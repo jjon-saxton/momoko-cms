@@ -1,0 +1,193 @@
+<?php
+
+class UserManager implements MomokoLITEObject
+{
+ public $action;
+ public $dbtable;
+ private $info=array();
+
+ public function __construct($action=null)
+ {
+  $this->dbtable=new DataBaseTable(DAL_TABLE_PRE."users",DAL_DB_DEFAULT);
+  $this->action=$action;
+ }
+
+ public function __get($key)
+ {
+  if (array_key_exists($key,$this->info))
+  {
+   return $this->info[$key];
+  }
+  else
+  {
+   return null;
+  }
+ }
+
+ public function __set($key,$value)
+ {
+  return false;
+ }
+
+ public function get()
+ {
+  switch ($this->action)
+  {
+   case 'get':
+   if (@$_GET['columns'])
+   {
+    $cols=explode(",",$_GET['columns']);
+   }
+   else
+   {
+    $cols=null;
+   }
+   $where="num=".$_GET['u'];
+   $query=$this->dbtable->getData($cols,$where,null,1);
+   $rows=$query->toArray();
+   return $rows[0];
+   break;
+   case 'put':
+   $data=$_POST;
+   $data['num']=@$_GET['u'];
+   return $this->put($data);
+   break;
+   case 'drop';
+   $data['num']=$_GET['u'];
+   return $this->drop($data);
+   break;
+   default:
+   $table="<table width=100% id=\"users\" class=\"ui-widget ui-widget-content\">\n<tr class=\"ui-widget-header \">\n";
+
+   $where=null;
+   if (@$_GET['columns'])
+   {
+    $cols=explode(",",$_GET['columns']);
+   }
+   else
+   {
+    $cols=array('num','name','groups');
+   }
+   foreach ($cols as $col)
+   {
+    if ($col == 'num')
+    {
+     $table.="<th>#</th>";
+    }
+    else
+    {
+     $table.="<th>".ucwords($col)."</th>";
+    }
+   }
+   $table.="<th>Actions</th>\n</tr>\n";
+
+
+   if (@$_GET['filter'])
+   {
+    $where=explode(",",$_GET['filter']);
+   }
+   $query=$this->dbtable->getData($cols,$where,@$_GET['sort'],@$_GET['limit'],@$_GET['offset']);
+   
+   while ($row=$query->next())
+   {
+    $table.="<tr id=\"".$row->num."\">\n";
+    foreach ($cols as $col)
+    {
+     $table.="<td>".$row->$col."</td>";
+    }
+    $table.="<td><a href=\"#edit\" title=\"Edit\" onClick=\"showEdit('".$row->num."', event)\" class=\"ui-icon ui-icon-pencil\" style=\"display: inline-block\">Edit</a> <a href=\"#remove\" title=\"Delete\" class=\"ui-icon ui-icon-trash\" onClick=\"showDelete('".$row->num."', event)\" style=\"display: inline-block\">Delete</a></td>\n</tr>";
+   }
+   $table.="</table>";
+   $siteroot=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location;
+
+   $html=<<<HTML
+<html>
+<head>
+<title>User Manager</title>
+</head>
+<body>
+<script language="javascript" type="text/javascript" src="{$siteroot}/assets/addins/usermanager/scripts/umanager.js"></script>
+<style>
+label, input { display:block;  }
+div#dialog-form label, div#dialog-form p, div#dialog-form input { font-size: 10pt; }
+input.text { margin-bottom:12px; width:95%; padding: .4em; }
+fieldset { padding:0; border:0; margin-top:25px; }
+div#users-contain { margin: 20px 0; }
+div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+button#create-user {font-size:11pt; }
+.ui-widget {font-size: 10pt; font-weight: none}
+.ui-dialog .ui-state-error { padding: .3em; }
+.validateTips { border: 1px solid transparent; padding: 0.3em; }
+ </style>
+<h2>User Manager</h2>
+<div id="dialog-fill" style="display:inline"></div>
+<div id="users-contain" class="ui-widget">
+<h3>Existing Users</h3>
+{$table}
+</div>
+<button id="create-user">Add new user</button>
+</body>
+</html>
+HTML;
+   return $html;
+  }
+ }
+
+ public function put($data)
+ {
+  $okay=false;
+  $return=$data;
+  if (!empty($data['num']))
+  {
+   if ($this->dbtable->updateData($data))
+   {
+    $okay=true;
+   }
+  }
+  else
+  {
+   if ($return['num']=$this->dbtable->putData($data))
+   {
+    $okay=true;
+   }
+  }
+  $return['actions']="<a href=\"#edit\" title=\"Edit\" onClick=\"showEdit('".$return['num']."', event)\" class=\"ui-icon ui-icon-pencil\" style=\"display: inline-block\">Edit</a> <a href=\"#remove\" title=\"Delete\" class=\"ui-icon ui-icon-trash\" onClick=\"showDelete('".$return['num']."', event)\" style=\"display: inline-block\">Delete</a></td>\n";
+  if ($okay)
+  {
+   return $return;
+  }
+ }
+
+ public function drop($data)
+ {
+  if ($this->dbtable->removeData($data))
+  {
+   return true;
+  }
+  else
+  {
+   return false;
+  }
+ }
+
+ public function setInfo()
+ {
+  if ($data=$this->get())
+  {
+   $info=parse_page($data);
+   $varlist['finderroot']=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elfinder';
+   $varlist['connectoruri']=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.$this->connector;
+   $ch=new MomokoCommentHandler($varlist);
+   $info['inner_body']=$ch->replace($info['inner_body']);
+  }
+  else
+  {
+   $page=new MomokoLITEError('Server_Error');
+   $info['full_html']=$page->full_html;
+   $info['title']=$page->title;
+   $info['inner_body']=$page->inner_body;
+  }
+  $this->info=$info;
+ }
+}

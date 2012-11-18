@@ -1,0 +1,8 @@
+<manifest addin="Victorique BB">
+<dirroot>/assets/addins/vbb/</dirroot>
+<module file="mods.inc.php" class="VictoriqueMemberCP">memberbar</module>
+<module file="mods.inc.php" class="VictoriqueModeratorCP">modbar</module>
+<authority>
+	<managed>ALL</managed>
+</authority>
+</manifest>

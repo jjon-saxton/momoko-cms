@@ -1,0 +1,8 @@
+# DAL configuration #
+#{type:mysql}
+#{table_pre:ss_}
+#{file:}
+#{host:localhost}
+#{user:saxton}
+#{password:Artemis&Arlette2013}
+#{default:saxton}

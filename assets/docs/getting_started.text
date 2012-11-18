@@ -1,0 +1,143 @@
+#Getting Started#
+MomoKO LITE offers the flexability and power of a CMS without all the complications. MomoKO LITE is designed to work with tools you are already familiar with without having to worry about saving and retrieving templates while you move between platforms. Use Dreamweaver, or any other HTML editor to write one template and save it for your site, than start basic HTML documents for your pages. You can even create folders and sub-folders. To get started using MomoKO LITE you will want to install it. Once installed on your server you will need to make a few configuration changes and than you should be all set. At this time, MomoKO LITE does not have MomoKO's installation wizard, so installation is more similar to EmiKO. Below we will outline the following step-by-step instructions for getting MomoKO LITE up and running.
+
+1. Finding a place to put MomoKO LITE
+2. Downloading a MomoKO LITE distribution package
+3. Unpacking MomoKO LITE
+4. Uploading MomoKO LITE to your server
+5. Checking permissions
+6. Configuring MomoKO LITE
+7. Creating your first page!
+
+## 1. Finding a place to put MomoKO LITE
+MomoKO LITE requires a working PHP 5.0.4+ environment. Additionally; the GD library, and Apache 2 with mod_rewrite is recommended to tranform URLs to more search-engine and user-friendly versions. If you already have a server and would like to check its PHP version create a PHP file with the function `phpinfo()` in it. This will print out all sorts of information about your PHP environment. Check your version and your GD library installation.
+
+If you do not already have hosting, then you have a couple of questions now to ask your potential hosting partners. You can also contact [SaxtonSolutions][s1] and ask about their hosting and MomoKO LITE deployment services.
+
+If you own your own server. Please check your server's docs or the [PHP][php1] website for information on installing the required and recommended software.
+
+## 2. Downloading a MomoKO LITE distribution package
+MomoKO LITE is offered in both Tarball and ZIP packages so you may choose the one you are most comfortable with working with. The ZIP packages is well suited if your workstation (not your server) is running Windows. You can find links to these on [MomoKO LITE's Information page][s2].
+
+## 3. Unpacking MomoKO LITE
+These instructions and the instructions in the following section assume you either don't know how to use `wget` or you do not have full shell access to your server. It is much easier to download the packages directly to your site's folder on your server and unpack them there. If you have a Linux server with shell access find the link to the tarball above and use `wget` to download it directly to your site root than use `tar -xzvf` to extract it and skip to step five.
+
+Otherwise you will likely need to open the package in an archive manager. On a Windows machine, if you have downloaded the ZIP package, you simply need to double click the file in Explorer. Explorer should now have an extract option, or you can simply select the files and use `ctrl-c` to copy them. Find a place on your Desktop, or somewhere you'll remember and make a folder named `MomoKOLITE`, or something similar. Now use `ctrl-v` to past the files in that folder.
+
+On Linux the steps are similar, but you will likely want to download the Tarball above and it will likely open in an archive manager rather than a file manager. You can click extract and browse to a location on your Desktop and create a new folder to extract the files into.
+
+On Mac, the archive will probably mount as a disk drive. Navigate create a folder on your desktop, than open the disk drive and copy the files to your new folder. Don't forget to unmount/eject the drive.
+
+## 4. Uploading MomoKO LITE to your server
+Great, you have all of MomoKO's files! However, they aren't going to do you much good on your local computer. You will need to upload them to a webserver.
+
+The instructions here tend to very depending on how you typically upload files to your server. Most people will use an FTP client or Dreamweaver, so these instructions are written with this in mind. If you use a more obscure method, just remember, you will want to upload MomoKO LITE to your root site folder.
+
+### 4.1 FTP with FireFTP, Bitvise SFTP, WinSCP and others
+These instructions are written for FTP or SFTP clients that use a twin panel interface. One panel, usually the left one, will be your local view, and the other, usually the right, will be your remote view.
+
+First navigate the right panel to the home folder or root folder for your site. Next navigate the left panel over to the folder you extracted MomoKO LITE into earlier. The default template does not relay on graphics, so, by default, all of MomoKO's files *should* be able to be tranferred in plain text, nevertheless it is highly recommended to turn on your FTP client's **auto-detect mode**, if you are using FTP. Now simply drag all the files within the local folder into the remove folder and wait they should all upload and appear shortly.
+
+### 4.2 FTP with NetDrive, WebDrive, gvfs, Finder
+Some FTP/SFTP clients create a network drive on your computer to represent your remote server. This works a bit better. Make sure that your software is set to **auto-detect mode** if using FTP and simply find the files you extracted earlier and than open the network drive in your file manager and copy the files from one window to the other with drag-and-drop.
+
+### 4.3 FTP with Dreamweaver
+If you don't already have a site definition created for your site, create one! This is the easiest option. Simply set the local site folder to the location you extracted your files into and define your server as normal, ensuring your site root folder is defined to the actual site root. Now, in local view, simply select the top-level folder and click the up arrow (put) button. All the files will be uploaded to the server! Now you can even use this site definition to add and manage your sites content!
+
+If you already have a site definition for your site, your not out of luck. For ease though, we recommend ensure your files are in your local site folder, if they aren't move them there, then select the top-level folder and click the put button.
+
+## 5. Checking permissions
+
+MomoKO LITE requires that a few files and folders are writable to the server. The files are (relative to site root):
+
+-`/assets/etc/main.cfg.txt`
+-`/assets/etc/dal.cfg.txt`
+
+In addition a temporary folder needs to be set in the configuration file, as instructed below, you will also have to ensure this is writable to the webserver.
+
+If you are running a Windows server, this should not be a problem. For Linux servers, you should familiarize yourself with the UNIX security model and file permissions.
+
+## 6. Configuring MomoKO LITE
+The ever-so-creatively named `main.cfg.txt` in `/assets/etc/` holds the main configuration settings for MomoKO LITE. These will have to be adjusted to your server environment. They are explained below:
+
+`sitename`
+:	This is the title of your entire site.
+
+`basedir`
+:	You will set this to the *absolute* path to your site root folder
+
+`datadir`
+:	You will need to set this to the *absolute* path where you want uploaded files to be stored. For security, we recommend setting this to a path not normally accessible by your webserver.
+
+`tempdir`
+:	Set this to the *absolute* path of a temporary folder to store uploaded files and images before they are sent or saved in their proper locations. The webserver **must be able** to write to this folder.
+
+`domain`
+:	This setting is purely optional. MomoKO LITE will normally try and guess your domain, but if that fails, or produces odd results, you can specify one here. Anything you put here will overwrite MomoKO's default behaviour.
+
+`location`
+:	This is the root of your folder according to your webserver. Most of the time this will be blank, but if you have to put something after your domain, like ~username, you will want to put it here.
+
+`default_template`
+:	Provided for your convinence your can set this to the path relative to `basedir` above to a template file you want to use if no others can be detected.
+
+`session`
+:	Simply the name of a session used to store user information for addins that require login
+
+`salt`
+:	A two character encryption salt of your choosing.
+
+`rewite`
+:	If you have enabled `mod_rewrite` and have enabled the rules discribed [here][h1], you can set this to true to perform URL transformations that are better suited for search engines and more human-friendly.
+
+The default `main.conf.txt` file should give you an idea how to define these settings. In general, they are defined as follows: #{setting:value} where setting is the name of the setting and value is the actual value you wish to set.
+
+Upon editing the `main.conf.txt` file, you will need to edit `dal.conf.txt`. Most addins will require a database connection. The Database Abstraction Layer helps provide this connection in a simple manner for all set-ups. Its options are below.
+
+`type`
+:	The type of database server you have installed. A 
+driver is needed for your server. MySQL and SQLite are available by default, others can be downloaded [elsewhere][dal1]
+
+`table_pre`
+:	A prefix to prepend to table names. This will help you seperate MomoKO LITE generated tables from other tables in the same databse. You can leave this blank if MomoKO LITE will be the only software using this database.
+
+`file`
+:	For SQLite, this is where you will set the *absolute* path to your .db file.
+
+`host`
+:	For MySQL and others, the hostname of the server to connect to
+
+`user`
+:	The user name to use to connect to the database for MySQL
+
+`password`
+:	The password for the user above
+
+`default`
+:	The defualt database. The user specified above should have all rights to edit and insert tables and data into this database.
+
+## 7. Creating your first page!
+With MomoKO LITE now fully configured, you are ready to begin managing content. You will want to create or download templates to use, but that is for another page. For now we will dive right in to creating pages for your content for MomoKO LITE.
+
+The first place to start is right in your site's root folder. A file named `home.htm` came with your MomoKO distribution. This has some basic content and gives you an idea of the power of MomoKO LITE. By default, any folder you create will look for a `home.htm` file. It will server this up whenever a user just navigates to the folder. So, when your users for go to your domain the `home.htm` in the root folder is shown.
+
+You can use this file as a guide, but generally creating a new HTML file like the one below, is all you need to do.
+
+>&lt;html>
+>&lt;head>
+>&lt;title>Your page's title&lt;/title>
+>&lt;/head>
+>&lt;body>
+>&lt;h1>Your page's header&lt;/h1>
+>&lt;p>Your page's content&lt;/p>
+>&lt;/body>
+>&lt;/html>
+
+Of course to get your users to this page is up to you. You can manually write your navigation as part of your template, but MomoKO LITE does offer a more flexible module, called [`nav`][h2].
+
+[s1]:http://www.saxton-solutions.com/page/contact.htm
+[s2]:http://www.saxton-solutions.com/page/software/momoko.htm
+[php1]:http://www.php.org
+[h1]:./mod_rewrite.htm
+[h2]:./modules/nav.htm
+[dal1]:http://www.saxton-solutions.com/page/software/dal.htm

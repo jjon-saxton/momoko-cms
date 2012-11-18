@@ -1,0 +1,50 @@
+# MomoKO LITE and mod_rewrite #
+With the Apache module `mod_rewrite`, MomoKO LITE can be used in a much more human and search engine friendly manner. You will be able to set rewrite rules that redirect to the various handler scripts MomoKO LITE uses. This will avoid having to get to a page with the URL `http://example.com/index.php/your-folder/your-page.htm`. Instead you could simply use `http://example.com/page/your-folder/your-page.htm` or you could access a file with the more helpful `http://example.com/file/your-file.doc`.
+
+This section will help you set up these rules. Once the rules are set properly, you can set the configuration setting `rewrite` to 'true' and all URLs MomoKO LITE generates for herself will be reformatted to the more friendly versions. The steps are simple:
+
+1. Write the Apache rewrite rules
+2. Test the rewrite rules
+3. Set `rewrite` to true
+4. Test the new URLs
+
+## 1. Write the Apache rewrite rules
+To get your started each MomoKO LITE distribution includes a file named `mod_rewrite.conf.txt`. This file has all the rewrite rules contained within.
+
+Essentially you want the following folders to be 'mapped' to the following scripts. Remember that Apache prefers absolute URLs from the domain. You should prepend the script's name with the `location` you specified in your `main.conf.txt` file. The following assumes you want all files and folders requested for the folder 'addin' to be mapped to 'addin.php' with the value of `location` being '~mysite'
+><IfModule mod_rewrite.c>
+>RewriteEngine On
+>RewriteRule ^addin/(.*)$ /~mysite/addin.php/$1 [L]
+></IfModule>
+
+The following shows the mapping that needs to be done.
+
+- addin -> addin.php
+- file -> file.php
+- help -> help.php
+- page -> index.php
+
+Expending the above for all script and folder matches, you will end up with a file very similar to `mod_rewrite.conf.txt`
+
+><IfModule mod_rewrite.c>
+>RewriteEngine On
+>RewriteRule ^addin/(.*)$ /~mysite/addin.php/$1 [L]
+>RewriteRule ^file/(.*)$ /~mysite/file.php/$1 [L]
+>RewriteRule ^help/(.*)$ /~mysite/help.php/$1 [L]
+>RewriteRule ^page/(.*)$ /~mysite/index.php/$1 [L]
+></IfModule>
+
+Simply edit the portion `/~mysite/` to match your location and save as `.htaccess`
+
+## 2. Test the rewrite rules
+Once you have these rules set and the file saved as `.htaccess` you can place this in the root site folder where you installed MomoKO LITE. Restart your Apache server. That is restart the software, there should be no reason for you to restart the entire computer.
+
+Now try to go to `http://yourdomain.com/~mysite/page/home.htm` replacing 'yourdomain.com' with your actual domain and '~mysite` with your site's root. If all goes well you'll see your home page. If you receive a 500 error ensure your rewrite rules are typed correctly and check to ensure overrides are allowed on your server.
+
+If you need to, you may wish to try placing the rewrite rules in your apache configuration file under a `<directory>` derictive for your site root.
+
+## 3. Set `rewrite` to true
+If you managed to get your rewrite rules working you can open `main.conf.txt` and set the value of `rewrite` to true. This will tell MomoKO LITE to use the more friendly URLs when generating them, either through the navigation module, or through addins.
+
+## 4. Test the new URLs
+If you have addins installed or you are using the nav module, check the links they generate. The nav module should generate page links that look similar to `http://yoursite.com/~mysite/page/my-page.htm`. If it does and all of them work that you are finished here! If not make sure you have saved and uploaded changes made to `main.conf.txt` and that you have spelled the `rewrite` variable correctly and try again.

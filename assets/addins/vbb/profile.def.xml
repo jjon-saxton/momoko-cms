@@ -1,0 +1,16 @@
+<form>
+<fieldlist table="bb_profiles">
+<field type="radio" label="Gender" name="gender">
+<option value="m">Male</option>
+<option value="f">Female</option>
+<option default="true" value="u">Undisclosed</option>
+</field>
+<field type="string" label="Occupation" name="occupation" len="200" />
+<field type="string" label="Location" name="location" len="255" />
+<field type="string" label="Interests" name="interests" />
+<field type="number" label="ICQ UIN" name="icq" />
+<field type="string" label="AIM Sceename" name="aim" />
+<field type="string" label="Google Chat" name="gchat" />
+<field type="text" label="Bio" name="bio" />
+</fieldlist>
+</form>

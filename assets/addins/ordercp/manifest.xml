@@ -1,0 +1,7 @@
+<manifest addin="Order Control Panel">
+<dirroot>/assets/addins/ordercp/</dirroot>
+<authority>
+	<whitelist>admin,editor</whitelist>
+	<blacklist>ALL</blacklist>
+</authority>
+</manifest>

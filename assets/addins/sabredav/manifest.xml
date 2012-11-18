@@ -1,0 +1,6 @@
+<manifest addin="SabreDAV">
+<dirroot>/assets/addins/sabredav/</dirroot>
+<authority>
+	<managed>ALL</managed>
+</authority>
+</manifest>

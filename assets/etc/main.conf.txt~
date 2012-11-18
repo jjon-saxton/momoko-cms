@@ -1,0 +1,12 @@
+#{sitename:SaxtonSolutions LLC}
+#{basedir:/home/saxton/public_html}
+#{pagedir:/home/saxton/pages}
+#{datadir:/home/saxton/files}
+#{tempdir:/home/saxton/temp}
+#{location:} 
+
+#{default_template:/assets/templates/main.tpl.htm}
+
+#{session:ss}
+#{salt:ss}
+#{rewrite:}
