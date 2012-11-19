@@ -1,0 +1,121 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="ie6 oldie"> <![endif]-->
+<!--[if IE 7]>    <html class="ie7 oldie"> <![endif]-->
+<!--[if IE 8]>    <html class="ie8 oldie"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="">
+<!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords" content="web, web services, web design, search engine optimization, seo, linux, server, administration">
+<meta name="description" content="SaxtonSolutions LLC is a full-service web company. We are dedicated to providing outstanding web services. At the moment we can offer your business a set of services and tools that will help build your online presence.">
+<title>Your Site Name - ~{pagetitle}</title>
+<link href="~{siteroot}/assets/styles/professional-blue.css" rel="stylesheet" type="text/css">
+<link href="~{siteroot}/index.php/atom.xml" type="application/atom+xml" rel="alternate" title="News Feed" />
+<link href="~{siteroot}/index.php/" rel="top" type="text/html">
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<script src="~{siteroot}/assets/scripts/respond.min.js"></script>
+<!-- ShareThis JS Libraries and Procedures -->
+<script type="text/javascript">var switchTo5x=true;</script>
+<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+<script type="text/javascript">stLight.options({publisher: "a211c235-5e89-464b-8b65-03fc50ea6cd9"}); </script>
+<!-- Google Analytics Procedures -->
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-33996246-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<!-- JQuery Links and Libraries -->
+<script language="javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+<script language="javascript" src="//code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
+<link href="//code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" name="JqueryUI Base theme">
+<script language="javascript" src="~{siteroot}/assets/scripts/jquery.plugins.js" type="text/javascript"></script>
+<!--JQuery Procedures-->
+<script language="javascript" type="text/javascript">
+$(document).ready(function(){
+ //Auto add icons to links based on href attribute, exclude header (h) and footer (f) links
+ $("a[href^='mailto:']:not(.hf):not(marquee)").addClass("email");
+ /*if we want to add icons to file types, here is an example of how to do that
+ $("a[href$='.pdf']:not(.hf)").addClass("pdf"); */
+ $('a:not(.hf)').filter(function(){
+  //Compare the 'a' elements href host name to the location's host
+  return this.hostname && this.hostname !== location.hostname;
+  }).addClass("external").attr("target","_blank");
+
+  $('#content img:even').css("float","left");
+  $('#content img:odd').css("float","right");
+
+    $("ul.topnav ul.subnav").parent().append("<span onclick=void()>↓</span>"); //Only shows drop down trigger when js is enabled (Adds empty span tag after ul.subnav*)
+  
+    $("ul.topnav li span").click(function() { //When trigger is clicked...  
+  
+        //Following events are applied to the subnav itself (moving subnav up and down)  
+        $(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click  
+  
+        $(this).parent().hover(function() {  
+        }, function(){  
+            $(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up  
+												$("div#SiteShare span").fadeIn();
+        }); 
+								$("div#SiteShare span").fadeOut();
+  
+        //Following events are applied to the trigger (Hover events for the trigger)  
+        }).hover(function() {  
+            $(this).addClass("subhover"); //On hover over, add class "subhover"  
+        }, function(){  //On Hover Out  
+            $(this).removeClass("subhover"); //On hover out, remove class "subhover"  
+    });  
+ });
+</script>
+</head>
+<body>
+<div id="page" class="gridContainer clearfix">
+<div id="navbar">
+<!-- MODULE:nav:display=menu -->
+</div>
+<div id="header" class="banner"> 
+<h1>Your Site Name or Logo</h1>
+</div>
+<div id="SiteShare">
+<span class='st_plusone' title='Google +1'></span>
+<span class='st_facebook' title='Facebook'></span>
+<span class='st_twitter' title='Tweet'></span>
+<span class='st_linkedin' title='LinkedIn'></span>
+<span class='st_sharethis' title='ShareThis'></span>
+<span class='st_email' title='Email'></span>
+<div id="SiteFollow">
+<span class="sf_follow"><a href="https://twitter.com/saxtonsolutions" class="twitter-follow-button" data-show-count="false" data-show-screen-name="false">Follow @saxtonsolutions</a></span>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+<span class="sf_rss"><a type="application/rss+xml"  href="~{siteroot}/index.php/feed.xml"><img src="~{siteroot}/assets/images/feed-icon.gif" alt="News Feed" width="16" height="16" border="0" align="top"></a></span>
+</div>
+</div>
+<div id="Content">
+<!-- MODULE:pagecontrols:display=toolbar&text=true&nouser=hidden -->
+<!-- VAR:body -->
+</div>
+<div id="News">
+<!-- MODULE:news:sort=recent&length=255&num=5 -->
+<!-- MODULE:usercontrols:display=box -->
+</div>
+<div id="footer">
+<ul id="info">
+<li>©<a href="mailto:tech-coordinator@saxton-solutions.com">Jon Saxton</a> 2012 all rights reserved.</li>
+<li>This template and stylesheet as well as some artwork are intellectual properties owned by SaxtonSolutions LLC and are protected by copyright or creative commons licences.</li>
+<li>This site was last updated on Aug, 2012</li>
+</ul>
+</div>
+</div>
+</body>
+</html>

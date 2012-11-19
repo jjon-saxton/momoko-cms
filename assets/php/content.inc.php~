@@ -19,7 +19,7 @@ class MomokoLITENavigation implements MomokoModuleInterface
   }
   else
   {
-   trigger_error($GLOBALS['CFG']->pagedir.'/map.xml does not exists!',E_USER_NOTICE);
+   trigger_error($GLOBALS['CFG']->padedir.'/map.xml does not exists!',E_USER_NOTICE);
   }
  }
 	

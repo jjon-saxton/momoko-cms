@@ -1,0 +1,44 @@
+@import "base.css";
+@import "boilerplate.css";
+@import "fluid.css";
+@import "smoothness/jquery-ui-1.9.0.custom.min.css";
+
+body {background:#D7E1FF; font: 10pt "Trebuchet MS", Arial, Helvetica, sans-serif; color:#333}
+a:link {color: #666}
+a:visited {color: #666}
+a:active {color: #333}
+div.default {background: transparent; font: 12pt "Palatino Linotype", "Book Antiqua", Palatino, serif; color:#000}
+h1 { text-align: center; color: #272728 }
+
+div#page {background:url(../images/pagebg.png) #F9FAFB  no-repeat fixed right top; border-radius:5px}
+
+div#Content, div#Victorique, div#elFinder {background: #fff; color: #212122; border-radius:5px}
+div#Content ul, div#Content p, div#Victorique p {font:12pt "Times New Roman", Times, serif}
+div#Content h2,h3,h4,h5,h6, div#Victorique h2,h3,h4,h5,h6, div#elFinder h2,h3,h4,h5,h6 {font-family: Arial, Helvetica, sans-serif; color: #35456F}
+div#Content h2, div#Victorique h2, div#elFinder h2 {font-size: 18pt; font-weight:bold}
+div#Content h3, div#Victorique h3 {font-size: 16pt; font-weight:bold}
+div#Content h4, div#Victorique h4 {font-size: 14pt; font-weight:bold}
+div#Content h5, div#Victorique h5 {font-size: 12pt; font-weight:bold; font-style:italic}
+div#Content h6, div#Victorique h6 {padding-bottom:0; padding-top:.5em; font-size:12pt; text-decoration:underline}
+div#Content p, div#News p, div#Victorique p {text-align:justify}
+div#Content div, div#Victorique div {padding-left:1em}
+
+div#Content div.date { font: 10pt "Courier New", Courier, monospace; text-align: center; color: #777; margin-bottom: 1em }
+
+div#footer {font: 8pt "Courier New", Courier, monospace}
+
+ul.topnav {background: #272728; font:bold 10pt Verdana, Geneva, sans-serif; color: #FFF; border-bottom-left-radius:5px; border-bottom-right-radius:5px}
+ul.topnav li a {color: #E6E9EC}
+ul.topnav li a:hover {background: transparent; color: #fff}
+ul.topnav li span {background: url(../images/down_arrow.png) transparent no-repeat; color: transparent}
+ul.topnav li span:hover {background: url(../images/down_arrow_hover.png) transparent no-repeat; color:transparent}
+ul.topnav li ul.subnav  {background:#282828}
+
+html ul.topnav li ul.subnav li a {color: #E6E9EC}
+html ul.topnav li ul.subnav li a:hover {background: #06C; color: #fff}
+html ul.topnav li ul.subnav li hr {border-color: #E6E9EC}
+
+h4.headline {padding:0;margin-bottom:0}
+div.news div.item {background-color:#ffffff; border-radius: 2px; margin-bottom: 5px }
+div.news div.date {font-style:italic}
+div.news div.article p {font:10pt Arial, Helvetica, sans-serif; margin:0; padding:0; text-indent:1em}

@@ -1,11 +1,11 @@
 #{sitename:SaxtonSolutions LLC}
-#{basedir:/home/saxton/public_html}
-#{pagedir:/home/saxton/pages}
-#{datadir:/home/saxton/files}
-#{tempdir:/home/saxton/temp}
-#{location:} 
+#{basedir:/home/momoko/public_html}
+#{pagedir:/home/momoko/assets/pages}
+#{datadir:/home/momoko/assets/files}
+#{tempdir:/home/momoko/assets/temp}
+#{location:/~momoko/} 
 
-#{default_template:/assets/templates/main.tpl.htm}
+#{default_template:/assets/templates/professional.tpl.htm}
 
 #{session:ss}
 #{salt:ss}
