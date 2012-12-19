@@ -1,12 +1,12 @@
-#{sitename:SaxtonSolutions LLC}
-#{basedir:/home/saxton/www}
-#{pagedir:/home/saxton/pages}
-#{datadir:/home/saxton/files}
-#{tempdir:/home/saxton/temp}
-#{location:} 
+#{sitename:MomoKO Development Site}
+#{basedir:/home/momoko/public_html}
+#{pagedir:/home/momoko/public_html/assets/pages}
+#{datadir:/home/momoko/public_html/assets/files}
+#{tempdir:/home/momoko/public_html/assets/temp}
+#{location:~momoko} 
 
 #{default_template:/assets/templates/quirk.tpl.htm}
 
-#{session:ss}
-#{salt:ss}
-#{rewrite:true}
+#{session:mk}
+#{salt:mk}
+#{rewrite:}

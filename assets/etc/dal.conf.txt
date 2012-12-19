@@ -1,8 +1,8 @@
 # DAL configuration #
 #{type:mysql}
-#{table_pre:ss_}
+#{table_pre:mk_}
 #{file:}
 #{host:localhost}
-#{user:saxton}
-#{password:Artemis&Arlette2013}
-#{default:saxton}
+#{user:momoko}
+#{password:aKa48842002}
+#{default:momoko-cms}
