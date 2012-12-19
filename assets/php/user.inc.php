@@ -40,6 +40,20 @@ class MomokoSession
     }
   }
 
+  public function updateSession()
+  {
+   $curname=$this->name;
+   if ($this->loginAs($this->name))
+   {
+    $this->name=$curname;
+    return true;
+   }
+   else
+   {
+    return false;
+   }
+  }
+
   public function loginAs($name)
   {
    if (defined('INCLI') || $this->inGroup('admin'))
@@ -499,7 +513,32 @@ HTML;
  {
   if ($GLOBALS['USR']->inGroup('admin'))
   {
+   $atitle="AdminCP";
+   if (!empty($this->opts['admin_title']))
+   {
+    $atitle=$this->opts['admin_title'];
+   }
    $actions[]=array('href'=>$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADMINROOT,'title'=>'AdminCP');
+  }
+  if (is_array($this->opts['custom_links']))
+  {
+   foreach ($this->opts['custom_links'] as $group=>$link)
+   {
+    if ($this->usr->inGroup($group))
+    {
+     @list($link,$text,)=explode(">",$link);
+     $link=str_replace("\\","/",$link);
+     if (preg_match("/\/\//",$link) <= 0)
+     {
+      $link=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.$link;
+     }
+     if (empty($text))
+     {
+      $text=$link;
+     }
+     $actions[]=array('href'=>$link,'title'=>$text);
+    }
+   }
   }
   $actions[]=array('href'=>'?action=logout','title'=>'Logout');
   $html=null;

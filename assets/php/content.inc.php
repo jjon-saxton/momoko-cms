@@ -12,15 +12,8 @@ class MomokoLITENavigation implements MomokoModuleInterface
  {
   $this->user=$user;
   parse_str($options,$this->options);
-  if (file_exists($GLOBALS['CFG']->pagedir.'/map.xml'))
-  {
-   $xml=simplexml_load_file($GLOBALS['CFG']->pagedir.'/map.xml');
-   $this->convertXmlObjToArr($xml,$this->map);
-  }
-  else
-  {
-   trigger_error($GLOBALS['CFG']->pagedir.'/map.xml does not exists!',E_USER_NOTICE);
-  }
+  $xml=simplexml_load_file($GLOBALS['CFG']->pagedir.'/map.xml');
+  $this->convertXmlObjToArr($xml,$this->map);
  }
 	
 public function convertXmlObjToArr($obj, &$arr)
@@ -240,10 +233,10 @@ HTML;
   return trim($html,"\n\r");
  }
 	
-	private function getTextNav($map,$ppath=null)
+	private function getTextNav($map)
 	{
 		$text=null;
-  $rpath="http:{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/index.php/";
+  $rpath="http:{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}";
 		
 		if ($this->options['display'] == 'list')
 		{
@@ -260,15 +253,15 @@ HTML;
 			{
 				$id=$node['@text'];
 				$class='subnav';
-				$cpath=$node['@attributes']['dir'];
-				$text.=$rpath.$ppath.$cpath.$sep;
-				$text.=$this->getTextNav($node['@children'],$cpath).$sep;
+				//$cpath=$node['@attributes']['dir'];
+				$text.=$rpath.$node['@attributes']['file'].$sep;
+				$text.=$this->getTextNav($node['@children']).$sep;
 			}
 			elseif ($node['@name'] == 'page')
 			{
 				if (!empty($node['@attributes']['file']))
 				{
-					$text.=$rpath.$ppath.$node['@attributes']['file'].$sep;
+					$text.=$rpath.$node['@attributes']['file'].$sep;
 				}
 			}
 		}
@@ -294,6 +287,7 @@ HTML;
         if (preg_match("/".preg_quote($GLOBALS['CFG']->domain.$GLOBALS['CFG']->location,"/")."/",$grandchild['attributes']['href']) > 0)
         {
          $attrs['file']=preg_replace("/".preg_quote($GLOBALS['CFG']->domain.$GLOBALS['CFG']->location,"/")."/","",$grandchild['attributes']['href']);
+	 $attrs['file']=preg_replace("/http:/",'',$attrs['file']);
         }
 	else
 	{
@@ -468,7 +462,7 @@ class MomokoLITENews implements MomokoModuleInterface
 		 foreach($data as $news)
 		 {
 			 $news['file']=$news['date'].'.htm';
-			 $news['date']=date('m-d-Y',$news['date']);
+			 $news['date']=date($GLOBALS['USR']->shortdateformat,$news['date']);
 			 if ($max > 0 && $c<=$max)
 			 {
 			  if (strlen($news['summary']) > $this->options['length'])
@@ -653,15 +647,17 @@ HTML;
    if (file_put_contents($GLOBALS['CFG']->pagedir.$this->path,$full_html))
    {
     $dir=pathinfo($this->path,PATHINFO_DIRNAME);
-    if (pathinfo($this->path,PATHINFO_BASENAME) != $data['pagename'])
+
+    if ((pathinfo($this->path,PATHINFO_BASENAME) != $data['pagename']) && (rename($GLOBALS['CFG']->pagedir.$this->path,$GLOBALS['CFG']->pagedir.$dir.'/'.$data['pagename'])))
     {
-     rename($GLOBALS['CFG']->basedir.$this->path,$GLOBALS['CFG']->basedir.$dir.$data['pagename']);
-     header("Location: ".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT.$dir.$data['pagename']);
+     $dir=ltrim($dir,"/");
+     header("Location: ".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT.$dir.'/'.$data['pagename']);
      exit();
     }
     else
     {
-     header("Location: ".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT.$this->path);
+     $file=ltrim($this->path,"/");
+     header("Location: ".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT.$file);
      exit();
     }
    }
@@ -724,10 +720,6 @@ HTML;
 			});
 		});
 	</script>
-
-	<style type="text/css" media="screen">
-		body { padding:20px;}
-	</style>
 <h2>Edit Page: {$this->path}</h2>
 <form method=post>
 <ul class="noindent nobullet">
@@ -1266,6 +1258,7 @@ class MomokoLITETemplate implements MomokoLITEObject, MomokoLITEPageObject
    $page=new MomokoLITEError('Tea_Time');
   }
   $vars['pagetitle']=@$page->title;
+  $vars['softwareversion']=MOMOKOVERSION;
   $vars['body']=@$page->inner_body;
 
   if (@!$vars['body'] && @$page->full_html) // just in case the above didn't work, note: this is not elegant as it could result in invalid code, but will prevent links from appearing not to work. >.>

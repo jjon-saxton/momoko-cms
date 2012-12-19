@@ -71,7 +71,7 @@ HTML;
 	
 	public function toHTML()
 	{
-		$fdate=date('d M Y',$this->date);
+		$fdate=date($GLOBALS['USR']->longdateformat,$this->date);
 		$self=pathinfo($this->path,PATHINFO_BASENAME);
 		$html=<<<HTML
 <h2 class="headline">{$this->headline}</h2>
@@ -182,21 +182,23 @@ class MomokoLITENewsManager implements MomokoLITEObject
    if (empty($_POST['headline']))
    {
     $article=$this->get();
+    $editorroot=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elrte';
+    $finderroot=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elfinder';
     $info['title']=ucwords($action)." Article";
     $info['inner_body']=<<<HTML
 	<!-- elFinder -->
-	<script src="//saxton-solutions.com/assets/scripts/elfinder/js/elfinder.min.js" type="text/javascript" charset="utf-8"></script>
-	<link rel="stylesheet" href="//saxton-solutions.com/assets/scripts/elfinder/css/elfinder.min.css" type="text/css" media="screen" charset="utf-8">
+	<script src="{$finderroot}/js/elfinder.min.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" href="{$finderroot}/css/elfinder.min.css" type="text/css" media="screen" charset="utf-8">
 	<!-- elRTE -->
-	<script src="//saxton-solutions.com/assets/scripts/elrte/js/elrte.min.js" type="text/javascript" charset="utf-8"></script>
-	<link rel="stylesheet" href="//saxton-solutions.com/assets/scripts/elrte/css/elrte.min.css" type="text/css" media="screen" charset="utf-8">
+	<script src="{$editorroot}/js/elrte.min.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" href="{$editorroot}/css/elrte.min.css" type="text/css" media="screen" charset="utf-8">
 	<script type="text/javascript" charset="utf-8">
 		$().ready(function() {
 			var opts = {
 				cssClass : 'el-rte',
 				fmOpen : function(callback) {
 				$('<div />').dialogelfinder({
-      						url: '//saxton-solutions.com/assets/scripts/elfinder/php/connector.php',
+      						url: '{$finderroot}/php/connector.php',
       						commandsOptions: {
         						getfile: {
           							oncomplete: 'destroy' // destroy elFinder after file selection
@@ -208,7 +210,7 @@ class MomokoLITENewsManager implements MomokoLITEObject
 				// lang     : 'ru',
 				height   : 375,
 				toolbar  : 'maxi',
-				cssfiles : ['//saxton-solutions.com/assets/scripts/elrte/css/elrte-inner.css']
+				cssfiles : ['{$editorroot}/css/elrte-inner.css']
 			}
 			$('#article').elrte(opts);
 
@@ -249,7 +251,7 @@ var id=setTimeout("writeTime()",1000); //set function to run again, 1 second fro
 <form method=post>
 <ul class="nobullet noindent">
 <li><label for="title">Headline:</label> <input type=text id="title" size=30 name="headline" value="{$article['headline']}"></li>
-<li><label for="date">Date:</label> <input type=date id="date" size=10 name="date" value="{$article['ndate']}"> <label for="time">Time:</label> <input type=time id="time" size=8 name="time" value="{$article['time']}"></li>
+<li><label for="date">Date:</label> <input type=text id="date" size=10 name="date" value="{$article['ndate']}"> <label for="time">Time:</label> <input type=text id="time" size=8 name="time" value="{$article['time']}"></li>
 <li><label for="summary">Summary (do not include HTML!):</label><br>
 <textarea name="summary" cols=45 rows=5 id="summary">{$article['summary']}</textarea>
 <li><label for="eltrte">Article:</label>
@@ -300,6 +302,54 @@ else
 
 switch (@$_GET['action'])
 {
+ case 'login':
+ if (@!empty($_POST['password']))
+ {
+  if ($GLOBALS['USR']->login($_POST['name'],$_POST['password']))
+  {
+   $_SESSION['data']=serialize($GLOBALS['USR']);
+   if (@!empty($_GET['re']))
+   {
+    header("Location: ?action=".$_GET['re']);
+   }
+   else
+   {
+    header("Location: ?loggedin=1");
+   }
+   exit();
+  }
+  else
+  {
+   $child=new MomokoLITEError('Unauthorized');
+  }
+ }
+ else
+ {
+  $child=new MomokoForm('login');
+ }
+ break;
+ case 'register':
+ if (@$_POST['first'])
+ {
+  $usr=new MomokoUser($_POST['name']);
+  if ($usr->put($_POST))
+  {
+   header("Location:/?action=login");
+   exit();
+  }
+ }
+ else
+ {
+  $child=new MomokoForm('register');
+ }
+ break;
+ case 'logout':
+ if ($GLOBALS['USR']->logout())
+ {
+  $_SESSION['data']=serialize($GLOBALS['USR']);
+  header("Location: ?loggedin=0");
+ }
+ break;
  case 'new':
  case 'edit':
  case 'delete':

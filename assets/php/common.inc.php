@@ -21,6 +21,8 @@ else
  define("NEWSROOT","/news.php/");
 }
 
+define("MOMOKOVERSION",trim(file_get_contents($GLOBALS['CFG']->basedir.'/assets/etc/version.nfo.txt'),"\n"));
+
 #user session now added here as part of MomoKO merge
 require_once $GLOBALS['CFG']->basedir.'/assets/php/user.inc.php';
 
@@ -301,6 +303,21 @@ class MomokoCommentHandler
       }
     } 
 
+    if (preg_match_all("/<var>(?P<var>.*?)<\/var>/",$text,$list))
+    {
+      foreach ($list['var'] as $var)
+      {
+	     if (@$this->$var)
+	     {
+	      $text=preg_replace("/<var>".$var."<\/var>/",$this->$var,$text);
+	     }
+	     else
+	     {
+	      $text=preg_replace("/<var>".$var."<\/var>/","<!-- Notice: variable '".$var."' not set or empty -->",$text);
+	     }
+      }
+    }
+
     //Replace DataBase Blocks
     if (preg_match_all("/<!-- DATABASE:(?P<base_query>.*?)\/\/ -->(?P<rows>.*?)<!-- \/\/DATABASE -->/smU",$text,$list))
     {
@@ -353,7 +370,7 @@ class MomokoCommentHandler
       foreach ($list['item'] as $item)
       {
         list($name,$options,)=explode(":",$item);
-        $text=preg_replace("/<!-- MODULE:".preg_quote($item)." -->/",$this->loadMod($name,$options),$text);
+        $text=preg_replace("/<!-- MODULE:".preg_quote($item,"/")." -->/",$this->loadMod($name,$options),$text);
       }
     }
 

@@ -37,14 +37,14 @@ ul.victorique, ul.list, li.box { list-style:none; padding:0; margin:0 }
 	clear: both;
 	float: left;
 	margin-left: 0;
-	width: 24.1379%;
+	width: 20%;
 	display: block;
 }
 #Victorique {
 	clear: none;
 	float: left;
 	margin-left: 1.1494%;
-	width: 74.7126%;
+	width: 80%;
 	display: block;
 }
 }
@@ -64,14 +64,14 @@ ul.victorique, ul.list, li.box { list-style:none; padding:0; margin:0 }
 	clear: both;
 	float: left;
 	margin-left: 0;
-	width: 29.3577%;
+	width: 15%;
 	display: block;
 }
 #Victorique {
 	clear: none;
 	float: left;
-	margin-left: 0.9174%;
-	width: 69.7247%;
+	margin-left: 0%;
+	width: 85%;
 	display: block;
 }
 }
