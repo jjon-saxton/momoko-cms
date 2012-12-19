@@ -1,7 +1,0 @@
-<manifest addin="Rep Center">
-<dirroot>/assets/addins/repcenter/</dirroot>
-<authority>
-	<managed>ALL</managed>
-</authority>
-<incp>Yes</incp>
-</manifest>
