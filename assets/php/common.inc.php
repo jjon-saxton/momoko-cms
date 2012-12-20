@@ -24,7 +24,7 @@ else
 define("MOMOKOVERSION",trim(file_get_contents($GLOBALS['CFG']->basedir.'/assets/etc/version.nfo.txt'),"\n"));
 require $GLOBALS['CFG']->basedir.'/assets/php/dal/load.inc.php';
 
-if (INCLI != TRUE)
+if (!defined("INCLI"))
 {
  #user session now added here as part of MomoKO merge
  require_once $GLOBALS['CFG']->basedir.'/assets/php/user.inc.php';
@@ -104,7 +104,7 @@ class MomokoConfiguration
 
     if(is_array(@$configuration))
     {
-      if (!array_key_exists('domain',$configuration) && INCLI != TRUE)
+      if (!array_key_exists('domain',$configuration) && !defined("INCLI"))
       {
        $configuration['domain']='//'.$_SERVER['SERVER_NAME']; //guess the domain everytime if it is not supplied in configuration. Useful if you're domain changes a lot for whatever reason =^.~=
       }
