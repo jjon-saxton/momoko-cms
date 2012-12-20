@@ -22,21 +22,25 @@ else
 }
 
 define("MOMOKOVERSION",trim(file_get_contents($GLOBALS['CFG']->basedir.'/assets/etc/version.nfo.txt'),"\n"));
+require $GLOBALS['CFG']->basedir.'/assets/php/dal/load.inc.php';
 
-#user session now added here as part of MomoKO merge
-require_once $GLOBALS['CFG']->basedir.'/assets/php/user.inc.php';
-
-session_name($GLOBALS['CFG']->session);
-session_start();
-
-if (@$_SESSION['data'])
+if (INCLI != TRUE)
 {
- $GLOBALS['USR']=unserialize($_SESSION['data']);
-}
-else
-{
- $GLOBALS['USR']=new MomokoSession();
- $_SESSION['data']=serialize($GLOBALS['USR']);
+ #user session now added here as part of MomoKO merge
+ require_once $GLOBALS['CFG']->basedir.'/assets/php/user.inc.php';
+
+ session_name($GLOBALS['CFG']->session);
+ session_start();
+
+ if (@$_SESSION['data'])
+ {
+  $GLOBALS['USR']=unserialize($_SESSION['data']);
+ }
+ else
+ {
+  $GLOBALS['USR']=new MomokoSession();
+  $_SESSION['data']=serialize($GLOBALS['USR']);
+ }
 }
 
 interface MomokoModuleInterface
@@ -100,7 +104,7 @@ class MomokoConfiguration
 
     if(is_array(@$configuration))
     {
-      if (!array_key_exists('domain',$configuration))
+      if (!array_key_exists('domain',$configuration) && INCLI != TRUE)
       {
        $configuration['domain']='//'.$_SERVER['SERVER_NAME']; //guess the domain everytime if it is not supplied in configuration. Useful if you're domain changes a lot for whatever reason =^.~=
       }

@@ -5,4 +5,4 @@
 #{host:localhost}
 #{user:momoko}
 #{password:aKa48842002}
-#{default:momoko-cms}
+#{default:momoko}

@@ -1,6 +1,4 @@
 <?php
-require_once $GLOBALS['CFG']->basedir.'/assets/php/dal/load.inc.php';
-
 class MomokoSession
 {
   public $name;
