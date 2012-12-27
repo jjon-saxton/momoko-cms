@@ -41,24 +41,34 @@ You should get to files, `dal.conf.txt` and `main.conf.txt`. First open `main.co
 
 sitename
 :	This is the name of your site, it will appear in certain title sections
+
 basedir
 :	This sets the location of your MomoKO's scripts. This should be set to the *absolute* path to the folder MomoKO was put in when you acquired her.
+
 pagedir
 :	This sets the location where MomoKO's pages will be stored. In the example, we show the absolute path to assets/pages, but this can be *any* folder on your file system that your web server software can read and write to.
+
 filedir
 :	Like the above, but sets were MomoKO will look for photos, videos, and other types of files other than pages.
+
 tempdir
 :	Like the above, but sets where MomoKO will store temporary files
+
 domain
 :	Not set in the example, this is where you can store the fully qualified domain name of your site. If you leave this blank MomoKO will try to use global environment variables to guess your domain.
+
 location
 :	The location of you site according to your web server software. This is often just the folder underneath you web document folder where you put MomoKO, but this can be different if your server uses userdirs. Please consult your server documentation if this is the case. If in doubt, leave blank and see if there are errors.
+
 default_template
 :	This sets the path for the template to load if none is found in the current page folder. MomoKO comes with the Quirk template developed by Jon Saxton at SaxtonSolutions LLC, other templates will become available on our website.
+
 session
 :	Gives the MomoKO session a name, by default this is 'mk', there should be no need to change it unless you have multiple MomoKO instances on your server or something else that sets a cookie with that name.
+
 salt
 :	Used to encrypt passwords, the salt characters are prepended to the password and alters the output. The example sets this to 'mk', there should be no need to change this unless you simply want more security by being more unique.
+
 rewrite
 :	If your server supports mod_rewrite you can use included rewrite rules. Move the `.htaccess` file to your MomoKO's basedir and set this to true. This will generate more search-engine and human friendly URLS
 
@@ -66,8 +76,8 @@ rewrite
 
 type
 :	This is the type of database server you have. This instructs the Database Abstraction Layer on what driver to load. Please ensure a driver exists and/or as been installed for your server type. Also uses all lower-case for this value. If you use a MySQL server, type mysql here; for SQLite2 type sqlite, for SQLite3 use sqlite3.
-table_pre
 
+table_pre
 :	A prefix to prepend to table names. This can be anything you chose, but we advise you to have an underscore '_' character at the end. Leaving this blank will generate simple names with no prefix. You might do this for a dedicated database.
 file
 :	For SQLite2 and SQLite3, specify the *absolute* path to the database file.
