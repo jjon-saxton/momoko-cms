@@ -3,7 +3,8 @@
 #{pagedir:/home/momoko/public_html/assets/pages}
 #{datadir:/home/momoko/public_html/assets/files}
 #{tempdir:/home/momoko/public_html/assets/temp}
-#{location:~momoko} 
+#{domain:}
+#{location:/~momoko} 
 
 #{default_template:/assets/templates/quirk.tpl.htm}
 
