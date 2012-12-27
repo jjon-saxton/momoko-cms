@@ -17,7 +17,7 @@ The steps outlined here will help you set up a folder on your server as a local 
 1. Log in to your server via SSH, instructions on this procedure vary depending on your SSH client. Consult your client's instruction manual for details.
 2. Once you have an shell prompt create a folder for MomoKO or change to your web folder either `mkdir momoko && ch momoko` or `ch public_html` replace momoko or public_html with the correct folder name.
 3. Set-up git in the folder you switched to; `git initialize`
-4. Set our repo as this folder's remote origin: `git origin remote https://www.github,com/jjon-saxton/momoko-cms.git`
+4. Set our repo as this folder's remote origin: `git origin remote https://github.com/jjon-saxton/momoko-cms.git`
 5. Download from git: `git pull`
 6. Proceed to 'Configuring MomoKO'
 
@@ -67,15 +67,20 @@ rewrite
 type
 :	This is the type of database server you have. This instructs the Database Abstraction Layer on what driver to load. Please ensure a driver exists and/or as been installed for your server type. Also uses all lower-case for this value. If you use a MySQL server, type mysql here; for SQLite2 type sqlite, for SQLite3 use sqlite3.
 table_pre
+
 :	A prefix to prepend to table names. This can be anything you chose, but we advise you to have an underscore '_' character at the end. Leaving this blank will generate simple names with no prefix. You might do this for a dedicated database.
 file
 :	For SQLite2 and SQLite3, specify the *absolute* path to the database file.
+
 host
 :	For MySQL and others, specify the fully qualified domain name for your database server.
+
 user
 :	The user name of MomoKO's database user. This user must have full read write rights to the database listed below. The easiest method is to create this user and than chose to create a database with their name and grant them all privledges.
+
 password
 :	The password of the user above. Do **NOT** leave this blank. For security this user **needs** a password! The only exception would be an SQLite2 or SQLite3 database where no user is used.
+
 default
 :	The name of the default database. The user specified above needs full privledges for this database!
 
@@ -90,8 +95,8 @@ To use this method you will need SSH access to your server!
 1. Login to you server via SSH
 2. Navigate to your MomoKO installation and change to `assets/php/cli`
 3. Run `install.php`
-    a. Ensure `install.php` is executable and type: `./install.php`
-    b. If this files try: `php ./install.php`
+    1. Ensure `install.php` is executable and type: `./install.php`
+    2. If this files try: `php ./install.php`
 4. Follow the onscreen instructions.
 
 ### Congratulations!
