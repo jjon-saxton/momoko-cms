@@ -15,10 +15,10 @@ There are two quick and easy methods for getting your hands on MomoKO's code. Bo
 The steps outlined here will help you set up a folder on your server as a local git repository. You will than be able to set our repo up as a remote origin and pull in MomoKO. This method is the quickest and allows you to easily upgrade when new updates are made available. SSH access to your web host is **required**!
 
 1. Log in to your server via SSH, instructions on this procedure vary depending on your SSH client. Consult your client's instruction manual for details.
-2. Once you have an shell prompt create a folder for MomoKO or change to your web folder either `mkdir momoko && ch momoko` or `ch public_html` replace momoko or public_html with the correct folder name.
+2. Once you have an shell prompt create a folder for MomoKO or change to your web folder either `mkdir momoko && cd momoko` or `cd public_html` replace momoko or public_html with the correct folder name.
 3. Set-up git in the folder you switched to; `git init`
 4. Set our repo as this folder's remote origin: `git remote add origin https://github.com/jjon-saxton/momoko-cms.git`
-5. Download from git: `git pull`
+5. Download from git: `git pull origin 1.1-BETA`
 6. Proceed to 'Configuring MomoKO'
 
 #### 1.2 Using a ZIP file from our repo
