@@ -4,5 +4,5 @@
 #{file:}
 #{host:localhost}
 #{user:momoko}
-#{password:aKa48842002}
+#{password:momokopass}
 #{default:momoko}
