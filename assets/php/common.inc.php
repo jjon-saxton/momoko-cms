@@ -104,9 +104,9 @@ class MomokoConfiguration
 
     if(is_array(@$configuration))
     {
-      if (!array_key_exists('domain',$configuration) && !defined("INCLI"))
+      if ((!array_key_exists('domain',$configuration) || empty($configuration['domain'])) && !defined("INCLI"))
       {
-       $configuration['domain']='//'.$_SERVER['SERVER_NAME']; //guess the domain everytime if it is not supplied in configuration. Useful if you're domain changes a lot for whatever reason =^.~=
+       $configuration['domain']=$_SERVER['SERVER_NAME']; //guess the domain everytime if it is not supplied in configuration. Useful if you're domain changes a lot for whatever reason =^.~=
       }
       $this->cfg=$configuration;
     }
