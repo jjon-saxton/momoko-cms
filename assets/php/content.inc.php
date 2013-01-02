@@ -214,7 +214,7 @@ HTML;
 				}
 				$id=$node['@text'];
 				$class='subnav';
-				$html.="<li type=\"{$node['@name']}\" class=\"site\"><a href=\"{$rpath}/{$node['@attributes']['file']}\">{$node['@text']}</a>\n";
+				$html.="<li type=\"{$node['@name']}\" class=\"site\"><a href=\"{$rpath}{$node['@attributes']['file']}\">{$node['@text']}</a>\n";
 				$html.="<ul id=\"{$id}\" class=\"{$class}\">\n".$this->getLinkList($node['@children'])."\n</ul></li>\n";
 			}
 			elseif ($node['@name'] == 'page')
@@ -225,7 +225,7 @@ HTML;
 				}
 				elseif (!empty($node['@attributes']['file']))
 				{
-					$html.="<li type=\"{$node['@name']}\" class=\"page\"><a href=\"{$rpath}/{$node['@attributes']['file']}\">{$node['@text']}</a></li>\n";
+					$html.="<li type=\"{$node['@name']}\" class=\"page\"><a href=\"{$rpath}{$node['@attributes']['file']}\">{$node['@text']}</a></li>\n";
 				}
 			}
 		}
