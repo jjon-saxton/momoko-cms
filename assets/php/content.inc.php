@@ -670,8 +670,8 @@ HTML;
   }
   else
   {
-   $editorroot=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elrte';
-   $finderroot=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elfinder';
+   $editorroot='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elrte';
+   $finderroot='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elfinder';
    $page['data']=$this->get();
    $page['name']=pathinfo($this->path,PATHINFO_BASENAME);
    if (preg_match("/<title>(?P<title>.*?)<\/title>/smU",$page['data'],$match) > 0) //Find page title in $data
