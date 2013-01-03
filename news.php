@@ -85,7 +85,7 @@ HTML;
 }(document, 'script', 'facebook-jssdk'));</script>
 <div class="date">{$fdate}</div>
 <div class="article">{$this->article}</div>
-<div class="fb-comments" data-href="{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/news.php/{$self}" data-num-posts="2" data-width="470"></div>
+<div class="fb-comments" data-href="//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/news.php/{$self}" data-num-posts="2" data-width="470"></div>
 HTML;
   return $html;
 	}
@@ -182,8 +182,8 @@ class MomokoLITENewsManager implements MomokoLITEObject
    if (empty($_POST['headline']))
    {
     $article=$this->get();
-    $editorroot=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elrte';
-    $finderroot=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elfinder';
+    $editorroot='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elrte';
+    $finderroot='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elfinder';
     $info['title']=ucwords($action)." Article";
     $info['inner_body']=<<<HTML
 	<!-- elFinder -->

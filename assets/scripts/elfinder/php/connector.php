@@ -36,14 +36,14 @@ $opts = array(
 		array(
 			'driver'        => 'LocalFileSystem',   // driver for accessing file system (REQUIRED)
 			'path'          => $GLOBALS['CFG']->pagedir,         // path to files (REQUIRED)
-			'URL'           => 'http:'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT, // URL to files (REQUIRED)
+			'URL'           => 'http://'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT, // URL to files (REQUIRED)
 			'alias'	=>	'Pages',
 			'accessControl' => 'access'             // disable and hide dot starting files (OPTIONAL)
 		),
 		array(
 			'driver'	=> 'LocalFileSystem',
 			'path'	=>	$GLOBALS['CFG']->datadir,
-			'URL'	=>	'http:'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.FILEROOT,
+			'URL'	=>	'http://'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.FILEROOT,
 			'alias'	=>	'Files',
 			'accessControl'	=>	'access'
 		)

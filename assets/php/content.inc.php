@@ -97,7 +97,7 @@ $(function(){
 		})
 		.click(function(event){
 			event.preventDefault();
-			$("div#NavEditDialog").load("{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ajax.php?include=navhelper&action=build&dialog=map").dialog({
+			$("div#NavEditDialog").load("//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ajax.php?include=navhelper&action=build&dialog=map").dialog({
 				autoLoad:false,
 				modal:true,
 				title:'Edit Site Map',
@@ -106,7 +106,7 @@ $(function(){
 				buttons:{
 					"Save":function(){
 						//Perform ajax save and site nav update
-						$.post("{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ajax.php?include=navhelper&action=post",{ 'raw_dom':$("div#MapList").html() },function(data){
+						$.post("//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ajax.php?include=navhelper&action=post",{ 'raw_dom':$("div#MapList").html() },function(data){
 							location.reload(true);
 						});
 						$(this).dialog('close');
@@ -236,7 +236,7 @@ HTML;
 	private function getTextNav($map)
 	{
 		$text=null;
-  $rpath="http:{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}";
+  $rpath="http://{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}";
 		
 		if ($this->options['display'] == 'list')
 		{
@@ -393,7 +393,7 @@ class MomokoLITENews implements MomokoModuleInterface
 			case 'array':
 			return $data;
 			case 'rss':
-			$uri_root='http:'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/';
+			$uri_root='http://'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/';
    $dom=new DOMDocument('1.0', 'UTF-8');
 			$rss=$dom->appendChild(new DOMElement('rss'));
 			$rss_version=$rss->setAttribute('version','2.0');
@@ -414,7 +414,7 @@ class MomokoLITENews implements MomokoModuleInterface
 			return $xml;
 			break;
 			case 'atom':
-			$uri_root=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/';
+			$uri_root='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/';
    $dom=new DOMDocument('1.0', 'UTF-8');
    $feed=$dom->appendChild(new DOMElement('feed',null,'http://www.w3.org/2005/Atom'));
 			$ftitle=$feed->appendChild(new DOMElement('title',$GLOBALS['CFG']->sitename.' News Feed','http://www.w3.org/2005/Atom'));
@@ -469,11 +469,11 @@ class MomokoLITENews implements MomokoModuleInterface
                           {
                            $matches = array();
   			   preg_match("/^(.{1,".$this->options['length']."})[\s]/i", $news['summary'], $matches);
-                           $text=$matches[0].'... <a href="'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.NEWSROOT.$news['file'].'">more</a>';
+                           $text=$matches[0].'... <a href="//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.NEWSROOT.$news['file'].'">more</a>';
                           }
 			  else
                           {
-                           $text=$news['summary'].' <a href="'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.NEWSROOT.$news['file'].'">view/comment on article</a>';
+                           $text=$news['summary'].' <a href="//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.NEWSROOT.$news['file'].'">view/comment on article</a>';
                           }
 			  $html.=<<<HTML
 <div id="{$news['date']}" class="news item">
@@ -651,13 +651,13 @@ HTML;
     if ((pathinfo($this->path,PATHINFO_BASENAME) != $data['pagename']) && (rename($GLOBALS['CFG']->pagedir.$this->path,$GLOBALS['CFG']->pagedir.$dir.'/'.$data['pagename'])))
     {
      $dir=ltrim($dir,"/");
-     header("Location: ".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT.$dir.'/'.$data['pagename']);
+     header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT.$dir.'/'.$data['pagename']);
      exit();
     }
     else
     {
      $file=ltrim($this->path,"/");
-     header("Location: ".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT.$file);
+     header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT.$file);
      exit();
     }
    }
@@ -970,16 +970,16 @@ class MomokoLITEStylesheet implements MomokoLITEObject
    {
     foreach ($list as $site)
     {
-     $vars['site_list'].="<li class=\"site\"><a href=\"{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/index.php/{$site['dir']}\">{$site['name']}</a></li>\n";
+     $vars['site_list'].="<li class=\"site\"><a href=\"//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/index.php/{$site['dir']}\">{$site['name']}</a></li>\n";
     }
     if ($GLOBALS['USR']->inGroup('contributer') || $GLOBALS['USR']->inGroup('admin'))
     {
-     $vars['site_list'].="<li class=\"site new\"><a href=\"{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/manager.php?action=create&amp;what=site\">Create Site</a></li>\n";
+     $vars['site_list'].="<li class=\"site new\"><a href=\"//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/manager.php?action=create&amp;what=site\">Create Site</a></li>\n";
     }
    }
    else
    {
-    $vars['site_list'].="<li class=\"site new\"><a href=\"{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/manager.php?action=create&amp;what=site\">No site to list</a></li>\n";
+    $vars['site_list'].="<li class=\"site new\"><a href=\"//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/manager.php?action=create&amp;what=site\">No site to list</a></li>\n";
    }
    $vars['site_list'].="</ul>";
    $ch=new MomokoCommentHandler($vars);
@@ -1127,7 +1127,7 @@ class MomokoLITEError implements MomokoLITEObject
     $vars['error_message']=$this->error_msg;
    }
   }
-  $vars['forgot_password']=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/manager.php?action=reset&what=password';
+  $vars['forgot_password']='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/manager.php?action=reset&what=password';
 
   return $vars;
  }

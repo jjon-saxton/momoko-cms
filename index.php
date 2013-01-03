@@ -93,7 +93,7 @@ if (@$path && !@$child)
    {
     if ($child->drop())
     {
-     header("Location: ".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location);
+     header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location);
      exit();
     }
    }
