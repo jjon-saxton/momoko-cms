@@ -45,8 +45,8 @@ class FinderPage implements MomokoLITEObject
   if ($data=$this->get())
   {
    $info=parse_page($data);
-   $varlist['finderroot']=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elfinder';
-   $varlist['connectoruri']=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.$this->connector;
+   $varlist['finderroot']='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elfinder';
+   $varlist['connectoruri']='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.$this->connector;
    $ch=new MomokoCommentHandler($varlist);
    $info['inner_body']=$ch->replace($info['inner_body']);
   }

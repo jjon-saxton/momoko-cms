@@ -516,7 +516,7 @@ HTML;
    {
     $atitle=$this->opts['admin_title'];
    }
-   $actions[]=array('href'=>$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADMINROOT,'title'=>'AdminCP');
+   $actions[]=array('href'=>'//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADMINROOT,'title'=>'AdminCP');
   }
   if (is_array($this->opts['custom_links']))
   {
@@ -528,7 +528,7 @@ HTML;
      $link=str_replace("\\","/",$link);
      if (preg_match("/\/\//",$link) <= 0)
      {
-      $link=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.$link;
+      $link='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.$link;
      }
      if (empty($text))
      {
@@ -584,7 +584,7 @@ class MomokoMiniCP implements MomokoModuleInterface
   $query=$this->dbtable->getData(null,'incp=y');
   while ($data=$query->next())
   {
-   $html.=preg_replace("/__LINK__/","<a href=\"".ADDINROOT.$data->dir."\" title=\"".$data->longname."\">".$data->shortname."</a>",$wrapper);
+   $html.=preg_replace("/__LINK__/","<a href=\"//".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADDINROOT.$data->dir."\" title=\"".$data->longname."\">".$data->shortname."</a>",$wrapper);
   }
   return $html;
  }

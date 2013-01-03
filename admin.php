@@ -52,7 +52,7 @@ HTML;
  }
 }
 
-if (@$_GET['action'] == 'login' || @$_GET['action'] == 'logout' || $_GET['action'] == 'register')
+if (@$_GET['action'] == 'login' || @$_GET['action'] == 'logout' || @$_GET['action'] == 'register')
 {
  header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location."?action=".$_GET['action']);
 }
