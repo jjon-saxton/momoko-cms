@@ -46,6 +46,7 @@ interface DALTable
 	function removeField($name);
 	function getPrimaryKey();
 	function getData($what=null,$where=null,$sort=null, $limit=null, $offset=null);
+	function getDataMatch($what=null,$query=null,$keycols=null,$sort=null,$limit=null,$offset=null);
 	function getDataCustom($query);
 	function putData($fieldarray);
 	function updateData($fieldarray);
