@@ -35,7 +35,7 @@ class checkout
 
   private function GetMerchantKey($mid)
   {
-   $merchants=new DataBaseTable('ss_merchants','saxton');
+   $merchants=new DataBaseTable(DAL_TABLE_PRE.'merchants',DAL_DB_DEFAULT);
 			$merchant=$merchants->getData('key','id='.$mid,null,1);
 			$merchant=$merchant->first();
 			
