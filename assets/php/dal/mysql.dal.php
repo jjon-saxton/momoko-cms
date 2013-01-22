@@ -1,7 +1,7 @@
 <?php
 /********************************************\
 |db/mysql.dal.php                            |
-|Momo-KO Version 0.1a                        |
+|Momo-KO Version 1.0.98b                     |
 |MySQL Driver for the Database Abstraction   |
 |Layer (DAL)                                 |
 \********************************************/
