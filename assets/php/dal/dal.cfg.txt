@@ -1,1 +1,0 @@
-DAL={"type":"mysql","db_folder":"var/data/" ,"host":"localhost","user":"momoko","password":"aKa48842002","db_default":"momoko","table_pre":"wow_"}

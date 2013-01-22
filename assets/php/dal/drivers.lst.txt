@@ -1,9 +1,0 @@
-/**************************************\
-|drivers.lst.txt                       |
-|List of drivers currently installed   |
-|and support by this DAL implentation  |
-\**************************************/ 
-
-[0|MySQL|mysql]
-[1|SQLite|sqlite]
- 
