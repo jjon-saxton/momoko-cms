@@ -64,8 +64,8 @@ else
  }
  else
  {
-  $child=new MomokoLITEError('Forbidden');
+  $child=new MomokoError('Forbidden');
  }
- $tpl=new MomokoLITETemplate('/');
+ $tpl=new MomokoTemplate('/');
  echo $tpl->toHTML($child);
 }

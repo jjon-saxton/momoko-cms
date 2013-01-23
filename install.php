@@ -4,7 +4,7 @@ require dirname(__FILE__)."/assets/php/content.inc.php";
 
 define("INCLI",true); //fake a CLI environment to prevent session creation
 
-class MomokoInstall implements MomokoLITEObject
+class MomokoInstall implements MomokoObject
 {
   private $info;
   private $settings;
@@ -138,7 +138,7 @@ HTML;
       }
       else
       {
-	$page=new MomokoLITEError('Server_Error');
+	$page=new MomokoError('Server_Error');
 	$info['title']=$page->title;
 	$info['inner_body']=$page->inner_body;
       }
@@ -155,7 +155,7 @@ HTML;
       }
       else
       {
-	$page=new MomokoLITEError('Server_Error');
+	$page=new MomokoError('Server_Error');
 	$info['title']=$page->title;
 	$info['inner_body']=$page->inner_body;
       }
@@ -241,6 +241,6 @@ HTML;
 else
 { 
  $child=new MomokoInstall(@$_GET['step']);
- $tpl=new MomokoLITETemplate('/'); //forces load of default template to show install page
+ $tpl=new MomokoTemplate('/'); //forces load of default template to show install page
  echo $tpl->toHTML($child);
 }

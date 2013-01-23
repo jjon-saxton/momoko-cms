@@ -6,7 +6,7 @@ if (!function_exists('imagecreatefromstring'))
  exit();
 }
 
-class MomoKOImage
+class MomokoImage
 {
  public $filename;
  private $image;
