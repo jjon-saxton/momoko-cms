@@ -1083,11 +1083,11 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
  {
   $html=$this->get();
   $vars['siteroot']=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location;
-  $vars['fileroot']=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/file.php';
-  $vars['sitepath']=$vars['siteroot'].'/index.php'.$this->cur_path;
-  $vars['this_site']=$this->cur_path;
   $vars['sitename']=$GLOBALS['CFG']->sitename;
   $vars['pagetitle']="Untitled";
+  $vars['corestyles']=$vars['siteroot'].'/assets/core/styles/';
+  $vars['templatedir']=$vars['siteroot'].dirname($this->path);
+  $vars['pagedir']=$vars['siteroot'].PAGEROOT;
   
   if (@$child && (is_object($child)) && ($child instanceof MomokoObject))
   {
