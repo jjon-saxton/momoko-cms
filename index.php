@@ -1,6 +1,6 @@
 <?php
-require "./assets/php/common.inc.php";
-require "./assets/php/content.inc.php";
+require dirname(__FILE__)."/assets/php/common.inc.php";
+require dirname(__FILE__)."/assets/php/content.inc.php";
 
 if (@$_SERVER['PATH_INFO'] && (pathinfo($_SERVER['PATH_INFO'],PATHINFO_EXTENSION) == 'htm' || pathinfo($_SERVER['PATH_INFO'],PATHINFO_EXTENSION) == 'html'))
 {
@@ -10,13 +10,13 @@ elseif (@$_SERVER['PATH_INFO'] && pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_EXTEN
 {
  $path=$_SERVER['PATH_INFO'];
  include $GLOBALS['CFG']->basedir.$_SERVER['PATH_INFO'];
- $child=new MomokoLITECustom($_GET);
+ $child=new MomokoCustom($_GET);
 }
 elseif (@$_SERVER['PATH_INFO'] && pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_EXTENSION) == 'txt')
 {
  if (pathinfo($_SERVER['PATH_INFO'],PATHINFO_FILENAME) == 'sitemap')
 	{
-		$nav=new MomokoLITENavigation(null,'display=list');
+		$nav=new MomokoNavigation(null,'display=list');
 		header("Content-type: text/plain");
 		echo ($nav->getModule('plain'));
 	}
@@ -34,13 +34,13 @@ elseif (@$_SERVER['PATH_INFO'] && pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_EXTEN
 		case 'rss':
 		$format='rss';
 		header("Content-type: application/rss+xml");
-		$mod=new MomokoLITENews(null,'type=recent');
+		$mod=new MomokoNews(null,'type=recent');
 		echo ($mod->getModule('rss'));
 		break;
 		case  'atom':
 		$format='atom';
 		header("Content-type: application/atom-xml");
-		$nav=new MomokoLITENews(null,'type=recent');
+		$nav=new MomokoNews(null,'type=recent');
 		echo ($nav->getModule($format));
 	 break;
 		default:
@@ -50,18 +50,18 @@ elseif (@$_SERVER['PATH_INFO'] && pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_EXTEN
 }
 elseif (@$_SERVER['PATH_INFO'])
 {
- $nav=new MomokoLITENavigation(null,'display=none');
+ $nav=new MomokoNavigation(null,'display=none');
  $path=$nav->getIndex($_SERVER['PATH_INFO']);
 }
 else
 {
-  $nav=new MomokoLITENavigation(null,'display=none');
+  $nav=new MomokoNavigation(null,'display=none');
   $path=$nav->getIndex();
 }
 
 if (@$path && !@$child)
 {
- $child=new MomokoLITEPage($path);
+ $child=new MomokoPage($path);
  if (@!empty($_GET['action']))
  {
   switch ($_GET['action'])
@@ -69,7 +69,7 @@ if (@$path && !@$child)
    case 'new':
    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
    {
-    $child=new MomokoLITEPage(pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_DIRNAME).'/new_page.htm');
+    $child=new MomokoPage(pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_DIRNAME).'/new_page.htm');
     $child->put($_POST);
    }
    else
@@ -121,7 +121,7 @@ if (@$path && !@$child)
     }
     else
     {
-     $child=new MomokoLITEError('Unauthorized');
+     $child=new MomokoError('Unauthorized');
     }
    }
    else
@@ -155,7 +155,7 @@ if (@$path && !@$child)
  }
 }
 
-$tpl=new MomokoLITETemplate(pathinfo($path,PATHINFO_DIRNAME));
+$tpl=new MomokoTemplate(pathinfo($path,PATHINFO_DIRNAME));
 print $tpl->toHTML($child);
 
 ?>
