@@ -24,10 +24,10 @@ else
 define("MOMOKOVERSION",trim(file_get_contents($GLOBALS['CFG']->basedir.'/assets/etc/version.nfo.txt'),"\n"));
 require $GLOBALS['CFG']->basedir.'/assets/dal/load.inc.php';
 
-if (!defined("INCLI"))
+require_once $GLOBALS['CFG']->basedir.'/assets/core/user.inc.php';
+if (!defined("INCLI") &&  basename($_SERVER['PHP_SELF']) != 'install.php')
 {
  #user session now added here as part of MomoKO merge
- require_once $GLOBALS['CFG']->basedir.'/assets/core/user.inc.php';
 
  session_name($GLOBALS['CFG']->session);
  session_start();
@@ -145,19 +145,33 @@ class MomokoCommentHandler
     switch ($item)
     {
       case 'usercontrols':
-      $mod=new MomokoUCPModule($GLOBALS['USR'],$argstr);
-      return $mod->getModule('html');
+      if (@$GLOBALS['USR'] instanceof MomokoSession)
+      {
+        $mod=new MomokoUCPModule($GLOBALS['USR'],$argstr);
+        return $mod->getModule('html');
+      }
+      else
+      {
+        return null;
+      }
       break;
       case 'pagecontrols':
-      $mod=new MomokoPCModule($GLOBALS['USR'],$argstr);
-      return $mod->getModule('html');
+      if (@$GLOBALS['USR'] instanceof MomokoSession)
+      {
+        $mod=new MomokoPCModule($GLOBALS['USR'],$argstr);
+        return $mod->getModule('html');
+      }
+      else
+      {
+        return null;
+      }
       break;
       case 'nav':
-      $mod=new MomokoLITENavigation(null,$argstr);
+      $mod=new MomokoNavigation(null,$argstr);
       return $mod->getModule('html');
       break;
       case 'news':
-      $mod=new MomokoLITENews(null,$argstr);
+      $mod=new MomokoNews(null,$argstr);
       return $mod->getModule('html');
       break;
       default: //TODO: add code to look for plugin modules
@@ -359,7 +373,7 @@ function build_sorter($key)
 function xmltoarray($file)
 {
  $xml=simplexml_load_string(file_get_contents($file));
- $nav=new MomokoLITENavigation(null,'display=none');
+ $nav=new MomokoNavigation(null,'display=none');
  $nav->convertXmlObjToArr($xml,$array);
 
  return $array;

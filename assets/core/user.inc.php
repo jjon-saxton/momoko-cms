@@ -74,7 +74,7 @@ class MomokoSession
   {
     $this->name='guest';
     $r=new MomokoUser($this->name);
-				$this->user=$r->get();
+    $this->user=$r->get();
     $this->groups=$this->updateGroups(); 
 
     return true;
@@ -193,11 +193,11 @@ class MomokoUser
     }
     if (isset($data['name']))
     {
-      $ud=$this->db->getData('num','name='.$data['name'],null,1);
+      $ud=$this->db->getData("name:'".$data['name']."'",array('num'),null,1);
       $check=$ud->first();
-      if($check->num) //TODO evaluate this check!
+      if($check->num !== FALSE)
       {
-        return $this->updateByName($data['name'],$data);
+        return $this->updateByID($check->num,$data);
       }
       else
       {
@@ -208,27 +208,9 @@ class MomokoUser
     }
   }
   
-  public function editForm()
-  {
-   $data=$this->get();
-   $html=<<<HTML
-<h2>Manage Member: {$data->name}</h2>
-<form action="#edit" method=post>
-<ul id="MemberInfo" class="nobullet">
-<li><label for="name">Name:</label> <input type=text name="name" id="name" value="{$data->name}"></li>
-<li><label for="pass">Password: </label> <span id="pass">Saved</span></li>
-<li><label for="email">E-mail:</label> <input type=text name="email" id="email" value="{$data->email}"></li>
-<li><label for="groups">Groups:</label> <input type=text name="groups" id="groups" value="{$data->groups}"></li>
-<li><div id="MainOption" class="oneline"><input type=submit name="send" value="Edit Member"></div> <div id="SecondOption" class="oneline"><input type=submit name="delete" value="Delete Member"></div></li>
-</ul>
-</form>
-HTML;
-   return $html;
-  }
-  
   public function updateByName($name,array $data)
   {
-    $resource=$this->db->getData('num','name='.$name,null,1);
+    $resource=$this->db->getData("name:'".$name."'",array('num'),null,1);
     $user=$resource->first();
     return $this->updateByID($user->num,$data);
   }
@@ -395,12 +377,12 @@ class MomokoUCPModule implements MomokoModuleInterface
    {
     return <<<HTML
 <div id="LoginBox" class="ucp box">
-<form action="?action=login" method=post>
+<form action="https://{$GLOBALS['CFG']->domain}/{$_SERVER['REQUEST_URI']}?action=login" method=post>
 <ul class="noindent nobullet">
 <li><input type=text name="name" placeholder="username:"></li>
 <li><input type=password name="password" placeholder="password:"></li>
 <li><input type=submit name="send" value="Login"></li>
-<li><a href="?action=register">Want an account?</a></li>
+<li><a href="https://{$GLOBALS['CFG']->domain}/{$_SERVER['REQUEST_URI']}?action=register">Want an account?</a></li>
 </ul>
 </form>
 </div>

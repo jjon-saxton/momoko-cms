@@ -1,8 +1,6 @@
 <?php
-require dirname(__FILE__)."/assets/php/common.inc.php";
-require dirname(__FILE__)."/assets/php/content.inc.php";
-
-define("INCLI",true); //fake a CLI environment to prevent session creation
+require dirname(__FILE__)."/assets/core/common.inc.php";
+require dirname(__FILE__)."/assets/core/content.inc.php";
 
 class MomokoInstall implements MomokoObject
 {
@@ -88,11 +86,11 @@ class MomokoInstall implements MomokoObject
 HTML;
       break;
       case 2:
-      require dirname(__FILE__).'/assets/php/install.inc.php';
+      require dirname(__FILE__).'/assets/core/install.inc.php';
       if (create_tables())
       {
        $sdf='m/d/Y';
-       $ldf='I F j, Y';
+       $ldf='l F j, Y';
        $dpreview['sdf']=date($sdf);
        $dpreview['ldf']=date($ldf);
        
@@ -144,7 +142,7 @@ HTML;
       }
       break;
       case 3:
-      require dirname(__FILE__).'/assets/php/install.inc.php';
+      require dirname(__FILE__).'/assets/core/install.inc.php';
       if (fill_tables($_POST['admin'],$_POST['defaults']))
       {
 	$siteroot=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location;

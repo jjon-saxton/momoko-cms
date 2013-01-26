@@ -45,7 +45,7 @@ interface DALTable
   function updateField($name,$type,$len,$attr);
   function removeField($name);
   function getPrimaryKey();
-  function getDataMatch($query=null,$what=null,$keycols=null,$sort=null,$limit=null,$offset=null);
+  function getData($query=null,array $what=null,$sort=null,$limit=null,$offset=null,array $keycols=null);
   function getDataCustom($query);
   function putData($fieldarray);
   function updateData($fieldarray);
@@ -121,12 +121,14 @@ class DALResult
 {
 	protected $tbl_obj;
 	protected $result=array();
+	public $numrows;
 	private $row_index=0;
 	private $curr_index=0;
 	private $done=false;
 
 	public function __construct(DALTable $table)
 	{
+		$this->numrows=$table->numrows;
 		$this->tbl_obj=$table;
 	}
 
@@ -204,16 +206,6 @@ class DALResult
 		$this->done=true;
 		$this->currIndex = $this->rowIndex = count($this->result) - 1;
 		return $this;
-	}
-
-	public function numRows()
-	{
-	  $i=0;
-	  while ($this->next())
-	  {
-	    $i++;
-	  }
-	  return $i;
 	}
 
 	public function toArray()

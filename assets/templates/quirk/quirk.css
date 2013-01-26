@@ -1,5 +1,5 @@
-@import "base.css";
-@import "boilerplate.css";
+@import "../../core/styles/base.css";
+@import "../../core/styles/boilerplate.css";
 @import "quirky-grid.css";
 @import "black-tie/jquery.ui.theme.css";
 

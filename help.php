@@ -1,7 +1,7 @@
 <?php
-require_once dirname(__FILE__).'/assets/php/common.inc.php';
-require_once $GLOBALS['CFG']->basedir.'/assets/php/content.inc.php';
-require_once $GLOBALS['CFG']->basedir.'/assets/php/markdown.inc.php';
+require_once dirname(__FILE__).'/assets/core/common.inc.php';
+require_once $GLOBALS['CFG']->basedir.'/assets/core/content.inc.php';
+require_once $GLOBALS['CFG']->basedir.'/assets/core/markdown.inc.php';
 
 class MomokoDoc implements MomokoObject
 {

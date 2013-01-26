@@ -176,8 +176,8 @@ class DataBaseTable implements DALTable
 {
  private $table;             // table name
  private $db;                // database name
- private $fieldlist;         // list of fields in this table
- private $numrows;           // number of rows returned by a query
+ public $fieldlist;         // list of fields in this table
+ public $numrows;           // number of rows returned by a query
  protected $result;            // result id from a query
  private $errors;            // array of error messages
  private $cfg;		//configuration object
@@ -344,110 +344,7 @@ class DataBaseTable implements DALTable
   }
  }
 
- function getData($what=null,$where=null,$sort=null, $limit=null, $offset=null)
- {
-  $this->data=array();
-  $connection=$this->connect($this->db) or trigger_error("SQL: ".mysql_error(), E_USER_ERROR);
-  if (!is_array($what))
-  {
-   $what=explode(', ',$what);
-  }
-
-  if(empty($what[0]) || $what[0] == NULL)
-  {
-   $select_str="*";
-  }
-  else
-  {
-   foreach ($what as $quoted)
-   {
-    if (preg_match("/`(?P<name>.*?)`/",$quoted,$matches) <= 0)
-    {
-      $quote[]="`".$quoted."`";
-    }
-    else
-    {
-      $quote[]=$quoted;
-    }
-   }
-   if (is_array($quote))
-   {
-    $what=$quote;
-   }
-   $select_str=implode(", ",$what);
-   $select_str=rtrim($select_str,", ");
-  }
-
-  if(empty($where) || $where == NULL)
-  {
-   $where_str=null;
-  }
-  else
-  {
-    if (!is_array($where))
-    {
-      $where=array($where);
-    }
-    $where_str="WHERE ";
-    foreach ($where as $statement)
-    {
-      if (preg_match("/=/",$statement))
-      {
-	$tmp=explode('=',$statement);
-	$where_str.="`".$tmp[0]."`='".$tmp[1]."' AND ";
-      }
-      elseif (preg_match("/~/",$statement))
-      {
-	$tmp=explode('~',$statement);
-	$where_str.="`".$tmp[0]."` LIKE '".$tmp[1]."' AND ";
-      }
-      else
-      {
-	$where_str=$where." AND ";
-      }
-    }
-    $where_str=strrtrim($where_str," AND ");
-  }
-
-  if(empty($sort) || $sort == NULL)
-  {
-   $sort_str=null;
-  }
-  else
-  {
-   $sort=explode('>',$sort);
-   if (@$sort[1] == "descending")
-   {
-    $sort[1]="DESC";
-   }
-   else
-   {
-    $sort[1]="ASC";
-   }
-   $sort_str="ORDER BY `".$sort[0]."` ".$sort[1];
-  }
-
-  if(empty($limit) || $limit == NULL)
-  {
-   $limit_str=null;
-  }
-  elseif (empty($offest) || $offest == NULL)
-  {
-   $limit_str="LIMIT ".$limit;
-  }
-  else
-  {
-    $limit_str="LIMIT ".$offset.",".$limit;
-  }
-
-  $query="SELECT ".$select_str." FROM ".$this->table." ".$where_str." ".$sort_str." ".$limit_str;
-
-  $this->result=mysql_query($query,$connection) or trigger_error("SQL: ".mysql_error()." in ".$query, E_USER_NOTICE);
-  $this->numrows=mysql_num_rows($this->result);
-  return new DALResult($this);
- }
- 
- public function getDataMatch($what=null,$query=null,$keycols=null,$sort=null,$limit=null,$offset=null)
+ public function getData($query=null, array $what=null,$sort=null,$limit=null,$offset=null,array $keycols=null)
  {
   $this->data=array();
   $connection=$this->connect($this->db) or trigger_error("SQL: ".mysql_error(), E_USER_ERROR);
@@ -505,7 +402,7 @@ class DataBaseTable implements DALTable
   {
    $limit_str=null;
   }
-  elseif (empty($offest) || $offest == NULL)
+  elseif (empty($offset) || $offset == NULL)
   {
    $limit_str="LIMIT ".$limit;
   }
@@ -528,28 +425,16 @@ class DataBaseTable implements DALTable
     $keycols=implode(",",$keycols);
   }
   
-  if (preg_match_all("/(?P<key>(?:[a-z][a-z0-9_-]*))(:)\[(?P<values>.*.?)\]/",$query,$filters) > 0)
+  if (preg_match_all("/(?P<key>(?:[a-z][a-z0-9_]*))(:)'(?P<values>.*?)'/is",$query,$filters) > 0)
   {
     $where=array();
     $i=0;
     foreach ($filters['key'] as $key)
     {
-      $where[$key]=explode(",",$filters['values'][$i]);
+      $where[$key]=explode("|",$filters['values'][$i]);
       ++$i;
     }
-    $query=trim(preg_replace("/(?P<key>(?:[a-z][a-z0-9_-]*))(:)\[(?P<values>.*.?)\]/","",$query)." ");
-  }
-  
-  if (preg_match_all("/(?P<key>(?:[a-z][a-z0-9_-]*))(:)(?P<value>.(?:[a-z][a-z0-9_-]*))/",$query,$filters) > 0)
-  {
-    $where=array();
-    $i=0;
-    foreach ($filters['key'] as $key)
-    {
-      $where[$key]=$filters['value'][$i];
-      ++$i;
-    }
-    $query=trim(preg_replace("/(?P<key>(?:[a-z][a-z0-9_-]*))(:)(?P<value>.(?:[a-z][a-z0-9_-]*))/","",$query)." ");
+    $query=trim(preg_replace("/(?P<key>(?:[a-z][a-z0-9_]*))(:)'(?P<values>.*?)'/is","",$query)." ");
   }
   
   if (empty($query))
@@ -561,41 +446,40 @@ class DataBaseTable implements DALTable
     $where_str="WHERE MATCH (".$keycols.") AGAINST ('".$query."')";
   }
   
-  foreach($where as $field => $value)
-  {
-   if (!in_array($field,$fieldlist))
-   {
-    unset($where[$field]);
-   }
-  }
-  
   if (@is_array($where))
   {
     foreach ($where as $col=>$value)
     {
       if (in_array($col,$fieldlist))
       {
-       if (is_array($value))
-       {
 	 $where_group=null;
 	 foreach ($value as $item)
 	 {
-	   $where_group.="`".$col."` LIKE '".$item."' OR";
+	   if (preg_match("/(<)(>)( )(?P<digit1>\\d+)( )(?P<digit2>\\d+)/",$item,$compare) > 0)
+	   {
+	    $where_group.="`".$col."` BETWEEN ".$compare['digit1']." AND ".$compare['digit2']." OR ";
+	   }
+	   elseif (preg_match("/(?P<operator>.*)( )(?P<digit>\\d+)/",$item,$compare) > 0)
+	   {
+	    $where_group.="`".$col."` ".$compare['operator']." ".$compare['digit']." OR ";
+	   }
+	   else
+	   {
+	    $where_group.="`".$col."` LIKE '".$item."' OR ";
+	   }
 	 }
 	 $where_str.=" AND (".trim($where_group," OR").")";
-       }
-       else
-       {
-         $where_str.=" AND `".$col."` LIKE '".$value."'";
-       }
       }
     }
   }
   
-  $where_str=preg_replace("/WHERE AND/","WHERE",$where_str);
+  $where_str=preg_replace("/WHERE AND/","WHERE",$where_str); //Prevents illegal WHERE AND combo
+  if ($where_str == "WHERE") //if nothing appears after WHERE, set to null to select everything
+  {
+    $where_str=null;
+  }
 
   $query="SELECT ".$select_str." FROM ".$this->table." ".$where_str." ".$sort_str." ".$limit_str;
-  var_dump($query);
 
   $this->result=mysql_query($query,$connection) or trigger_error("SQL: ".mysql_error()." in ".$query, E_USER_NOTICE);
   $this->numrows=mysql_num_rows($this->result);

@@ -1,6 +1,6 @@
 <?php
-require_once $GLOBALS['CFG']->basedir.'/assets/php/Array2XML.class.php';
-require_once $GLOBALS['CFG']->basedir.'/assets/php/XML2Array.class.php';
+require_once $GLOBALS['CFG']->basedir.'/assets/core/Array2XML.class.php';
+require_once $GLOBALS['CFG']->basedir.'/assets/core/XML2Array.class.php';
 
 class MomokoNavigation implements MomokoModuleInterface
 {
@@ -78,7 +78,7 @@ public function convertXmlObjToArr($obj, &$arr)
    break;
    case 'html':
    default:
-   if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
+   if ((@$GLOBALS['USR'] instanceof MomokoSession) && ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor')))
    {
     $edit=<<<HTML
 <style>
@@ -1086,7 +1086,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   $vars['sitename']=$GLOBALS['CFG']->sitename;
   $vars['pagetitle']="Untitled";
   $vars['corestyles']=$vars['siteroot'].'/assets/core/styles/';
-  $vars['templatedir']=$vars['siteroot'].dirname($this->path);
+  $vars['templatedir']=$vars['siteroot'].dirname($this->template);
   $vars['pagedir']=$vars['siteroot'].PAGEROOT;
   
   if (@$child && (is_object($child)) && ($child instanceof MomokoObject))
