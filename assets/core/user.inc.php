@@ -493,7 +493,7 @@ class MomokoMiniCP implements MomokoModuleInterface
  public function listMods($wrapper="__LINK__")
  {
   $html=null;
-  $query=$this->dbtable->getData("incp: 'y'");
+  $query=$this->dbtable->getData("incp:'y'");
   while ($data=$query->next())
   {
    $html.=preg_replace("/__LINK__/","<a href=\"//".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADDINROOT.$data->dir."\" title=\"".$data->longname."\">".$data->shortname."</a>",$wrapper);

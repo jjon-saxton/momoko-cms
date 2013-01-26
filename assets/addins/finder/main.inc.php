@@ -1,6 +1,6 @@
 <?php
 
-class FinderPage implements MomokoLITEObject
+class FinderPage implements MomokoObject
 {
  public $connector;
  private $info=array();

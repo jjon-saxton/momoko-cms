@@ -8,7 +8,7 @@ include_once dirname(__FILE__).DIRECTORY_SEPARATOR.'elFinderVolumeDriver.class.p
 include_once dirname(__FILE__).DIRECTORY_SEPARATOR.'elFinderVolumeLocalFileSystem.class.php';
 
 chdir(dirname(__FILE__).'/../../../../');
-require './assets/php/common.inc.php';
+require './assets/core/common.inc.php';
 chdir(dirname(__FILE__));
 // Required for MySQL storage connector
 // include_once dirname(__FILE__).DIRECTORY_SEPARATOR.'elFinderVolumeMySQL.class.php';

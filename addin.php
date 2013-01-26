@@ -2,7 +2,7 @@
 require dirname(__FILE__)."/assets/core/common.inc.php";
 require dirname(__FILE__)."/assets/core/content.inc.php";
 
-class MomokoAddin implements MomokoLITEObject
+class MomokoAddin implements MomokoObject
 {
  public $path;
  private $info=array();

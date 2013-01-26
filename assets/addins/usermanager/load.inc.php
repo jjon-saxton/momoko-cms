@@ -22,6 +22,6 @@ elseif (@$_GET['ajax'])
 else
 {
  $child->setInfo();
- $tpl=new MomokoLITETemplate($dirroot.'/templates/main.tpl.htm');
+ $tpl=new MomokoTemplate($dirroot.'/templates/main.tpl.htm');
  echo ($tpl->toHTML($child));
 }

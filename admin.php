@@ -1,8 +1,8 @@
 <?php
-require dirname(__FILE__)."/assets/php/common.inc.php";
-require dirname(__FILE__)."/assets/php/content.inc.php";
+require dirname(__FILE__)."/assets/core/common.inc.php";
+require dirname(__FILE__)."/assets/core/content.inc.php";
 
-class MomokoACP implements MomokoLITEObject
+class MomokoACP implements MomokoObject
 {
  public $path;
  private $info=array();

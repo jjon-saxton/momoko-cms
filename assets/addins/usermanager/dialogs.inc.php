@@ -1,6 +1,6 @@
 <?php
 
-class UMDialog implements MomokoLITEObject
+class UMDialog implements MomokoObject
 {
  public $path;
  private $info=array();
