@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^addin/(.*)$ /~saxton/addin.php/$1 [L]
+RewriteRule ^file/(.*)$ /~saxton/file.php/$1 [L]
+RewriteRule ^news/(.*)$ /~saxton/news.php/$1 [L]
+RewriteRule ^help/(.*)$ /~saxton/help.php/$1 [L]
+RewriteRule ^page/(.*)$ /~saxton/index.php/$1 [NC]
+RewriteRule ^admin/(.*)$ /~saxton/admin.php/$1 [L]
+</IfModule>
+
+<Limit *>
+Order allow,deny
+Allow from all
+</Limit>
