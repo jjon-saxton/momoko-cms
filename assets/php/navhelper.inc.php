@@ -67,7 +67,7 @@ $(function(){
 			primary:'ui-icon-document'
 		}
 	}).click(function(){
-		$("#ItemEditDialog").load("{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ajax.php?include=navhelper&action=build&dialog=page").dialog({
+		$("#ItemEditDialog").load("//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ajax.php?include=navhelper&action=build&dialog=page").dialog({
 			title:"New Page",
 			buttons:{
 				"Save":function(){
@@ -88,7 +88,7 @@ $(function(){
 			primary:'ui-icon-folder-open'
 		}
 	}).click(function(){
-		$("#ItemEditDialog").load("{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ajax.php?include=navhelper&action=build&dialog=folder").dialog({
+		$("#ItemEditDialog").load("//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ajax.php?include=navhelper&action=build&dialog=folder").dialog({
 			title:"New Folder",
 			buttons:{
 				"Save":function(){
@@ -136,7 +136,7 @@ $( "#MapList ul" )
 		}
 		else{
 			var type=$("#selected_item").attr('type');
-			$("#ItemEditDialog").load("{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ajax.php?include=navhelper&action=build&dialog="+type,function(){
+			$("#ItemEditDialog").load("//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ajax.php?include=navhelper&action=build&dialog="+type,function(){
 					var title=$("#selected_item a").html();
 					var uri=$("#selected_item a").attr('href');
 					$("input#uri").val(uri);
@@ -210,12 +210,12 @@ HTML;
 <style>
 	label { display:block; }
 </style>
-<link rel="stylesheet" href="{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/css/elfinder.min.css" type="text/css" media="screen">
-<script language="javascript" type="text/javascript" src="{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/js/elfinder.min.js"></script>
+<link rel="stylesheet" href="//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/css/elfinder.min.css" type="text/css" media="screen">
+<script language="javascript" type="text/javascript" src="//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/js/elfinder.min.js"></script>
 <script language="javascript" type="text/javascript">
 $(function() {
     var opt = {      // Must change variable name
-    url : "{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/php/connector.php",
+    url : "//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/php/connector.php",
     lang : 'en',
     defaultView : 'list',
     getFileCallback : function(url) {
@@ -260,12 +260,12 @@ HTML;
 <style>
 	label { display:block; }
 </style>
-<link rel="stylesheet" href="{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/css/elfinder.min.css" type="text/css" media="screen">
-<script language="javascript" type="text/javascript" src="{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/js/elfinder.min.js"></script>
+<link rel="stylesheet" href="//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/css/elfinder.min.css" type="text/css" media="screen">
+<script language="javascript" type="text/javascript" src="//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/js/elfinder.min.js"></script>
 <script language="javascript" type="text/javascript">
 $(function() {
     var opt = {      // Must change variable name
-    url : "{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/php/connector.php",
+    url : "//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/php/connector.php",
     lang : 'en',
     defaultView : 'list',
     getFileCallback : function(url) {
