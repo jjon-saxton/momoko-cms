@@ -1,7 +1,7 @@
 <?php
 /********************************************\
 |db/mysql.dal.php                            |
-|Momo-KO Version 0.1a                        |
+|Momo-KO Version 1.0.98b                     |
 |MySQL Driver for the Database Abstraction   |
 |Layer (DAL)                                 |
 \********************************************/
@@ -446,6 +446,161 @@ class DataBaseTable implements DALTable
   $this->numrows=mysql_num_rows($this->result);
   return new DALResult($this);
  }
+ 
+ public function getDataMatch($what=null,$query=null,$keycols=null,$sort=null,$limit=null,$offset=null)
+ {
+  $this->data=array();
+  $connection=$this->connect($this->db) or trigger_error("SQL: ".mysql_error(), E_USER_ERROR);
+  $fieldlist=$this->fieldlist;
+  
+  if (!is_array($what))
+  {
+   $what=explode(', ',$what);
+  }
+
+  if(empty($what[0]) || $what[0] == NULL)
+  {
+   $select_str="*";
+  }
+  else
+  {
+   foreach ($what as $quoted)
+   {
+    if (preg_match("/`(?P<name>.*?)`/",$quoted,$matches) <= 0)
+    {
+      $quote[]="`".$quoted."`";
+    }
+    else
+    {
+      $quote[]=$quoted;
+    }
+   }
+   if (is_array($quote))
+   {
+    $what=$quote;
+   }
+   $select_str=implode(", ",$what);
+   $select_str=rtrim($select_str,", ");
+  }
+
+  if(empty($sort) || $sort == NULL)
+  {
+   $sort_str=null;
+  }
+  else
+  {
+   $sort=explode('>',$sort);
+   if (@$sort[1] == "descending")
+   {
+    $sort[1]="DESC";
+   }
+   else
+   {
+    $sort[1]="ASC";
+   }
+   $sort_str="ORDER BY `".$sort[0]."` ".$sort[1];
+  }
+
+  if(empty($limit) || $limit == NULL)
+  {
+   $limit_str=null;
+  }
+  elseif (empty($offest) || $offest == NULL)
+  {
+   $limit_str="LIMIT ".$limit;
+  }
+  else
+  {
+    $limit_str="LIMIT ".$offset.",".$limit;
+  }
+  
+  if (!empty($query) && $keycols == NULL)
+  {
+   $result=mysql_query("SELECT `COLUMN_NAME` FROM information_schema.STATISTICS WHERE `TABLE_SCHEMA`='".$this->db."' AND `TABLE_NAME`='".$this->table."' AND `INDEX_TYPE`='FULLTEXT'",$connection) or  trigger_error("SQL Error: ".mysql_error(), E_USER_NOTICE);
+   while ($data=mysql_fetch_assoc($result))
+   {
+     $keycols.=$data['COLUMN_NAME'].",";
+   }
+   $keycols=trim($keycols,",");
+  }
+  elseif (is_array($keycols))
+  {
+    $keycols=implode(",",$keycols);
+  }
+  
+  if (preg_match_all("/(?P<key>(?:[a-z][a-z0-9_-]*))(:)\[(?P<values>.*.?)\]/",$query,$filters) > 0)
+  {
+    $where=array();
+    $i=0;
+    foreach ($filters['key'] as $key)
+    {
+      $where[$key]=explode(",",$filters['values'][$i]);
+      ++$i;
+    }
+    $query=trim(preg_replace("/(?P<key>(?:[a-z][a-z0-9_-]*))(:)\[(?P<values>.*.?)\]/","",$query)." ");
+  }
+  
+  if (preg_match_all("/(?P<key>(?:[a-z][a-z0-9_-]*))(:)(?P<value>.(?:[a-z][a-z0-9_-]*))/",$query,$filters) > 0)
+  {
+    $where=array();
+    $i=0;
+    foreach ($filters['key'] as $key)
+    {
+      $where[$key]=$filters['value'][$i];
+      ++$i;
+    }
+    $query=trim(preg_replace("/(?P<key>(?:[a-z][a-z0-9_-]*))(:)(?P<value>.(?:[a-z][a-z0-9_-]*))/","",$query)." ");
+  }
+  
+  if (empty($query))
+  {
+    $where_str="WHERE";
+  }
+  else
+  {
+    $where_str="WHERE MATCH (".$keycols.") AGAINST ('".$query."')";
+  }
+  
+  foreach($where as $field => $value)
+  {
+   if (!in_array($field,$fieldlist))
+   {
+    unset($where[$field]);
+   }
+  }
+  
+  if (@is_array($where))
+  {
+    foreach ($where as $col=>$value)
+    {
+      if (in_array($col,$fieldlist))
+      {
+       if (is_array($value))
+       {
+	 $where_group=null;
+	 foreach ($value as $item)
+	 {
+	   $where_group.="`".$col."` LIKE '".$item."' OR";
+	 }
+	 $where_str.=" AND (".trim($where_group," OR").")";
+       }
+       else
+       {
+         $where_str.=" AND `".$col."` LIKE '".$value."'";
+       }
+      }
+    }
+  }
+  
+  $where_str=preg_replace("/WHERE AND/","WHERE",$where_str);
+
+  $query="SELECT ".$select_str." FROM ".$this->table." ".$where_str." ".$sort_str." ".$limit_str;
+  var_dump($query);
+
+  $this->result=mysql_query($query,$connection) or trigger_error("SQL: ".mysql_error()." in ".$query, E_USER_NOTICE);
+  $this->numrows=mysql_num_rows($this->result);
+  return new DALResult($this);
+ }
 
  public function getDataCustom($query)
  {
@@ -496,38 +651,6 @@ class DataBaseTable implements DALTable
     }
    }
   }
- }
- 
- function getDataFT($query,$what=null)
- {
-	$connection=$this->connect($this->db) or trigger_error("SQL: ".mysql_error(), E_USER_ERROR);
-	$cols=null;
-	if (is_array($what))
-	{
-	 foreach ($what as $col)
-	 {
-		$cols.=$col.", ";
-	 }
-	}
-	elseif ($what)
-	{
-	 $cols=$what;
-	}
-	else
-	{
-	 $cols='*';
-	}
-	
-	$ftcols=null;
-	$result=mysql_query("SELECT `COLUMN_NAME` FROM information_schema.STATISTICS WHERE `TABLE_SCHEMA`='".$this->db."' AND `TABLE_NAME`='".$this->table."' AND `INDEX_TYPE`='FULLTEXT'",$connection) or trigger_error("SQL: ".mysql_error(), E_USER_NOTICE);
-  while($data=mysql_fetch_assoc($result))
-	{
-	 $ftcols.=$data['COLUMN_NAME'].",";
-	}
-	$ftcols=trim($ftcols,",");
-	
-	$this->result=mysql_query("SELECT ".$cols." FROM ".$this->table." WHERE MATCH(".$ftcols.") AGAINST('".$query."')",$connection) or trigger_error("SQL: ".mysql_error(), E_USER_ERROR);
-	return new DALResult($this);
  }
 
  function updateData($fieldarray)
