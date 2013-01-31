@@ -872,7 +872,7 @@ class MomokoError implements MomokoObject
 
   $body=$this->page->inner_body;
   $vars=$this->varList();
-  $ch=new MomokoCommentHandler($vars);
+  $ch=new MomokoVariableHandler($vars);
   $this->inner_body=$ch->replace($body);
  }
 
@@ -937,7 +937,7 @@ class MomokoError implements MomokoObject
    {
     $vars['content']="<html>\n";
    }
-   $ch=MomokoCommentHandler($vars);
+   $ch=new MomokoVariableHandler($vars);
    $body=$ch->replace($body);
 
    return $body;
@@ -1034,7 +1034,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
    {
     $vars['content']="<html>\n";
    }
-   $ch=new MomokoCommentHandler($vars);
+   $ch=new MomokoVariableHandler($vars);
    $body=$ch->replace($body);
 
    return $body;
@@ -1112,7 +1112,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
    $vars['body']=$page->inner_body;
   }
 
-  $ch=new MomokoCommentHandler($vars);
+  $ch=new MomokoVariableHandler($vars);
   $html=$ch->replace($html);
   
   return $html;

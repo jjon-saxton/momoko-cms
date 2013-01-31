@@ -239,125 +239,6 @@ class MomokoUser
   }
 }
 
-class MomokoUserCPModule implements MomokoModuleInterface
-{
-	private $user;
-	private $options=array();
-	
-	public function __construct($user,$options)
-	{
-		$this->user=$user;
-		parse_str($options,$options);
-		if (!@$options['acp_name'])
-		{
-		 $options['acp_name']="AdminCP";
-		}
-		if (!@$options['ucp_name'])
-		{
-		 $options['ucp_name']="UserCP";
-		}
-		if (!@$options['login_name'])
-		{
-		 $options['login_name']="Login";
-		}
-		$this->options=$options;
-	}
-	
-	public function __get($key)
-	{
-		if (array_key_exists($key,$this->options))
-		{
-			return $this->options[$key];
-		}
-		else
-		{
-			return false;
-		}
-	}
-	
-	public function getModule($format='html')
-	{
-	 if ($format == 'html')
-	 {
-	 	if ($this->user->inGroup('admin'))
-	 	{
-	 		$links=array("Welcome ".$this->user->name."!","<a href=\"//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/acp/\">".$this->acp_name."</a>","<a href=\"//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ucp/\">".$this->ucp_name."</a>");
-	 	}
-	 	elseif ($this->user->inGroup('users'))
-	 	{
-	 		$links=array("Welcome ".$this->user->name."!","<a href=\"//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ucp/\">".$this->ucp_name."</a>");
-	 	}
-	 	elseif ($this->user->inGroup('nobody'))
-	 	{
-	 		$links=array("<a href=\"./login.mmk\">".$this->login_name."</a>");
-	 	}
-	 	elseif ($this->user->inGroup('restricted') || $this->user->inGroup('banned'))
-	 	{
-	 		$links=array("Welcome ".$this->user->name."!","User restrictions in place!");
-	 	}
-	 	else
-	 	{
-	 		$links=array("Welcome ".$this->user->name."!");
-	 	}
-	 }
-	 
-	 if (is_array($this->custom_links))
-	 {
-	  foreach ($this->custom_links as $group=>$link)
-	  {
-	  	if ($this->user->inGroup($group))
-	  	{
-				@list($link,$text,)=explode("=>",$link);
-				$link=str_replace("\\","/",$link);
-				if (!@$text)
-				{
-				 $text=$link;
-				}
-	  	 	$links[]="<a href=\"{$link}\">{$text}</a>";
-	  	}
-	  }
-	 }
-	 
-	 if (!$this->user->inGroup('nobody'))
-	 {
-	  $links[]="<a href=\"./logout.mmk\">Logout</a>";
-	 }
-
-		switch ($this->display)
-		{
-			case 'line':
-			$html=null;
-			foreach ($links as $item)
-			{
-			 $html.=$item." | ";
-			}
-			$html=trim($html, " | ");
-			break;
-			case 'list':
-			$html="<ul id=\"UserCPList\">\n";
-			foreach ($links as $item)
-			{
-				$html.="<li class=\"cp-item\">".$item."</li>\n";
-			}
-			$html.="</ul>";
-			break;
-			default:
-			$html="<!-- Display missing or not recognized: '{$this->dispay}' -->";
-		}
-		
-		if ($GLOBALS['CFG']->rewrite)
-		{
-		 $siteroot="/";
-		}
-		else
-		{
-		 $siteroot="/index.php/";
-		}
-		
-		return preg_replace("/\.\//",$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.$siteroot,$html);
-	}
-}
-
 class MomokoUCPModule implements MomokoModuleInterface
 {
  public $opts;
@@ -450,6 +331,7 @@ HTML;
     }
    }
   }
+  $actions[]=array('href'=>'//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADDINROOT.'settings','title'=>'Change Settings');
   $actions[]=array('href'=>'?action=logout','title'=>'Logout');
   $html=null;
 

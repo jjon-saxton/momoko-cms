@@ -82,6 +82,8 @@ function fill_tables(array $admin,array $defaults=null)
   
   $rows['settings'][]=array('key'=>'version','value'=>'1.2');
   $rows['settings'][]=array('key'=>'support_email','value'=>$admin['email']);
+  $rows['settings'][]=array('key'=>'security_logging','value'=>1);
+  $rows['settings'][]=array('key'=>'error_logging','value'=>1);
   
   $okay=0;
   $tottbls=0;

@@ -119,7 +119,7 @@ class MomokoConfiguration
   }
 }
 
-class MomokoCommentHandler
+class MomokoVariableHandler
 {
   private $varlist=array();
 

@@ -1,0 +1,67 @@
+<html>
+  <head>
+    <title>Change Your Settings</title>
+  </head>
+  <body>
+  <script>
+  $(document).ready(function(){
+    $("input#newpass2").keyup(function(){
+      var password=$("input#newpass1").val();
+      var confirm=$(this).val();
+      
+      if (password == confirm)
+      {
+	$("#passmsg").fadeOut("fast");
+	$("#submit").removeAttr("disabled");
+      }
+      else
+      {
+	$("#passmsg").fadeIn("normal");
+	$("#submit").attr("disabled","disabled");
+      }
+    });
+    
+    $("select").change(function(){
+      var dateform=$(this).val();
+      var id=$(this).attr('id');
+      $("input#"+id).val(dateform).focus();
+    });
+  });
+  </script>
+  <h2>Change Your Settings</h2>
+  <p>Use the form below to change your settings.</p>
+  <form method=post>
+  <table width=100% border=0 cellspacing=1 cellpadding=1>
+  <tr>
+  <th colspan=2>Password</th>
+  </tr>
+  <tr>
+  <td align=right><label for="curpass">Current Password:</label> </td><td><input type=password name="check" id="curpass"></td>
+  </tr>
+  <tr>
+  <td align=right><label for="newpass1">New Password:</label> </td><td><input type=password name="newpass1" id="newpass1"></td>
+  </tr>
+  <tr>
+  <td align=right><label for="newpass2">Confirm New Password:</label> </td><td><input type=password name="newpass2" id="newpass2"><span id="passmsg" class="redflag" style="display:none">Password mismatch!</span></td>
+  </tr>
+  <tr>
+  <th colspan=2>Settings</th>
+  </tr>
+  <tr valign=top>
+  <td align=right><label for="sdf">Short Date Format:</label> </td><td><select name="commonsdf" id="sdf"><var>sdfopts</var></select> <input type=text name="shortdateformat" id="sdf" value="~{shortdateformat}"></td>
+  </tr>
+  <tr valign=top>
+  <td align=right><label for="ldf">Long Date Format:</label> </td><td><select name="commonldf" id="ldf"><var>ldfopts</var></select> <input type=text name="longdateformat" id="ldf" value="~{longdateformat}"></td>
+  </tr>
+  <tr>
+  <td align=right><label for="rpg">Items Per Page:</label> </td><td><input type=number name="rowspertable" value="~{rowspertable}"></td>
+  </tr>
+  <tr>
+  <th colspan=2>Save</th>
+  </tr>
+  <tr>
+  <td align=center colspan=2><input type=submit name="send" id="submit" value="Save Changes"></td>
+  </tr>
+  </table>
+  </body>
+</html>
