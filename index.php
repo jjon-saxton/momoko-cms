@@ -2,6 +2,8 @@
 require dirname(__FILE__)."/assets/core/common.inc.php";
 require dirname(__FILE__)."/assets/core/content.inc.php";
 
+define ("CURURI",$GLOBALS['CFG']->domain.'/'.ltrim(preg_replace("/\?.*/",'',$_SERVER['REQUEST_URI']),"\/"));
+
 if (@$_SERVER['PATH_INFO'] && (pathinfo($_SERVER['PATH_INFO'],PATHINFO_EXTENSION) == 'htm' || pathinfo($_SERVER['PATH_INFO'],PATHINFO_EXTENSION) == 'html'))
 {
   $path=$_SERVER['PATH_INFO'];
@@ -74,7 +76,7 @@ if (@$path && !@$child)
    }
    else
    {
-    header("Location: https://".$GLOBALS['CFG']->domain.'/'.$_SERVER['REQUEST_URI']."?action=login&re=new");
+    header("Location: https://".CURURI."?action=login&re=new");
     exit();
    }
    case 'edit':
@@ -84,7 +86,7 @@ if (@$path && !@$child)
    }
    else
    {
-    header("Location: https://".$GLOBALS['CFG']->domain.'/'.$_SERVER['REQUEST_URI']."?action=login&re=edit");
+    header("Location: https://".CURURI."?action=login&re=edit");
     exit();
    }
    break;
@@ -111,11 +113,11 @@ if (@$path && !@$child)
      $_SESSION['data']=serialize($GLOBALS['USR']);
      if (@!empty($_GET['re']))
      {
-      header("Location: http://".$GLOBALS['CFG']->domain.'/'.$_SERVER['REQUEST_URI']."?action=".$_GET['re']);
+      header("Location: http://".CURURI."?action=".$_GET['re']);
      }
      else
      {
-      header("Location: http://".$GLOBALS['CFG']->domain.'/'.$_SERVER['REQUEST_URI']."?loggedin=1");
+      header("Location: http://".CURURI."?loggedin=1");
      }
      exit();
     }

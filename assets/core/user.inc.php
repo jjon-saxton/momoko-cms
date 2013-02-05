@@ -270,14 +270,15 @@ class MomokoUCPModule implements MomokoModuleInterface
   {
    if ($this->opts['display'] == 'box')
    {
+    $url=CURURI;
     return <<<HTML
 <div id="LoginBox" class="ucp box">
-<form action="https://{$GLOBALS['CFG']->domain}/{$_SERVER['REQUEST_URI']}?action=login" method=post>
+<form action="https://{$url}?action=login" method=post>
 <ul class="noindent nobullet">
 <li><input type=text name="name" placeholder="username:"></li>
 <li><input type=password name="password" placeholder="password:"></li>
 <li><input type=submit name="send" value="Login"></li>
-<li><a href="https://{$GLOBALS['CFG']->domain}/{$_SERVER['REQUEST_URI']}?action=register">Want an account?</a></li>
+<li><a href="https://{$url}?action=register">Want an account?</a></li>
 </ul>
 </form>
 </div>
