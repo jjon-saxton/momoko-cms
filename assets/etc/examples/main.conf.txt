@@ -3,6 +3,7 @@
 #{pagedir:/home/momoko/public_html/assets/pages}
 #{datadir:/home/momoko/public_html/assets/files}
 #{tempdir:/home/momoko/public_html/assets/temp}
+#{logdir:/home/momoko/public_html/assets/logs}
 #{domain:}
 #{location:/~momoko} 
 

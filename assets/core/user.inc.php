@@ -25,15 +25,20 @@ class MomokoSession
   {
     $r=new MomokoUser($name);
     $user=$r->get();
+    
+    $log=fopen($GLOBALS['CFG']->logdir.'/access.log','a') or die(exit());
+    
     if (crypt($password,$user->password) == $user->password)
     {
       $this->name=$name;
       $this->user=$user;
       $this->groups=$this->updateGroups();
+      fwrite($log,"[".date('Y-m-d H:i:s')."] Session started for user ".$name.".\n");
       return true;
     }
     else
     {
+      fwrite($log,"[".date('Y-m-d H:i:s')."] Authentication failed for user ".$name.".\n");
       return false;
     }
   }
@@ -61,6 +66,12 @@ class MomokoSession
     $this->name=$this->name." as ".$name;
     $this->user=$user;
     $this->groups=$this->updateGroups();
+    
+    if ($this->inGroup('admin'))
+    {
+      $log=fopen($GLOBALS['CFG']->logdir.'/access.log','a');
+      fwrite($log,"[".date('Y-m-d H:i:s')."] An administrator logged in as ".$name." (".$this->name.").\n");
+    }
    
     return true;
    }
@@ -71,12 +82,15 @@ class MomokoSession
   }
 
   public function logout()
-  {
+  {    
+    $log=fopen($GLOBALS['CFG']->logdir."/access.log",'a');
+    fwrite($log,"[".date('Y-m-d H:i:s')."] Session ended for user ".$this->name.".\n");
+
     $this->name='guest';
     $r=new MomokoUser($this->name);
     $this->user=$r->get();
-    $this->groups=$this->updateGroups(); 
-
+    $this->groups=$this->updateGroups();
+    
     return true;
   }
 
