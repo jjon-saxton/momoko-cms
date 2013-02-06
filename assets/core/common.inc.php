@@ -415,8 +415,30 @@ function momoko_cli_errors($num,$str,$file,$line,$context)
   }
 }
 
+#Change logging handler
+function momoko_changes($user,$action,$resource,$message=null)
+{
+  if ($GLOBALS['SET']['security_logging'] > 0)
+  {
+    if (is_writable($GLOBALS['CFG']->logdir.'/changes.log'))
+    {
+      $log=fopen($GLOBALS['CFG']->logdir.'/changes.log','a');
+      $string="[".date("Y-m-d H:i:s")."] ".$user->name." (".$user->num.") ".$action.; //TODO we need a way of handeling the resource, this is going to be the object where changes are made!
+      if (!empty($message)
+      {
+	$string.=": ".$message;
+      }
+      fwrite($log,$string);
+    }
+    else
+    {
+      trigger_error("changes.log is not writable!",E_USER_WARNING);
+    }
+  }
+}
+
 #Misc functions
-function strrtrim($message, $strip)
+function strrtrim($message,$strip)
 {
   // break message apart by strip string
   $lines = explode($strip, $message);

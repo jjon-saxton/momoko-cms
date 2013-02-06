@@ -499,6 +499,7 @@ HTML;
   $data['update']=date("d M Y H:i:s",$key);
   unset($data['date'],$data['time']);
   $array[$key]=$data;
+  momoko_changes($GLOBALS['USR'],'added',$this); //Log changes based on settings
   if ($prepend == TRUE)
   {
    return array_merge($array,$this->getModule('array'));
@@ -516,6 +517,7 @@ HTML;
   unset($data['date'],$data['time']);
   $array=$this->getModule('array');
   $array[$key]=$data;
+  momoko_changes($GLOBALS['USR'],'updated',$this); //Log the change
   return $array;
  }
 
@@ -523,6 +525,7 @@ HTML;
  {
   $array=$this->getModule('array');
   unset($array[$key]);
+  momoko_changes($GLOBALS['USR'],'deleted',$this);
   return $array;
  }
 
@@ -563,10 +566,12 @@ XML;
   $data=$dom->saveXML();
   if (file_put_contents($GLOBALS['CFG']->pagedir.'/news.xml',$data)) // Replace with actual path!
   {
+   momoko_changes($GLOBALS['USR'],'updated',$this,"Changes were written to news.xml!");
    return true;
   }
   else
   {
+   trigger_error("Could not write to news.xml, check permissions!",E_USER_WARNING);
    return false;
   }
  }
@@ -650,12 +655,14 @@ HTML;
 
     if ((pathinfo($this->path,PATHINFO_BASENAME) != $data['pagename']) && (rename($GLOBALS['CFG']->pagedir.$this->path,$GLOBALS['CFG']->pagedir.$dir.'/'.$data['pagename'])))
     {
+     momoko_changes($GLOBALS['USR'],'updated',$this,"Additionally the page was renamed from ".basename($this->path)." to ".$data['pagename']."!");
      $dir=ltrim($dir,"/");
      header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT.$dir.'/'.$data['pagename']);
      exit();
     }
     else
     {
+     momoko_changes($GLOBALS['USR'],'updated',$this);
      $file=ltrim($this->path,"/");
      header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT.$file);
      exit();
@@ -939,50 +946,6 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   return $this->writeInfo();
  }
  
- public function listAll()
- {
- }
- 
- public function getChildren()
- {
- }
- 
- public function put($data)
- {
- }
-
- public function edit($new=false,$path=null,$data=null)
- {
-  if (isset($path) && $path)
-  {
-   $this->cur_path=$path;
-  }
-  if (@!$data['send'])
-  {
-   $page=new MomokoPage('/admin/textedit.htm');
-   $body=$page->get();
-   $vars['name']=$this->name;
-   $vars['type']='Template';
-   if ($new == FALSE)
-   {
-    $vars['content']=$this->get();
-   }
-   else
-   {
-    $vars['content']="<html>\n";
-   }
-   $ch=new MomokoVariableHandler($vars);
-   $body=$ch->replace($body);
-
-   return $body;
-  }
-  else
-  {
-   $this->put($data);
-  }
- }
-
- 
  public function get()
  {
   if ((pathinfo($this->cur_path,PATHINFO_EXTENSION) == 'html' || pathinfo($this->cur_path,PATHINFO_EXTENSION) == 'htm') && file_exists($GLOBALS['CFG']->basedir.$this->cur_path))
@@ -1000,10 +963,6 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   
   return file_get_contents($GLOBALS['CFG']->basedir.$this->template);
  }
- 
- public function drop()
- {
- }
 
  private function readInfo()
  {
@@ -1011,11 +970,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   
   return $info;
  }
- 
- private function writeInfo()
- {
- }
- 
+
  public function toHTML($child=null)
  {
   $html=$this->get();

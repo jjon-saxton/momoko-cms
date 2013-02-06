@@ -217,6 +217,7 @@ class MomokoUser
       {
         $data['added']=date('Y-m-d H:i:s');
 	$data['password']=crypt($data['password'],$GLOBALS['CFG']->salt);
+	momoko_changes($GLOBALS['USR'],'added',$this);
         return $this->db->putData($data);
       }
     }
@@ -226,12 +227,14 @@ class MomokoUser
   {
     $resource=$this->db->getData("name:'".$name."'",array('num'),null,1);
     $user=$resource->first();
+    momoko_changes($GLOBALS['USR'],'updated',$this);
     return $this->updateByID($user->num,$data);
   }
   
   public function updateByID($num,array $data)
   {
     $data['num']=$num;
+    momoko_changes($GLOBALS['USR'],'updated',$this);
     return $this->db->updateData($data);
   }
 
@@ -249,6 +252,7 @@ class MomokoUser
     $data=$this->db->getData("name:'".$name."'",array('num'),null,1);
     $row=$data->first();
     $del['num']=$row->num;
+    momoko_changes($GLOBALS['USR'],'deleted',$this);
     return $this->db->removeData($del);
   }
 }
