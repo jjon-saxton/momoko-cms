@@ -663,9 +663,7 @@ HTML;
    }
    else
    {
-    $page=new MomokoError('Server_Error');
-    $this->title=$page->title;
-    $this->inner_body=$page->inner_body;
+    trigger_error("Unable to write to page!",E_USER_ERROR);
    }
   }
   else
@@ -892,16 +890,6 @@ class MomokoError implements MomokoObject
   }
  }
 
- public function listAll()
- {
-  //TODO scan for all errors and list them with name and title ($dir and $name) in an array
- }
- 
- public function getChildren()
- {
-  return false; //this object should have no children
- }
-
  public function __set($key,$value)
  {
   return $this->page->$key=$value;
@@ -912,64 +900,13 @@ class MomokoError implements MomokoObject
   return $this->page->get();
  }
 
- public function put($data)
+ private function setVars($vars)
  {
-  return $this->page->put($data);
- }
-
- public function edit($new=false,$path=null,$data=null)
- {
-  if (isset($path) && $path)
-  {
-   $this->cur_path=$path;
-  }
-  if (@!$data['send'])
-  {
-   $page=new MomokoPage('admin/textedit.htm');
-   $body=$page->getHTML();
-   $vars['name']=$this->name;
-   $vars['type']='Error Page';
-   if ($new == FALSE)
-   {
-    $vars['content']=$this->get();
-   }
-   else
-   {
-    $vars['content']="<html>\n";
-   }
-   $ch=new MomokoVariableHandler($vars);
-   $body=$ch->replace($body);
-
-   return $body;
-  }
-  else
-  {
-   $this->put($data);
-  }
- }
-
- public function drop()
- {
-  return false;
- }
-
- private function varList()
- {
-  $vars['admin_email']=$GLOBALS['CFG']->tech_contact;
-  if ($this->error_msg)
-  {
-   if ($this->name == 'Moved')
-   {
-    list($vars['new_url'],$vars['error_message'])=explode("|",$this->error_msg);
-   }
-   else
-   {
-    $vars['error_message']=$this->error_msg;
-   }
-  }
-  $vars['forgot_password']='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/manager.php?action=reset&what=password';
-
-  return $vars;
+  $vars['admin_email']=$GLOBALS['SET']['support_email'];
+  $vh=new MomokoVariableHandler($vars);
+  
+  $this->info=$vh->replace($this->info);
+  return true;
  }
 }
 

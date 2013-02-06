@@ -171,9 +171,7 @@ class MomokoNewsManager implements MomokoObject
    }
    else
    {
-    $page=new MomokoError('Server_Error');
-    $info['title']=$page->title;
-    $info['inner_body']=$page->inner_body;
+    trigger_error("Could not write changes to news reel!",E_USER_ERROR);
    }
    break;
    case 'new':
@@ -279,9 +277,7 @@ HTML;
     }
     else
     {
-     $page=new MomokoError('Server_Error');
-     $info['title']=$page->title;
-     $info['inner_body']=$page->inner_body;
+      trigger_error("Could not write to news reel!",E_USER_ERROR);
     }
    }
   }

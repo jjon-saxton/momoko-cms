@@ -52,10 +52,7 @@ class FinderPage implements MomokoObject
   }
   else
   {
-   $page=new MomokoLITEError('Server_Error');
-   $info['full_html']=$page->full_html;
-   $info['title']=$page->title;
-   $info['inner_body']=$page->inner_body;
+   trigger_error("Cannot open finder window! Check permissions on ".FINDERPATH."/templates/window.tpl.htm",E_USER_ERROR);
   }
   $this->info=$info;
  }

@@ -1,6 +1,7 @@
 <?php
-#This holds configuration
+#Basic configuration
 $GLOBALS['CFG']=new MomokoConfiguration();
+
 #Set Constants
 if ($GLOBALS['CFG']->rewrite)
 {
@@ -20,14 +21,26 @@ else
  define("ADDINROOT","/addin.php/");
  define("NEWSROOT","/news.php/");
 }
-
 define("MOMOKOVERSION",trim(file_get_contents($GLOBALS['CFG']->basedir.'/assets/etc/version.nfo.txt'),"\n"));
+
+#Load DAL
 require $GLOBALS['CFG']->basedir.'/assets/dal/load.inc.php';
 
+#Add advanced/changable settings
+$settings=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
+$settings=$settings->getData();
+$settings=$settings->toArray();
+foreach ($settings as $pairs)
+{
+  $GLOBALS['SET'][$pairs['key']]=$pairs['value'];
+}
+unset($setting,$pairs);
+
+#Set up a user session so long as we are not in CLI mode or installing
 require_once $GLOBALS['CFG']->basedir.'/assets/core/user.inc.php';
 if (!defined("INCLI") &&  basename($_SERVER['PHP_SELF']) != 'install.php')
 {
- #user session now added here as part of MomoKO merge
+  define ("CURURI",$GLOBALS['CFG']->domain.'/'.ltrim(preg_replace("/\?.*/",'',$_SERVER['REQUEST_URI']),"\/"));
 
  session_name($GLOBALS['CFG']->session);
  session_start();
@@ -40,6 +53,11 @@ if (!defined("INCLI") &&  basename($_SERVER['PHP_SELF']) != 'install.php')
  {
   $GLOBALS['USR']=new MomokoSession();
   $_SESSION['data']=serialize($GLOBALS['USR']);
+ }
+ 
+ if ($GLOBALS['SET']['error_logging'] > 0)
+ {
+  set_error_handler("momoko_html_errors"); //since we know we are in a web interface we will set our handler now
  }
 }
 
@@ -345,6 +363,57 @@ class SimpleXMLExtended extends SimpleXMLElement
   $node->appendChild($no->createCDATASection($cdata_text));   
  }   
 } 
+
+#Error handlers
+function momoko_html_errors($num,$str,$file,$line,$context)
+{
+  if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($GLOBALS['SET']['error_logging'] > 1))
+  {
+    if (file_exists($GLOBALS['CFG']->logdir.'/error.log'))
+    {
+      $log=fopen($GLOBALS['CFG']->logdir.'/error.log','a') or die("Error log could not be open for write!");
+      fwrite($log,"[".date("Y-m-d H:i:s")."] PHP Error (".$num."; ".$str.") in ".$line." of ".$file."!\n");
+    }
+    else
+    {
+      die("Error log does not exist at configured location: ".$GLOBALS['CFG']->logdir."!");
+    }
+  }
+  
+  if ($num == E_USER_ERROR)
+  {
+    $info['error_type']=$num;
+    $info['error_msg']=$str;
+    $child=new MomokoError('Server_Error');
+    $child->setVars($info);
+
+    $tpl=new MomokoTemplate(pathinfo($path,PATHINFO_DIRNAME));
+    print $tpl->toHTML($child);
+    die();
+  }
+}
+
+function momoko_cli_errors($num,$str,$file,$line,$context)
+{
+  if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($GLOBALS['SET']['error_logging'] > 1))
+  {
+    if (file_exists($GLOBALS['CFG']->logdir.'/error.log'))
+    {
+      $log=fopen($GLOBALS['CFG']->logdir.'/error.log','a') or die("Error log could not be open for write!");
+      fwrite($log,"[".date("Y-m-d H:i:s")."] PHP Error (".$num."; ".$str.") in ".$line." of ".$file."!\n");
+    }
+    else
+    {
+      die("Error log does not exist at configured location: ".$GLOBALS['CFG']->logdir."!");
+    }
+  }
+  
+  if ($num == E_USER_ERROR)
+  {
+    fwrite(STDOUT,"Fetal Error: ".$str." in line ".$line." of ".$file."!\n");
+    exit(2);
+  }
+}
 
 #Misc functions
 function strrtrim($message, $strip)

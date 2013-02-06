@@ -2,8 +2,6 @@
 require dirname(__FILE__)."/assets/core/common.inc.php";
 require dirname(__FILE__)."/assets/core/content.inc.php";
 
-define ("CURURI",$GLOBALS['CFG']->domain.'/'.ltrim(preg_replace("/\?.*/",'',$_SERVER['REQUEST_URI']),"\/"));
-
 if (@$_SERVER['PATH_INFO'] && (pathinfo($_SERVER['PATH_INFO'],PATHINFO_EXTENSION) == 'htm' || pathinfo($_SERVER['PATH_INFO'],PATHINFO_EXTENSION) == 'html'))
 {
   $path=$_SERVER['PATH_INFO'];

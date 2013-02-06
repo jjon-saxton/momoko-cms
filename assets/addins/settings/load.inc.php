@@ -14,7 +14,7 @@ if (!empty($_POST['send']))
   }
   else
   {
-    $child=new MomokoError("Server_Error");
+    trigger_error("Unable to change settings!",E_USER_ERROR);
   }
 }
 else
