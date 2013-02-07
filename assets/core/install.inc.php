@@ -5,9 +5,10 @@ function create_tables()
   $def['addins'][0]="`num` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['addins'][1]="`dir` VARCHAR(75) NOT NULL";
   $def['addins'][2]="`incp` CHAR(1) NOT NULL";
-  $def['addins'][3]="`shortname` VARCHAR(72) NOT NULL";
-  $def['addins'][4]="`longname` VARCHAR(125) NOT NULL";
-  $def['addins'][5]="`description` TEXT";
+  $def['addins'][3]="`enabled` CHAR(1) NOT NULL";
+  $def['addins'][4]="`shortname` VARCHAR(72) NOT NULL";
+  $def['addins'][5]="`longname` VARCHAR(125) NOT NULL";
+  $def['addins'][6]="`description` TEXT";
   
   $def['merchants'][0]="`num` INT(255) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['merchants'][1]="`vpos` VARCHAR(15) NOT NULL";
@@ -71,8 +72,9 @@ function fill_tables(array $admin,array $defaults=null)
   $admin['longdateformat']=$defaults['ldf'];
   $admin['rowspertable']=$defaults['rpt'];
   
-  $rows['addins'][]=array('dir'=>'finder','incp'=>'y','shortname'=>'elFinder','longname'=>'elFinder','description'=>"A simple file management addin, which simply loads elFinder in a page");
-  $rows['addins'][]=array('dir'=>'usermanager','incp'=>'y','shortname'=>'User Manager','longname'=>"User Manager",'description'=>"Addin providing rudementary user management functions.");
+  $rows['addins'][]=array('dir'=>'finder','incp'=>'y','enabled'=>'y','shortname'=>'elFinder','longname'=>'elFinder','description'=>"A simple file management addin, which simply loads elFinder in a page");
+  $rows['addins'][]=array('dir'=>'usermanager','incp'=>'y','enabled'=>'y','shortname'=>'User Manager','longname'=>"User Manager",'description'=>"Addin providing rudementary user management functions.");
+  $rows['addins'][]=array('dir'=>'settings','incp'=>'n','enabled'=>'y','shortname'=>'User Settings','longname'=>'Manage Use Settings','description'=>'Addin providing users the ability to change there settings.');
   
   $rows['merchants'][]=array('vpos'=>'google','id'=>"148034693076512",'key'=>"PA99wKfO-z5RsClusjP6hA",'description'=>"Default Google Merchant Sandbox");
   

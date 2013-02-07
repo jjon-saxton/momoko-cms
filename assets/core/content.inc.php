@@ -943,7 +943,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
  public function __set($key,$value)
  {
   $this->info[$key]=$value;
-  return $this->writeInfo();
+  return true;
  }
  
  public function get()

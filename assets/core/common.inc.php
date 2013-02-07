@@ -423,7 +423,7 @@ function momoko_changes($user,$action,$resource,$message=null)
     if (is_writable($GLOBALS['CFG']->logdir.'/changes.log'))
     {
       $log=fopen($GLOBALS['CFG']->logdir.'/changes.log','a');
-      $string="[".date("Y-m-d H:i:s")."] ".$user->name." (".$user->num.") ".$action.;
+      $string="[".date("Y-m-d H:i:s")."] ".$user->name." (".$user->num.") ".$action;
       switch (get_class($resource))
       {
 	case 'MomokoPage':
@@ -435,7 +435,7 @@ function momoko_changes($user,$action,$resource,$message=null)
 	default:
 	$string.=" Addin Object";
       }
-      if (!empty($message)
+      if (!empty($message))
       {
 	$string.=" : ".$message;
       }

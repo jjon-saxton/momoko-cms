@@ -37,6 +37,74 @@ class MomokoAddin implements MomokoObject
  {
   return $this->info;
  }
+ 
+ public function put($archive=null)
+ {
+  if (empty($archive))
+  {
+    return new MomokoAddinForm('add');
+  }
+  else
+  {
+    return true;
+  }
+ }
+ 
+ public function update($archive=null)
+ {
+  if (empty($archive))
+  {
+    return new MomokoAddinForm('update');
+  }
+  else
+  {
+    //TODO open archive, update files in addindir, use manifest to update database
+    return true;
+  }
+ }
+ 
+ public function drop()
+ {
+  $table=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
+  $query=$table->getData("dir: '".basename($this->info['dirroot'])."'",array('num','dir'),null,1);
+  $data=$query->first();
+  
+  $ddata['num']=$data->num;
+  if ($table->removeData($ddata) && rmdirr($this->info['dirroot']))
+  {
+    return true;
+  }
+  else
+  {
+    trigger_error("Unable to remove addin!",E_USER_ERROR);
+  }
+ }
+ 
+ public function toggleEnabled()
+ {
+  $table=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
+  $query=$table->getData("dir: '".basename($this->info['dirroot'])."'",array('num','enabled'),null,1);
+  $data=$query->first();
+  
+  $ndata['num']=$data->num;
+  if ($data->enabled == 'y')
+  {
+    $ndata['enabled']='n';
+  }
+  else
+  {
+    $ndata['enabled']='y';
+  }
+  
+  if ($update=$table->updateData($ndata))
+  {
+    return true;
+  }
+  else
+  {
+    trigger_error("Unable to toggle enabled/disabled state of addin ".basename($this->info['dirroot'])."!",E_USER_WARNING);
+  }
+ }
 
  public function hasAuthority()
  {
@@ -112,15 +180,25 @@ elseif (@$_SERVER['PATH_INFO'])
  list(,$addindir,)=explode("/",$_SERVER['PATH_INFO']);
  $GLOBALS['LOADED_ADDIN']=new MomokoAddin($GLOBALS['CFG']->basedir."/assets/addins/".$addindir."/");
 
- if ($GLOBALS['LOADED_ADDIN']->hasAuthority()) //User must have authority!
+ switch (@$_GET['action'])
  {
-  include $GLOBALS['CFG']->basedir."/assets/addins/".$addindir."/load.inc.php"; //hand control over to the addin
- }
- else
- {
-  $child=new MomokoLITEError('Forbidden');
+  case 'add':
+  case 'update':
+  case 'enable':
+  case 'disable':
+  case 'view':
+  case 'list':
+  default:
+  if ($GLOBALS['LOADED_ADDIN']->hasAuthority()) //User must have authority!
+  {
+   include $GLOBALS['CFG']->basedir."/assets/addins/".$addindir."/load.inc.php"; //hand control over to the addin
+  }
+  else
+  {
+   $child=new MomokoLITEError('Forbidden');
 
-  $tpl=new MomokoLITETemplate('/'); //forces load of default template to show error message
-  echo $tpl->toHTML($child);
+   $tpl=new MomokoLITETemplate('/'); //forces load of default template to show error message
+   echo $tpl->toHTML($child);
+  }
  }
 }
