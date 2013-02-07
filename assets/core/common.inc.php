@@ -423,12 +423,27 @@ function momoko_changes($user,$action,$resource,$message=null)
     if (is_writable($GLOBALS['CFG']->logdir.'/changes.log'))
     {
       $log=fopen($GLOBALS['CFG']->logdir.'/changes.log','a');
-      $string="[".date("Y-m-d H:i:s")."] ".$user->name." (".$user->num.") ".$action.; //TODO we need a way of handeling the resource, this is going to be the object where changes are made!
+      $string="[".date("Y-m-d H:i:s")."] ".$user->name." (".$user->num.") ".$action.;
+      switch (get_class($resource))
+      {
+	case 'MomokoPage':
+	$string.=" Page ".$resource->title;
+	break;
+	case 'MomokoNews':
+	$string.=" News Article ".$resource->title;
+	break;
+	default:
+	$string.=" Addin Object";
+      }
       if (!empty($message)
       {
-	$string.=": ".$message;
+	$string.=" : ".$message;
       }
-      fwrite($log,$string);
+      
+      if (($GLOBALS['SET']['security_logging'] > 1) || (!$user->inGroup('admin')))
+      {
+       fwrite($log,$string);
+      }
     }
     else
     {
