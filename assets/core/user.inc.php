@@ -329,6 +329,7 @@ HTML;
     $atitle=$this->opts['admin_title'];
    }
    $actions[]=array('href'=>'//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADMINROOT,'title'=>'AdminCP');
+   $actions[]=array('href'=>'//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADDINROOT."?action=list",'title'=>'Manage Addins');
   }
   if (is_array($this->opts['custom_links']))
   {

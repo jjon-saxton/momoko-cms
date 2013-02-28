@@ -453,6 +453,52 @@ function momoko_changes($user,$action,$resource,$message=null)
 }
 
 #Misc functions
+function rmdirr($dir,$empty_only=false)
+{
+  rtrim($dir,"/");
+  if (file_exists($dir) && is_readable($dir))
+  {
+    $handle=opendir($dir);
+    while (FALSE !== ($item=readdir($handle)))
+    {
+      if ($item != '.' && $item != '..')
+      {
+	$path=$dir.'/'.$item;
+	if (is_dir($path))
+	{
+	  rmdirr($path);
+	}
+	else
+	{
+	  unlink($path);
+	}
+      }
+    }
+    closedir($handle);
+    
+    if ($empty_only == FALSE)
+    {
+      if (!rmdir($directory))
+      {
+	trigger_error("Unable to remove folder!",E_USER_ERROR);
+	return false;
+      }
+    }
+    
+    return true;
+  }
+  elseif (!file_exists($directory))
+  {
+    trigger_error("Directory '{$directory}' does not exists!",E_USER_ERROR);
+    return false;
+  }
+  else
+  {
+    trigger_error("Directory '{$directory}' could not be opened for read!",E_USER_ERROR);
+    return false;
+  }
+}
+
 function strrtrim($message,$strip)
 {
   // break message apart by strip string
