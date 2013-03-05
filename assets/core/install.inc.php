@@ -10,12 +10,6 @@ function create_tables()
   $def['addins'][5]="`longname` VARCHAR(125) NOT NULL";
   $def['addins'][6]="`description` TEXT";
   
-  $def['merchants'][0]="`num` INT(255) NOT NULL AUTO_INCREMENT PRIMARY KEY";
-  $def['merchants'][1]="`vpos` VARCHAR(15) NOT NULL";
-  $def['merchants'][2]="`id` TEXT";
-  $def['merchants'][3]="`key` TEXT";
-  $def['merchants'][4]="`description` TEXT";
-  
   $def['users'][0]="`num` INT(255) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['users'][1]="`name` VARCHAR(125) NOT NULL";
   $def['users'][2]="`password` TEXT";
@@ -75,8 +69,6 @@ function fill_tables(array $admin,array $defaults=null)
   $rows['addins'][]=array('dir'=>'finder','incp'=>'y','enabled'=>'y','shortname'=>'elFinder','longname'=>'elFinder','description'=>"A simple file management addin, which simply loads elFinder in a page");
   $rows['addins'][]=array('dir'=>'usermanager','incp'=>'y','enabled'=>'y','shortname'=>'User Manager','longname'=>"User Manager",'description'=>"Addin providing rudementary user management functions.");
   $rows['addins'][]=array('dir'=>'settings','incp'=>'n','enabled'=>'y','shortname'=>'User Settings','longname'=>'Manage Use Settings','description'=>'Addin providing users the ability to change there settings.');
-  
-  $rows['merchants'][]=array('vpos'=>'google','id'=>"148034693076512",'key'=>"PA99wKfO-z5RsClusjP6hA",'description'=>"Default Google Merchant Sandbox");
   
   $rows['users'][]=array('name'=>'root','password'=>'root','email'=>$admin['email'],'groups'=>"admin,cli",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'rowspertable'=>$defaults['rpt']);
   $rows['users'][]=array('name'=>'guest','password'=>'guest','email'=>$admin['email'],'groups'=>"nobody",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'rowspertable'=>$defaults['rpt']);
