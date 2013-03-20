@@ -481,9 +481,15 @@ class DataBaseTable implements DALTable
 
   $query="SELECT ".$select_str." FROM ".$this->table." ".$where_str." ".$sort_str." ".$limit_str;
 
-  $this->result=mysql_query($query,$connection) or trigger_error("SQL: ".mysql_error()." in ".$query, E_USER_NOTICE);
-  $this->numrows=mysql_num_rows($this->result);
-  return new DALResult($this);
+  if ($this->result=mysql_query($query,$connection))
+  {
+   $this->numrows=mysql_num_rows($this->result);
+   return new DALResult($this);
+  }
+  else
+  {
+    trigger_error(mysql_error()." in ".$query,E_USER_ERROR);
+  }
  }
 
  public function getDataCustom($query)

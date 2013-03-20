@@ -53,21 +53,41 @@ class MomokoAddin implements MomokoObject
   return $this->info;
  }
  
- public function put($archive=null)
+ public function put($data=null)
  {
-  if (empty($archive))
+  if (empty($data['archive']))
   {
     return new MomokoAddinForm('add');
   }
   else
   {
-    return true;
+    $destination=ADDINDIR.'/'.$data['dir'];
+    if (mkdir($destination))
+    {
+      $zip=new ZipArchive;
+      $zip->open($data['archive']);
+      $zip->extractTo($destination);
+      unlink($data['archive']);
+      if ($num=$this->table->putData($data))
+      {
+	$new=$this->table->getData("'num:= ".$num."'",null,1);
+	$info=$new->toArray();
+	if (is_array($info[0]))
+	{
+	  return $info[0];
+	}
+	else
+	{
+	  return $info;
+	}
+      }
+    }
   }
  }
  
- public function update($archive=null)
+ public function update($data=null)
  {
-  if (empty($archive))
+  if (empty($data['archive']))
   {
     return new MomokoAddinForm('update');
   }
@@ -83,8 +103,10 @@ class MomokoAddin implements MomokoObject
   if (!empty($file) && $file['error'] == UPLOAD_ERR_OK)
   {
     $result=false;
-    if (move_uploaded_file($file['tmp_name'],$GLOBALS['CFG']->tmpdir.'/'.$file['name']))
+    $filename=$GLOBALS['CFG']->tmpdir.'/'.$file['name'];
+    if (move_uploaded_file($file['tmp_name'],$filename))
     {
+      $info=$this->getArchiveInfo($filename);
       $result=true;
     }
     elseif ($file['error'] == UPLOAD_ERR_INI_SIZE)
@@ -100,9 +122,10 @@ class MomokoAddin implements MomokoObject
     {
       $script_body=<<<TXT
 $('span#msg',pDoc).html('File upload complete...continuing');
-$('div#file',pDoc).replaceWith("<div id=\"file\"><label for=\"file\">File:</label> <input id=file type=hidden name=\"file\" value=\"{$filename}\">{$filename} <input type=button onclick=\"gallery.change('{$filename}',event)\" value=\"Change\"></div>");
-$('div#view',pDoc).replaceWith("<div id=\"view\"><a href=\"../images/temp/{$filename}\" target=\"_new\"><img src=\"../images/temp/{$filename}\" style=\"max-width:400px\"></div>");
-$('input[type=button]',pDoc).removeAttr('disabled');
+$('div#file',pDoc).replaceWith("<div id="file"><label for="file">File:</label> <input id=addin type=hidden name="file" value="{$filename}">{$filename}<input id="addin-dir" type="hidden" name="dir" value="{$info['dir']}"></div>");
+$('input#addin-name',pDoc).value('{$info['shortname']}').removeAttr('disabled');
+$('input#addin-title',pDoc).value('{$info['longname']}').removeAttr('disabled');
+$('input#addin-description',pDoc).value('{$info['description']}').removeAttr('disabled');
 TXT;
     }
     else
@@ -134,7 +157,7 @@ HTML;
  public function drop()
  {
   $table=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
-  $query=$table->getData("dir: '".basename($this->info['dirroot'])."'",array('num','dir'),null,1);
+  $query=$table->getData("dir:'".basename($this->info['dirroot'])."'",array('num','dir'),null,1);
   $data=$query->first();
   
   $ddata['num']=$data->num;
@@ -148,10 +171,47 @@ HTML;
   }
  }
  
+ private function getArchiveInfo($archive)
+ {
+  $destination=pathinfo($archive,PATHINFO_DIRNAME).pathinfo($archive,PATHINFO_FILENAME);
+  if (mkdir($destination))
+  {
+    $zip=new ZipArchive;
+    $zip->open($archive);
+    $zip->extractTo($destination,'manifest.xml');
+    $zip->close();
+    if (file_exists($destination.'/manifest.xml'))
+    {
+      $manifest=xmltoarray($destination.'/manifest.xml');
+      return $this->parseManifest($manifest);
+    }
+  }
+ }
+ 
+ public function setPathByID($id)
+ {
+  $query=$this->table->getData("num:'= ".$id."'",array('num','dir','enabled'),null,1);
+  $data=$query->first();
+  $path=$GLOBALS['CFG']->basedir."/assets/addins/".$data->dir."/";
+  
+  $manifest=xmltoarray($path.'/manifest.xml'); //Load manifest
+  $this->info=$this->parseManifest($manifest);
+   
+  if ($data->enabled == 'y')
+  {
+   $this->isEnabled=true;
+  }
+  else
+  {
+   $this->isEnabled=false;
+  }
+  
+  return $this->path=$path;
+ }
+ 
  public function toggleEnabled()
  {
-  $table=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
-  $query=$table->getData("dir: '".basename($this->info['dirroot'])."'",array('num','enabled'),null,1);
+  $query=$this->table->getData("dir:'".basename($this->info['dirroot']['value'])."'",array('num','enabled'),null,1);
   $data=$query->first();
   
   $ndata['num']=$data->num;
@@ -164,13 +224,13 @@ HTML;
     $ndata['enabled']='y';
   }
   
-  if ($update=$table->updateData($ndata))
+  if ($update=$this->table->updateData($ndata))
   {
-    return true;
+    return $ndata['enabled'];
   }
   else
   {
-    trigger_error("Unable to toggle enabled/disabled state of addin ".basename($this->info['dirroot'])."!",E_USER_WARNING);
+    trigger_error("Unable to toggle enabled/disabled state of addin ".basename($this->info['dirroot']['value'])."!",E_USER_WARNING);
   }
  }
 
@@ -255,22 +315,30 @@ elseif (@$_SERVER['PATH_INFO'])
   $path=$GLOBALS['CFG']->basedir."/assets/addins/".$addindir."/";
  }
  $GLOBALS['LOADED_ADDIN']=new MomokoAddin($path);
- $archive=null;
+ if (!empty($_GET['num']))
+ {
+  $GLOBALS['LOADED_ADDIN']->setPathByID($_GET['num']);
+ }
 
  switch (@$_GET['action'])
  {
   case 'add':
-  $child=$GLOBALS['LOADED_ADDIN']->put($archive);
+  $child=$GLOBALS['LOADED_ADDIN']->put($_POST);
+  if (!empty($_GET['ajax']) && $_GET['ajax'] == 1)
+  {
+    echo json_encode($child);
+  }
   break;
   case 'update':
-  $child=$GLOBALS['LOADED_ADDIN']->update($archive);
+  $child=$GLOBALS['LOADED_ADDIN']->update($_POST);
   break;
   case 'enable':
   case 'disable':
-  $child=$GLOBALS['LOADED_ADDIN']->toggleEnabled();
+  echo $newstate=$GLOBALS['LOADED_ADDIN']->toggleEnabled();
   break;
   case 'remove';
   $child=$GLOBALS['LOADED_ADDIN']->drop();
+  break;
   case 'upload':
   $child=$GLOBALS['LOADED_ADDIN']->upload($_FILES['addin']);
   break;
