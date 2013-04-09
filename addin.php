@@ -61,13 +61,14 @@ class MomokoAddin implements MomokoObject
   }
   else
   {
-    $destination=ADDINDIR.'/'.$data['dir'];
+    $destination=$GLOBALS['CFG']->basedir.$data['dir'];
     if (mkdir($destination))
     {
       $zip=new ZipArchive;
       $zip->open($data['archive']);
       $zip->extractTo($destination);
       unlink($data['archive']);
+      $data['dir']=pathinfo($data['dir'],PATHINFO_BASENAME);
       if ($num=$this->table->putData($data))
       {
 	$new=$this->table->getData("'num:= ".$num."'",null,1);
@@ -81,6 +82,12 @@ class MomokoAddin implements MomokoObject
 	  return $info;
 	}
       }
+    }
+    else
+    {
+      unlink($data['archive']);
+      $info['error']="Could not make directory '".$destination."'!";
+      return $info;
     }
   }
  }
@@ -100,13 +107,12 @@ class MomokoAddin implements MomokoObject
  
  public function upload($file)
  {
-  if (!empty($file) && $file['error'] == UPLOAD_ERR_OK)
+  if (!empty($file))
   {
     $result=false;
-    $filename=$GLOBALS['CFG']->tmpdir.'/'.$file['name'];
-    if (move_uploaded_file($file['tmp_name'],$filename))
+    $filename=$GLOBALS['CFG']->tempdir.'/'.$file['name'];
+    if ($file['error'] == UPLOAD_ERR_OK && move_uploaded_file($file['tmp_name'],$filename))
     {
-      $info=$this->getArchiveInfo($filename);
       $result=true;
     }
     elseif ($file['error'] == UPLOAD_ERR_INI_SIZE)
@@ -120,12 +126,14 @@ class MomokoAddin implements MomokoObject
     
     if ($result == TRUE)
     {
+      $info=$this->getArchiveInfo($filename);
+      $basename=basename($filename);
       $script_body=<<<TXT
 $('span#msg',pDoc).html('File upload complete...continuing');
-$('div#file',pDoc).replaceWith("<div id="file"><label for="file">File:</label> <input id=addin type=hidden name="file" value="{$filename}">{$filename}<input id="addin-dir" type="hidden" name="dir" value="{$info['dir']}"></div>");
-$('input#addin-name',pDoc).value('{$info['shortname']}').removeAttr('disabled');
-$('input#addin-title',pDoc).value('{$info['longname']}').removeAttr('disabled');
-$('input#addin-description',pDoc).value('{$info['description']}').removeAttr('disabled');
+$('li#file',pDoc).replaceWith("<li id=\"file\"><label for=\"file\">File:</label> <input id=addin type=hidden name=\"file\" value=\"{$filename}\">{$basename}<input id=\"addin-dir\" type=hidden name=\"dir\" value=\"{$info['dirroot']['value']}\"><input id=\"addin-incp\" type=hidden name=\"incp\" value=\"{$info['incp']['value']}\"></div>");
+$('input#addin-name',pDoc).val('{$info['shortname']['value']}').removeAttr('disabled');
+$('input#addin-title',pDoc).val('{$info['longname']['value']}').removeAttr('disabled');
+$('textarea#addin-description',pDoc).val('{$info['description']['value']}').removeAttr('disabled');
 TXT;
     }
     else
@@ -157,23 +165,36 @@ HTML;
  public function drop()
  {
   $table=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
-  $query=$table->getData("dir:'".basename($this->info['dirroot'])."'",array('num','dir'),null,1);
+  $query=$table->getData("dir:'".basename($this->info['dirroot']['value'])."'",array('num','dir','shortname'),null,1);
   $data=$query->first();
   
-  $ddata['num']=$data->num;
-  if ($table->removeData($ddata) && rmdirr($this->info['dirroot']))
+  if ($_POST['send'] == "Yes")
   {
-    return true;
-  }
-  else
-  {
-    trigger_error("Unable to remove addin!",E_USER_ERROR);
-  }
+    $ddata['num']=$data->num;
+    if ($table->removeData($ddata) && rmdirr($GLOBALS['CFG']->basedir.'/assets/addins/'.$data->dir))
+    {
+      $ddata['succeed']=true;
+    }
+    else
+    {
+      trigger_error("Unable to remove addin!",E_USER_NOTICE);
+      $ddata['suceed']=false;
+      $ddata['error']="MySQL Error: ".$table->error();
+    }
+   }
+   else
+   {
+    $form=new MomokoAddinForm('remove');
+    $form->addin=$data;
+    return $form;
+   }
+  
+  return $ddata;
  }
  
  private function getArchiveInfo($archive)
  {
-  $destination=pathinfo($archive,PATHINFO_DIRNAME).pathinfo($archive,PATHINFO_FILENAME);
+  $destination=pathinfo($archive,PATHINFO_DIRNAME).'/'.pathinfo($archive,PATHINFO_FILENAME);
   if (mkdir($destination))
   {
     $zip=new ZipArchive;
@@ -183,8 +204,14 @@ HTML;
     if (file_exists($destination.'/manifest.xml'))
     {
       $manifest=xmltoarray($destination.'/manifest.xml');
+      unlink ($destination.'/manifest.xml');
+      rmdir ($destination);
       return $this->parseManifest($manifest);
     }
+  }
+  else
+  {
+    echo "Could not make folder '".$destination."'!";
   }
  }
  
@@ -324,13 +351,17 @@ elseif (@$_SERVER['PATH_INFO'])
  {
   case 'add':
   $child=$GLOBALS['LOADED_ADDIN']->put($_POST);
-  if (!empty($_GET['ajax']) && $_GET['ajax'] == 1)
+  if (!empty($_POST['dir']) && (!empty($_GET['ajax']) && $_GET['ajax'] == 1))
   {
     echo json_encode($child);
   }
   break;
   case 'update':
   $child=$GLOBALS['LOADED_ADDIN']->update($_POST);
+  if (!empty($_POST['dir']) && (!empty($_GET['ajax']) && $_GET['ajax'] == 1))
+  {
+    echo json_encode($child);
+  }
   break;
   case 'enable':
   case 'disable':
@@ -338,6 +369,10 @@ elseif (@$_SERVER['PATH_INFO'])
   break;
   case 'remove';
   $child=$GLOBALS['LOADED_ADDIN']->drop();
+  if (!empty($_POST['send']) && (!empty($_GET['ajax']) && $_GET['ajax'] == 1))
+  {
+    echo json_encode($child);
+  }
   break;
   case 'upload':
   $child=$GLOBALS['LOADED_ADDIN']->upload($_FILES['addin']);

@@ -478,23 +478,22 @@ function rmdirr($dir,$empty_only=false)
     
     if ($empty_only == FALSE)
     {
-      if (!rmdir($directory))
+      if (!rmdir($dir))
       {
 	trigger_error("Unable to remove folder!",E_USER_ERROR);
 	return false;
       }
     }
-    
     return true;
   }
-  elseif (!file_exists($directory))
+  elseif (!file_exists($dir))
   {
-    trigger_error("Directory '{$directory}' does not exists!",E_USER_ERROR);
+    trigger_error("Directory '{$dir}' does not exists!",E_USER_ERROR);
     return false;
   }
   else
   {
-    trigger_error("Directory '{$directory}' could not be opened for read!",E_USER_ERROR);
+    trigger_error("Directory '{$dir}' could not be opened for read!",E_USER_ERROR);
     return false;
   }
 }

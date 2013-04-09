@@ -1138,8 +1138,13 @@ class MomokoAddinForm implements MomokoObject
   {
     $info=parse_page($this->get());
     
-    switch($this-form)
+    switch($this->form)
     {
+      case 'remove':
+      $vars['num']=$this->info['addin']->num;
+      $vars['name']=$this->info['addin']->shortname;
+      $vars['dir']=$this->info['addin']->dir;
+      break;
       default:
       $table=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
       $cols=$table->getFields();
@@ -1172,11 +1177,10 @@ class MomokoAddinForm implements MomokoObject
 	}
 	$vars['addin_list'].="<td class=\"ui-widget-content\"><a class=\"ui-icon ui-icon-check\" style=\"display:inline-block\" onclick=\"toggleEnabled('".$row->num."',event)\" title=\"Enable/Disable\" href=\"#toggleEnabled\"></a><a class=\"ui-icon ui-icon-arrowthickstop-1-n\" style=\"display:inline-block\" onclick=\"showUpdate('".$row->num."',event)\" title=\"Update\" href=\"#update\"></a><a class=\"ui-icon ui-icon-trash\" style=\"display:inline-block\" onclick=\"showRemove('".$row->num."',event)\" title=\"Delete\" href=\"#delete\"></a></td>\n</tr>\n";
       }
-      
-      $vh=new MomokoVariableHandler($vars);
-      $info['inner_body']=$vh->replace($info['inner_body']);
     }
-    
+      
+    $vh=new MomokoVariableHandler($vars);
+    $info['inner_body']=$vh->replace($info['inner_body']);
     return $info;
   }
 }

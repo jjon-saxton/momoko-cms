@@ -41,7 +41,7 @@ function iUpload(field){
     }
 
     field.form.submit();
-    $("div#file").append("<span id=\"msg\"> Uploading...</span>");
+    $("li#file").append("<span id=\"msg\"> Uploading...</span>");
     field.disabled=true;
 }
 
@@ -55,7 +55,7 @@ function showAdd(){
 		modal: true,
 		buttons: {
 			Go: function(){
-				add();
+				doAdd();
 				$(this).dialog("close");
  },
 			Cancel: function(){
@@ -122,6 +122,8 @@ function toggleEnabled(id,event){
 
 function doAdd(){
 	var archive=$("input#addin").val();
+	var incp=$("input#addin-incp").val();
+	var enabled=$("input#addin-enabled").val();
 	var dir=$("input#addin-dir").val();
 	var shortname=$("input#addin-name").val();
 	var longname=$("input#addin-title").val();
@@ -129,12 +131,19 @@ function doAdd(){
 
 	$.post("?action=add&ajax=1",{
 		archive: archive,
+		incp: incp,
+		enabled: enabled,
 		dir: dir,
 		shortname: shortname,
 		longname: longname,
 		description: description
 }, function(data){
-	$("#addins tr:last").after("<tr id="+data.num+"><td>"+data.num+"</td><td>"+data.name+"</td><td>"+data.groups+"</td><td>"+data.actions+"</td></tr>");
+	if (data.error){
+	  alert (data.error);
+	}
+	else{
+	  $("#addins tr:last").after("<tr id="+data.num+"><td>"+data.dir+"</td><td>"+data.incp+"</td><td>"+data.enabled+"</td><td>"+data.shortname+"</td><td>"+data.longname+"</td><td>"+data.description+"</td><td>&nbsp;<!-- actions --></td></tr>");
+	}
 },'json');
 }
 
@@ -159,6 +168,10 @@ function doUpdate(id)
 
 function doRemove(id) {
 	$.post("?action=remove&num="+id+"&ajax=1", { send:"Yes"}, function(data){
- 	  $("tr#"+id).remove();
+ 	  if (data.suceed){
+	    $("tr#"+data.num).remove();
+ 	  }else{
+	    alert(data.error);
+ 	  }
 	},'json');
 }
