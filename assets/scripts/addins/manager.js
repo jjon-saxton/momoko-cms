@@ -168,7 +168,7 @@ function doUpdate(id)
 
 function doRemove(id) {
 	$.post("?action=remove&num="+id+"&ajax=1", { send:"Yes"}, function(data){
- 	  if (data.suceed){
+ 	  if (data.succeed){
 	    $("tr#"+data.num).remove();
  	  }else{
 	    alert(data.error);

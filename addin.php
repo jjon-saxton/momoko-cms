@@ -354,6 +354,7 @@ elseif (@$_SERVER['PATH_INFO'])
   if (!empty($_POST['dir']) && (!empty($_GET['ajax']) && $_GET['ajax'] == 1))
   {
     echo json_encode($child);
+    exit();
   }
   break;
   case 'update':
@@ -361,6 +362,7 @@ elseif (@$_SERVER['PATH_INFO'])
   if (!empty($_POST['dir']) && (!empty($_GET['ajax']) && $_GET['ajax'] == 1))
   {
     echo json_encode($child);
+    exit();
   }
   break;
   case 'enable':
@@ -372,6 +374,7 @@ elseif (@$_SERVER['PATH_INFO'])
   if (!empty($_POST['send']) && (!empty($_GET['ajax']) && $_GET['ajax'] == 1))
   {
     echo json_encode($child);
+    exit();
   }
   break;
   case 'upload':
