@@ -71,7 +71,7 @@ class MomokoAddin implements MomokoObject
       $data['dir']=pathinfo($data['dir'],PATHINFO_BASENAME);
       if ($num=$this->table->putData($data))
       {
-	$new=$this->table->getData("'num:= ".$num."'",null,1);
+	$new=$this->table->getData("num:'= ".$num."'",null,null,1);
 	$info=$new->toArray();
 	if (is_array($info[0]))
 	{

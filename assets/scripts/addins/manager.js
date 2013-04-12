@@ -129,22 +129,16 @@ function doAdd(){
 	var longname=$("input#addin-title").val();
 	var description=$("input#addin-description").val();
 
-	$.post("?action=add&ajax=1",{
-		archive: archive,
-		incp: incp,
-		enabled: enabled,
-		dir: dir,
-		shortname: shortname,
-		longname: longname,
-		description: description
-}, function(data){
-	if (data.error){
-	  alert (data.error);
-	}
-	else{
-	  $("#addins tr:last").after("<tr id="+data.num+"><td>"+data.dir+"</td><td>"+data.incp+"</td><td>"+data.enabled+"</td><td>"+data.shortname+"</td><td>"+data.longname+"</td><td>"+data.description+"</td><td>&nbsp;<!-- actions --></td></tr>");
-	}
-},'json');
+	$.post("?action=add&ajax=1", { archive: archive,
+	  incp: incp,
+	  enabled: enabled,
+	  dir: dir,
+	  shortname: shortname,
+	  longname: longname,
+	  description: description
+	}, function(data){
+	  alert(data.longname+" Added!");
+	},'json');	
 }
 
 function doUpdate(id)
