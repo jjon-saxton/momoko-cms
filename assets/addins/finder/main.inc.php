@@ -47,7 +47,7 @@ class FinderPage implements MomokoObject
    $info=parse_page($data);
    $varlist['finderroot']='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elfinder';
    $varlist['connectoruri']='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.$this->connector;
-   $ch=new MomokoCommentHandler($varlist);
+   $ch=new MomokoVariableHandler($varlist);
    $info['inner_body']=$ch->replace($info['inner_body']);
   }
   else

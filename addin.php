@@ -408,9 +408,4 @@ elseif (@$_SERVER['PATH_INFO'])
  {
   echo $child->inner_body;
  }
- else
- {
-  $tpl=new MomokoTemplate('/'); //forces load of default template to show error message
-  echo $tpl->toHTML($child);
- }
 }

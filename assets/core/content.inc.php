@@ -1178,6 +1178,7 @@ class MomokoAddinForm implements MomokoObject
 	$vars['addin_list'].="<td class=\"ui-widget-content\"><a class=\"ui-icon ui-icon-check\" style=\"display:inline-block\" onclick=\"toggleEnabled('".$row->num."',event)\" title=\"Enable/Disable\" href=\"#toggleEnabled\"></a><a class=\"ui-icon ui-icon-arrowthickstop-1-n\" style=\"display:inline-block\" onclick=\"showUpdate('".$row->num."',event)\" title=\"Update\" href=\"#update\"></a><a class=\"ui-icon ui-icon-trash\" style=\"display:inline-block\" onclick=\"showRemove('".$row->num."',event)\" title=\"Delete\" href=\"#delete\"></a></td>\n</tr>\n";
       }
     }
+    $vars['site_location']=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location;
       
     $vh=new MomokoVariableHandler($vars);
     $info['inner_body']=$vh->replace($info['inner_body']);
