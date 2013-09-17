@@ -100,7 +100,42 @@ class MomokoAddin implements MomokoObject
   }
   else
   {
-    //TODO open archive, update files in addindir, use manifest to update database
+    $destination=$GLOBALS['CFG']->basedir.$data['dir'];
+    if (!file_exists($destination))
+    {
+      unlink($data['archive']);
+      $info['error']="Cannot update non-existent addin '".$data['dir']."'! Please go back and select 'add addin' first.";
+      return $info;
+    }
+    if (is_writable($destination))
+    {
+      $zip=new ZipArchive;
+      $zip->open($data['archive']);
+      $zip->extractTo($destination); //should overwrite files that already exist!
+      // TODO: clean files that no longer exist in archive. IDEA: remove old files ahead of time
+      unlink($data['archive']);
+      $data['dir']=pathinfo($data['dir'],PATHINFO_BASENAME);
+      //TODO: Need to get num and set $data['num'] for archive
+      if ($num=$this->table->updateData($data))
+      {
+	$new=$this->table->getData("num:'= ".$num."'",null,null,1);
+	$info=$new->toArray();
+	if (is_array($info[0]))
+	{
+	  return $info[0];
+	}
+	else
+	{
+	  return $info;
+	}
+      }
+    }
+    else
+    {
+      unlink($data['archive']);
+      $info['error']="Addin folder '".$destination."' not writable, cannot update addin!";
+      return $info;
+    }
     return true;
   }
  }
