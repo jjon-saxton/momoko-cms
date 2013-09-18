@@ -104,18 +104,20 @@ class MomokoAddin implements MomokoObject
     if (!file_exists($destination))
     {
       unlink($data['archive']);
-      $info['error']="Cannot update non-existent addin '".$data['dir']."'! Please go back and select 'add addin' first.";
+      $info['error']="Cannot update non-existent addin '".$data['dir']."'! Please go back and select 'add addin'.";
       return $info;
     }
     if (is_writable($destination))
     {
       $zip=new ZipArchive;
       $zip->open($data['archive']);
-      $zip->extractTo($destination); //should overwrite files that already exist!
-      // TODO: clean files that no longer exist in archive. IDEA: remove old files ahead of time
+      rmdirr($destination,true); //should empty the addin folder WITHOUT removing it
+      $zip->extractTo($destination); //places the new files in the intact addin folder
       unlink($data['archive']);
       $data['dir']=pathinfo($data['dir'],PATHINFO_BASENAME);
-      //TODO: Need to get num and set $data['num'] for archive
+      $old=$this->table->getData("dir:'".$data['dir']."'",array('num'),null,1);
+      $old=$old->first();
+      $data['num']=$old->num;
       if ($num=$this->table->updateData($data))
       {
 	$new=$this->table->getData("num:'= ".$num."'",null,null,1);
