@@ -652,6 +652,10 @@ HTML;
    if (file_put_contents($GLOBALS['CFG']->pagedir.$this->path,$full_html))
    {
     $dir=pathinfo($this->path,PATHINFO_DIRNAME);
+    if (pathinfo($data['pagename']),PATHINFO_EXTENSION != 'htm' || pathinfo($data['pagename'],PATHINFO_EXTENSION) != 'html')
+    {
+     $data['pagename'].=".htm";
+    }
 
     if ((pathinfo($this->path,PATHINFO_BASENAME) != $data['pagename']) && (rename($GLOBALS['CFG']->pagedir.$this->path,$GLOBALS['CFG']->pagedir.$dir.'/'.$data['pagename'])))
     {
