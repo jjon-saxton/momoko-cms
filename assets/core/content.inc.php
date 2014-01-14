@@ -652,7 +652,7 @@ HTML;
    if (file_put_contents($GLOBALS['CFG']->pagedir.$this->path,$full_html))
    {
     $dir=pathinfo($this->path,PATHINFO_DIRNAME);
-    if (pathinfo($data['pagename']),PATHINFO_EXTENSION != 'htm' || pathinfo($data['pagename'],PATHINFO_EXTENSION) != 'html')
+    if (pathinfo($data['pagename'],PATHINFO_EXTENSION) != 'htm' || pathinfo($data['pagename'],PATHINFO_EXTENSION) != 'html')
     {
      $data['pagename'].=".htm";
     }
@@ -995,7 +995,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   }
   $vars['pagetitle']=@$page->title;
   $vars['softwareversion']=MOMOKOVERSION;
-  $vars['body']=@$page->inner_body;
+  $vars['body']=str_replace('$','&#36;',@$page->inner_body); //str_replace here works around PHP $ (dollar sign) problems)
 
   if (@!$vars['body'] && @$page->full_html) // just in case the above didn't work, note: this is not elegant as it could result in invalid code, but will prevent links from appearing not to work. >.>
   {
