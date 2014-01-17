@@ -75,7 +75,7 @@ HTML;
       else {
       $sid=$this->generateSid($num,time());
       $location=RESETURI."?sid=".$sid;
-      require RESETPATH.'/email.conf.php';
+      require RESETPATH.'/email.conf.php'; //TODO: find away to merge this with core configuration
       //Mailer start
       $mail=new PHPMailer();
       switch ($email['type'])
@@ -101,7 +101,7 @@ HTML;
       //Message header
       $mail->From=$email['header']['from']['address'];
       $mail->FromName=$email['header']['from']['name'];
-      //$mail->addReplyTo=$email['header']['from']['readdress'];
+      //$mail->addReplyTo=$email['header']['from']['readdress']; TODO fix this!
       $mail->IsHTML(true);
       //Message
       $mail->AddAddress($data['email']);
@@ -118,6 +118,7 @@ Per your request we are sending you instructions on how to reset your password. 
 
 Thank you!
 TXT;
+     $admincontact="test@test.net" //TODO replace with actually contact from configuration
      if ($mail->Send())
      {
       $info['title'].=" - E-Mail Sent";
@@ -131,7 +132,7 @@ HTML;
        $info['title'].=" - E-Mail Could not be sent!";
        $info['inner_body']=<<<HTML
 <h1>Unable to Send E-Mail</h1>
-<p>{$mail->ErrorInfo} Please contact <a href="mailto:gerald.overmyer@unco.edu">Jerry Overmyer</a> for assistance!</p>
+<p>{$mail->ErrorInfo} Please contact <a href="mailto:{$admincontact}">your administrator</a> for assistance!</p>
 <p>Reference Number: {$sid}</p>
 HTML;
      }
@@ -149,7 +150,7 @@ HTML;
 	    $info['title'].=" - Password Changed";
 	    $info['inner_body']=<<<HTML
 <h2>Eureka!</h2>
-Your password as now been changed to the password you supplied. You can now login with your new password. If you continue to have problems logging in please contact <a href="mailto:gerald.overmyer@unco.edu?subject=Login Help">Jerry Overmyer</a>.
+Your password as now been changed to the password you supplied. You can now login with your new password. If you continue to have problems logging in please contact <a href="mailto:{$admincontact}?subject=Login Help">your administrator</a>.
 HTML;
 	  }
           else
@@ -157,7 +158,7 @@ HTML;
             $info['title'].=" - Password Not Changed";
             $info['inner_body']=<<<HTML
 <h2>Unhandled MySQL Error!</h2>
-<p>Your password had <u>not</u> been changed due to a database error. Below are details we were able to gather about this error. Please report these to <a href="mailto:tech-coordinator@saxton-solutions.com?subject=Password reset error">our software developer</a>.<br>
+<p>Your password had <u>not</u> been changed due to a database error. Below are details we were able to gather about this error. Please report these to <a href="mailto:{$admincontact}?subject=Password reset error">your administrator</a>.<br>
 Supplied e-mail: {$name}<br>
 Current user e-mail: {$user->name}<br>
 Current user number: {$user->num}

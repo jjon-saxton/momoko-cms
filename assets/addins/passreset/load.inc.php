@@ -10,6 +10,10 @@ foreach ($manifest as $node) //find this addins folder
  {
   define('ADDIN_TABLE_PRE',$node['@text']);
  }
+ else
+ {
+  define('ADDIN_TABLE_PRE',DB_TABLE_PRE);
+ }
  if ($node['@name'] == 'dbtable')
  {
   $tables=explode(",",trim($node['@text']));
@@ -27,8 +31,8 @@ define ('RESETPATH',$GLOBALS['CFG']->basedir.$dirroot); //sets script base using
 require $GLOBALS['CFG']->basedir."/assets/php/phpmailer/class.phpmailer.php";
 require RESETPATH.'/main.inc.php';
 
-$child=new GandolfPage($_SERVER['PATH_INFO']);
+$child=new ResetPage($_SERVER['PATH_INFO']);
 $child->showPage(@$_GET['sid'],$_POST);
 
-$tpl=new MomokoLITETemplate($dirroot.'/templates/main.tpl.htm');
+$tpl=new MomokoTemplate($dirroot.'/templates/main.tpl.htm');
 echo ($tpl->toHTML($child));
