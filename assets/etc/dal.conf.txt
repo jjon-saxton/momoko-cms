@@ -1,0 +1,8 @@
+# DAL configuration #
+#{type:mysql}
+#{table_pre:mk_}
+#{file:}
+#{host:localhost}
+#{user:mika}
+#{password:Cwf2Nl!?}
+#{default:mika}
