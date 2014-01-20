@@ -69,6 +69,7 @@ function fill_tables(array $admin,array $defaults=null)
   $rows['addins'][]=array('dir'=>'finder','incp'=>'y','enabled'=>'y','shortname'=>'elFinder','longname'=>'elFinder','description'=>"A simple file management addin, which simply loads elFinder in a page");
   $rows['addins'][]=array('dir'=>'usermanager','incp'=>'y','enabled'=>'y','shortname'=>'User Manager','longname'=>"User Manager",'description'=>"Addin providing rudementary user management functions.");
   $rows['addins'][]=array('dir'=>'settings','incp'=>'n','enabled'=>'y','shortname'=>'User Settings','longname'=>'Manage Use Settings','description'=>'Addin providing users the ability to change there settings.');
+  $rows['addins'][]=array('dir'=>'passreset','incp'=>'n','enabled'=>'y','shortname'=>'Password Resetter','longname'=>'Password Resetter','description'=>'Allows users to reset their own password.');
   
   $rows['users'][]=array('name'=>'root','password'=>'root','email'=>$admin['email'],'groups'=>"admin,cli",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'rowspertable'=>$defaults['rpt']);
   $rows['users'][]=array('name'=>'guest','password'=>'guest','email'=>$admin['email'],'groups'=>"nobody",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'rowspertable'=>$defaults['rpt']);
