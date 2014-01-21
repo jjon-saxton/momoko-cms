@@ -75,9 +75,11 @@ HTML;
       else {
       $sid=$this->generateSid($num,time());
       $location=RESETURI."?sid=".$sid;
-      require RESETPATH.'/email.conf.php'; //TODO: use new config
       //Mailer start
       $mail=new PHPMailer();
+      $email['type']=$GLOBALS['CFG']['emailprotcol'];
+      list($email['server']['auth'],$email['server']['security'],$email['server']['host'],$email['server']['port'],$email['server']['user'],$email['server']['password'])=explode(",",$GLOBALS['CFG']['server'];
+      list($email['from']['name'],$email['from']['address'])=explode(",",$GLOBALS['CFG']['from']);
       switch ($email['type'])
       {
         case 'smtp':
