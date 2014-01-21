@@ -75,7 +75,7 @@ HTML;
       else {
       $sid=$this->generateSid($num,time());
       $location=RESETURI."?sid=".$sid;
-      require RESETPATH.'/email.conf.php'; //TODO: find away to merge this with core configuration
+      require RESETPATH.'/email.conf.php'; //TODO: use new config
       //Mailer start
       $mail=new PHPMailer();
       switch ($email['type'])
