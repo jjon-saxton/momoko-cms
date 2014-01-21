@@ -914,6 +914,7 @@ class MomokoError implements MomokoObject
  private function setVars($vars)
  {
   $vars['admin_email']=$GLOBALS['SET']['support_email'];
+  $vars['forgot_password']='http://'.$GLOBALS['CONFIG']['loction'].ADDINDIR.'/passreset/';
   $vh=new MomokoVariableHandler($vars);
   
   $this->info=$vh->replace($this->info);
