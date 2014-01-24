@@ -872,7 +872,7 @@ class MomokoError implements MomokoObject
  private $inner_body;
  private $error_msg;
 
- public function __construct($name,$msg=null)
+ public function __construct($name,$msg=null,array $additional_vars=null)
  {
   $this->page=new MomokoPage('/error/'.$name.'.htm');
   $this->error_msg=$msg;
@@ -880,7 +880,7 @@ class MomokoError implements MomokoObject
   header("HTTP/1.0 ".$this->page->title);
 
   $body=$this->page->inner_body;
-  $vars=$this->setVars();
+  $vars=$this->setVars($additional_vars);
   $ch=new MomokoVariableHandler($vars);
   $this->inner_body=$ch->replace($body);
  }
@@ -913,12 +913,10 @@ class MomokoError implements MomokoObject
 
  private function setVars($vars)
  {
+  $vars['error_msg']=$this->error_msg;
   $vars['admin_email']=$GLOBALS['SET']['support_email'];
-  $vars['forgot_password']='http://'.$GLOBALS['CONFIG']['loction'].ADDINDIR.'/passreset/';
-  $vh=new MomokoVariableHandler($vars);
-  
-  $this->info=$vh->replace($this->info);
-  return true;
+  $vars['forgot_password']='http://'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADDINROOT.'passreset/';
+  return $vars;
  }
 }
 

@@ -383,11 +383,9 @@ function momoko_html_errors($num,$str,$file,$line,$context)
   if ($num == E_USER_ERROR)
   {
     $info['error_type']=$num;
-    $info['error_msg']=$str;
-    $child=new MomokoError('Server_Error');
-    $child->setVars($info);
+    $child=new MomokoError('Server_Error',$str,$info);
 
-    $tpl=new MomokoTemplate(pathinfo($path,PATHINFO_DIRNAME));
+    $tpl=new MomokoTemplate(pathinfo(@$path,PATHINFO_DIRNAME));
     print $tpl->toHTML($child);
     die();
   }

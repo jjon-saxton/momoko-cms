@@ -51,7 +51,7 @@ HTML;
     if (!$sid && !@$data['email'])
     {
       $info['inner_body']=<<<HTML
-<h1>Reset your Password</h1>
+<h2>Reset your Password</h2>
 <p>We are sorry you are having trouble with your password. We hope this will help. Please supply your e-mail address. If the address matches one on file you will recieve and e-mail with further instructions.</p>
 <form method=post>
 <input type=email name="email"><br>
@@ -61,7 +61,7 @@ HTML;
     }
     elseif (!$sid && $data['email'])
     {
-      $query=$GLOBALS['ADDIN']['db-tables']['users']->getData(array('num','name'),"name=".$data['email'],null,1);
+      $query=$GLOBALS['ADDIN']['db-tables']['users']->getData("email:'".$data['email']."'",array('num','email'),null,1);
       $user=$query->first();
       $num=$user->num;
       if (!$num)
@@ -77,9 +77,9 @@ HTML;
       $location=RESETURI."?sid=".$sid;
       //Mailer start
       $mail=new PHPMailer();
-      $email['type']=$GLOBALS['CFG']['emailprotcol'];
-      list($email['server']['auth'],$email['server']['security'],$email['server']['host'],$email['server']['port'],$email['server']['user'],$email['server']['password'])=explode(",",$GLOBALS['CFG']['server'];
-      list($email['from']['name'],$email['from']['address'])=explode(",",$GLOBALS['CFG']['from']);
+      $email['type']=$GLOBALS['SET']['email_protocol'];
+      parse_str($GLOBALS['SET']['email_server'],$email['server']); //TODO apply %26 (&) workaround when setting values for 'email_server' and so forth, may already exist, furhter testing needed.
+      parse_str($GLOBALS['SET']['email_from'],$email['from']);
       switch ($email['type'])
       {
         case 'smtp':
@@ -103,7 +103,6 @@ HTML;
       //Message header
       $mail->From=$email['header']['from']['address'];
       $mail->FromName=$email['header']['from']['name'];
-      //$mail->addReplyTo=$email['header']['from']['readdress']; TODO fix this!
       $mail->IsHTML(true);
       //Message
       $mail->AddAddress($data['email']);
@@ -120,12 +119,12 @@ Per your request we are sending you instructions on how to reset your password. 
 
 Thank you!
 TXT;
-     $admincontact="test@test.net" //TODO replace with actually contact from configuration
+     $admincontact=$GLOBALS['SET']['support_email'];
      if ($mail->Send())
      {
       $info['title'].=" - E-Mail Sent";
       $info['inner_body']=<<<HTML
-<h1>E-mail Sent</h1>
+<h2>E-mail Sent</h2>
 <p>We have sent an e-mail with password reset instructions. Please check your e-mail and review the e-mail we sent.</p>
 HTML;
      }
@@ -133,8 +132,8 @@ HTML;
      {
        $info['title'].=" - E-Mail Could not be sent!";
        $info['inner_body']=<<<HTML
-<h1>Unable to Send E-Mail</h1>
-<p>{$mail->ErrorInfo} Please contact <a href="mailto:{$admincontact}">your administrator</a> for assistance!</p>
+<h2>Unable to Send E-Mail</h2>
+<p>{$mail->ErrorInfo} Please contact <a href="mailto:{$admincontact}?subject=Password reset error!">your administrator</a> for assistance!</p>
 <p>Reference Number: {$sid}</p>
 HTML;
      }
@@ -160,9 +159,9 @@ HTML;
             $info['title'].=" - Password Not Changed";
             $info['inner_body']=<<<HTML
 <h2>Unhandled MySQL Error!</h2>
-<p>Your password had <u>not</u> been changed due to a database error. Below are details we were able to gather about this error. Please report these to <a href="mailto:{$admincontact}?subject=Password reset error">your administrator</a>.<br>
+<p>Your password had <u>not</u> been changed due to a database error. Below are details we were able to gather about this error. Please report these to <a href="mailto:{$admincontact}?subject=Password reset error!">your administrator</a>.<br>
 Supplied e-mail: {$name}<br>
-Current user e-mail: {$user->name}<br>
+Current user e-mail: {$user->email}<br>
 Current user number: {$user->num}
 HTML;
           }

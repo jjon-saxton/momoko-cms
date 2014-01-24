@@ -13,6 +13,3 @@
 #{salt:rm}
 #{rewrite:}
 
-#{emailprotocol:smtp}
-#{server:true,ssl,smtp.host.com,user,password}
-#{from:First Last,name@domain.com}

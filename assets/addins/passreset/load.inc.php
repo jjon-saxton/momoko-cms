@@ -12,7 +12,7 @@ foreach ($manifest as $node) //find this addins folder
  }
  else
  {
-  define('ADDIN_TABLE_PRE',DB_TABLE_PRE);
+  define('ADDIN_TABLE_PRE',DAL_TABLE_PRE);
  }
  if ($node['@name'] == 'dbtable')
  {
@@ -28,7 +28,7 @@ foreach($tables as $tablename)
 define ('RESETURI',$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADDINROOT.pathinfo($dirroot,PATHINFO_BASENAME)); //set roots based off of addins folder found from manifest
 define ('RESETPATH',$GLOBALS['CFG']->basedir.$dirroot); //sets script base using the same info
 
-require $GLOBALS['CFG']->basedir."/assets/php/phpmailer/class.phpmailer.php";
+require $GLOBALS['CFG']->basedir."/assets/core/phpmailer/class.phpmailer.php";
 require RESETPATH.'/main.inc.php';
 
 $child=new ResetPage($_SERVER['PATH_INFO']);
