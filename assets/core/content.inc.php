@@ -994,7 +994,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   }
   $vars['pagetitle']=@$page->title;
   $vars['softwareversion']=MOMOKOVERSION;
-  $vars['body']=str_replace('$','&#36;',@$page->inner_body); //str_replace here works around PHP $ (dollar sign) problems)
+  $vars['body']=preg_replace("/([\$])([A-za-z0-9])/","&#36;\\2",@$page->inner_body); //preg_replace here works around PHP $ (dollar sign) problems)
 
   if (@!$vars['body'] && @$page->full_html) // just in case the above didn't work, note: this is not elegant as it could result in invalid code, but will prevent links from appearing not to work. >.>
   {
