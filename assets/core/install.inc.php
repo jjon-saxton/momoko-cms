@@ -79,6 +79,9 @@ function fill_tables(array $admin,array $defaults=null)
   $rows['settings'][]=array('key'=>'support_email','value'=>$admin['email']);
   $rows['settings'][]=array('key'=>'security_logging','value'=>1);
   $rows['settings'][]=array('key'=>'error_logging','value'=>1);
+  $rows['settings'][]=array('key'=>'email_mta','value'=>'phpmail');
+  $rows['settings'][]=array('key'=>'email_server','value'=>"host=localhost");
+  $rows['settings'][]=array('key'=>'email_from',"name={$admin['name']}&address={$admin['email']}");
   
   $okay=0;
   $tottbls=0;
