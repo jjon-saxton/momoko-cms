@@ -77,7 +77,7 @@ HTML;
       $location=RESETURI."?sid=".$sid;
       //Mailer start
       $mail=new PHPMailer();
-      $email['type']=$GLOBALS['SET']['email_protocol'];
+      $email['type']=$GLOBALS['SET']['email_mta'];
       parse_str($GLOBALS['SET']['email_server'],$email['server']); //TODO apply %26 (&) workaround when setting values for 'email_server' and so forth, may already exist, furhter testing needed.
       parse_str($GLOBALS['SET']['email_from'],$email['from']);
       switch ($email['type'])
@@ -98,11 +98,23 @@ HTML;
         $mail->Username=$email['server']['user'];
         $mail->Password=$email['server']['password'];
 	break;
-        //TODO other connection types like sendmail
+	case 'sendmail':
+	$mail->isSendmail();
+	if ($email['server']['host'] != 'localhost')
+        {
+           trigger_error("Sendmail must be sent from this server. If you need to use an external server please configure the mailer for SMTP!",E_USER_ERROR);
+        }
+	break;
+        case 'phpmail':
+	default:
+        if ($email['server']['host'] != 'localhost')
+        {
+          trigger_error("You opted to use PHP's default Mail Transport Authority, but the hostname or server is not a local server, please use SMTP if you need to use an external server!",E_USER_ERROR);
+        }
       } 
       //Message header
-      $mail->From=$email['header']['from']['address'];
-      $mail->FromName=$email['header']['from']['name'];
+      $mail->From=$email['from']['address'];
+      $mail->FromName=$email['from']['name'];
       $mail->IsHTML(true);
       //Message
       $mail->AddAddress($data['email']);
