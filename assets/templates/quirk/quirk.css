@@ -10,7 +10,7 @@ a:active {color: #333}
 div.default {background: transparent; font: 12pt "Palatino Linotype", "Book Antiqua", Palatino, serif; color:#000}
 h1 { text-align: justify; color: #272728 }
 
-div#page {background:url(./quirk/pagebg.png) #F9FAFB  no-repeat fixed right top }
+div#page {background:url(./pagebg.png) #F9FAFB  no-repeat fixed right top }
 
 div#Content, div#Victorique, div#elFinder {background: #fff; color: #212122; border-radius:5px}
 div#Content ul, div#Content p, div#Victorique p {font:12pt "Times New Roman", Times, serif}
