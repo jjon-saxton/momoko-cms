@@ -335,7 +335,6 @@ HTML;
 XML;
   $xmlobj=new SimpleXMLElement($xmlstr);
   $arr=$this->map;
-  var_dump($arr);
   $this->convertArrToXmlObj($arr,$xmlobj);
   $dom=new DOMDocument('1.0'); //Folowing lines are used to process XML in easier to read format, for anyone who cares
   $dom->preserveWhiteSpace=false;
@@ -1140,6 +1139,7 @@ class MomokoAddinForm implements MomokoObject
   private function parse()
   {
     $info=parse_page($this->get());
+    $vars['sitedir']=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location;
     
     switch($this->form)
     {

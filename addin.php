@@ -445,4 +445,9 @@ elseif (@$_SERVER['PATH_INFO'])
  {
   echo $child->inner_body;
  }
+ else
+ {
+  $tpl=new MomokoTemplate();
+  print $tpl->toHTML($child);
+ }
 }
