@@ -40,7 +40,7 @@ class UMDialog implements MomokoObject
 
  public function build($eid='dialog-form')
  {
-  return <<<HTML
+  $this->inner_body=<<<HTML
 <div id="{$eid}">
 {$this->inner_body}
 </div>

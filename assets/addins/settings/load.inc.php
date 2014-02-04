@@ -22,6 +22,3 @@ else
   require USPATH."/form.inc.php";
   $child=new SettingsForm();
 }
-
-$tpl=new MomokoTemplate($dirroot.'/templates/main.tpl.htm');
-echo ($tpl->toHTML($child));

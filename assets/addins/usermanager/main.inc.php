@@ -171,6 +171,11 @@ HTML;
   }
  }
 
+ public function getJSON()
+ {
+  $this->info['inner_body']=json_encode($this->get());
+ }
+
  public function setInfo()
  {
   if ($data=$this->get())

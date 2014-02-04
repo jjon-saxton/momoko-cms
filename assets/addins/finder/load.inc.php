@@ -14,6 +14,3 @@ define ('FINDERPATH',$GLOBALS['CFG']->basedir.$dirroot); //sets script base usin
 require FINDERPATH.'/main.inc.php';
 
 $child=new FinderPage();
-
-$tpl=new MomokoTemplate($dirroot.'/templates/main.tpl.htm');
-echo ($tpl->toHTML($child));

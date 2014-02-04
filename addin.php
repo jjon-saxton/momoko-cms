@@ -441,13 +441,13 @@ elseif (@$_SERVER['PATH_INFO'])
    $child=new MomokoError('Forbidden');
   }
  }
- if (array_key_exists('ajax',$_GET) && $_GET['ajax'] == 1)
+ if ((array_key_exists('dialog',$_GET) && $_GET['dialog']) || (array_key_exists('ajax',$_GET) && $_GET['ajax'] == 1))
  {
   echo $child->inner_body;
  }
  else
  {
-  $tpl=new MomokoTemplate();
+  $tpl=new MomokoTemplate($GLOBALS['LOADED_ADDIN']->dirroot['value'].'/templates/main.tpl.htm');
   print $tpl->toHTML($child);
  }
 }
