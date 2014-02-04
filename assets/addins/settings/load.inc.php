@@ -1,12 +1,12 @@
 <?php
 $dirroot=$GLOBALS['LOADED_ADDIN']->dirroot['value'];
 
-define ('USURI',$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADDINROOT.pathinfo($dirroot,PATHINFO_BASENAME)); //set roots based off of addins folder found from manifest
-define ('USPATH',$GLOBALS['CFG']->basedir.$dirroot); //sets script base using the same info
+define ('USSURI',$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADDINROOT.pathinfo($dirroot,PATHINFO_BASENAME)); //set roots based off of addins folder found from manifest
+define ('USSPATH',$GLOBALS['CFG']->basedir.$dirroot); //sets script base using the same info
 
 if (!empty($_POST['send']))
 {
-  require USPATH."/apply.inc.php";
+  require USSPATH."/apply.inc.php";
   if (apply_settings($_POST))
   {
     header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADDINROOT.basename($dirroot));
@@ -19,6 +19,6 @@ if (!empty($_POST['send']))
 }
 else
 {
-  require USPATH."/form.inc.php";
+  require USSPATH."/form.inc.php";
   $child=new SettingsForm();
 }

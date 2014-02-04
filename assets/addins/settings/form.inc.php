@@ -31,8 +31,8 @@ class SettingsForm implements MomokoObject
   
   public function get()
   {
-    $data=file_get_contents(USPATH.'/form.htm');
-    $dates=file_get_contents(USPATH.'/commondates.json');
+    $data=file_get_contents(USSPATH.'/form.htm');
+    $dates=file_get_contents(USSPATH.'/commondates.json');
     $dates=json_decode($dates,true);
     if (preg_match("/<title>(?P<title>.*?)<\/title>/smU",$data,$match) > 0) //Find page title in $data
     {

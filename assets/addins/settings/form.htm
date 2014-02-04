@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Change Your Settings</title>
+    <title>Change Settings</title>
   </head>
   <body>
   <script>
@@ -28,8 +28,7 @@
     });
   });
   </script>
-  <h2>Change Your Settings</h2>
-  <p>Use the form below to change your settings.</p>
+  <h2>Change Settings</h2>
   <form method=post>
   <table width=100% border=0 cellspacing=1 cellpadding=1>
   <tr>
@@ -45,7 +44,7 @@
   <td align=right><label for="newpass2">Confirm New Password:</label> </td><td><input type=password name="newpass2" id="newpass2"><span id="passmsg" class="redflag" style="display:none">Password mismatch!</span></td>
   </tr>
   <tr>
-  <th colspan=2>Settings</th>
+  <th colspan=2>Your Settings</th>
   </tr>
   <tr valign=top>
   <td align=right><label for="sdf">Short Date Format:</label> </td><td><select name="commonsdf" id="sdf"><var>sdfopts</var></select> <input type=text name="shortdateformat" id="sdf" value="~{shortdateformat}"></td>
@@ -56,6 +55,34 @@
   <tr>
   <td align=right><label for="rpg">Items Per Page:</label> </td><td><input type=number name="rowspertable" value="~{rowspertable}"></td>
   </tr>
+<!-- TemplateIF($user->isAdmin()) // -->
+  <tr>
+  <th colspan=2>Site Settings</th>
+  </tr>
+  <tr>
+  <td align=right><label for="se">Support E-Mail:</label> </td><td><input id="se" type=text name="support_email" value="~{support_email}"></td>
+  </tr>
+  <tr>
+  <td align=right><label for="sl">Security Logging:</label> </td><td><var>security_logging_radio</var></td>
+  </tr>
+  <tr>
+  <td align=right><label for="el">Error Logging:</label> </td><td><var>error_loggin_radio</var></td>
+  </tr>
+  <tr>
+  <td align=right><label for="mta">Mail Transport Authority:</label> </td><td><select name="email_mta" id="mta">~{mta_options}</select></td>
+  </tr>
+  <tr>
+  <td align=right><label for="eserv">Mail Sever:</label> </td><td><ul id="eserv" class="nobullet"><li><label for="host">Hostname:</label> <input type=text name="email_server[host]" id="host" value="~{email_host}"></li>
+  <li><label for="port">Port:</label> <input type=text name="email_server[port]" id="port" value="~{email_port}"></li>
+  <li><label for="security">Security:</label> <var>email_security_radio</var></li>
+  <li><label for="user">User Name:</label> <input type=text name="email_server[username]" value="~{email_username}"></li>
+  <li><label for="pass">Password:</label> <input type=password name="email_server[password]" value="~{email_password"> <a href="#">unmask</a></ul></td>
+  </tr>
+  <tr>
+  <td align=right><label for="efrom">Mail From Line:</label> </td><td><ul id="efrom" class="nobullet"><li><label for="from_name">Name:</label> <input type=text name="email_from[name]" id="from_name" value="~{email_from_name}"></li>
+<li><label for="from_address">Address</label> <input type=text name="email_from[address]" id="from_address" value="~{email_from_address}"></li></ul></td>
+  </tr>
+<!-- //EndTemplateIF -->
   <tr>
   <th colspan=2>Save</th>
   </tr>
