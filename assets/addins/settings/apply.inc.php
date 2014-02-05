@@ -20,8 +20,21 @@ function apply_settings($data)
     trigger_error("Password not changed! New passwords do not match!",E_USER_WARNING);
     return false;
   }
+
+  if($GLOBALS['USR']->inGroup('admin'))
+  {
+   $stbl=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
+   $data['email_server']=http_build_query($data['email_server']);
+   $data['email_from']=http_build_query($data['email_from']);
+
+   $news=$stbl->updateData($data);
+  }
+  else
+  {
+   $news="user not admin"; //set a value here so the logic below still shows true when needed
+  }
   
-  if ($new=$utbl->updateData($data))
+  if ($newu=$utbl->updateData($data) && $news)
   {
     return true;
   }

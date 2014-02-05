@@ -92,7 +92,7 @@ class SettingsForm implements MomokoObject
        $vars['email_port']=$email['server']['port'];
        $vars['email_username']=$email['server']['username'];
        $vars['email_password']=$email['server']['password'];
-       $vars['email_security_radio']="<input type=radio name=\"server[security]\" id=\"esec0\" value=\"\"><label for=\"esec0\"> None</label> <input type=radio name=\"server[security]\" id=\"esec1\" value=\"ssl\"><label for=\"esec1\"> SSL</label> <input type=radio name=\"server[security]\" id=\"esec2\" value=\"tls\"><label for=\"esec2\"> TLS</label>";
+       $vars['email_security_radio']="<input type=radio name=\"email_server[security]\" id=\"esec0\" value=\"\"><label for=\"esec0\"> None</label> <input type=radio name=\"email_server[security]\" id=\"esec1\" value=\"ssl\"><label for=\"esec1\"> SSL</label> <input type=radio name=\"email_server[security]\" id=\"esec2\" value=\"tls\"><label for=\"esec2\"> TLS</label>";
        parse_str($this->site['email_from'],$email['from']);
        $vars['email_from_address']=$email['from']['address'];
        $vars['email_from_name']=$email['from']['name'];
