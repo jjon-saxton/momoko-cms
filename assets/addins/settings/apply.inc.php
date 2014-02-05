@@ -27,11 +27,11 @@ function apply_settings($data)
    $data['email_server']=http_build_query($data['email_server']);
    $data['email_from']=http_build_query($data['email_from']);
 
-   $news=$stbl->updateData($data);
+   $news=$stbl->updateData($data) or die(trigger_error(mysql_error(),E_USER_ERROR)); //TODO Must fix DAL's updateData to handle non-numeric primary keys!
   }
   else
   {
-   $news="user not admin"; //set a value here so the logic below still shows true when needed
+   $news=true; //set a value here so the logic below still shows true when needed
   }
   
   if ($newu=$utbl->updateData($data) && $news)
