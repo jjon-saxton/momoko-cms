@@ -337,7 +337,7 @@ class DataBaseTable implements DALTable
  {
   foreach($this->fieldlist as $item => $value)
   {
-   if (isset($item['pkey']))
+   if (isset($value['pkey']))
    {
     return $item;
    }

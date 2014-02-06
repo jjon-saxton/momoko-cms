@@ -60,7 +60,7 @@
   <th colspan=2>Site Settings</th>
   </tr>
   <tr>
-  <td align=right><label for="se">Support E-Mail:</label> </td><td><input id="se" type=text name="support_email" value="~{support_email}"></td>
+  <td align=right><label for="se">Support E-Mail:</label> </td><td><input id="se" type=text name="site[support_email]" value="~{support_email}"></td>
   </tr>
   <tr>
   <td align=right><label for="sl">Security Logging:</label> </td><td><var>security_logging_radio</var></td>
@@ -69,18 +69,18 @@
   <td align=right><label for="el">Error Logging:</label> </td><td><var>error_logging_radio</var></td>
   </tr>
   <tr>
-  <td align=right><label for="mta">Mail Transport Authority:</label> </td><td><select name="email_mta" id="mta">~{mta_options}</select></td>
+  <td align=right><label for="mta">Mail Transport Authority:</label> </td><td><select name="site[email_mta]" id="mta">~{mta_options}</select></td>
   </tr>
   <tr>
-  <td align=right><label for="eserv">Mail Sever:</label> </td><td><table id="eserv"><tr><td align=right><label for="host">Hostname:</label></td><td><input type=text name="email_server[host]" id="host" value="~{email_host}"></td></tr>
-  <tr><td align=right><label for="port">Port:</label></td><td><input type=text name="email_server[port]" id="port" value="~{email_port}"></td></tr>
+  <td align=right><label for="eserv">Mail Sever:</label> </td><td><table id="eserv"><tr><td align=right><label for="host">Hostname:</label></td><td><input type=text name="site[email_server][host]" id="host" value="~{email_host}"></td></tr>
+  <tr><td align=right><label for="port">Port:</label></td><td><input type=text name="site[email_server][port]" id="port" value="~{email_port}"></td></tr>
   <tr><td align=right><label for="security">Security:</label></td><td><var>email_security_radio</var></td></tr>
-  <tr><td align=right><label for="user">User Name:</label></td><td><input type=text name="email_server[username]" value="~{email_username}"></td><tr>
-  <tr><td align=right><label for="pass">Password:</label></td><td><input type=password name="email_server[password]" value="~{email_password"> <a href="#">unmask</a></td></tr></table></td>
+  <tr><td align=right><label for="user">User Name:</label></td><td><input type=text name="site[email_server][username]" value="~{email_username}"></td><tr>
+  <tr><td align=right><label for="pass">Password:</label></td><td><input type=password name="site[email_server][password]" value="~{email_password}"> <a href="#">unmask</a></td></tr></table></td>
   </tr>
   <tr>
-  <td align=right><label for="efrom">Mail From Line:</label> </td><td><table id="efrom"><tr><td align=right><label for="from_name">Name:</label></td><td><input type=text name="email_from[name]" id="from_name" value="~{email_from_name}"></td></tr>
-<tr><td align=right><label for="from_address">Address:</label></td><td><input type=text name="email_from[address]" id="from_address" value="~{email_from_address}"></td></tr></table></td>
+  <td align=right><label for="efrom">Mail From Line:</label> </td><td><table id="efrom"><tr><td align=right><label for="from_name">Name:</label></td><td><input type=text name="site[email_from][name]" id="from_name" value="~{email_from_name}"></td></tr>
+<tr><td align=right><label for="from_address">Address:</label></td><td><input type=text name="site[email_from][address]" id="from_address" value="~{email_from_address}"></td></tr></table></td>
   </tr>
 <!-- //EndTemplateIF -->
   <tr>

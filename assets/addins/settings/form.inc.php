@@ -59,25 +59,25 @@ class SettingsForm implements MomokoObject
        $vars['support_email']=$this->site['support_email'];
        if ($this->site['security_logging'] == 1)
        {
-        $vars['security_logging_radio']="<input type=radio name=\"security_logging\" id=\"sl1\" checked=checked value=1><label for=\"sl1\"> Enabled</label> <input name=\"security_logging\" type=radio id=\"sl0\" value=0><label for=\"sl0\"> Disabled</label>";
+        $vars['security_logging_radio']="<input type=radio name=\"site[security_logging]\" id=\"sl1\" checked=checked value=1><label for=\"sl1\"> Enabled</label> <input name=\"site[security_logging]\" type=radio id=\"sl0\" value=0><label for=\"sl0\"> Disabled</label>";
        }
        else
        {
-        $vars['security_logging_radio']="<input type=radio name=\"security_logging\" id=\"sl1\" value=1><label for=\"sl1\"> Enabled</label> <input type=radio checked=checked name=\"security_logging\" id=\"sl0\" value=0><label for=\"sl0\"> Disabled</label>";
+        $vars['security_logging_radio']="<input type=radio name=\"site[security_logging]\" id=\"sl1\" value=1><label for=\"sl1\"> Enabled</label> <input type=radio checked=checked name=\"site[security_logging]\" id=\"sl0\" value=0><label for=\"sl0\"> Disabled</label>";
        }
        if ($this->site['error_logging'] == 1)
        {
-        $vars['error_logging_radio']="<input type=radio name=\"error_logging\" id=\"el1\" checked=checked value=1><label for=\"el1\"> Enabled</label> <input name=\"error_logging\" type=radio id=\"el0\" value=0><label for=\"el0\"> Disabled</label>";
+        $vars['error_logging_radio']="<input type=radio name=\"site[error_logging]\" id=\"el1\" checked=checked value=1><label for=\"el1\"> Enabled</label> <input name=\"site[error_logging]\" type=radio id=\"el0\" value=0><label for=\"el0\"> Disabled</label>";
        }
        else
        {
-        $vars['error_logging_radio']="<input type=radio name=\"error_logging\" id=\"el1\" value=1><label for=\"el1\"> Enabled</label> <input type=radio checked=checked name=\"error_logging\" id=\"el0\" value=0><label for=\"el0\"> Disabled</label>";
+        $vars['error_logging_radio']="<input type=radio name=\"site[error_logging]\" id=\"el1\" value=1><label for=\"el1\"> Enabled</label> <input type=radio checked=checked name=\"site[error_logging]\" id=\"el0\" value=0><label for=\"el0\"> Disabled</label>";
        }
 
        $vars['mta_options']="";
        foreach ($mtas as $mta)
        {
-        if ($this->site['email_protocol'] == $mta)
+        if ($this->site['email_mta'] == $mta)
         {
          $vars['mta_options'].="<option selected=selected>{$mta}</option>";
         }
@@ -92,7 +92,7 @@ class SettingsForm implements MomokoObject
        $vars['email_port']=$email['server']['port'];
        $vars['email_username']=$email['server']['username'];
        $vars['email_password']=$email['server']['password'];
-       $vars['email_security_radio']="<input type=radio name=\"email_server[security]\" id=\"esec0\" value=\"\"><label for=\"esec0\"> None</label> <input type=radio name=\"email_server[security]\" id=\"esec1\" value=\"ssl\"><label for=\"esec1\"> SSL</label> <input type=radio name=\"email_server[security]\" id=\"esec2\" value=\"tls\"><label for=\"esec2\"> TLS</label>";
+       $vars['email_security_radio']="<input type=radio name=\"site[email_server][security]\" id=\"esec0\" value=\"\"><label for=\"esec0\"> None</label> <input type=radio name=\"site[email_server][security]\" id=\"esec1\" value=\"ssl\"><label for=\"esec1\"> SSL</label> <input type=radio name=\"site[email_server][security]\" id=\"esec2\" value=\"tls\"><label for=\"esec2\"> TLS</label>";
        parse_str($this->site['email_from'],$email['from']);
        $vars['email_from_address']=$email['from']['address'];
        $vars['email_from_name']=$email['from']['name'];

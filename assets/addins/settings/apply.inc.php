@@ -24,17 +24,20 @@ function apply_settings($data)
   if($GLOBALS['USR']->inGroup('admin'))
   {
    $stbl=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
-   $data['email_server']=http_build_query($data['email_server']);
-   $data['email_from']=http_build_query($data['email_from']);
+   $site_data=$data['site'];
+   $site_data['email_server']=http_build_query($site_data['email_server']);
+   $site_data['email_from']=http_build_query($site_data['email_from']);
 
-   $news=$stbl->updateData($data) or die(trigger_error(mysql_error(),E_USER_ERROR)); //TODO Must fix DAL's updateData to handle non-numeric primary keys!
-  }
-  else
-  {
-   $news=true; //set a value here so the logic below still shows true when needed
+   foreach ($site_data as $key=>$value)
+   {
+    $new_settings['key']=$key;
+    $new_settings['value']=$value;
+    $news[]=$stbl->updateData($new_settings) or die(trigger_error(mysql_error(),E_USER_ERROR));
+   }
+   $data['site']=serialize($news); //we could just empty this, but this is far more fun, if it causes to much overhead, we'll remove it!
   }
   
-  if ($newu=$utbl->updateData($data) && $news)
+  if ($newu=$utbl->updateData($data))
   {
     return true;
   }
