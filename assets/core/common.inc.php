@@ -240,7 +240,7 @@ class MomokoVariableHandler
 
   public function evalIf($exp,$true_block,$false_block=null)
   {
-   if ($exp)
+   if (eval("return $exp;"))
    {
     return $true_block;
    }
