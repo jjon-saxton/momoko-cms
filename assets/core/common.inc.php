@@ -238,6 +238,18 @@ class MomokoVariableHandler
    return $mod->getModule('html');
   }
 
+  public function evalIf($exp,$true_block,$false_block=null)
+  {
+   if ($exp)
+   {
+    return $true_block;
+   }
+   else
+   {
+    return $false_block;
+   }
+  }
+
   public function replace($text)
   {
     //Replace variables
@@ -284,6 +296,26 @@ class MomokoVariableHandler
 	      $text=preg_replace("/<var>".$var."<\/var>/","<!-- Notice: variable '".$var."' not set or empty -->",$text);
 	     }
       }
+    }
+    //Evaluate If statements to produce the best block
+    if (preg_match_all("/<!-- TemplateIF:(?P<expression>.*?)\/\/ -->(?P<iftrue>.*?)<!-- \/\/EndIF -->/smU",$text,$list)) //simple if only
+    {
+     $tracker=0;
+     foreach ($list['expression'] as $exp)
+     {
+      $text=preg_replace("/<!-- TemplateIF:".preg_quote($exp)."\/\/ -->(.*?)<!-- \/\/EndIF -->/smU",$this->evalIF($exp,$list['iftrue'][$tracker]),$text);
+      $tracker++;
+     }
+    }
+
+    if (preg_match_all("/<!-- TemplateIF:(?P<expression>.*?)\/\/ --><?P<iftrue>.*?)<!-- \/\/ELSE\/\/ --><?P<iffalse>.*?)<!-- \/\/EndIF -->/smU",$text,$list)) //if/else
+    {
+     $tracker=0;
+     foreach ($list['expression'] as $exp)
+     {
+      $text=preg_replace("/<!-- TemplateIF:".preg_quote($exp)."\/\/ -->(.*?)<!-- \/\/EndIF -->/smU",$this->evalIF($exp,$list['iftrue'][$tracker],$list['iffalse'][$tracker]),$text);
+      $tracker++;
+     }
     }
 
     //Replace DataBase Blocks

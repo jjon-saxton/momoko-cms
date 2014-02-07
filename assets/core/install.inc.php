@@ -45,7 +45,7 @@ function create_tables()
   }
 }
 
-function fill_tables(array $admin,array $defaults=null)
+function fill_tables(array, $site, array $admin,array $defaults=null)
 {
   if (empty($defaults['sdf']))
   {
@@ -76,6 +76,8 @@ function fill_tables(array $admin,array $defaults=null)
   $rows['users'][]=$admin;
   
   $rows['settings'][]=array('key'=>'version','value'=>'1.2');
+  $rows['settings'][]=array('key'=>'name','value'=>$site['name']);
+  $rows['settings'][]=array('key'=>'template','value'=>'quirk');
   $rows['settings'][]=array('key'=>'support_email','value'=>$admin['email']);
   $rows['settings'][]=array('key'=>'security_logging','value'=>1);
   $rows['settings'][]=array('key'=>'error_logging','value'=>1);

@@ -55,7 +55,7 @@
   <tr>
   <td align=right><label for="rpg">Items Per Page:</label> </td><td><input type=number name="rowspertable" value="~{rowspertable}"></td>
   </tr>
-<!-- TemplateIF($user->isAdmin()) // -->
+<!-- TemplateIF:$GLOBALS['USR']->inGroup('admin') // -->
   <tr>
   <th colspan=2>Site Settings</th>
   </tr>
