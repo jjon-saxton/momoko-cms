@@ -21,25 +21,27 @@ else
  define("ADDINROOT","/addin.php/");
  define("NEWSROOT","/news.php/");
 }
+define("TEMPLATEROOT","/assets/templates/");
 define("MOMOKOVERSION",trim(file_get_contents($GLOBALS['CFG']->basedir.'/assets/etc/version.nfo.txt'),"\n"));
 
 #Load DAL
 require $GLOBALS['CFG']->basedir.'/assets/dal/load.inc.php';
 
-#Add advanced/changable settings
-$settings=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
-$settings=$settings->getData();
-$settings=$settings->toArray();
-foreach ($settings as $pairs)
-{
-  $GLOBALS['SET'][$pairs['key']]=$pairs['value'];
-}
-unset($setting,$pairs);
-
 #Set up a user session so long as we are not in CLI mode or installing
 require_once $GLOBALS['CFG']->basedir.'/assets/core/user.inc.php';
 if (!defined("INCLI") &&  basename($_SERVER['PHP_SELF']) != 'install.php')
 {
+  #Add advanced/changable settings
+  $settings=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
+  $settings=$settings->getData();
+  $settings=$settings->toArray();
+  foreach ($settings as $pairs)
+  {
+    $GLOBALS['SET'][$pairs['key']]=$pairs['value'];
+  }
+  unset($setting,$pairs);
+  $GLOBALS['SET']['template']=TEMPLATEROOT.$GLOBALS['SET']['template'].'/'.$GLOBALS['SET']['template'].'.tpl.htm';
+
   define ("CURURI",$GLOBALS['CFG']->domain.'/'.ltrim(preg_replace("/\?.*/",'',$_SERVER['REQUEST_URI']),"\/"));
 
  session_name($GLOBALS['CFG']->session);

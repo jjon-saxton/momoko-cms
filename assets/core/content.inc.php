@@ -960,7 +960,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   }
   else
   {
-   $this->template=$GLOBALS['CFG']->default_template;
+   $this->template=$GLOBALS['SET']['template'];
   }
   
   return file_get_contents($GLOBALS['CFG']->basedir.$this->template);
@@ -977,7 +977,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
  {
   $html=$this->get();
   $vars['siteroot']=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location;
-  $vars['sitename']=$GLOBALS['CFG']->sitename;
+  $vars['sitename']=$GLOBALS['SET']['name'];
   $vars['pagetitle']="Untitled";
   $vars['corestyles']=$vars['siteroot'].'/assets/core/styles/';
   $vars['templatedir']=$vars['siteroot'].dirname($this->template);
