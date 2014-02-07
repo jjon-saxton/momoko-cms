@@ -40,7 +40,7 @@ if (!defined("INCLI") &&  basename($_SERVER['PHP_SELF']) != 'install.php')
     $GLOBALS['SET'][$pairs['key']]=$pairs['value'];
   }
   unset($setting,$pairs);
-  $GLOBALS['SET']['template']=TEMPLATEROOT.$GLOBALS['SET']['template'].'/'.$GLOBALS['SET']['template'].'.tpl.htm';
+  define ("TEMPLATEPATH",TEMPLATEROOT.$GLOBALS['SET']['template'].'/'.$GLOBALS['SET']['template'].'.tpl.htm');
 
   define ("CURURI",$GLOBALS['CFG']->domain.'/'.ltrim(preg_replace("/\?.*/",'',$_SERVER['REQUEST_URI']),"\/"));
 

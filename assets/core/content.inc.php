@@ -960,7 +960,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   }
   else
   {
-   $this->template=$GLOBALS['SET']['template'];
+   $this->template=TEMPLATEPATH;
   }
   
   return file_get_contents($GLOBALS['CFG']->basedir.$this->template);

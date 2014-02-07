@@ -56,6 +56,8 @@ class SettingsForm implements MomokoObject
 
       if (!empty($this->site['version']))
       {
+       $vars['site_name']=$this->site['name'];
+       $vars['site_template']=$this->site['template'];
        $vars['support_email']=$this->site['support_email'];
        if ($this->site['security_logging'] == 1)
        {
