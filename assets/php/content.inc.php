@@ -310,7 +310,7 @@ HTML;
        if (!empty($new['@attributes']['file']))
        {
         unset($new['@attributes']['file']);
-        $new['@attributes']['file']=$attrs['file'];
+        $new['@attributes']['file']='/'.trim($attrs['file'],'/');
        }
        $new['@children']=$this->HTMLArraytoMap($child['childNodes']);
       }
@@ -342,7 +342,7 @@ XML;
   $dom->formatOutput=true;
   $dom->loadXML($xmlobj->asXML());
   $data=$dom->saveXML();
-  if (file_put_contents($GLOBALS['CFG']->pagedir.'/map.xml',$data)) // Replace with actual path!
+  if (file_put_contents($GLOBALS['CFG']->pagedir.'/map.xml',$data))
   {
    return true;
   }
