@@ -307,7 +307,7 @@ HTML;
  }
  break;
  case 'post':
- include $GLOBALS['CFG']->basedir.'/assets/php/class.htmlParser.php';
+ include $GLOBALS['CFG']->basedir.'/assets/core/class.htmlParser.php';
  $parser=new htmlParser($_POST['raw_dom']);
  $html=$parser->toArray();
  $nav=new MomokoNavigation($GLOBALS['USR'],'display=none');

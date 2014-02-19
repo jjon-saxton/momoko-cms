@@ -18,7 +18,7 @@ The steps outlined here will help you set up a folder on your server as a local 
 2. Once you have an shell prompt create a folder for MomoKO or change to your web folder either `mkdir momoko && cd momoko` or `cd public_html` replace momoko or public_html with the correct folder name.
 3. Set-up git in the folder you switched to; `git init`
 4. Set our repo as this folder's remote origin: `git remote add origin https://github.com/jjon-saxton/momoko-cms.git`
-5. Download from git: `git pull origin 1.1-BETA`
+5. Download from git: `git pull origin latest_stable`
 6. Proceed to 'Configuring MomoKO'
 
 #### 1.2 Using a ZIP file from our repo
@@ -39,9 +39,6 @@ You should get to files, `dal.conf.txt` and `main.conf.txt`. First open `main.co
 
 #### 2.1 main.conf.txt Settings
 
-sitename
-:	This is the name of your site, it will appear in certain title sections
-
 basedir
 :	This sets the location of your MomoKO's scripts. This should be set to the *absolute* path to the folder MomoKO was put in when you acquired her.
 
@@ -59,9 +56,6 @@ domain
 
 location
 :	The location of you site according to your web server software. This is often just the folder underneath you web document folder where you put MomoKO, but this can be different if your server uses userdirs. Please consult your server documentation if this is the case. If in doubt, leave blank and see if there are errors.
-
-default_template
-:	This sets the path for the template to load if none is found in the current page folder. MomoKO comes with the Quirk template developed by Jon Saxton at SaxtonSolutions LLC, other templates will become available on our website.
 
 session
 :	Gives the MomoKO session a name, by default this is 'mk', there should be no need to change it unless you have multiple MomoKO instances on your server or something else that sets a cookie with that name.
