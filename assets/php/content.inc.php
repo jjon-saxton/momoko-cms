@@ -288,6 +288,7 @@ HTML;
         {
          $attrs['file']=preg_replace("/".preg_quote($GLOBALS['CFG']->domain.$GLOBALS['CFG']->location,"/")."/","",$grandchild['attributes']['href']);
 	 $attrs['file']=preg_replace("/http:/",'',$attrs['file']);
+	 $attrs['file']="/".trim($attrs['file'],"/"); //Since removing extra slashes (/) never seemed to work above we will trim them off here and readd a single slash to the front.
         }
 	else
 	{
