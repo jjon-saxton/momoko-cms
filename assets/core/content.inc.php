@@ -342,8 +342,9 @@ XML;
   $dom->formatOutput=true;
   $dom->loadXML($xmlobj->asXML());
   $data=$dom->saveXML();
-  if (file_put_contents($GLOBALS['CFG']->pagedir.'/map.xml',$data)) // Replace with actual path!
+  if (file_put_contents($GLOBALS['CFG']->pagedir.'/map.xml',$data))
   {
+   momoko_changes($GLOBALS['USR'],'updated',$this,"Changes were written to {$GLOBALS['CFG']->pagedir}/map.xml");
    return true;
   }
   else
@@ -566,7 +567,7 @@ XML;
   $data=$dom->saveXML();
   if (file_put_contents($GLOBALS['CFG']->pagedir.'/news.xml',$data)) // Replace with actual path!
   {
-   momoko_changes($GLOBALS['USR'],'updated',$this,"Changes were written to news.xml!");
+   momoko_changes($GLOBALS['USR'],'updated',$this,"Changes were written to {$GLOBALS['CFG']}/news.xml!");
    return true;
   }
   else

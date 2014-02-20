@@ -464,15 +464,18 @@ function momoko_changes($user,$action,$resource,$message=null)
 	case 'MomokoNews':
 	$string.=" News Article ".$resource->title;
 	break;
+        case 'MomokoNavigation':
+	$string.=" Site Map";
+	break;
 	default:
-	$string.=" Addin Object";
+	$string.=" Addin Object".@$resource->path;
       }
       if (!empty($message))
       {
 	$string.=" : ".$message;
       }
       
-      if (($GLOBALS['SET']['security_logging'] > 1) || (!$user->inGroup('admin')))
+      if ($GLOBALS['SET']['security_logging'] > 0)
       {
        fwrite($log,$string);
       }

@@ -73,6 +73,7 @@ class MomokoAddin implements MomokoObject
       {
 	$new=$this->table->getData("num:'= ".$num."'",null,null,1);
 	$info=$new->toArray();
+	momoko_changes($GLOBALS['USR'],'added',$this);
 	if (is_array($info[0]))
 	{
 	  return $info[0];
@@ -122,6 +123,7 @@ class MomokoAddin implements MomokoObject
       {
 	$new=$this->table->getData("num:'= ".$num."'",null,null,1);
 	$info=$new->toArray();
+	momoko_changes($GLOBALS['USR'],'updated',$this);
 	if (is_array($info[0]))
 	{
 	  return $info[0];
@@ -210,6 +212,7 @@ HTML;
     $ddata['num']=$data->num;
     if ($table->removeData($ddata) && rmdirr($GLOBALS['CFG']->basedir.'/assets/addins/'.$data->dir))
     {
+      momoko_changes($GLOBALS['USR'],'dropped',$this);
       $ddata['succeed']=true;
     }
     else
@@ -290,6 +293,7 @@ HTML;
   
   if ($update=$this->table->updateData($ndata))
   {
+    momoko_changes($GLOBALS['USR'],'toggled',$this,"Addin is enabled is now set to=".$ndata['enabled']);
     return $ndata['enabled'];
   }
   else
