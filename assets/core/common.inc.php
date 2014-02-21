@@ -308,7 +308,7 @@ class MomokoVariableHandler
      }
     }
 
-    if (preg_match_all("/<!-- TemplateIF:(?P<expression>.*?)\/\/ --><?P<iftrue>.*?)<!-- \/\/ELSE\/\/ --><?P<iffalse>.*?)<!-- \/\/EndIF -->/smU",$text,$list)) //if/else
+    if (preg_match_all("/<!-- TemplateIF:(?P<expression>.*?)\/\/ -->(<?P<iftrue>.*?)<!-- \/\/ELSE\/\/ -->(<?P<iffalse>.*?)<!-- \/\/EndIF -->/smU",$text,$list)) //if/else
     {
      $tracker=0;
      foreach ($list['expression'] as $exp)
@@ -452,33 +452,37 @@ function momoko_changes($user,$action,$resource,$message=null)
 {
   if ($GLOBALS['SET']['security_logging'] > 0)
   {
-    if (is_writable($GLOBALS['CFG']->logdir.'/changes.log'))
-    {
-      $log=fopen($GLOBALS['CFG']->logdir.'/changes.log','a');
-      $string="[".date("Y-m-d H:i:s")."] ".$user->name." (".$user->num.") ".$action;
       switch (get_class($resource))
       {
 	case 'MomokoPage':
-	$string.=" Page ".$resource->title;
+	$target="Page ".$resource->title;
 	break;
 	case 'MomokoNews':
-	$string.=" News Article ".$resource->title;
+	$target="News Article ".$resource->title;
 	break;
         case 'MomokoNavigation':
-	$string.=" Site Map";
+	$target="Site Map";
 	break;
 	default:
-	$string.=" Addin Object".@$resource->path;
-      }
-      if (!empty($message))
-      {
-	$string.=" : ".$message;
+	$target="Addin Object".@$resource->path;
       }
       
-      if ($GLOBALS['SET']['security_logging'] > 0)
+    momoko_basic_changes($user,$action,$target,$message);
+  }
+}
+
+function momoko_basic_changes($user,$action,$target,$message=null)
+{
+  if ($GLOBALS['SET']['security_logging'] > 0)
+  {
+    if (is_writable($GLOBALS['CFG']->logdir.'/changes.log'))
+    {
+      if (!empty($message))
       {
-       fwrite($log,$string);
+        $message=": ".$message;
       }
+      $log=fopen($GLOBALS['CFG']->logdir.'/changes.log','a');
+      fwrite($log,"[".date("Y-m-d H:i:s")."] ".$user->name." (".$user->num.":".$_SERVER['REMOTE_ADDR'].") ".$action." ".$target.$message."\n");
     }
     else
     {

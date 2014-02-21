@@ -653,7 +653,7 @@ HTML;
    if (file_put_contents($GLOBALS['CFG']->pagedir.$this->path,$full_html))
    {
     $dir=pathinfo($this->path,PATHINFO_DIRNAME);
-    if (pathinfo($data['pagename'],PATHINFO_EXTENSION) != 'htm' || pathinfo($data['pagename'],PATHINFO_EXTENSION) != 'html')
+    if (pathinfo($data['pagename'],PATHINFO_EXTENSION) != 'htm' && pathinfo($data['pagename'],PATHINFO_EXTENSION) != 'html')
     {
      $data['pagename'].=".htm";
     }

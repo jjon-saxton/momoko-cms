@@ -13,6 +13,7 @@ function apply_settings($data)
   if (crypt($data['check'],$cur_data->password) == $cur_data->password && $data['newpass1'] == $data['newpass2'])
   {
     $data['password']=crypt($data['newpass2'],$GLOBALS['CFG']->salt);
+    momoko_basic_changes($GLOBALS['USR'],"changed","their password");
     unset($data['newpass1'],$data['newpass2']);
   }
   elseif (crypt($data['check'],$cur_data->password) == $cur_data->password && $data['newpass1'] != $data['newpass2'])
@@ -34,6 +35,7 @@ function apply_settings($data)
     $new_settings['value']=$value;
     $news[]=$stbl->updateData($new_settings) or die(trigger_error(mysql_error(),E_USER_ERROR));
    }
+   momoko_basic_changes($GLOBALS['USR'],'updated','Site Settings');
    $data['site']=serialize($news); //we could just empty this, but this is far more fun, if it causes to much overhead, we'll remove it!
   }
   

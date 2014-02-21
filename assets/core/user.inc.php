@@ -33,7 +33,7 @@ class MomokoSession
       $this->name=$name;
       $this->user=$user;
       $this->groups=$this->updateGroups();
-      fwrite($log,"[".date('Y-m-d H:i:s')."] Session started for user ".$name.".\n");
+      fwrite($log,"[".date('Y-m-d H:i:s')."] Session started for user ".$name." at ".$_SERVER['REMOTE_ADDR'].".\n");
       return true;
     }
     else
