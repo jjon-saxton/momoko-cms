@@ -1028,17 +1028,17 @@ class MomokoPCModule implements MomokoModuleInterface
 
  public function getModule($format='html')
  {
-  if (@$_GET['action'] == 'new' || @$_GET['action'] == 'edit')
+  $ext=pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_EXTENSION);
+  if ((empty($_SERVER['PATH_INFO']) || $ext == 'htm' || $ext == 'html') && (@$_GET['action'] != 'edit' && @$_GET['action'] != 'new'))
   {
-   return null;
-  }
-  elseif ($this->opts['nouser'] == 'hidden' && ($this->user->inGroup('admin') || $this->user->inGroup('editor')))
-  {
-   return $this->buildControls($format);
-  }
-  elseif (@empty($this->opts['nouser']) || @$this->opts['nouser'] == 'visible')
-  {
-   return $this->buildControls($format);
+    if ($this->opts['nouser'] == 'hidden' && ($this->user->inGroup('admin') || $this->user->inGroup('editor')))
+    {
+      return $this->buildControls($format);
+    }
+    elseif (@empty($this->opts['nouser']) || @$this->opts['nouser'] == 'visible')
+    {
+      return $this->buildControls($format);
+    }
   }
   else
   {
