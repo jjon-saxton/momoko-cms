@@ -97,7 +97,7 @@ class MomokoAddin implements MomokoObject
  {
   if (empty($data['archive']))
   {
-    return new MomokoAddinForm('update');
+    return new MomokoAddinForm('add');
   }
   else
   {

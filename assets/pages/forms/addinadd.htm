@@ -3,11 +3,9 @@
 <title>Add Addin</title>
 </head>
 <body>
-<h2>Add Addin</h2>
 <form enctype="multipart/form-data" action="./?action=upload&ajax=1" method="post" target="droptarget">
 <ul class="nobullet noindent">
 <li id="file"><label for="file">Browse for file (file must be a zipped archive):</label> <input name="addin" type="file" id="file" onchange="iUpload(this)"></li>
-<li><label for="enabled">Enable:</label> <span id="enabled"><var>enabled_radios</var><input type=hidden id="incp" value="n"></span></li>
 <li><label for="addin-name">Name:</label> <input type="text" id="addin-name" disabled=disabled value=""><input type=hidden name="dir" value=""></li>
 <li><label for="addin-title">Full Title:</label> <input type="text" id="addin-title" disabled=disabled value=""></li>
 <li><label for="addin-description">Description:</label><br>
