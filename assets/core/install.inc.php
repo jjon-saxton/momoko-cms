@@ -118,3 +118,12 @@ function fill_tables(array, $site, array $admin,array $defaults=null)
     return false;
   }
 }
+
+function db_upgrade($version,array $newsettings,$backup=null)
+{
+ if ($backup == 'Y' || $backup == 'y')
+ {
+  //DAL Needs to provide backup methods (see issue 0000008)
+ }
+ //TODO we need to analyze the differences between the two versions since I didn't keep in notes =^^;=
+}
