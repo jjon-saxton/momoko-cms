@@ -119,11 +119,32 @@ function fill_tables(array, $site, array $admin,array $defaults=null)
   }
 }
 
-function db_upgrade($version,array $newsettings,$backup=null)
+function db_upgrade($version,array $settings,$backup=null)
 {
  if ($backup == 'Y' || $backup == 'y')
  {
   //DAL Needs to provide backup methods (see issue 0000008)
  }
- //TODO we need to analyze the differences between the two versions since I didn't keep in notes =^^;=
+ $db=new DataBaseStructure(DAL_DB_DEFAULT);
+ $tables['addins']=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
+ echo("Altering addin table columns...\n");
+ $tables['addins']->putField("enabled","char",1,"NOT NULL");
+ echo("Dropping old/unused tables...\n");
+ $db->dropTable(DAL_TABLE_PRE.'merchants',DAL_DB_DEFAULT) or die(trigger_error("Unable to drop old table '".DAL_TABLE_PRE."merchants'!",E_USER_ERROR);
+ echo("Adding the new settings table...\n");
+ $settings_def[0]="`key` VARCHAR(30) NOT NULL PRIMARY KEY";
+ $settings_def[1]="`value` VARCHAR(255) NOT NULL";
+ $db->addTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT) or die(trigger_error("Unable to add new settings table please try again!",E_USER_ERROR);
+ $table['settings']=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
+ $settings['email_mta']='phpmail';
+ $settings['email_server']='host=localhost';
+ $settings['email_from']='name='.$settings['from']['name']."&address=".$settings['from']['address'];
+ unset($settings['from']);
+ foreach ($settings as $key=>$value)
+ {
+  $newrow['key']=$key;
+  $newrow['value']=$value;
+  $row=$table['settings']->putData($newrow) or die(trigger_error("Could not add setting '{$key}'");
+ }
+ return true;
 }

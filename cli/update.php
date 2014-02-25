@@ -56,6 +56,14 @@ if (strtolower($update) == 'y')
    $newsettings['name']=trim("\n",fputs(STDIN));
    fwrite(STDOUT,"What e-mail should we use for support inquiries?");
    $newsettings['support_email']=trim("\n",fputs(STDIN));
+   fwrite(STDOUT,"What e-mail do you want to send automatic e-mail from? [{$newsettings['support_email']}]");
+   $newsettings['from']['address']=trim("\n",fputs(STDIN));
+   if (empty($newsettings['from']['address']))
+   {
+    $newsettings['from']['address']=$newsettings['support_email'];
+   }
+   fwrite(STDOUT,"What is the name you want associated with that address?");
+   $newsettings['from']['name']=trim("\n",fputs(STDIN));
    fwrite(STDOUT,"Should we enable security logging? [Y]es or [N]o [Yes]");
    $newsettings['security_logging']=trim("\n",fputs(STDIN));
    fwrite(STDOUT,"Should we enable error loggin? [Y]es or [N]o [Yes]");
