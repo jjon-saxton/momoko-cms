@@ -170,6 +170,53 @@ class DataBaseStructure implements DALStructure
 	 
   return sprintf($retstring, $size, $sys['prefix'][$i]);
  }
+
+  function createBackup($file=null,$tables='*')
+  {
+   if ($tables == '*') //get all tables
+   {
+    $tables=$this->showTables();
+   }
+   else
+   {
+    if (!is_array($tables))
+    {
+     $tables=explode(",",$tables);
+    }
+   }
+
+   //now we will have to cycle through and get data from tables
+   $text=null; //we will populate this with the data to be printed or saved.
+   foreach($tables as $name)
+   {
+    $table=new DataBaseTable($name,$this->cfg);
+    $text.="DROP TABLE ".$name.";\n\n".$table->getCreateStatement().";\n\n";
+    $data=$table->getData();
+    $list=$data->toArray();
+    foreach ($list as $row)
+    {
+     $set=null;
+     foreach ($row as $col=>$val)
+     {
+      $set.=rtrim("`".$col."`='".mysql_escape_string($val)."', ",", ");
+     }
+     $text.="INSERT INTO `".$name."` SET ".$set.";\n";
+   }
+  }
+
+  //now we need to decide what to do with the file
+  if (!empty($file))
+  {
+   $file=fopen($file,'w+');
+   fwrite($file,$text);
+   fclose($file);
+   return true;
+  }
+  else
+  {
+   return $text;
+  }
+ }
 }
 
 class DataBaseTable implements DALTable
@@ -342,6 +389,12 @@ class DataBaseTable implements DALTable
     return $item;
    }
   }
+ }
+
+ public function getCreateStatement()
+ {
+  $stmt=mysql_fetch_row(mysql_query("SHOW CREATE TABLE ".$this->table));
+  return $stmt[1];
  }
 
  public function getData($query=null, array $what=null,$sort=null,$limit=null,$offset=null,array $keycols=null)

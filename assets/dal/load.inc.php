@@ -33,6 +33,7 @@ interface DALStructure
   function dropTable($name);
   function getSize();
   function humanReadableSize($size,$system='si',$retstring='%01.2f %s',$max=null);
+  function createBackup($file=null,$tables='*');
 }
 
 interface DALTable
@@ -45,6 +46,7 @@ interface DALTable
   function updateField($name,$type,$len,$attr);
   function removeField($name);
   function getPrimaryKey();
+  function getCreateStatement();
   function getData($query=null,array $what=null,$sort=null,$limit=null,$offset=null,array $keycols=null);
   function getDataCustom($query);
   function putData($fieldarray);
