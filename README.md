@@ -18,7 +18,7 @@ The steps outlined here will help you set up a folder on your server as a local 
 2. Once you have an shell prompt create a folder for MomoKO or change to your web folder either `mkdir momoko && cd momoko` or `cd public_html` replace momoko or public_html with the correct folder name.
 3. Set-up git in the folder you switched to; `git init`
 4. Set our repo as this folder's remote origin: `git remote add origin https://github.com/jjon-saxton/momoko-cms.git`
-5. Download from git: `git pull origin 1.1-BETA`
+5. Download from git: `git pull origin latest_stable`
 6. Proceed to 'Configuring MomoKO'
 
 #### 1.2 Using a ZIP file from our repo
