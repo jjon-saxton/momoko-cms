@@ -163,10 +163,10 @@ class MomokoNewsManager implements MomokoObject
   {
    case 'delete':
    $news_reel=new MomokoNews($GLOBALS['USR'],'sort=recent');
-   $data=$news_reel->put($_POST);
+   $data=$news_reel->drop(pathinfo($this->path,PATHINFO_FILENAME));
    if ($news_reel->write($data))
    {
-    header ("Location: ?success=true");
+    header ("Location: ../?success=true&what=News Article Deleted!");
     exit();
    }
    else

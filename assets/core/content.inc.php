@@ -567,7 +567,7 @@ XML;
   $data=$dom->saveXML();
   if (file_put_contents($GLOBALS['CFG']->pagedir.'/news.xml',$data)) // Replace with actual path!
   {
-   momoko_changes($GLOBALS['USR'],'updated',$this,"Changes were written to {$GLOBALS['CFG']}/news.xml!");
+   momoko_changes($GLOBALS['USR'],'updated',$this,"Changes were written to {$GLOBALS['CFG']->pagedir}/news.xml!");
    return true;
   }
   else
