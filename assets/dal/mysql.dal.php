@@ -191,7 +191,7 @@ class DataBaseStructure implements DALStructure
    {
     if (is_array($name))
     {
-     $name=$name['name'];
+     $name=$name['Tables_in_'.$this->db];
     }
     $table=new DataBaseTable($name,$this->db);
     $text.="DROP TABLE ".$name.";\n\n".$table->getCreateStatement().";\n\n";
