@@ -28,14 +28,14 @@ if (!empty($settings)) //Sanitation check! make sure we have a dbtable set for '
     else
     {
       fwrite(STDOUT,"Your database must be updated! Do you wish to update now? [Y]es, or [N]o ");
-      $update=trim("\n",fgets(STDIN));
+      $update=trim(fgets(STDIN),"\n");
     }
     $version=$settings->value;
   }
   else
   {
     fwrite(STDOUT,"Your database is out of date. You cannot proceed beyond this point without an update! Apply update now? [Y]es or [N]o ");
-    $update=trim("\n",fgets(STDIN));
+    $update=trim(fgets(STDIN),"\n");
     $version=1.1;
   }
 }
@@ -43,7 +43,7 @@ else
 {
   fwrite(STDOUT,"A pre 1.5 database has been detected. MomoKO 1.5 requires new database table and settings. These will have to be created now in order to ensure proper functionality. If you chose not to upgrade now your site WILL NOT work!\n");
   fwrite(STDOUT,"Apply update now? [Y]es or [N]o ");
-  $update=trim("\n",fgets(STDIN));
+  $update=trim(fgets(STDIN),"\n");
 }
 
 if (strtolower($update) == 'y')
@@ -53,23 +53,23 @@ if (strtolower($update) == 'y')
   {
    fwrite(STDOUT,"MomoKO 1.5 moved a few settings to the database and introduced other new setting values for better and easier customization. I will now begin asking you a series of questions so you may set these new values. Just like when you first installed MomoKO, if you see brackets [], it means I can fill in the default value presented within if you leave the answer blank. Otherwise all questions are required!\n");
    fwrite(STDOUT,"What was the name of your site as you configured it in main.conf.txt for MomoKO 1.1 or earlier?");
-   $newsettings['name']=trim("\n",fgets(STDIN));
+   $newsettings['name']=trim(fgets(STDIN),"\n");
    fwrite(STDOUT,"What e-mail should we use for support inquiries?");
-   $newsettings['support_email']=trim("\n",fgets(STDIN));
+   $newsettings['support_email']=trim(fgets(STDIN),"\n");
    fwrite(STDOUT,"What e-mail do you want to send automatic e-mail from? [{$newsettings['support_email']}]");
-   $newsettings['from']['address']=trim("\n",fgets(STDIN));
+   $newsettings['from']['address']=trim(fgets(STDIN),"\n");
    if (empty($newsettings['from']['address']))
    {
     $newsettings['from']['address']=$newsettings['support_email'];
    }
    fwrite(STDOUT,"What is the name you want associated with that address?");
-   $newsettings['from']['name']=trim("\n",fgets(STDIN));
+   $newsettings['from']['name']=trim(fgets(STDIN),"\n");
    fwrite(STDOUT,"Should we enable security logging? [Y]es or [N]o [Yes]");
-   $newsettings['security_logging']=trim("\n",fgets(STDIN));
+   $newsettings['security_logging']=trim(fgets(STDIN),"\n");
    fwrite(STDOUT,"Should we enable error loggin? [Y]es or [N]o [Yes]");
-   $newsettings['error_logging']=trim("\n",fgets(STDIN));
+   $newsettings['error_logging']=trim(fgets(STDIN),"\n");
    fwrite(STDOUT,"Which template should we use? [quirk]");
-   $newsettings['template']=trim("\n",fgets(STDIN));
+   $newsettings['template']=trim(fgets(STDIN),"\n");
    foreach ($newsettings as $key=>$value)
    {
     if ($value == 'N' || $value == 'n')
@@ -93,7 +93,7 @@ if (strtolower($update) == 'y')
    $newsettings['version']='1.5';
    fwrite(STDIN,"Great! You can use the new 'change settings' link in your user control panel (if you are an administrator) to access these and other settings in the future. Now we have one final question before we begin upgrading your database.");
    fwrite(STDIN,"Would you like us to create a backup of the database? [Y]es [N]o [No]");
-   $backup=trim("\n",fgets(STDIN));
+   $backup=trim(fgets(STDIN),"\n");
    $fwrite(STDIN,"Very well, we are upgrading your database now, please standby...\n");
   }
   if (db_upgrade($version,$newsettings,$backup))
