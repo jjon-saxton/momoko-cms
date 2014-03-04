@@ -122,7 +122,7 @@ function fill_tables(array $site, array $admin,array $defaults=null)
 function db_upgrade($version,array $settings,$backup=null)
 {
  $db=new DataBaseStructure(DAL_DB_DEFAULT);
- if ($backup == 'Y' || $backup == 'y')
+ if ($backup == 'y')
  {
   $db->createBackup($GLOBALS['CFG']->datadir."/momoko-db-".time().".sql") or die(trigger_error("Could not create backup!", E_USER_WARNING));
  }
