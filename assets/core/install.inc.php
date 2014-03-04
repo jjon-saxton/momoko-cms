@@ -128,13 +128,13 @@ function db_upgrade($version,array $settings,$backup=null)
  }
  $tables['addins']=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
  echo("Altering addin table columns...\n");
- $tables['addins']->putField("enabled","char",1,"NOT NULL") or die(trigger_error("could not add 'enabled' column, you may need to manually add this column, see our release notes for more details!",E_USER_WARNING);
+ $tables['addins']->putField("enabled","char",1,"NOT NULL") or die(trigger_error("could not add 'enabled' column, you may need to manually add this column, see our release notes for more details!",E_USER_WARNING));
  echo("Dropping old/unused tables...\n");
- $db->dropTable(DAL_TABLE_PRE.'merchants',DAL_DB_DEFAULT) or die(trigger_error("Unable to drop old table '".DAL_TABLE_PRE."merchants'!",E_USER_ERROR);
+ $db->dropTable(DAL_TABLE_PRE.'merchants',DAL_DB_DEFAULT) or die(trigger_error("Unable to drop old table '".DAL_TABLE_PRE."merchants'!",E_USER_ERROR));
  echo("Adding the new settings table...\n");
  $settings_def[0]="`key` VARCHAR(30) NOT NULL PRIMARY KEY";
  $settings_def[1]="`value` VARCHAR(255) NOT NULL";
- $db->addTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT) or die(trigger_error("Unable to add new settings table please try again!",E_USER_ERROR);
+ $db->addTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT) or die(trigger_error("Unable to add new settings table please try again!",E_USER_ERROR));
  $table['settings']=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
  $settings['email_mta']='phpmail';
  $settings['email_server']='host=localhost';
@@ -144,7 +144,7 @@ function db_upgrade($version,array $settings,$backup=null)
  {
   $newrow['key']=$key;
   $newrow['value']=$value;
-  $row=$table['settings']->putData($newrow) or die(trigger_error("Could not add setting '{$key}'");
+  $row=$table['settings']->putData($newrow) or die(trigger_error("Could not add setting '{$key}'"));
  }
  return true;
 }
