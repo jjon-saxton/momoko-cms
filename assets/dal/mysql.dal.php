@@ -189,6 +189,10 @@ class DataBaseStructure implements DALStructure
    $text=null; //we will populate this with the data to be printed or saved.
    foreach($tables as $name)
    {
+    if (is_array($name))
+    {
+     $name=$name['name'];
+    }
     $table=new DataBaseTable($name,$this->db);
     $text.="DROP TABLE ".$name.";\n\n".$table->getCreateStatement().";\n\n";
     $data=$table->getData();
