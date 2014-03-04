@@ -45,7 +45,7 @@ function create_tables()
   }
 }
 
-function fill_tables(array, $site, array $admin,array $defaults=null)
+function fill_tables(array $site, array $admin,array $defaults=null)
 {
   if (empty($defaults['sdf']))
   {
