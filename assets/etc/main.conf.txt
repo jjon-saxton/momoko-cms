@@ -1,12 +1,12 @@
-#{basedir:/home/mika/public_html/momoko}
-#{pagedir:/home/mika/public_html/pages}
-#{datadir:/home/mika/public_html/files}
-#{tempdir:/home/mika/public_html/files/temp}
-#{logdir:/home/mika/public_html/logs}
-#{domain:}
-#{location:/~mika/momoko}
+#{basedir:/home/tower21/html}
+#{pagedir:/home/tower21/html/pages}
+#{datadir:/home/tower21/html/files}
+#{tempdir:/home/tower21/html/temp}
+#{logdir:/home/tower21/html/logs}
+#{domain:www.tower21studios.com}
+#{location:}
 
-#{session:rm}
-#{salt:rm}
-#{rewrite:}
+#{session:ts}
+#{salt:ts}
+#{rewrite:true}
 

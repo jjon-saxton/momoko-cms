@@ -272,17 +272,25 @@ class MomokoUCPModule implements MomokoModuleInterface
  {
   if ($this->usr->inGroup('nobody'))
   {
+   if ($GLOBALS['SET']->use_ssl == 1)
+   {
+    $protocol='https';
+   }
+   else
+   {
+    $protocol='http';
+   }
+   $url=CURURI;
    if ($this->opts['display'] == 'box')
    {
-    $url=CURURI;
     return <<<HTML
 <div id="LoginBox" class="ucp box">
-<form action="https://{$url}?action=login" method=post>
+<form action="{$protocol}://{$url}?action=login" method=post>
 <ul class="noindent nobullet">
 <li><input type=text name="name" placeholder="username:"></li>
 <li><input type=password name="password" placeholder="password:"></li>
 <li><input type=submit name="send" value="Login"></li>
-<li><a href="https://{$url}?action=register">Want an account?</a></li>
+<li><a href="{$protocol}://{$url}?action=register">Want an account?</a></li>
 </ul>
 </form>
 </div>
@@ -291,7 +299,7 @@ HTML;
   else
   {
    return <<<HTML
-<span id="LoginLine" class="ucp"><form action="?action=login" method=post><input type=text name="name" placeholder="username:"> <input type=password name="password" placeholder="password:"> <input type=submit name="send" value="Login"></form></span>
+<span id="LoginLine" class="ucp"><form action="{$protocol}://{$url}?action=login" method=post><input type=text name="name" placeholder="username:"> <input type=password name="password" placeholder="password:"> <input type=submit name="send" value="Login"></form> | <a href="{$protocol}://{$url}?action=register">Want an account?</a></span>
 HTML;
   }
  }
