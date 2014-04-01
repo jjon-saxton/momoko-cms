@@ -272,7 +272,7 @@ class MomokoUCPModule implements MomokoModuleInterface
  {
   if ($this->usr->inGroup('nobody'))
   {
-   if ($GLOBALS['SET']->use_ssl == 1)
+   if ($GLOBALS['SET']['use_ssl'] == 1)
    {
     $protocol='https';
    }
