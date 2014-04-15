@@ -1,8 +1,0 @@
-# DAL configuration #
-#{type:mysql}
-#{table_pre:t21_}
-#{file:}
-#{host:localhost}
-#{user:momoko}
-#{password:Cwf2Nl!?}
-#{default:momoko}
