@@ -34,5 +34,3 @@ require RESETPATH.'/main.inc.php';
 $child=new ResetPage($_SERVER['PATH_INFO']);
 $child->showPage(@$_GET['sid'],$_POST);
 
-$tpl=new MomokoTemplate($dirroot.'/templates/main.tpl.htm');
-echo ($tpl->toHTML($child));
