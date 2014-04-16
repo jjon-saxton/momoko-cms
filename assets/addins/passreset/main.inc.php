@@ -85,18 +85,18 @@ HTML;
         case 'smtp':
         $mail->IsSMTP();
         //SMTP Configuration
-	$mail->SMTPAuth=$email['server']['auth'];
-	if ($email['server']['auth'] == TRUE)
-        {
-         $mail->SMTPSecure=$email['server']['security'];
-        }
+        $mail->SMTPSecure=$email['server']['security'];
         $mail->Host=$email['server']['host'];
         if (isset($email['server']['port']))
         {
           $mail->Port=$email['server']['port'];
         }
-        $mail->Username=$email['server']['user'];
-        $mail->Password=$email['server']['password'];
+        if (isset($email['server']['username']) && $email['server']['username'])
+        {
+         $mail->SMTPAuth=true;
+         $mail->Username=$email['server']['username'];
+         $mail->Password=$email['server']['password'];
+        }
 	break;
 	case 'sendmail':
 	$mail->isSendmail();
