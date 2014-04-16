@@ -367,7 +367,7 @@ HTML;
  }
 }
 
-if (@$_GET['action'] == 'login' || @$_GET['action'] == 'logout' || @$_GET['action'] == 'register')
+if (@$_GET['action'] == 'logout' || @$_GET['action'] == 'register')
 {
  header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location."?action=".$_GET['action']);
 }
@@ -390,6 +390,25 @@ elseif (@$_SERVER['PATH_INFO'])
 
  switch (@$_GET['action'])
  {
+  case 'login':
+  if (@!empty($_POST['password']))
+  {
+   if ($GLOBALS['USR']->login($_POST['name'],$_POST['password']))
+   {
+    $_SESSION['data']=serialize($GLOBALS['USR']);
+    header("Location: http://".CURURI."?loggedin=1");
+    exit();
+   }
+   else
+   {
+    $child=new MomokoError('Unauthorized');
+   }
+  }
+  else
+  {
+   $child=new MomokoForm('login');
+  }
+  break;
   case 'add':
   $child=$GLOBALS['LOADED_ADDIN']->put($_POST);
   if (!empty($_POST['dir']) && (!empty($_GET['ajax']) && $_GET['ajax'] == 1))
