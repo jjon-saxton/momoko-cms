@@ -76,7 +76,6 @@ interface MomokoPageObject
 
 interface MomokoObject
 {
- public function __construct($path);
  public function __get($var);
  public function __set($key,$value);
  public function get();

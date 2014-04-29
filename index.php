@@ -126,7 +126,8 @@ if (@$path && !@$child)
    }
    else
    {
-    $child=new MomokoForm('login');
+    header("Location://".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location."/login.php");
+     exit();
    }
    break;
    case 'register':
@@ -135,13 +136,14 @@ if (@$path && !@$child)
     $usr=new MomokoUser($_POST['name']);
     if ($usr->put($_POST))
     {
-     header("Location:?action=login");
+     header("Location://".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location."/login.php");
      exit();
     }
    }
    else
    {
-    $child=new MomokoForm('register');
+    header ("Location://".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location."/login.php?action=create");
+    exit();
    }
    break;
    case 'logout':

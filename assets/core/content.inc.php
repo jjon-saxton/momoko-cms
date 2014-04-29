@@ -594,10 +594,15 @@ class MomokoPage implements MomokoObject
  private $cur_path;
  private $info=array();
  
- public function __construct($path)
+ public function __construct($path,array $additional_vars=null)
  {
   $this->cur_path=$path;
   $this->info=$this->readInfo();
+
+  $body=$this->inner_body;
+  $vars=$this->setVars($additional_vars);
+  $ch=new MomokoVariableHandler($vars);
+  $this->inner_body=$ch->replace($body);
  }
  
  public function __get($var)
@@ -783,6 +788,18 @@ HTML;
    $page=new MomokoError("Not_Found");
    return $page->full_html;
   }
+ }
+ 
+ private function setVars(array $vars=null)
+ {
+   if (empty($vars))
+   {
+    $vars=array();
+   }
+   
+   $vars['siteroot']=$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'];
+   
+   return $vars;
  }
 
  private function readInfo()
