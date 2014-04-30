@@ -667,7 +667,7 @@ HTML;
     {
      momoko_changes($GLOBALS['USR'],'updated',$this,"Additionally the page was renamed from ".basename($this->path)." to ".$data['pagename']."!");
      $dir=ltrim($dir,"/");
-     header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT.$dir.'/'.$data['pagename']);
+     header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT.$dir.$data['pagename']);
      exit();
     }
     else
