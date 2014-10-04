@@ -1,0 +1,8 @@
+<manifest addin="elFinder">
+<dirroot>/assets/addins/finder/</dirroot>
+<authority>
+	<whitelist>admin</whitelist>
+	<blacklist>ALL</blacklist>
+</authority>
+<incp>Yes</incp>
+</manifest>
