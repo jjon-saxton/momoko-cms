@@ -19,16 +19,16 @@ if ($GLOBALS['SET']['rewrite'])
  define("ADMINROOT","/mk_dash/");
  define("PAGEROOT","/page/");
  define("FILEROOT","/mk_content/");
- define("ADDINROOT","/addin/");
+ define("ADDINROOT","/mk_addin/");
  define("NEWSROOT","/news/");
 }
 else
 {
  define("ADMINROOT","/mk_dash.php/");
- define("PAGEROOT","/index.php/");
- define("FILEROOT","/mk_content.php/");
- define("ADDINROOT","/addin.php/");
- define("NEWSROOT","/news.php/");
+ define("PAGEROOT","/?q=page/");
+ define("FILEROOT","/?q=file/");
+ define("ADDINROOT","/?q=addin/");
+ define("NEWSROOT","/?q=news/");
 }
 define("TEMPLATEROOT","/templates/");
 

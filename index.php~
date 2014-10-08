@@ -76,7 +76,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    }
    else
    {
-    header("Location: //".$GLOBALS['SET']['domain'].$GLOBALS['SET']['location']."/mk_login.php");
+    header("Location: //".$GLOBALS['SET']['baseuri']."/mk_login.php");
 	exit();
    }
    break;

@@ -11,7 +11,6 @@ foreach ($settings as $pairs)
 if (empty($GLOBALS['SET']['baseuri']))
 {
  $GLOBALS['SET']['baseuri']=$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']);
- echo ($GLOBALS['SET']['baseuri']);
 }
 
 #Set Constants
