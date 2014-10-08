@@ -11,6 +11,7 @@ foreach ($settings as $pairs)
 if (empty($GLOBALS['SET']['baseuri']))
 {
  $GLOBALS['SET']['baseuri']=$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']);
+ echo ($GLOBALS['SET']['baseuri']);
 }
 
 #Set Constants
@@ -339,9 +340,9 @@ function momoko_html_errors($num,$str,$file,$line,$context)
 {
   if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($GLOBALS['SET']['error_logging'] > 1))
   {
-    if (file_exists($GLOBALS['SET']['logdir'].'/error.log'))
+    if (file_exists($GLOBALS['SET']['logdir'].'error.log'))
     {
-      $log=fopen($GLOBALS['SET']['logdir'].'/error.log','a') or die("Error log could not be open for write!");
+      $log=fopen($GLOBALS['SET']['logdir'].'error.log','a') or die("Error log could not be open for write!");
       fwrite($log,"[".date("Y-m-d H:i:s")."] PHP Error (".$num."; ".$str.") in ".$line." of ".$file."!\n");
     }
     else

@@ -76,7 +76,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    }
    else
    {
-    header("Location: //".$GLOBALS['SET']['domain'].$GLOBALS['SET']['location']."/mk_login.php");
+    header("Location: //".$GLOBALS['SET']['baseuri']."/mk_login.php");
 	exit();
    }
    break;
@@ -86,14 +86,14 @@ if(isset($_GET['action']) && !empty($_GET['action']))
     $usr=new MomokoUser($_POST['name']);
     if ($usr->put($_POST))
     {
-     header("Location: //".$GLOBALS['SET']['domain'].$GLOBALS['SET']['location']."/mk_login.php");
+     header("Location: //".$GLOBALS['SET']['baseuri']."/mk_login.php");
      exit();
     }
    }
    else
    {
-    header("Location: //".$GLOBALS['SET']['domain'].$GLOBALS['SET']['location']."/mk_login.php?action=create");
-	exit();
+    header("Location: //".$GLOBALS['SET']['baseuri']."/mk_login.php?action=new");
+    exit();
    }
    break;
    case 'logout':
@@ -101,6 +101,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    {
     $_SESSION['data']=serialize($GLOBALS['USR']);
     header("Location: ?loggedin=0");
+    exit();
    }
    break;
   }

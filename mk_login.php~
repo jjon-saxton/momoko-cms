@@ -6,12 +6,20 @@ if (isset($_GET['action']) && $_GET['action'] == 'new')
 {
 	$formname="register";
 }
+elseif (isset($_GET['action']) && $_GET['action'] == 'logout')
+{
+ if ($GLOBALS['USR']->logout())
+ {
+  $_SESSION['data']=serialize($GLOBALS['USR']);
+  header("Location: //".$GLOBALS['SET']['baseuri']."/?loggedin=0");
+ }
+}
 else
 {
 	$formname="login";
 }
 $props['link']=$GLOBALS['SET']['baseuri']."/?action=".$formname;
-$props['recovery']=$GLOBALS['SET']['baseuri'].ADDINROOT.'passreset/'; //TODO finish with location of passreset addin
+$props['recovery']=$GLOBALS['SET']['baseuri'].ADDINROOT.'passreset/';
 
 $form=new MomokoPage("/forms/{$formname}.htm",$props);
 
