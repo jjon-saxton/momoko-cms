@@ -1,5 +1,5 @@
 <manifest addin="PasswordReset">
-<dirroot>/assets/addins/passreset/</dirroot>
+<dirroot>/addins/passreset/</dirroot>
 <dbtable>users</dbtable>
 <authority>
 	<whitelist>nobody</whitelist>

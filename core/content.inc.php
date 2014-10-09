@@ -1217,16 +1217,16 @@ class MomokoAddin implements MomokoObject
 
  public function __construct($path=null)
  {
-  $this->table=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
+  $this->table=new DataBaseTable('addins');
   if (!empty($path))
   {
-   $manifest=xmltoarray($path.'/manifest.xml'); //Load manifest
+   $manifest=xmltoarray($GLOBALS['SET']['basedir'].$path.'/manifest.xml'); //Load manifest
    $this->info=$this->parseManifest($manifest);
    
-   $db=new DataBaseTable(DAL_TABLE_PRE."addins",DAL_DB_DEFAULT);
+   $db=new DataBaseTable("addins");
    $query=$db->getData("dir:'".basename($path)."'",array('enabled','num','dir'),null,1);
-   $data=$query->first();
-   if ($data->enabled == 'y')
+   $data=$query->fetch();
+   if ($data['enabled'] == 'y')
    {
     $this->isEnabled=true;
    }

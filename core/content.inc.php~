@@ -995,11 +995,11 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
  public function toHTML($child=null)
  {
   $html=$this->get();
-  $vars['siteroot']=$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'];
+  $vars['siteroot']=$GLOBALS['SET']['baseuri'];
   $vars['sitename']=$GLOBALS['SET']['name'];
   $vars['pagetitle']="Untitled";
   $vars['corestyles']=$vars['siteroot'].'/assets/core/styles/';
-  $vars['templatedir']=$GLOBALS['SET']['baseuri'].dirname($this->template);
+  $vars['templatedir']=$vars['siteroot'].dirname($this->template);
   $vars['pagedir']=$vars['siteroot'].PAGEROOT;
   
   if (@$child && (is_object($child)) && ($child instanceof MomokoObject))
@@ -1217,16 +1217,17 @@ class MomokoAddin implements MomokoObject
 
  public function __construct($path=null)
  {
-  $this->table=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
+  $this->table=new DataBaseTable('addins');
   if (!empty($path))
   {
-   $manifest=xmltoarray($path.'/manifest.xml'); //Load manifest
+   $manifest=xmltoarray($GLOBALS['SET']['basedir'].$path.'/manifest.xml'); //Load manifest
    $this->info=$this->parseManifest($manifest);
    
-   $db=new DataBaseTable(DAL_TABLE_PRE."addins",DAL_DB_DEFAULT);
+   $db=new DataBaseTable("addins");
    $query=$db->getData("dir:'".basename($path)."'",array('enabled','num','dir'),null,1);
-   $data=$query->first();
-   if ($data->enabled == 'y')
+   $data=$query->fetch();
+   var_dump($data);
+   if ($data['enabled'] == 'y')
    {
     $this->isEnabled=true;
    }

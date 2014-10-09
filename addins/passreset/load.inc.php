@@ -22,15 +22,15 @@ foreach ($manifest as $node) //find this addins folder
 
 foreach($tables as $tablename)
 {
- $GLOBALS['ADDIN']['db-tables'][$tablename]=new DataBaseTable(ADDIN_TABLE_PRE.$tablename,DAL_DB_DEFAULT);
+ $GLOBALS['ADDIN']['db-tables'][$tablename]=new DataBaseTable($tablename);
 }
 	 
-define ('RESETURI',$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADDINROOT.pathinfo($dirroot,PATHINFO_BASENAME)); //set roots based off of addins folder found from manifest
-define ('RESETPATH',$GLOBALS['CFG']->basedir.$dirroot); //sets script base using the same info
+define ('RESETURI',$GLOBALS['SET']['baseuri'].ADDINROOT.pathinfo($dirroot,PATHINFO_BASENAME)); //set roots based off of addins folder found from manifest
+define ('RESETPATH',$GLOBALS['SET']['basedir'].$dirroot); //sets script base using the same info
 
-require $GLOBALS['CFG']->basedir."/assets/core/phpmailer/class.phpmailer.php";
+require $GLOBALS['SET']['basedir']."/core/phpmailer/class.phpmailer.php";
 require RESETPATH.'/main.inc.php';
 
-$child=new ResetPage($_SERVER['PATH_INFO']);
+$child=new ResetPage($_GET['q']);
 $child->showPage(@$_GET['sid'],$_POST);
 

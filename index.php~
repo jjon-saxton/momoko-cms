@@ -110,23 +110,24 @@ if(isset($_GET['action']) && !empty($_GET['action']))
 }
 else
 {
-	include dirname(__FILE__)."/core/deliver.php";
-	@$str=$_GET['q'];
-	$path_parts=explode("/",$str);
-	switch($path_parts[0])
-	{
-		case "addin":
-		case "news":
-		case "help":
-		case "file":
-		case "page":
-		$run="do_".$path_parts[0];
-		$path_parts=array_splice($path_parts,1);
-		break;
-		default:
-		$run="do_page";
-	}
+ include dirname(__FILE__)."/core/deliver.php";
+ @$str=$_GET['q'];
+ $path_parts=explode("/",$str);
+ switch($path_parts[0])
+ {
+  case "addin":
+  case "news":
+  case "help":
+  case "file":
+  case "page":
+  $run="do_".$path_parts[0];
+  var_dump(implode("/",$path_parts));
+  $path_parts=array_splice($path_parts,1);
+  break;
+  default:
+  $run="do_page";
+ }
 
-	$run(implode("/",$path_parts));
+ $run(implode("/",$path_parts));
 }
 ?>

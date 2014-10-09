@@ -216,18 +216,18 @@ function do_addin($path,$action=null)
 {
 if (@$action == 'login' || @$action == 'logout' || @$action == 'register')
 {
- header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location."?action=".$action);
+ header("Location: //".$GLOBALS['SET']['baseuri']."?action=".$action);
 }
 elseif (@$path)
 {
- list(,$addindir,)=explode("/",$path);
+ $addindir=trim($path,"/");
  if (empty($addindir))
  {
   $path=null;
  }
  else
  {
-  $path=$GLOBALS['CFG']->basedir."/assets/addins/".$addindir."/";
+  $path=$GLOBALS['CFG']->basedir."/addins/".$addindir."/";
  }
  $GLOBALS['LOADED_ADDIN']=new MomokoAddin($path);
  if (!empty($_GET['num']))
@@ -281,7 +281,7 @@ elseif (@$path)
   default:
   if ($GLOBALS['LOADED_ADDIN']->hasAuthority() && $GLOBALS['LOADED_ADDIN']->isEnabled) //User must have authority, and the addin must be enabled!
   {
-   include $GLOBALS['CFG']->basedir."/assets/addins/".$addindir."/load.inc.php"; //hand control over to the addin
+   include $GLOBALS['SET']['basedir']."/addins/".$addindir."/load.inc.php"; //hand control over to the addin
   }
   elseif (!$GLOBALS['LOADED_ADDIN']->isEnabled)
   {

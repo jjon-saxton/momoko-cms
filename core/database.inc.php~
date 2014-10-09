@@ -80,6 +80,7 @@ class DataBaseTable extends DataBaseSchema
  public function getFields()
  {
   $describe=$this->query("SHOW COLUMNS FROM ".$this->table);
+  var_dump($this->table);
 
   return $describe->fetchAll(PDO::FETCH_OBJ);
  }
@@ -244,7 +245,15 @@ class DataBaseTable extends DataBaseSchema
  $this->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
  if ($query->execute($values))
   {
-   return $this->lastInsertID();
+   $id=$this->lastInsertID();
+   if ($id > 0)
+   {
+    return $id;
+   }
+   else
+   {
+    return true;
+   }
   }
   else
   {

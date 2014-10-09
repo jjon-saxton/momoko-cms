@@ -74,7 +74,7 @@ HTML;
       }
       else {
       $sid=$this->generateSid($num,time());
-      $location=RESETURI."?sid=".$sid;
+      $location=RESETURI."&sid=".$sid;
       //Mailer start
       $mail=new PHPMailer();
       $email['type']=$GLOBALS['SET']['email_mta'];
