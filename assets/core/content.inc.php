@@ -794,7 +794,7 @@ HTML;
  {
   if (file_exists($GLOBALS['CFG']->pagedir.$this->cur_path))
   {
-   return unlink($GLOBALS['CFG']->padedir.$this->cur_path));
+   return unlink($GLOBALS['CFG']->padedir.$this->cur_path);
   }
   else
   {
