@@ -96,6 +96,10 @@ if (@$path && !@$child)
      header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location);
      exit();
     }
+    else
+    {
+     trigger_error("Cannot remove page, please check permissions!",E_USER_ERROR);
+    }
    }
    else
    {

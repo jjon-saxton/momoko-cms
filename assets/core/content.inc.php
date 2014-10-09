@@ -789,6 +789,18 @@ HTML;
    return $page->full_html;
   }
  }
+
+ public function drop()
+ {
+  if (file_exists($GLOBALS['CFG']->pagedir.$this->cur_path))
+  {
+   return unlink($GLOBALS['CFG']->padedir.$this->cur_path));
+  }
+  else
+  {
+   trigger_error("Could not delete page '".$this->cur_path."', page does not exist!",E_USER_NOTICE);
+  }
+ }
  
  private function setVars(array $vars=null)
  {
