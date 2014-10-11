@@ -1,4 +1,10 @@
 <?php
+if (!file_exists(dirname(__FILE__)."/database.ini")) //database.ini does not exist! go to mk_install.php to create it.
+{
+ header("Location: //".$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME'])."/mk_install.php");
+ exit();
+}
+
 require dirname(__FILE__)."/core/common.inc.php";
 require dirname(__FILE__)."/core/content.inc.php";
 

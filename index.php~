@@ -1,4 +1,10 @@
 <?php
+if (!file_exists(dirname(__FILE__)."/database.ini"))
+{
+ header("Location: //".$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME'])."/mk_install.php");
+ exit();
+}
+
 require dirname(__FILE__)."/core/common.inc.php";
 require dirname(__FILE__)."/core/content.inc.php";
 
@@ -121,7 +127,6 @@ else
   case "file":
   case "page":
   $run="do_".$path_parts[0];
-  var_dump(implode("/",$path_parts));
   $path_parts=array_splice($path_parts,1);
   break;
   default:
