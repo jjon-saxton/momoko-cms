@@ -46,75 +46,33 @@ If you have SSH access and prefer not to set up or install git, or you want to u
 
 ### 2. Configuring MomoKO
 
-Once you have MomoKO on your server and accessable to the world, you will have to configure her. In the folder you place MomoKO in on your server there is a sub-folder called `assets` in there is a sub-folder called `etc`. `etc` is where the configuration files are kept. Currently only one file, `version.nfo.txt` exists. This file simply holds the current version number. To configure MomoKO copy the contents of the sub-folder `examples` into the folder `etc`. Over SSH the following command should work: `cp -r ./examples/* ./`
+Once you have MomoKO it is time to configure her. As of version 1.6 you will only need to configure MomoKO to connect to a database server. All other settings will be handled in the next step 'Prepare your database'. Database configuration is stored in `database.ini` now in the directory you store MomoKO in.
 
-You should get to files, `dal.conf.txt` and `main.conf.txt`. First open `main.conf.txt`, this is used to set up MomoKO's environment variables so she knows where things are and what things are called. We will define the settings below.
-
-#### 2.1 main.conf.txt Settings
-
-basedir
-:	This sets the location of your MomoKO's scripts. This should be set to the *absolute* path to the folder MomoKO was put in when you acquired her.
-
-pagedir
-:	This sets the location where MomoKO's pages will be stored. In the example, we show the absolute path to assets/pages, but this can be *any* folder on your file system that your web server software can read and write to.
-
-filedir
-:	Like the above, but sets were MomoKO will look for photos, videos, and other types of files other than pages.
-
-tempdir
-:	Like the above, but sets where MomoKO will store temporary files
-
-domain
-:	Not set in the example, this is where you can store the fully qualified domain name of your site. If you leave this blank MomoKO will try to use global environment variables to guess your domain.
-
-location
-:	The location of you site according to your web server software. This is often just the folder underneath you web document folder where you put MomoKO, but this can be different if your server uses userdirs. Please consult your server documentation if this is the case. If in doubt, leave blank and see if there are errors.
-
-session
-:	Gives the MomoKO session a name, by default this is 'mk', there should be no need to change it unless you have multiple MomoKO instances on your server or something else that sets a cookie with that name.
-
-salt
-:	Used to encrypt passwords, the salt characters are prepended to the password and alters the output. The example sets this to 'mk', there should be no need to change this unless you simply want more security by being more unique.
-
-rewrite
-:	If your server supports mod_rewrite you can use included rewrite rules. Move the `.htaccess` file to your MomoKO's basedir and set this to true. This will generate more search-engine and human friendly URLS
-
-#### 2.2 dal.conf.txt Settings
-
-type
-:	This is the type of database server you have. This instructs the Database Abstraction Layer on what driver to load. Please ensure a driver exists and/or as been installed for your server type. Also uses all lower-case for this value. If you use a MySQL server, type mysql here; for SQLite2 type sqlite, for SQLite3 use sqlite3.
-
-table_pre
-:	A prefix to prepend to table names. This can be anything you chose, but we advise you to have an underscore '_' character at the end. Leaving this blank will generate simple names with no prefix. You might do this for a dedicated database.
-file
-:	For SQLite2 and SQLite3, specify the *absolute* path to the database file.
-
-host
-:	For MySQL and others, specify the fully qualified domain name for your database server.
-
-user
-:	The user name of MomoKO's database user. This user must have full read write rights to the database listed below. The easiest method is to create this user and than chose to create a database with their name and grant them all privledges.
-
-password
-:	The password of the user above. Do **NOT** leave this blank. For security this user **needs** a password! The only exception would be an SQLite2 or SQLite3 database where no user is used.
-
-default
-:	The name of the default database. The user specified above needs full privledges for this database!
+1. Open database.ex.ini
+2. Under the `[database]` section set the driver, host, and port. Driver is the PDO driver you wish to use. This should match the type of database you are trying to connect to i.e. for a MySQL database this would be `driver=mysql` for and SQLLite database it might be `driver=sqllite`. Host would the file or resource you would access, for MySQL this is often `host=localhost`. By default the 'port' option is commented out, but you my use it to set a different port.
+3. Under the `[schema]` section set the name, user, password, and tableprefix. Name is the name of the database schema you wish to store MomoKO's data in. User, if applicable, is the user name you will use to connect to the schema, and password is their password. The tableprefix option is used to set a special prefix for this MomoKO installation's tables. This can be used to seperate this installation from others in the same schema, or to seperate MomoKO's table from others.
+4. Please place a semicolan ';' in front of any setting you do not use to comment it out. You **do not** need to empty their settings, but you may wish to keep them in case you change something later.
 
 ### 3. Prepare your database
 
-Once configured you need to set up required tables on your database and create an administrator for your site. Once this is done, you will be able to login, create pages, and additional users. Fortunately this task is made simple by the inclusion of a finalization script. This procedure can only be completed via SSH at this time. A web front-end will be created shortly, which will allow you to complete this procedure in your web browser.
+Once configured you need to set up required tables on your database, change your site settings, and create an administrator for your site. Once this is done, you will be able to login, create pages, and additional users. Fortunately this task is made simple by the inclusion of a finalization script. Two versions of this script are available for flexibility. If you completed the previous two steps via SSH, you can run the finalization right there using the CLI version. If you did not use SSH, or simply wish to finish the installation in a web-browser you can use the web version.
 
-#### 3.1 Run install.php CLI over SSH
+#### 3.1 CLI: Run install.php over SSH
 
 To use this method you will need SSH access to your server!
 
-1. Login to you server via SSH
-2. Navigate to your MomoKO installation and change to `assets/php/cli`
+1. Login to you server via SSH if you are not already logged in.
+2. Navigate to your MomoKO installation and change to `cli`
 3. Run `install.php`
     1. Ensure `install.php` is executable and type: `./install.php`
-    2. If this files try: `php ./install.php`
+    2. If this does not work also try: `php ./install.php`
 4. Follow the onscreen instructions.
+
+#### 3.2 Web: Run mk_install.php via your browser
+
+1. Open your browser and navigate to the domain and location (URL) you placed MomoKO
+2. You should be redirected to `mk_install.php`, if not simply add `mk_install.php` at the end of the URL.
+3. Follow the onscreen instructions.
 
 ### Congratulations!
 
