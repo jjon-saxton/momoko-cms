@@ -1,6 +1,6 @@
 <?php
 
-function create_tables()
+function create_tables($config)
 {  
   $def['settings'][0]="`key` VARCHAR(30) NOT NULL PRIMARY KEY";
   $def['settings'][1]="`value` VARCHAR(255) NOT NULL";
@@ -24,7 +24,7 @@ function create_tables()
   
   $okay=0;
   $tottables=0;
-  $db=new DataBaseSchema(null,'../database.ini');
+  $db=new DataBaseSchema(null,$config);
   foreach ($def as $tablename=>$cols)
   {
     if ($table=$db->addTable($tablename,$cols))

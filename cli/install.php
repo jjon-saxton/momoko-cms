@@ -16,7 +16,7 @@ if (strtolower(trim(fgets(STDIN),"\n\r")) == 'y')
   if (strtolower(trim(fgets(STDIN),"\n\r")) == 'y')
   {
     fwrite(STDOUT,"This script is now creating the required database tables. Please stand by...\n");
-    if (create_tables())
+    if (create_tables('../database.ini'))
     {
      fwrite(STDOUT,"The required tables are in place. The script will now fill the tables with default data.\n");
 
@@ -41,6 +41,7 @@ if (strtolower(trim(fgets(STDIN),"\n\r")) == 'y')
      $setting['logdir']=trim(fgets(STDIN),"\n\r");
      fwrite(STDOUT,"Where should I store all other files? [$basedir/files/]: ");
      $setting['filedir']=trim(fgets(STDIN),"\n\r");
+
      fwrite(STDOUT,"Please provide a user name for your CMS administrator: ");
      $admin['name']=trim(fgets(STDIN),"\n\r");
      fwrite(STDOUT,"Please provide a password for your administrator: ");
@@ -56,7 +57,7 @@ if (strtolower(trim(fgets(STDIN),"\n\r")) == 'y')
      fwrite(STDOUT,"Number of rows in a table on any given page [20]: ");
      $defaults['rpt']=trim(fgets(STDIN),"\n\r");
      
-     if (fill_tables($setting, $admin,$defaults))
+     if (fill_tables($setting, $admin, $defaults))
      {
       fwrite(STDOUT,"System ready, you may access your content online at the URL you configured. We recommend using the admininstrator user name and password you just set to login and click 'change settings' to customize your site further.\n");
      }

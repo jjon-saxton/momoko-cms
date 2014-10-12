@@ -68,7 +68,7 @@ function fill_tables(array $site, array $admin,array $defaults=null)
   if (empty($site['basedir']))
   {
    $site['basedir']=dirname(__FILE__);
-   $site['basedir']=str_replace("cli","",$site['basedir']);
+   $site['basedir']=str_replace("core","",$site['basedir']);
    $site['basedir']=rtrim($site['basedir'],"/");
   }
 
