@@ -130,7 +130,7 @@ function fill_tables(array $site, array $admin,array $defaults=null)
   $tottbls=0;
   foreach ($rows as $table=>$dbrows)
   {
-    $dbtbl=new DataBaseTable($table,null,'../database.ini');
+    $dbtbl=new DataBaseTable($table,null,$site['basedir'].'/database.ini');
     $numrows=0;
     $addedrows=0;
     foreach ($dbrows as $data)

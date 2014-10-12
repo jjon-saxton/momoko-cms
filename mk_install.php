@@ -1,5 +1,5 @@
 <?php
-if ($_GET['step'] < 2 && file_exists(dirname(__FILE__)."/database.ini"))
+if (@$_GET['step'] < 2 && file_exists(dirname(__FILE__)."/database.ini"))
 {
  header("Location: //".$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME'])); //someone added database.ini, for security reasons, do NOT allow mk_install to be used!
  exit();
@@ -235,6 +235,12 @@ HTML;
 <table width=100% border=0 cellspacing=0 cellpadding=2>
 <tr>
 <td align=right><label for="shortdate">Short Date Format:</label></td><td><input type=text id="shortdate" name="defaults[sdf]" value="m/d/Y"></td>
+</tr>
+<tr>
+<td align=right><label for="longdate">Long Date Format:</label></td><td><input type=text id="longdate" name="defaults[ldf]" value="I F j, Y"></td>
+</tr>
+<tr>
+<td align=right><label for="numrows">Number of Rows in a Table (dashboard and addins):</label></td><td><input type=number id="numrows" name="defaults[rpt]" value="20"></td>
 </tr>
 <table>
 </div>
