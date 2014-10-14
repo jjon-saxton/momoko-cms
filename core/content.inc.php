@@ -685,8 +685,8 @@ HTML;
   }
   else
   {
-   $editorroot='//'.$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].'/assets/scripts/elrte';
-   $finderroot='//'.$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].'/assets/scripts/elfinder';
+   $editorroot='//'.$GLOBALS['SET']['baseuri'].'/scripts/elrte';
+   $finderroot='//'.$GLOBALS['SET']['baseuri'].'/scripts/elfinder';
    $page['data']=$this->get();
    $page['name']=pathinfo($this->path,PATHINFO_BASENAME);
    if (preg_match("/<title>(?P<title>.*?)<\/title>/smU",$page['data'],$match) > 0) //Find page title in $data
@@ -1106,13 +1106,13 @@ $(function(){
 	});
 });
 </script>
-<span class="toolbar ui-widget-header ui-corner-all"><a id="np" href="?action=new">New Page</a><a id="ep" href="?action=edit">Edit Page</a><a id="rp" href="?action=delete">Delete Page</a></span>
+<span class="toolbar ui-widget-header ui-corner-all"><a id="np" href="//{$GLOBALS['SET']['baseuri']}/?q={$_GET['q']}&action=new">New Page</a><a id="ep" href="//{$GLOBALS['SET']['baseuri']}/?q={$_GET['q']}&action=edit">Edit Page</a><a id="rp" href="//{$GLOBALS['SET']['baseuri']}/?q={$_GET['q']}&action=delete">Delete Page</a></span>
 HTML;
    break;
    case "icontext":
    default:
    return <<<HTML
-<span class="pagecontrols"><a href="?action=new"><i class="controls c1"></i>New Page</a> <a href="?action=edit"><i class="controls pc2"></i>Edit This Page</a> <a href="?action=delete"><i class="controls pc3"></i>Delete This Page</a><span>
+<span class="pagecontrols"><a href="//{$GLOBALS['SET']['baseuri']}/?q={$_GET['q']}&action=new"><i class="controls c1"></i>New Page</a> <a href="//{$GLOBALS['SET']['baseuri']}/?q={$_GET['q']}&action=edit"><i class="controls pc2"></i>Edit This Page</a> <a href="//{$GLOBALS['SET']['baseuri']}/?q={$_GET['q']}&action=delete"><i class="controls pc3"></i>Delete This Page</a><span>
 HTML;
    break;
   }

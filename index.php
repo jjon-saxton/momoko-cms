@@ -21,6 +21,9 @@ if(isset($_GET['action']) && !empty($_GET['action']))
     exit();
    }
   }
+  $path_parts=array_splice($path_parts,1);
+  $path=implode("/",$path_parts);
+  $child=new MomokoPage($path);
   switch ($_GET['action'])
   {
    case 'new':
@@ -34,6 +37,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
     header("Location: https://".$GLOBALS['SET']['baseuri']."?action=login&re=new");
     exit();
    }
+   break;
    case 'edit':
    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
    {

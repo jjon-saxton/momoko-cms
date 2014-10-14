@@ -21,19 +21,23 @@ if(isset($_GET['action']) && !empty($_GET['action']))
     exit();
    }
   }
+  $path_parts=array_splice($path_parts,1);
+  $path=implode("/",$path_parts);
+  $child=new MomokoPage($path);
   switch ($_GET['action'])
   {
    case 'new':
    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
    {
-    $child=new MomokoPage(pathinfo(@$path,PATHINFO_DIRNAME).'/new_page.htm');
-    $child->put($_POST);
+    $new_child=new MomokoPage(pathinfo(@$path,PATHINFO_DIRNAME).'/new_page.htm');
+    $new_child->put($_POST);
    }
    else
    {
     header("Location: https://".$GLOBALS['SET']['baseuri']."?action=login&re=new");
     exit();
    }
+   break;
    case 'edit':
    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
    {
@@ -123,8 +127,6 @@ else
  switch($path_parts[0])
  {
   case "addin":
-  do_addin(implode("/",$path_parts),@$_GET['action']);
-  break;
   case "news":
   case "help":
   case "file":
