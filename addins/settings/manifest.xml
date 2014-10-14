@@ -1,5 +1,5 @@
 <manifest addin="User Settings Editor">
-<dirroot>/assets/addins/settings/</dirroot>
+<dirroot>/addins/settings/</dirroot>
 <authority>
   <managed>ALL</managed>
 </authority>

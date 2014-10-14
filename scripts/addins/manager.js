@@ -46,7 +46,7 @@ function iUpload(field){
 }
 
 function showAdd(){
-	$("div#dialog-fill").load("?action=add&ajax=1", function(data){
+	$("div#dialog-fill").load("?q=addin/&action=add&ajax=1", function(data){
 	$(this).dialog({
 		autoOpen: true,
 		title: "Add Addin",
@@ -68,7 +68,7 @@ function showAdd(){
 
 function showUpdate(id,event) {
 	event.preventDefault();
-	$("div#dialog-fill").load("?action=update&num="+id+"&ajax=1", function(data){
+	$("div#dialog-fill").load("?q=addin/&action=update&num="+id+"&ajax=1", function(data){
         $(this).dialog({
             autoOpen: true,
 	    title: "Update Addin",
@@ -86,7 +86,7 @@ function showUpdate(id,event) {
             }
 	 });
         });
-	/*$.get("?action=get&u="+id+"&ajax=1", function(data){
+	/*$.get("?q=addin/&action=get&u="+id+"&ajax=1", function(data){
 		$("input#name").val(data.name);
 		$("input#email").val(data.email);
 		$("input#groups").val(data.groups);
@@ -95,7 +95,7 @@ function showUpdate(id,event) {
 
 function showRemove(id,event){
 	event.preventDefault();
-	$("div#dialog-fill").load("?action=remove&num="+id+"&ajax=1", function(data){
+	$("div#dialog-fill").load("?q=addin/&action=remove&num="+id+"&ajax=1", function(data){
 	$(this).dialog({
 		autoOpen: true,
 		title: "Remove Addin?",
@@ -117,7 +117,7 @@ function showRemove(id,event){
 
 function toggleEnabled(id,event){
   event.preventDefault();
-  $("tr#"+id+" > td#enabled").load("?action=enable&num="+id+"&ajax=1");
+  $("tr#"+id+" > td#enabled").load("?q=addin/&action=enable&num="+id+"&ajax=1");
 }
 
 function doAdd(){
@@ -129,7 +129,7 @@ function doAdd(){
 	var longname=$("input#addin-title").val();
 	var description=$("input#addin-description").val();
 
-	$.post("?action=add&ajax=1", { archive: archive,
+	$.post("?q=addin/&action=add&ajax=1", { archive: archive,
 	  incp: incp,
 	  enabled: enabled,
 	  dir: dir,
@@ -148,7 +148,7 @@ function doUpdate(id)
 	var longname=$("input#addin-title").val();
 	var description=$("input#addin-description").val();
 
-	$.post("?action=update&num="+id+"&ajax=1",{
+	$.post("?q=addin/&action=update&num="+id+"&ajax=1",{
 		dir: dir,
 		shortname: shortname,
 		longname: longname,
@@ -161,7 +161,7 @@ function doUpdate(id)
 }
 
 function doRemove(id) {
-	$.post("?action=remove&num="+id+"&ajax=1", { send:"Yes"}, function(data){
+	$.post("?q=addin/&action=remove&num="+id+"&ajax=1", { send:"Yes"}, function(data){
  	  if (data.succeed){
 	    $("tr#"+data.num).remove();
  	  }else{

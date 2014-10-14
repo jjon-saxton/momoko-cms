@@ -8,7 +8,7 @@ class UserManager implements MomokoObject
 
  public function __construct($action=null)
  {
-  $this->dbtable=new DataBaseTable(DAL_TABLE_PRE."users",DAL_DB_DEFAULT);
+  $this->dbtable=new DataBaseTable("users");
   $this->action=$action;
  }
 
@@ -43,7 +43,7 @@ class UserManager implements MomokoObject
     $cols=null;
    }
    $query=$this->dbtable->getData("num:'".$_GET['u']."'",$cols,null,1);
-   $rows=$query->toArray();
+   $rows=$query->fetch();
    return $rows[0];
    break;
    case 'put':
@@ -86,9 +86,9 @@ class UserManager implements MomokoObject
    }
    $table.="<th>Actions</th>\n</tr>\n";
 
-   $query=$this->dbtable->getData(@$_GET['q'],$cols,@$_GET['sort'],@$_GET['limit'],@$_GET['offset']);
+   $query=$this->dbtable->getData(@$_GET['query'],$cols,@$_GET['sort'],@$_GET['limit'],@$_GET['offset']);
    
-   while ($row=$query->next())
+   while ($row=$query->fetch(PDO::FETCH_CLASS))
    {
     $table.="<tr id=\"".$row->num."\">\n";
     foreach ($cols as $col)
@@ -98,7 +98,7 @@ class UserManager implements MomokoObject
     $table.="<td><a href=\"#edit\" title=\"Edit\" onClick=\"showEdit('".$row->num."', event)\" class=\"ui-icon ui-icon-pencil\" style=\"display: inline-block\">Edit</a> <a href=\"#remove\" title=\"Delete\" class=\"ui-icon ui-icon-trash\" onClick=\"showDelete('".$row->num."', event)\" style=\"display: inline-block\">Delete</a></td>\n</tr>";
    }
    $table.="</table>";
-   $siteroot=$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location;
+   $siteroot=$GLOBALS['SET']['baseuri'];
 
    $html=<<<HTML
 <html>
@@ -181,8 +181,8 @@ HTML;
   if ($data=$this->get())
   {
    $info=parse_page($data);
-   $varlist['finderroot']='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elfinder';
-   $varlist['connectoruri']='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.$this->connector;
+   $varlist['finderroot']='//'.$GLOBALS['SET']['baseuri'].'/assets/scripts/elfinder';
+   $varlist['connectoruri']='//'.$GLOBALS['SET']['baseuri'].$this->connector;
    $ch=new MomokoVariableHandler($varlist);
    $info['inner_body']=$ch->replace($info['inner_body']);
   }

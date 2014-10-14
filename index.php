@@ -12,9 +12,10 @@ if(isset($_GET['action']) && !empty($_GET['action']))
 {
  if (isset ($_GET['q']) && !empty($_GET['q']))
  {
-   $path_parts($explode("/",$_GET['q']));
+   $path_parts=(explode("/",$_GET['q']));
    if ($path_parts[0] == 'addin')
    {
+    include dirname(__FILE__)."/core/deliver.php";
     $path_parts=array_splice($path_parts,1);
     do_addin(implode("/",$path_parts),$_GET['action']);
     exit();

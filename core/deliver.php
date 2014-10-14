@@ -217,6 +217,7 @@ function do_addin($path,$action=null)
 if (@$action == 'login' || @$action == 'logout' || @$action == 'register')
 {
  header("Location: //".$GLOBALS['SET']['baseuri']."?action=".$action);
+ exit();
 }
 elseif (@$path)
 {
@@ -299,6 +300,23 @@ elseif (@$path)
  else
  {
   $tpl=new MomokoTemplate($GLOBALS['LOADED_ADDIN']->dirroot['value'].'/templates/main.tpl.htm');
+  print $tpl->toHTML($child);
+ }
+}
+else
+{
+ if (@$_GET['action'] == 'list')
+ {
+  if ($GLOBALS['USR']->inGroup('admin'))
+  {
+    $child=new MomokoAddinForm('list');
+  }
+  else
+  {
+    $child=MomokoError("Forbidden");
+  }
+
+  $tpl=new MomokoTemplate('/');
   print $tpl->toHTML($child);
  }
 }

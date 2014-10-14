@@ -2,13 +2,13 @@
 
 function apply_settings($data)
 {
-  $utbl=new DataBaseTable(DAL_TABLE_PRE.'users',DAL_DB_DEFAULT);
+  $utbl=new DataBaseTable('users');
   if ($GLOBALS['USR']->name != 'guest' || $GLOBALS['USR']->name != 'root')
   {
     $data['num']=$GLOBALS['USR']->num;
   }
   $query=$utbl->getData("num:'= ".$GLOBALS['USR']->num."'",array('name','password'),null,1);
-  $cur_data=$query->first();
+  $cur_data=$query->fetch();
   
   if (crypt($data['check'],$cur_data->password) == $cur_data->password && $data['newpass1'] == $data['newpass2'])
   {
@@ -24,7 +24,7 @@ function apply_settings($data)
 
   if($GLOBALS['USR']->inGroup('admin'))
   {
-   $stbl=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
+   $stbl=new DataBaseTable('settings');
    $site_data=$data['site'];
    $site_data['email_server']=http_build_query($site_data['email_server']);
    $site_data['email_from']=http_build_query($site_data['email_from']);

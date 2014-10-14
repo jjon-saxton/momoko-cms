@@ -25,3 +25,50 @@
 [2014-10-13 19:14:55] PHP Error (2; require(/assets/addins/settings//form.inc.php): failed to open stream: No such file or directory) in 22 of /home/allana/public_html/momoko/addins/settings/load.inc.php!
 [2014-10-13 19:15:15] PHP Error (2; require(/assets/addins/usermanager//main.inc.php): failed to open stream: No such file or directory) in 7 of /home/allana/public_html/momoko/addins/usermanager/load.inc.php!
 [2014-10-13 19:16:46] PHP Error (2; require(/assets/addins/usermanager//main.inc.php): failed to open stream: No such file or directory) in 7 of /home/allana/public_html/momoko/addins/usermanager/load.inc.php!
+[2014-10-13 19:23:49] PHP Error (2; require(/assets/addins/settings//form.inc.php): failed to open stream: No such file or directory) in 22 of /home/allana/public_html/momoko/addins/settings/load.inc.php!
+[2014-10-13 19:23:57] PHP Error (2; require(/assets/addins/settings//form.inc.php): failed to open stream: No such file or directory) in 22 of /home/allana/public_html/momoko/addins/settings/load.inc.php!
+[2014-10-13 20:11:55] PHP Error (2; file_get_contents(/forms/addinlist.htm): failed to open stream: No such file or directory) in 1155 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:12:30] PHP Error (2; file_get_contents(/forms/addinlist.htm): failed to open stream: No such file or directory) in 1155 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:14:23] PHP Error (2; file_get_contents(/forms/addinlist.htm): failed to open stream: No such file or directory) in 1155 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:15:49] PHP Error (2; file_get_contents(/forms/addinlist.htm): failed to open stream: No such file or directory) in 1155 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:16:36] PHP Error (2; file_get_contents(/forms/addinlist.htm): failed to open stream: No such file or directory) in 1155 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:16:36] PHP Error (2; file_get_contents(/forms/addinlist.htm): failed to open stream: No such file or directory) in 1155 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:16:40] PHP Error (2; file_get_contents(/forms/addinlist.htm): failed to open stream: No such file or directory) in 1155 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:17:36] PHP Error (2; file_get_contents(/forms/addinlist.htm): failed to open stream: No such file or directory) in 1155 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:22:45] PHP Error (2; file_get_contents(/forms/addinlist.htm): failed to open stream: No such file or directory) in 1155 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:24:41] PHP Error (4096; Object of class stdClass could not be converted to string) in 1198 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:24:41] PHP Error (4096; Object of class stdClass could not be converted to string) in 1198 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:24:41] PHP Error (4096; Object of class stdClass could not be converted to string) in 1198 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:24:41] PHP Error (4096; Object of class stdClass could not be converted to string) in 1198 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:24:41] PHP Error (4096; Object of class stdClass could not be converted to string) in 1198 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:24:41] PHP Error (4096; Object of class stdClass could not be converted to string) in 1198 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:24:43] PHP Error (4096; Object of class stdClass could not be converted to string) in 1198 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:24:43] PHP Error (4096; Object of class stdClass could not be converted to string) in 1198 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:24:43] PHP Error (4096; Object of class stdClass could not be converted to string) in 1198 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:24:43] PHP Error (4096; Object of class stdClass could not be converted to string) in 1198 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:24:43] PHP Error (4096; Object of class stdClass could not be converted to string) in 1198 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:24:43] PHP Error (4096; Object of class stdClass could not be converted to string) in 1198 of /home/allana/public_html/momoko/core/content.inc.php!
+[2014-10-13 20:44:17] PHP Error (2; require(/assets/addins/settings//form.inc.php): failed to open stream: No such file or directory) in 22 of /home/allana/public_html/momoko/addins/settings/load.inc.php!
+[2014-10-14 10:52:29] PHP Error (2; require(/home/allana/public_html/momoko/assets/addins/finder/main.inc.php): failed to open stream: No such file or directory) in 14 of /home/allana/public_html/momoko/addins/finder/load.inc.php!
+[2014-10-14 11:01:14] PHP Error (2048; Only variables should be passed by reference) in 645 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2014-10-14 11:01:14] PHP Error (2; mkdir(): Permission denied) in 468 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2014-10-14 11:01:14] PHP Error (2; mkdir(): Permission denied) in 424 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeLocalFileSystem.class.php!
+[2014-10-14 11:01:14] PHP Error (2048; Only variables should be passed by reference) in 645 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2014-10-14 11:01:20] PHP Error (2048; Only variables should be passed by reference) in 645 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2014-10-14 11:01:20] PHP Error (2; mkdir(): Permission denied) in 468 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2014-10-14 11:01:20] PHP Error (2; mkdir(): Permission denied) in 424 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeLocalFileSystem.class.php!
+[2014-10-14 11:01:20] PHP Error (2048; Only variables should be passed by reference) in 645 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2014-10-14 11:02:00] PHP Error (2048; Only variables should be passed by reference) in 645 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2014-10-14 11:02:00] PHP Error (2; mkdir(): Permission denied) in 468 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2014-10-14 11:02:00] PHP Error (2; mkdir(): Permission denied) in 424 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeLocalFileSystem.class.php!
+[2014-10-14 11:02:00] PHP Error (2048; Only variables should be passed by reference) in 645 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2014-10-14 11:03:35] PHP Error (2048; Only variables should be passed by reference) in 645 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2014-10-14 11:03:35] PHP Error (2; mkdir(): Permission denied) in 468 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2014-10-14 11:03:35] PHP Error (2; mkdir(): Permission denied) in 424 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeLocalFileSystem.class.php!
+[2014-10-14 11:03:35] PHP Error (2048; Only variables should be passed by reference) in 645 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2014-10-14 11:03:35] PHP Error (2; mkdir(): Permission denied) in 468 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2014-10-14 11:03:35] PHP Error (2; mkdir(): Permission denied) in 424 of /home/allana/public_html/momoko/scripts/elfinder/php/elFinderVolumeLocalFileSystem.class.php!
+[2014-10-14 11:16:24] PHP Error (2; require(/home/allana/public_html/momoko/assets/addins/usermanager//main.inc.php): failed to open stream: No such file or directory) in 7 of /home/allana/public_html/momoko/addins/usermanager/load.inc.php!
+[2014-10-14 11:16:48] PHP Error (2; PDOStatement::fetch(): SQLSTATE[HY000]: General error: No fetch class specified) in 91 of /home/allana/public_html/momoko/addins/usermanager/main.inc.php!
+[2014-10-14 11:19:15] PHP Error (2; PDOStatement::fetch(): SQLSTATE[HY000]: General error: No fetch class specified) in 91 of /home/allana/public_html/momoko/addins/usermanager/main.inc.php!
+[2014-10-14 11:22:36] PHP Error (2; PDOStatement::fetch(): SQLSTATE[HY000]: General error: No fetch class specified) in 91 of /home/allana/public_html/momoko/addins/usermanager/main.inc.php!

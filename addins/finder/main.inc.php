@@ -13,7 +13,7 @@ class FinderPage implements MomokoObject
   }
   else
   {
-   $this->connector='/assets/scripts/elfinder/php/connector.php';
+   $this->connector='/scripts/elfinder/php/connector.php';
   }
   $this->setInfo();
  }
@@ -45,8 +45,8 @@ class FinderPage implements MomokoObject
   if ($data=$this->get())
   {
    $info=parse_page($data);
-   $varlist['finderroot']='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elfinder';
-   $varlist['connectoruri']='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.$this->connector;
+   $varlist['finderroot']='//'.$GLOBALS['SET']['baseuri'].'/scripts/elfinder';
+   $varlist['connectoruri']='//'.$GLOBALS['SET']['baseuri'].$this->connector;
    $ch=new MomokoVariableHandler($varlist);
    $info['inner_body']=$ch->replace($info['inner_body']);
   }

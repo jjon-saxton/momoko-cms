@@ -1,5 +1,5 @@
 <manifest addin="User Manager">
-<dirroot>/assets/addins/usermanager/</dirroot>
+<dirroot>/addins/usermanager/</dirroot>
 <authority>
 	<whitelist>admin</whitelist>
 	<blacklist>ALL</blacklist>

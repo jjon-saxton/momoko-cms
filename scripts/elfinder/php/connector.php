@@ -7,8 +7,8 @@ include_once dirname(__FILE__).DIRECTORY_SEPARATOR.'elFinder.class.php';
 include_once dirname(__FILE__).DIRECTORY_SEPARATOR.'elFinderVolumeDriver.class.php';
 include_once dirname(__FILE__).DIRECTORY_SEPARATOR.'elFinderVolumeLocalFileSystem.class.php';
 
-chdir(dirname(__FILE__).'/../../../../');
-require './assets/core/common.inc.php';
+chdir(dirname(__FILE__).'/../../../');
+require './core/common.inc.php';
 chdir(dirname(__FILE__));
 // Required for MySQL storage connector
 // include_once dirname(__FILE__).DIRECTORY_SEPARATOR.'elFinderVolumeMySQL.class.php';
@@ -35,15 +35,15 @@ $opts = array(
 	'roots' => array(
 		array(
 			'driver'        => 'LocalFileSystem',   // driver for accessing file system (REQUIRED)
-			'path'          => $GLOBALS['CFG']->pagedir,         // path to files (REQUIRED)
-			'URL'           => 'http://'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.PAGEROOT, // URL to files (REQUIRED)
+			'path'          => $GLOBALS['SET']['pagedir'],         // path to files (REQUIRED)
+			'URL'           => 'http://'.$GLOBALS['SET']['baseuri'].PAGEROOT, // URL to files (REQUIRED)
 			'alias'	=>	'Pages',
 			'accessControl' => 'access'             // disable and hide dot starting files (OPTIONAL)
 		),
 		array(
 			'driver'	=> 'LocalFileSystem',
-			'path'	=>	$GLOBALS['CFG']->datadir,
-			'URL'	=>	'http://'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.FILEROOT,
+			'path'	=>	$GLOBALS['SET']['filedir'],
+			'URL'	=>	'http://'.$GLOBALS['SET']['baseuri'].FILEROOT,
 			'alias'	=>	'Files',
 			'accessControl'	=>	'access'
 		)
