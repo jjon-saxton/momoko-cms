@@ -10,7 +10,7 @@ foreach ($settings as $pairs)
 }
 if (empty($GLOBALS['SET']['baseuri']))
 {
- $GLOBALS['SET']['baseuri']=$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']);
+ $GLOBALS['SET']['baseuri']=$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']);
 }
 
 #Set Constants

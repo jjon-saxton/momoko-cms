@@ -21,6 +21,7 @@ if ($GLOBALS['SET']['rewrite'])
  define("FILEROOT","/mk_content/");
  define("ADDINROOT","/mk_addin/");
  define("NEWSROOT","/news/");
+ define("QUERYSTARTER","?");
 }
 else
 {
@@ -29,6 +30,7 @@ else
  define("FILEROOT","/?q=file/");
  define("ADDINROOT","/?q=addin/");
  define("NEWSROOT","/?q=news/");
+ define("QUERYSTARTER","&");
 }
 define("TEMPLATEROOT","/templates/");
 

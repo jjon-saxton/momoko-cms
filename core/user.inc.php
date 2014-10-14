@@ -332,8 +332,8 @@ HTML;
    {
     $atitle=$this->opts['admin_title'];
    }
-   $actions[]=array('href'=>'//'.$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].ADMINROOT,'title'=>'AdminCP');
-   $actions[]=array('href'=>'//'.$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].ADDINROOT."?action=list",'title'=>'Manage Addins');
+   $actions[]=array('href'=>'//'.$GLOBALS['SET']['baseuri'].ADMINROOT,'title'=>'AdminCP');
+   $actions[]=array('href'=>'//'.$GLOBALS['SET']['baseuri'].ADDINROOT.QUERYSTARTER."action=list",'title'=>'Manage Addins');
   }
   if (is_array($this->opts['custom_links']))
   {
@@ -345,7 +345,7 @@ HTML;
      $link=str_replace("\\","/",$link);
      if (preg_match("/\/\//",$link) <= 0)
      {
-      $link='//'.$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].$link;
+      $link='//'.$GLOBALS['SET']['baseuri'].$link;
      }
      if (empty($text))
      {
@@ -355,7 +355,7 @@ HTML;
     }
    }
   }
-  $actions[]=array('href'=>'//'.$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].ADDINROOT.'settings','title'=>'Change Settings');
+  $actions[]=array('href'=>'//'.$GLOBALS['SET']['baseuri'].ADDINROOT.'settings','title'=>'Change Settings');
   $actions[]=array('href'=>'?action=logout','title'=>'Logout');
   $html=null;
 
@@ -402,7 +402,7 @@ class MomokoMiniCP implements MomokoModuleInterface
   $query=$this->dbtable->getData("incp:'y'");
   while ($data=$query->fetch(PDO::FETCH_OBJ))
   {
-   $html.=preg_replace("/__LINK__/","<a href=\"//".$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].ADDINROOT.$data->dir."\" title=\"".$data->longname."\">".$data->shortname."</a>",$wrapper);
+   $html.=preg_replace("/__LINK__/","<a href=\"//".$GLOBALS['SET']['baseuri'].ADDINROOT.$data->dir."\" title=\"".$data->longname."\">".$data->shortname."</a>",$wrapper);
   }
   return $html;
  }
