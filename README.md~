@@ -46,27 +46,24 @@ If you have SSH access and prefer not to set up or install git, or you want to u
 
 ### 2. Configuring MomoKO
 
-Once you have MomoKO it is time to configure her. As of version 1.6 you will only need to configure MomoKO to connect to a database server. All other settings will be handled in the next step 'Prepare your database'. Database configuration is stored in `database.ini` now in the directory you store MomoKO in.
+Once she is on your server you need to set her up to connect to a database, create required tables on, change your site settings, and create an administrator for your site. Once this is done, you will be able to login, create pages, and additional users. Fortunately this task is made simple by the inclusion of a finalization script. Two versions of this script are available for flexibility. If you completed the previous step via SSH, you can run the finalization right there using the CLI version. If you did not use SSH, or simply wish to finish the installation in a web-browser you can use the web version.
 
-1. Open database.ex.ini
-2. Under the `[database]` section set the driver, host, and port. Driver is the PDO driver you wish to use. This should match the type of database you are trying to connect to i.e. for a MySQL database this would be `driver=mysql` for and SQLLite database it might be `driver=sqllite`. Host would the file or resource you would access, for MySQL this is often `host=localhost`. By default the 'port' option is commented out, but you my use it to set a different port.
-3. Under the `[schema]` section set the name, user, password, and tableprefix. Name is the name of the database schema you wish to store MomoKO's data in. User, if applicable, is the user name you will use to connect to the schema, and password is their password. The tableprefix option is used to set a special prefix for this MomoKO installation's tables. This can be used to seperate this installation from others in the same schema, or to seperate MomoKO's table from others.
-4. Please place a semicolan ';' in front of any setting you do not use to comment it out. You **do not** need to empty their settings, but you may wish to keep them in case you change something later.
-
-### 3. Prepare your database
-
-Once configured you need to set up required tables on your database and create an administrator for your site. Once this is done, you will be able to login, create pages, and additional users. Fortunately this task is made simple by the inclusion of a finalization script. This procedure can only be completed via SSH at this time. A web front-end will be created shortly, which will allow you to complete this procedure in your web browser.
-
-#### 3.1 Run install.php CLI over SSH
+#### 2.1 CLI: Run install.php over SSH
 
 To use this method you will need SSH access to your server!
 
-1. Login to you server via SSH
-2. Navigate to your MomoKO installation and change to `assets/php/cli`
+1. Login to you server via SSH if you are not already logged in.
+2. Navigate to your MomoKO installation and change to `cli`
 3. Run `install.php`
     1. Ensure `install.php` is executable and type: `./install.php`
-    2. If this files try: `php ./install.php`
+    2. If this does not work also try: `php ./install.php`
 4. Follow the onscreen instructions.
+
+#### 3.2 Web: Run mk_install.php via your browser
+
+1. Open your browser and navigate to the domain and location (URL) you placed MomoKO
+2. You should be redirected to `mk_install.php`
+3. Follow the onscreen instructions.
 
 ### Congratulations!
 

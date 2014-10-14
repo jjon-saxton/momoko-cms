@@ -30,34 +30,25 @@ If you have SSH access and prefer not to set up or install git, or you want to u
 1. Open a terminal and/or log in. If you wish to download and extract directly from you server login to it via SSH.
 2. To download the latest stable version of MomoKO you need only type `wget ftp://saxton-solutions/pub/momoko/core/latest_stable/*.zip`. The '*' is a wildcard which will make wget grab all zip files in the directory 'pub/momoko/core/latest_stable' There is only one archive in this folder at all times and it is the latest stable version of MomoKO so this will only grab the files you need. if you want a different version type `wget ftp://saxton-solutions.com/pub/momoko/core/momoko-cms-myversion.zip` replacing 'myversion' with the version you want. Keep in mind we use an x.x.xa version system. If you don't know what versions are available it's best to get a listing of the 'pub/momoko/core/' directory using Linux's built in FTP client or a graphical one.
 3. Extract the zip archive. This is a zip file so unzip will be needed to extract it. Type `unzip momoko-cms-1.1.2.zip` or the file name you acquired from wget, you can also use `unzip momoko-cms*.zip` if you aren't sure. This will create a folder like 'momoko-cms-latest_stable' or 'momoko-cms-1.1-STABLE'. You may wish to simply rename this to 'momoko' or something similar.
-4. If you ran all of these under an SSH login to your remote server than you are done and may proceed to 'Configure MomoKO'. If you did this locally you may wish to still proceed to 'Configure MomoKO' if you do not have SSH access, just don't forget to upload the **entire** folder to your server via FTP, FTPS, or whatever files upload method is available *before* proceeding to 'Preparing your database'. Make sure the file upload method can support folder uploads.
+4. Proceed to 'Configure MomoKO'
 
 ##### 1.2.2 Graphically: FireFTP
 
-1. Open your favorite FTP client, for this example we'll be using FireFTP, so we will be opening Firefox then clicking FireFTP in te toolbar or developer menu, but you may open just about any client.
+1. Open your favorite FTP client, for this example we'll be using FireFTP, so we will be opening Firefox then clicking FireFTP in the toolbar or developer menu, but you may open just about any client.
 2. Click the drop down and select 'create an account' to open the account manager. In some clients you need simply choose 'connect'.
 3. Find the 'host' field and type 'saxton-solutions.com'.
 4. Leave any 'login' and 'password' fields blank and find the checkbox labeled 'Anonymous' or something similar and make sure it is checked. Click 'Ok' then click 'connect'.
 5. Weclome to SaxtonSolutions! On the right pane (or remote pane) you will see a list of directories, expand them like so pub->momoko and click 'core' to open it. Select the zip of the version you want. Note: if you just want the latest stable version enter the 'latest-stable' directory, this houses only one archive, so just select that one.
-6. Double click the archive you selected, or right click and click download. You may also drag and drop it anyone in the left (local) pane.
+6. Double click the archive you selected, or right click and click download. You may also drag and drop it anywhere in the left (local) pane.
 7. After the file has downloaded right click it and select open to open it in your computer's default archive manager.
 8. We won't go into details here as archive managers vary widely, but you need to extract all of the files into a folder, while keeping the directory structure in the archive.
-9. Proceed to 'Configure MomoKO', but upload the **entire** folder to your server *before* moving on to 'Preparing your database'
+9. Proceed to 'Configure MomoKO',
 
-### 2. Configuring MomoKO
+### 2. Configure MomoKO
 
-Once you have MomoKO it is time to configure her. As of version 1.6 you will only need to configure MomoKO to connect to a database server. All other settings will be handled in the next step 'Prepare your database'. Database configuration is stored in `database.ini` now in the directory you store MomoKO in.
+Once she is on your server you need to set her up to connect to a database, create required tables on, change your site settings, and create an administrator for your site. Once this is done, you will be able to login, create pages, and additional users. Fortunately this task is made simple by the inclusion of a finalization script. Two versions of this script are available for flexibility. If you completed the previous step via SSH, you can run the finalization right there using the CLI version. If you did not use SSH, or simply wish to finish the installation in a web-browser you can use the web version.
 
-1. Open database.ex.ini
-2. Under the `[database]` section set the driver, host, and port. Driver is the PDO driver you wish to use. This should match the type of database you are trying to connect to i.e. for a MySQL database this would be `driver=mysql` for and SQLLite database it might be `driver=sqllite`. Host would the file or resource you would access, for MySQL this is often `host=localhost`. By default the 'port' option is commented out, but you my use it to set a different port.
-3. Under the `[schema]` section set the name, user, password, and tableprefix. Name is the name of the database schema you wish to store MomoKO's data in. User, if applicable, is the user name you will use to connect to the schema, and password is their password. The tableprefix option is used to set a special prefix for this MomoKO installation's tables. This can be used to seperate this installation from others in the same schema, or to seperate MomoKO's table from others.
-4. Please place a semicolan ';' in front of any setting you do not use to comment it out. You **do not** need to empty their settings, but you may wish to keep them in case you change something later.
-
-### 3. Prepare your database
-
-Once configured you need to set up required tables on your database, change your site settings, and create an administrator for your site. Once this is done, you will be able to login, create pages, and additional users. Fortunately this task is made simple by the inclusion of a finalization script. Two versions of this script are available for flexibility. If you completed the previous two steps via SSH, you can run the finalization right there using the CLI version. If you did not use SSH, or simply wish to finish the installation in a web-browser you can use the web version.
-
-#### 3.1 CLI: Run install.php over SSH
+#### 2.1 CLI: Run install.php over SSH
 
 To use this method you will need SSH access to your server!
 
@@ -71,7 +62,7 @@ To use this method you will need SSH access to your server!
 #### 3.2 Web: Run mk_install.php via your browser
 
 1. Open your browser and navigate to the domain and location (URL) you placed MomoKO
-2. You should be redirected to `mk_install.php`, if not simply add `mk_install.php` at the end of the URL.
+2. You should be redirected to `mk_install.php`
 3. Follow the onscreen instructions.
 
 ### Congratulations!

@@ -10,11 +10,52 @@ $version=MOMOKOVERSION;
 fwrite(STDOUT,"Ready to install MomoKO v".$version."? [Y]es or [N]o\n");
 if (strtolower(trim(fgets(STDIN),"\n\r")) == 'y')
 {
-  fwrite(STDOUT,"This script is designed to prepare your database to run MomoKO. This is the final step in the install procedure. You must first configure your installation in /assets/etc/main.conf.txt and configure your database in /assets/etc/dal.conf.txt\n");
-  fwrite(STDOUT,"This script will fail if the files mentioned above are not available for read or have not been edited. Please see the README for more details.\n");
+  fwrite(STDOUT,"This script is designed to prepare your database to run MomoKO.\n");
+  fwrite(STDOUT,"This script will fail if the base directory is not writable or if a file called 'database.ini' already exists there. Please see the README for more details.\n");
   fwrite(STDOUT,"Have you configured MomoKO v".$version." as described in the README? [Y]es or [N]o\n");
   if (strtolower(trim(fgets(STDIN),"\n\r")) == 'y')
   {
+    if (!is_writable("../") || file_exists("../database.ini"))
+    {
+     fwrite(STDOUT,"Database cannot be configured because I can't write to my base folder or a configuration already exists. Please correct the issue and try again!\n");
+     exit();
+    }
+    fwrite(STDOUT, "Welcome to MomoKO!\n");
+    fwrite(STDOUT,"I need to know a few things about the database server I will be connecting to.\n");
+    $pdo_drivers=PDO::getAvailableDrivers();
+    $pdo_drivers=implode(", ",$pdo_drivers);
+    trim ($pdo_drivers);
+    fwrite(STDOUT,"What type of database server am I connecting to? ({$pdo_drivers})\n");
+    $dserver['driver']=trim(fgets(STDIN),"\n\r");
+    fwrite(STDOUT,"Where is this database server? (hostname, or file location)\n");
+    $dserver['host']=trim(fgets(STDIN),"\n\r");
+    fwrite(STDOUT,"What port number, if applicable, will I use to open a database connection?\n");
+    $dserver['port']=trim(fgets(STDIN),"\n\r");
+    fwrite(STDOUT,"Okay, thank you! Now I will need to know a bit about the particular database schema I will be using to build tables and store data. Please ensure that this schema is already created and that you have a user other than root for me to use to connect to it if applicable.\n");
+    fwrite(STDOUT,"What is the name of the database schema you want me to use?\n");
+    $dschema['name']=trim(fgets(STDIN),"\n\r");
+    fwrite(STDOUT,"What user name will I need to access this schema, note: A user is not required to access SQLite databases?\n");
+    $dschema['user']=trim(fgets(STDIN),"\n\r");
+    fwrite(STDOUT,"What is the password, if needed, for the user above?\n");
+    $dschema['password']=trim(fgets(STDIN),"\n\r");
+    fwrite(STDOUT,"To help me defirentiate myself from other MomoKOs and other data I can add a prefix to my table. What prefix would like me to use? (mk_)\n");
+    $dschema['tableprefix']=trim(fgets(STDIN),"\n\r");
+
+    $ini=<<<TXT
+[database]
+driver = {$dserver['driver']}
+host = {$dserver['host']}
+port = {$dserver['port']}
+
+[schema]
+name = "{$dschema['name']}"
+username = "{$dschema['user']}"
+password = "${dschema['password']}"
+tableprefix = "${dschema['tableprefix']}"
+TXT;
+
+    file_put_contents('../database.ini',$ini);
+    
     fwrite(STDOUT,"This script is now creating the required database tables. Please stand by...\n");
     if (create_tables('../database.ini'))
     {
