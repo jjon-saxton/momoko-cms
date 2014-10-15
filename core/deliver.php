@@ -293,6 +293,7 @@ elseif (@$path)
    $child=new MomokoError('Forbidden');
   }
  }
+
  if ((array_key_exists('dialog',$_GET) && $_GET['dialog']) || (array_key_exists('ajax',$_GET) && $_GET['ajax'] == 1))
  {
   echo $child->inner_body;

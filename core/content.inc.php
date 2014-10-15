@@ -1409,14 +1409,14 @@ HTML;
  
  public function drop()
  {
-  $table=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
+  $table=new DataBaseTable('addins');
   $query=$table->getData("dir:'".basename($this->info['dirroot']['value'])."'",array('num','dir','shortname'),null,1);
-  $data=$query->first();
+  $data=$query->fetch(PDO::FETCH_OBJ);
   
   if ($_POST['send'] == "Yes")
   {
     $ddata['num']=$data->num;
-    if ($table->removeData($ddata) && rmdirr($GLOBALS['CFG']->basedir.'/assets/addins/'.$data->dir))
+    if ($table->removeData($ddata) && rmdirr($GLOBALS['SET']['basedir'].'/addins/'.$data->dir))
     {
       momoko_changes($GLOBALS['USR'],'dropped',$this);
       $ddata['succeed']=true;
@@ -1431,7 +1431,6 @@ HTML;
    else
    {
     $form=new MomokoAddinForm('remove');
-    $form->addin=$data;
     return $form;
    }
   
@@ -1463,9 +1462,9 @@ HTML;
  
  public function setPathByID($id)
  {
-  $query=$this->table->getData("num:'= ".$id."'",array('num','dir','enabled'),null,1);
-  $data=$query->first();
-  $path=$GLOBALS['CFG']->basedir."/assets/addins/".$data->dir."/";
+  $query=$this->table->getData("num:'= ".$id."'",array('`num`','`dir`','`enabled`'),null,1);
+  $data=$query->fetch(PDO::FETCH_OBJ);
+  $path=$GLOBALS['SET']['basedir']."/addins/".$data->dir."/";
   
   $manifest=xmltoarray($path.'/manifest.xml'); //Load manifest
   $this->info=$this->parseManifest($manifest);
