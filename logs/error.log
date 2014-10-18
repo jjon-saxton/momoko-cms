@@ -190,3 +190,9 @@
 [2014-10-15 14:15:06] PHP Error (2; file_get_contents(/home/allana/public_html/momoko/home/allana/public_html/momoko/addins/settings/manifest.xml): failed to open stream: No such file or directory) in 503 of /home/allana/public_html/momoko/core/common.inc.php!
 [2014-10-15 14:16:38] PHP Error (2; require(/home/allana/public_html/momoko/addins/finder//form.inc.php): failed to open stream: No such file or directory) in 22 of /home/allana/public_html/momoko/addins/settings/load.inc.php!
 [2014-10-15 14:18:01] PHP Error (2; require(/home/allana/public_html/momoko/addins/finder//form.inc.php): failed to open stream: No such file or directory) in 22 of /home/allana/public_html/momoko/addins/settings/load.inc.php!
+[2014-10-18 17:02:11] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/kuro/public_html/momoko/index.php!
+[2014-10-18 17:02:11] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/kuro/public_html/momoko/index.php!
+[2014-10-18 17:02:35] PHP Error (2; file_get_contents(/home/kuro/public_html/momoko/addins/manager//manifest.xml): failed to open stream: No such file or directory) in 503 of /home/kuro/public_html/momoko/core/common.inc.php!
+[2014-10-18 17:04:55] PHP Error (2; file_get_contents(/home/kuro/public_html/momoko/addins/manager//manifest.xml): failed to open stream: No such file or directory) in 503 of /home/kuro/public_html/momoko/core/common.inc.php!
+[2014-10-18 17:05:04] PHP Error (2; file_get_contents(/home/kuro/public_html/momoko/addins/manager//manifest.xml): failed to open stream: No such file or directory) in 503 of /home/kuro/public_html/momoko/core/common.inc.php!
+[2014-10-18 17:05:40] PHP Error (2; file_get_contents(/home/kuro/public_html/momoko/addins/manager//manifest.xml): failed to open stream: No such file or directory) in 503 of /home/kuro/public_html/momoko/core/common.inc.php!
