@@ -22,7 +22,7 @@ function create_tables($config)
   $def['content'][6]="`has_access` VARCHAR(20)";
   $def['content'][7]="`mime_type` VARCHAR(20)";
   $def['content'][8]="`text` TEXT";
-  $def['content'][8]="`link` TEXT";
+  $def['content'][9]="`link` TEXT";
   
   $def['users'][0]="`num` INT(255) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['users'][1]="`name` VARCHAR(125) NOT NULL";

@@ -154,7 +154,8 @@ function enter_settings($data=null)
   {
    return <<<HTML
 <div class="message box"><h3 class="message title">Congratulations!</h3>
-<p>Your site is now set up and ready to go! After clicking the button below you will be able to login as the administrator you just set up, add content, and add users to your site. Have fun and welcome to the MomoKO family!</p>
+<p>Your site is now set up and ready to go! After clicking the button below you will be able to login as the administrator you just set up, add content, and add users to your site.</p>
+<p>For your security you should change the permissions of your base directory so it is read-only to the server. Please ensure that your content directory, however, remains writable so MomoKO can store attachments there.</p>
 <div class="form next button"><button onclick="window.location='./'">Go to your site -></button></div>
 </div>
 HTML;
@@ -205,16 +206,7 @@ HTML;
 <td align=right><label for="basedir">Absolute path where MomoKO lives:</label></td><td><input type=text id="basedir" name="settings[basedir]" value="{$basedir}"></td>
 </tr>
 <tr>
-<td align=right><label for="pagedir">Path where Pages will be stored:</label></td><td><input type=text id="pagedir" name="settings[pagedir]" value="{$basedir}/pages/"></td>
-</tr>
-<tr>
-<td align=right><label for="tempdir">Path where Temporary Files will be stored:</label></td><td><input type=text id="tempdir" name="settings[tempdir]" value="{$basedir}/temp/"></td>
-</tr>
-<tr>
-<td align=right><label for="logdir">Path where Log Files will be stored:</label></td><td><input type=text id="logdir" name="settings[logdir]" value="{$basedir}/logs/"></td>
-</tr>
-<tr>
-<td align=right><label for="filedir">Path where all other Files will be stored:</label></td><td><input type=text id="filedir" name="settings[filedir]" value="{$basedir}/files/"></td>
+<td align=right><label for="filedir">Path where attachments and other content will be uploaded:</label></td><td><input type=text id="filedir" name="settings[filedir]" value="{$basedir}/mk-content/"></td>
 </tr>
 <table>
 </div>
