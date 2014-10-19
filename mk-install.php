@@ -6,8 +6,8 @@ if (@$_GET['step'] < 2 && file_exists(dirname(__FILE__)."/database.ini"))
 }
 
 define ("INSTALLER",TRUE);
-require './core/install.inc.php';
-require './core/database.inc.php';
+require './mk-core/install.inc.php';
+require './mk-core/database.inc.php';
 $version=trim(file_get_contents('./version.nfo.txt'),"\n");
 
 switch (@$_GET['step'])

@@ -13,6 +13,17 @@ function create_tables($config)
   $def['addins'][5]="`longname` VARCHAR(125) NOT NULL";
   $def['addins'][6]="`description` TEXT";
   
+  $def['content'][0]="`num` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
+  $def['content'][1]="`title` VARCHAR(100) NOT NULL";
+  $def['content'][2]="`type` VARCHAR(15) NOT NULL";
+  $def['content'][3]="`date_created` DATETIME NOT NULL";
+  $def['content'][4]="`date_modified` DATETIME";
+  $def['content'][5]="`author` INT(255)";
+  $def['content'][6]="`has_access` VARCHAR(20)";
+  $def['content'][7]="`mime_type` VARCHAR(20)";
+  $def['content'][8]="`text` TEXT";
+  $def['content'][8]="`link` TEXT";
+  
   $def['users'][0]="`num` INT(255) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['users'][1]="`name` VARCHAR(125) NOT NULL";
   $def['users'][2]="`password` TEXT";
@@ -92,6 +103,23 @@ function fill_tables(array $site, array $admin,array $defaults=null)
    $site['tempdir']=$site['basedir']."/temp/";
   }
   
+  $firstpage=<<<HTML
+<html>
+<body>
+<h2>Hello World!</h2>
+<p>Hello, I have just finished setting up my new site driven my MomoKO. In the coming days and weeks I will be adding content to this site. Please check back regularly for updates!</p>
+</body>
+</html>
+HTML;
+  $firstpost=<<<HTML
+<html>
+<body>
+<h2>Welcome!</h2>
+<p>As of today I have a new site running MomoKO!</p>
+</body>
+</html> 
+HTML;
+  
   $admin['password']=crypt($admin['password'],$site['session']);
   $admin['groups']="admin,users";
   $admin['shortdateformat']=$defaults['sdf'];
@@ -102,6 +130,9 @@ function fill_tables(array $site, array $admin,array $defaults=null)
   $rows['addins'][]=array('dir'=>'usermanager','incp'=>'y','enabled'=>'y','shortname'=>'User Manager','longname'=>"User Manager",'description'=>"Addin providing rudementary user management functions.");
   $rows['addins'][]=array('dir'=>'settings','incp'=>'n','enabled'=>'y','shortname'=>'User Settings','longname'=>'Manage Use Settings','description'=>'Addin providing users the ability to change there settings.');
   $rows['addins'][]=array('dir'=>'passreset','incp'=>'n','enabled'=>'y','shortname'=>'Password Resetter','longname'=>'Password Resetter','description'=>'Allows users to reset their own password.');
+  
+  $rows['content'][]=array('title'=>"Hello World!",'type'=>'page','author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');
+  $rows['content'][]=array('title'=>"Welcome!",'type'=>'post','author'=>1,'text'=>$firstpost,'mime_type'=>'text/html');
   
   $rows['users'][]=array('name'=>'root','password'=>'root','email'=>$admin['email'],'groups'=>"admin,cli",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'rowspertable'=>$defaults['rpt']);
   $rows['users'][]=array('name'=>'guest','password'=>'guest','email'=>$admin['email'],'groups'=>"nobody",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'rowspertable'=>$defaults['rpt']);
