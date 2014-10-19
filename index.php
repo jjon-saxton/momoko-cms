@@ -5,8 +5,8 @@ if (!file_exists(dirname(__FILE__)."/database.ini")) //database.ini does not exi
  exit();
 }
 
-require dirname(__FILE__)."/core/common.inc.php";
-require dirname(__FILE__)."/core/content.inc.php";
+require dirname(__FILE__)."/mk-core/common.inc.php";
+require dirname(__FILE__)."/mk-core/content.inc.php";
 
 if(isset($_GET['action']) && !empty($_GET['action']))
 {
@@ -15,7 +15,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    $path_parts=(explode("/",$_GET['q']));
    if ($path_parts[0] == 'addin')
    {
-    include dirname(__FILE__)."/core/deliver.php";
+    include dirname(__FILE__)."/mk-core/deliver.php";
     $path_parts=array_splice($path_parts,1);
     do_addin(implode("/",$path_parts),$_GET['action']);
     exit();
@@ -121,7 +121,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
 }
 else
 {
- include dirname(__FILE__)."/core/deliver.php";
+ include dirname(__FILE__)."/mk-core/deliver.php";
  @$str=$_GET['q'];
  $path_parts=explode("/",$str);
  switch($path_parts[0])
@@ -140,4 +140,4 @@ else
 
  $run(implode("/",$path_parts));
 }
-?>
+?>
