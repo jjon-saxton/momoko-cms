@@ -21,8 +21,14 @@ function create_tables($config)
   $def['content'][5]="`author` INT(255)";
   $def['content'][6]="`has_access` VARCHAR(20)";
   $def['content'][7]="`mime_type` VARCHAR(20)";
-  $def['content'][8]="`text` TEXT";
-  $def['content'][9]="`link` TEXT";
+  $def['content'][8]="`category_tree` TEXT";
+  $def['content'][9]="`text` TEXT";
+  $def['content'][10]="`link` TEXT";
+  
+  $def['log'][0]="`num` INT (11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
+  $def['log'][1]="`time` DATETIME";
+  $def['log'][2]="`action` VARCHAR(20) NOT NULL";
+  $def['log'][3]="`message` TEXT";
   
   $def['users'][0]="`num` INT(255) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['users'][1]="`name` VARCHAR(125) NOT NULL";
@@ -83,24 +89,14 @@ function fill_tables(array $site, array $admin,array $defaults=null)
    $site['basedir']=rtrim($site['basedir'],"/");
   }
 
-  if (empty($site['pagedir']))
-  {
-   $site['pagedir']=$site['basedir']."/pages/";
-  }
-
   if (empty($site['filedir']))
   {
    $site['filedir']=$site['basedir']."/files/";
   }
 
-  if (empty($site['logdir']))
-  {
-   $site['logdir']=$site['basedir']."/logs/";
-  }
-
   if (empty($site['tempdir']))
   {
-   $site['tempdir']=$site['basedir']."/temp/";
+   $site['tempdir']=$site['basedir'].$site['filedir']."/temp/";
   }
   
   $firstpage=<<<HTML
@@ -131,8 +127,34 @@ HTML;
   $rows['addins'][]=array('dir'=>'settings','incp'=>'n','enabled'=>'y','shortname'=>'User Settings','longname'=>'Manage Use Settings','description'=>'Addin providing users the ability to change there settings.');
   $rows['addins'][]=array('dir'=>'passreset','incp'=>'n','enabled'=>'y','shortname'=>'Password Resetter','longname'=>'Password Resetter','description'=>'Allows users to reset their own password.');
   
-  $rows['content'][]=array('title'=>"Hello World!",'type'=>'page','author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');
-  $rows['content'][]=array('title'=>"Welcome!",'type'=>'post','author'=>1,'text'=>$firstpost,'mime_type'=>'text/html');
+  $rows['content'][]=array('title'=>"Hello World!",'date_created'=>date("Y-m-d H:i:s"),'type'=>'page','author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');
+  $rows['content'][]=array('title'=>"Welcome!",'date_created'=>date("Y-m-d H:i:s"),'type'=>'post','author'=>1,'text'=>$firstpost,'mime_type'=>'text/html');
+  foreach (glob($site['basedir']."/mk-content/error/*.htm") as $file)
+  {
+   $raw=file_get_contents($file);
+   if (preg_match("/<title>(?P<title>.*?)<\/title>/smU",$raw,$match) > 0)
+   {
+    $page['title']=$match['title'];
+   }
+   else
+   {
+    $page['title']="Untitled Error";
+   }
+   unset($match);
+   $page['date_created']=date("Y-m-d H:i:s");
+   $page['type']="error page";
+   $page['author']=1;
+   if (preg_match("/<body>(?P<body>.*?)<\/body>/smU",$raw,$match) > 0)
+   {
+    $page['text']=$match['body'];
+   }
+   unset($match);
+   $page['mime_type']="text/html";
+   
+   $rows['content'][]=$page;
+  }
+  
+  $rows['log'][]=array('time'=>date("Y-m-d H:i:s"),'action'=>'created','message'=>$site['name']." goes online!");
   
   $rows['users'][]=array('name'=>'root','password'=>'root','email'=>$admin['email'],'groups'=>"admin,cli",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'rowspertable'=>$defaults['rpt']);
   $rows['users'][]=array('name'=>'guest','password'=>'guest','email'=>$admin['email'],'groups'=>"nobody",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'rowspertable'=>$defaults['rpt']);
@@ -152,9 +174,7 @@ HTML;
   $rows['settings'][]=array('key'=>'baseuri','value'=>$site['baseuri']);
   $rows['settings'][]=array('key'=>'basedir','value'=>$site['basedir']);
   $rows['settings'][]=array('key'=>'filedir','value'=>$site['filedir']);
-  $rows['settings'][]=array('key'=>'pagedir','value'=>$site['pagedir']);
   $rows['settings'][]=array('key'=>'tempdir','value'=>$site['tempdir']);
-  $rows['settings'][]=array('key'=>'logdir','value'=>$site['logdir']);
   $rows['settings'][]=array('key'=>'rewrite','value'=>$site['rewrite']);
   
   $okay=0;
