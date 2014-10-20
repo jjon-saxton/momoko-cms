@@ -101,7 +101,7 @@ elseif (@$path && pathinfo(@$path,PATHINFO_EXTENSION) == 'xml')
 	}
 	exit();
 }
-elseif (@$path)
+/*elseif (@$path)
 {
  $nav=new MomokoNavigation(null,'display=none');
  $path=$nav->getIndex($path);
@@ -110,7 +110,7 @@ else
 {
   $nav=new MomokoNavigation(null,'display=none');
   $path=$nav->getIndex();
-}
+} Not sure why I have this, figure it out or remove! */
 
 if (@$path && !@$child)
 {
@@ -323,4 +323,4 @@ else
 }
 }
 
-?>
+?>

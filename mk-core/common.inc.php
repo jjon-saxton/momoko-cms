@@ -32,7 +32,7 @@ else
  define("NEWSROOT","/?q=news/");
  define("QUERYSTARTER","&");
 }
-define("TEMPLATEROOT","/templates/");
+define("TEMPLATEROOT","/mk-content/templates/");
 
 
 unset($setting,$pairs);
@@ -42,7 +42,7 @@ define ("TEMPLATEPATH",TEMPLATEROOT.$GLOBALS['SET']['template'].'/'.$GLOBALS['SE
 session_name($GLOBALS['SET']['sessionname']);
 session_start();
 
-require_once $GLOBALS['SET']['basedir'].'/core/user.inc.php';
+require_once $GLOBALS['SET']['basedir'].'/mk-core/user.inc.php';
 
 if (@$_SESSION['data'])
 {
@@ -344,11 +344,11 @@ function momoko_html_errors($num,$str,$file,$line,$context)
     if (file_exists($GLOBALS['SET']['logdir'].'error.log'))
     {
       $log=fopen($GLOBALS['SET']['logdir'].'error.log','a') or die("Error log could not be open for write!");
-      fwrite($log,"[".date("Y-m-d H:i:s")."] PHP Error (".$num."; ".$str.") in ".$line." of ".$file."!\n");
+      fwrite($log,"[".date("Y-m-d H:i:s")."] PHP Error (".$num."; ".$str.") on line ".$line." of ".$file."!\n");
     }
     else
     {
-      die("Error log does not exist at configured location: ".$GLOBALS['CFG']->logdir."!");
+      print "PHP Error (".$num."; ".$str.") on line ".$line." of ".$file."!\n";
     }
   }
   
@@ -540,4 +540,4 @@ function join_dom(DOMDocument $DOMParent, DOMDocument $DOMChild, $tag = null)
  }
 
  return $DOMParent;
-}
+}

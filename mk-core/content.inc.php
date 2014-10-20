@@ -1,6 +1,6 @@
 <?php
-require_once $GLOBALS['SET']['basedir'].'/core/Array2XML.class.php';
-require_once $GLOBALS['SET']['basedir'].'/core/XML2Array.class.php';
+require_once $GLOBALS['SET']['basedir'].'/mk-core/Array2XML.class.php';
+require_once $GLOBALS['SET']['basedir'].'/mk-core/XML2Array.class.php';
 
 class MomokoNavigation implements MomokoModuleInterface
 {
@@ -11,346 +11,12 @@ class MomokoNavigation implements MomokoModuleInterface
  public function __construct($user,$options)
  {
   $this->user=$user;
-  parse_str($options,$this->options);
-  $xml=simplexml_load_file($GLOBALS['SET']['pagedir'].'/map.xml');
-  $this->convertXmlObjToArr($xml,$this->map);
- }
-	
-public function convertXmlObjToArr($obj, &$arr)
- {
-  $children = $obj->children();
-  foreach ($children as $elementName => $node)
-  {
-   $nextIdx = count($arr);
-   $arr[$nextIdx] = array();
-   $arr[$nextIdx]['@name'] = strtolower((string)$elementName);
-   $arr[$nextIdx]['@attributes'] = array();
-   $attributes = $node->attributes();
-   foreach ($attributes as $attributeName => $attributeValue)
-   {
-    $attribName = strtolower(trim((string)$attributeName));
-    $attribVal = trim((string)$attributeValue);
-    $arr[$nextIdx]['@attributes'][$attribName] = $attribVal;
-   }
-   $text = (string)$node;
-   $text = trim($text);
-   if (strlen($text) > 0)
-   {
-    $arr[$nextIdx]['@text'] = $text;
-   }
-   $arr[$nextIdx]['@children'] = array();
-   $this->convertXmlObjToArr($node, $arr[$nextIdx]['@children']);
-  }
-  return;
- } 
-
- public function convertArrToXmlObj($arr, &$obj)
- {
-  foreach ($arr as $item)
-  {
-   $subnode=$obj->addChild($item['@name'],$item['@text']);
-   if (is_array($item['@attributes']))
-   {
-    foreach ($item['@attributes'] as $attr=>$value)
-    {
-     $subnode->addAttribute($attr,$value);
-    }
-   }
-   if (is_array($item['@children']))
-   {
-    $this->convertArrToXmlObj($item['@children'],$subnode);
-   }
-  }
-  return;
- }
-
- public function getModule($format='html',$map=null,$name=null,$ppath=null)
- {
-  if (!@$map)
-  {
-   $map=$this->map;
-  }
-
-  switch ($format)
-  {
-   case 'plain':
-   return $this->getTextNav($this->map);
-   break;
-   case 'html':
-   default:
-   if ((@$GLOBALS['USR'] instanceof MomokoSession) && ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor')))
-   {
-    $edit=<<<HTML
-<style>
-div#Editor{
-	display:inline;
-	float:right
-}
-ul.subnav { display:none }
-</style>
-<script language="javascript" type="text/javascript">
-$(function(){
-	$("div#Editor a")
-		.button({
-			text:false,
-			icons:{ primary: 'ui-icon-gear' }
-		})
-		.click(function(event){
-			event.preventDefault();
-			$("div#NavEditDialog").load("//{$GLOBALS['SET']['domain']}{$GLOBALS['SET']['location']}/ajax.php?include=navhelper&action=build&dialog=map").dialog({
-				autoLoad:false,
-				modal:true,
-				title:'Edit Site Map',
-				minWidth: '400',
-				minHeight: '250',
-				buttons:{
-					"Save":function(){
-						//Perform ajax save and site nav update
-						$.post("//{$GLOBALS['SET']['domain']}{$GLOBALS['SET']['location']}/ajax.php?include=navhelper&action=post",{ 'raw_dom':$("div#MapList").html() },function(data){
-							location.reload(true);
-						});
-						$(this).dialog('close');
-					},
-					"Cancel":function(){
-						$(this).dialog('close');
-					}
-				}
-			});
-		});
-});
-</script>
-<div id="Editor"><a href="#edit-nav">Edit</a>
-<div id="NavEditDialog" style="display:none">
-<p>Loading...</p>
-</div>
-HTML;
-   }
-   else
-   {
-    $edit=null;
-   }
-   switch ($this->options['display'])
-   {
-    case 'menu':
-    $html="<ul id=\"NavList\" class=\"topnav\">\n".$this->getLinkList($map,$ppath).$edit."\n</ul>";
-    break;
-    case 'list':
-    if (!@$name)
-    {
-     $name="Site Map";
-    }
-    $html="<h2>{$name}</h2>\n<ul id=\"MapList\" class=\"sitemap\">\n".$this->getLinkList($map,$ppath)."\n</ul>";
-    break;
-    case'simple':
-    default:
-    $html=$this->getLinkList($map,$ppath);
-   }
-   return $html;
-   break;
-  }
- }
-
- public function getIndex($path='/',$mapnode=null,$fullpath=null)
- {
-  if (!@$mapnode)
-  {
-   $mapnode['@children']=$this->map;
-  }
-
-  $dir=explode('/',$path);
-  if (!@$dir[1])
-  {
-   $children=$mapnode['@children'];
-
-   if (!@$fullpath)
-   {
-    $fullpath='/';
-   }
-
-   foreach ($children as $child)
-   {
-    if (file_exists($GLOBALS['SET']['pagedir'].$fullpath.'home.htm'))
-    {
-     return $fullpath.'home.htm';
-    }
-   }
-   return $fullpath.'map.mmk';
-  }
-  else
-  {
-   $name=$dir[1].'/';
-   foreach ($mapnode['@children'] as $child)
-   {
-    if ($child['@name'] == 'site' && $child['@attributes']['dir'] == $name)
-    {
-     $mapnode=$child;
-    }
-   }
-
-   if (!@$fullpath)
-   {
-    $fullpath=$path;
-   }
-
-   unset ($dir[0]);
-   $npath=implode('/',$dir);
-
-   return $this->getIndex($npath,$mapnode,$fullpath);
-  }
+  //TODO Members and methods need to be rewritten for database drive content
  }
  
- private function getLinkList(array $map)
+ public function getModule($format='html')
  {
-  $html=null;
-  $rpath=rtrim('//'.$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'],'/');
-
-		foreach($map as $node)
-		{
-			if ($node['@name'] == 'site')
-			{
-				if (!isset($node['@attributes']['file']))
-				{
-					$node['@attributes']['file']='/';
-				}
-				$id=$node['@text'];
-				$class='subnav';
-				$html.="<li type=\"{$node['@name']}\" class=\"site\"><a href=\"{$rpath}{$node['@attributes']['file']}\">{$node['@text']}</a>\n";
-				$html.="<ul id=\"{$id}\" class=\"{$class}\">\n".$this->getLinkList($node['@children'])."\n</ul></li>\n";
-			}
-			elseif ($node['@name'] == 'page')
-			{
-				if(!empty($node['@attributes']['uri']))
-				{
-					$html.="<li type=\"{$node['@name']}\" class=\"page external\"><a href=\"{$node['@attributes']['uri']}\">{$node['@text']}</a></li>\n";
-				}
-				elseif (!empty($node['@attributes']['file']))
-				{
-					$html.="<li type=\"{$node['@name']}\" class=\"page\"><a href=\"{$rpath}{$node['@attributes']['file']}\">{$node['@text']}</a></li>\n";
-				}
-			}
-		}
-
-  return trim($html,"\n\r");
- }
-	
-	private function getTextNav($map)
-	{
-		$text=null;
-  $rpath="http://{$GLOBALS['SET']['domain']}{$GLOBALS['SET']['location']}";
-		
-		if ($this->options['display'] == 'list')
-		{
-			$sep="\n";
-		}
-		else
-		{
-			$sep=" | ";
-		}
-
-		foreach($map as $node)
-		{
-			if ($node['@name'] == 'site')
-			{
-				$id=$node['@text'];
-				$class='subnav';
-				//$cpath=$node['@attributes']['dir'];
-				$text.=$rpath.$node['@attributes']['file'].$sep;
-				$text.=$this->getTextNav($node['@children']).$sep;
-			}
-			elseif ($node['@name'] == 'page')
-			{
-				if (!empty($node['@attributes']['file']))
-				{
-					$text.=$rpath.$node['@attributes']['file'].$sep;
-				}
-			}
-		}
-		
-		return trim($text,"\n\r");
-	}
- public function HTMLArraytoMap(array $array)
- {
-  foreach ($array as $node)
-  {
-   if ($node['tag'] == 'ul')
-   {
-    foreach ($node['childNodes'] as $child)
-    {
-     $attrs=array();
-     unset($this->map);
-     if ($child['tag'] == 'li')
-     {
-      foreach ($child['childNodes'] as $grandchild)
-      {
-       if ($grandchild['tag'] == 'a')
-       {
-        if (preg_match("/".preg_quote($GLOBALS['SET']['domain'].$GLOBALS['SET']['location'],"/")."/",$grandchild['attributes']['href']) > 0)
-        {
-         $attrs['file']=preg_replace("/".preg_quote($GLOBALS['SET']['domain'].$GLOBALS['SET']['location'],"/")."/","",$grandchild['attributes']['href']);
-	 $attrs['file']=preg_replace("/http:/",'',$attrs['file']);
-	 $attrs['file']="/".trim($attrs['file'],"/"); //Since removing extra slashes (/) never seemed to work above we will trim them off here and readd a single slash to the front.
-        }
-	else
-	{
-	 $attrs['uri']=$grandchild['attributes']['href'];
-        }
-
-	/*if (!empty($grandchild['attributes']['index']))
-        {
-         $attrs['index']='index';
-        }*/
-
-	$title=$grandchild['innerHTML'];
-       }
-      }
-      $new['@name']=$child['attributes']['type'];
-      $new['@attributes']=$attrs;
-      $new['@text']=$title;
-      if ($child['attributes']['type'] == 'site')
-      {
-       if (!empty($new['@attributes']['file']))
-       {
-        unset($new['@attributes']['file']);
-        $new['@attributes']['file']=$attrs['file'];
-       }
-       $new['@children']=$this->HTMLArraytoMap($child['childNodes']);
-      }
-      else
-      {
-       $new['@children']=array();
-      }
-      $map[]=$new;
-     }
-    }
-   }
-  }
-  return $this->map=$map;
- }
-
- public function writeMap()
- {
-  $xmlstr=<<<XML
-<?xml version="1.0"?>
-<site dir="/">
-</site>
-XML;
-  $xmlobj=new SimpleXMLElement($xmlstr);
-  $arr=$this->map;
-  $this->convertArrToXmlObj($arr,$xmlobj);
-  $dom=new DOMDocument('1.0'); //Folowing lines are used to process XML in easier to read format, for anyone who cares
-  $dom->preserveWhiteSpace=false;
-  $dom->formatOutput=true;
-  $dom->loadXML($xmlobj->asXML());
-  $data=$dom->saveXML();
-  if (file_put_contents($GLOBALS['SET']['pagedir'].'/map.xml',$data))
-  {
-   momoko_changes($GLOBALS['USR'],'updated',$this,"Changes were written to {$GLOBALS['SET']['pagedir']}/map.xml");
-   return true;
-  }
-  else
-  {
-   return false;
-  }
+  //TODO must convert database entries into link lines and/or lists
  }
 }
 
@@ -987,18 +653,49 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
 
  private function readInfo()
  {
-  $info=array('owner' => 'admin'); //TODO: replace with actual info parser
+  $raw=$this->get();
+  preg_match("/<head>(?P<head>.*?)<\/head>/smU",$raw,$match);
+  $split['head']=$match['head'];
+  unset($match);
+  preg_match("/<body>(?P<body>.*?)<\/body>/smU",$raw,$match);
+  $split['body']=$match['body'];
+  unset($match);
   
-  return $info;
+  $split['head']=<<<HTML
+<title>~{sitename} - ~{pagetitle}</title>
+<!-- Meta Tags? -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+{$split['head']}
+HTML;
+  
+  $split['full']=<<<HTML
+<!doctype html>
+<!--[if lt IE 7]> <html class="ie6 oldie"> <![endif]-->
+<!--[if IE 7]>    <html class="ie7 oldie"> <![endif]-->
+<!--[if IE 8]>    <html class="ie8 oldie"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="">
+<!--<![endif]-->
+<head>
+{$split['head']}
+</head>
+<body>
+{$split['body']}
+</body>
+</html>
+HTML;
+
+  return $split;
  }
 
  public function toHTML($child=null)
  {
-  $html=$this->get();
+  $html=$this->info['full'];
   $vars['siteroot']=$GLOBALS['SET']['baseuri'];
   $vars['sitename']=$GLOBALS['SET']['name'];
   $vars['pagetitle']="Untitled";
-  $vars['corestyles']=$vars['siteroot'].'/assets/core/styles/';
   $vars['templatedir']=$vars['siteroot'].dirname($this->template);
   $vars['pagedir']=$vars['siteroot'].PAGEROOT;
   
@@ -1027,7 +724,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
 
   $ch=new MomokoVariableHandler($vars);
   $html=$ch->replace($html);
-  
+
   return $html;
  }
 }
@@ -1571,4 +1268,4 @@ HTML;
   return $array;
  }
 }
-
+
