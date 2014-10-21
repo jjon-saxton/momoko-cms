@@ -285,8 +285,8 @@ class MomokoUCPModule implements MomokoModuleInterface
     return <<<HTML
 <div id="LoginBox" class="ucp box">
 <ul class="noindent nobullet">
-<li><a href="{$protocol}://{$GLOBALS['SET']['baseuri']}/mk_login.php">Login</a></li>
-<li><a href="{$protocol}://{$GLOBALS['SET']['baseuri']}/mk_login.php?action=new">New Account?</a></li>
+<li><a href="{$protocol}://{$GLOBALS['SET']['baseuri']}/mk-login.php">Login</a></li>
+<li><a href="{$protocol}://{$GLOBALS['SET']['baseuri']}/mk-login.php?action=new">New Account?</a></li>
 </ul>
 </form>
 </div>
@@ -295,7 +295,7 @@ HTML;
   else
   {
    return <<<HTML
-<span id="LoginLine" class="ucp"><a href="{$protocol}://mk_login.php">Login</a> | <a href="{$protocol}://mk_login.php?action=new">New Account?</a></span>
+<span id="LoginLine" class="ucp"><a href="{$protocol}://mk-login.php">Login</a> | <a href="{$protocol}://mk-login.php?action=new">New Account?</a></span>
 HTML;
   }
  }
@@ -406,4 +406,4 @@ class MomokoMiniCP implements MomokoModuleInterface
   }
   return $html;
  }
-}
+}

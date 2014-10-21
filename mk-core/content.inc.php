@@ -30,9 +30,7 @@ class MomokoNews implements MomokoModuleInterface
 	{
   $this->user=$user;
   parse_str($options,$this->options);
-  $xml=simplexml_load_file($GLOBALS['SET']['pagedir'].'/news.xml');
-		$nav=new MomokoNavigation(null,'display=none');
-  $nav->convertXmlObjToArr($xml,$this->news_list);
+  //Load news from database
 	}
 	
 	public function getModule ($format='html')
@@ -515,6 +513,7 @@ class MomokoError implements MomokoObject
 class MomokoTemplate implements MomokoObject, MomokoPageObject
 {
  private $cur_path;
+ private $template;
  private $info=array();
  
  public function __construct($path)

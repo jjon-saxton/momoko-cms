@@ -341,15 +341,36 @@ function momoko_html_errors($num,$str,$file,$line,$context)
 {
   if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($GLOBALS['SET']['error_logging'] > 1))
   {
-    if (file_exists($GLOBALS['SET']['logdir'].'error.log'))
+   $text="PHP Error (".$num."; ".$str.") on line ".$line." of ".$file."!\n";
+   try
+   {
+    $table=new DataBaseTable('log');
+   }
+   catch (Exception $err)
+   {
+    echo "Unable to open database connection. ".$err->getMessage()." This error cannot be recorded!\n";
+    echo $text;
+    if ($num == E_USER_ERROR || $num == E_ERROR)
     {
-      $log=fopen($GLOBALS['SET']['logdir'].'error.log','a') or die("Error log could not be open for write!");
-      fwrite($log,"[".date("Y-m-d H:i:s")."] PHP Error (".$num."; ".$str.") on line ".$line." of ".$file."!\n");
+     exit();
     }
-    else
+   }
+   
+   $error['time']=date("Y-m-d H:i:s");
+   $error['action']="caught error";
+   $error['message']=$text;
+   
+   if ($table instanceof DataBaseTable)
+   {
+    try
     {
-      print "PHP Error (".$num."; ".$str.") on line ".$line." of ".$file."!\n";
+     $log_id=$table->putData($error);
     }
+    catch (Exception $err)
+    {
+     echo "Error could not be recorded! ".$err->getMessage();
+    }
+   }
   }
   
   if ($num == E_USER_ERROR)

@@ -8,6 +8,15 @@ if (!file_exists(dirname(__FILE__)."/database.ini")) //database.ini does not exi
 require dirname(__FILE__)."/mk-core/common.inc.php";
 require dirname(__FILE__)."/mk-core/content.inc.php";
 
+if (is_writable($GLOBALS['SET']['basedir']))
+{
+ trigger_error("Security Warning: MomoKO's base directory is writable!",E_USER_WARNING);
+}
+if (!is_writable($GLOBALS['SET']['filedir']))
+{
+ trigger_error("MomoKO's content storage directory is not writable!",E_USER_WARNING);
+}
+
 if(isset($_GET['action']) && !empty($_GET['action']))
 {
  if (isset ($_GET['q']) && !empty($_GET['q']))
