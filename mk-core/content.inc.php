@@ -257,15 +257,25 @@ XML;
 
 class MomokoPage implements MomokoObject
 {
- private $cur_path;
+ private $table;
+ private $page;
  private $info=array();
  
  public function __construct($path, array $additional_vars=null)
  {
-  $this->cur_path=$path;
-  $this->info=$this->readInfo();
+  $category_tree=dirname($path);
+  $title=basename($path);
+  
+  $where="title='{$title}'";
+  if (!empty($category_tree))
+  {
+   $where.=",category_tree='{$category_treeu}'";
+  }
+  $this->table=new DataBaseTable('content');
+  $this->page=$this->table->getData($where,null,null,1);
+  $this->info=$this->page->fetch();
 
-  $body=$this->inner_body;
+  $body=$this->get();
   $vars=$this->setVars($additional_vars);
   $ch=new MomokoVariableHandler($vars);
   $this->inner_body=$ch->replace($body);
@@ -289,84 +299,40 @@ class MomokoPage implements MomokoObject
   return true;
  }
  
- public function listAll()
- {
- }
- 
- public function getChildren()
- {
-  return false; //This object should have no children
- }
- 
  public function put($data)
  {
-  if (@$data['pagebody'])
+  if (@$data['text'])
   {
-   if (@$data['private'])
+   if ($this->table->putData($data))
    {
-    $extra="<private>".$data['private']."</private>";
+    //TODO on success
    }
    else
    {
-    $extra="<public />";
-   }
-   $full_html=<<<HTML
-<html>
-<head>
-<title>{$data['pagetitle']}</title>
-{$extra}
-</head>
-<body>
-{$data['pagebody']}
-</body>
-</html>
-HTML;
-   if (file_put_contents($GLOBALS['SET']['pagedir'].$this->path,$full_html))
-   {
-    $dir=pathinfo($this->path,PATHINFO_DIRNAME);
-    if (pathinfo($data['pagename'],PATHINFO_EXTENSION) != 'htm' && pathinfo($data['pagename'],PATHINFO_EXTENSION) != 'html')
-    {
-     $data['pagename'].=".htm";
-    }
-
-    if ((pathinfo($this->path,PATHINFO_BASENAME) != $data['pagename']) && (rename($GLOBALS['SET']['pagedir'].$this->path,$GLOBALS['SET']['pagedir'].$dir.'/'.$data['pagename'])))
-    {
-     momoko_changes($GLOBALS['USR'],'updated',$this,"Additionally the page was renamed from ".basename($this->path)." to ".$data['pagename']."!");
-     $dir=ltrim($dir,"/");
-     header("Location: //".$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].PAGEROOT.$dir.'/'.$data['pagename']);
-     exit();
-    }
-    else
-    {
-     momoko_changes($GLOBALS['USR'],'updated',$this);
-     $file=ltrim($this->path,"/");
-     header("Location: //".$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].PAGEROOT.$file);
-     exit();
-    }
-   }
-   else
-   {
-    trigger_error("Unable to write to page!",E_USER_ERROR);
+    //TODO on failure
    }
   }
   else
   {
    $editorroot='//'.$GLOBALS['SET']['baseuri'].'/scripts/elrte';
    $finderroot='//'.$GLOBALS['SET']['baseuri'].'/scripts/elfinder';
-   $page['data']=$this->get();
-   $page['name']=pathinfo($this->path,PATHINFO_BASENAME);
-   if (preg_match("/<title>(?P<title>.*?)<\/title>/smU",$page['data'],$match) > 0) //Find page title in $data
+   
+   $statuses=array('public'=>"Public",'cloaked'=>"Hidden From Navigation",'private'=>"Private",'"locked'=>"In Production");
+   $status_opts=null;
+   foreach($statuses as $value=>$name)
    {
-    if (@$match['title'] && ($match['title'] != "[Blank]" && $match['title'] != "Blank")) //accept titles other than Blank and [Blank]
+    if ($value=$this->status)
     {
-     $page['title']=$match['title'];
+     $sel=" selected=selected";
     }
+    else
+    {
+     $sel=null;
+    }
+    $status_opts.="<option{$sel} value=\"{$value}\">{$name}</option>\n";
    }
-   if (preg_match("/<body>(?P<body>.*?)<\/body>/smU",$page['data'],$match) > 0) // Find page body in $data
-   {
-    $page['body']=trim($match['body'],"\n\r"); //Replace the $body variable with just the page body found triming out the fat
-   }
-   $info['title']="Edit Page: ".$this->path;
+   
+   $info['title']="Edit Page: ".$this->title;
    $info['inner_body']=<<<HTML
 	<!-- elFinder -->
 	<script src="{$finderroot}/js/elfinder.min.js" type="text/javascript" charset="utf-8"></script>
@@ -401,15 +367,14 @@ HTML;
 			});
 		});
 	</script>
-<h2>Edit Page: {$this->path}</h2>
+<h2>Edit Page: {$this->title}</h2>
 <form method=post>
 <ul class="noindent nobullet">
-<li><label for="name">Filename:</label> <input type=text name="pagename" id="name" value="{$page['name']}"></li>
-<li><label for="title">Page Title:</label> <input type=text name="pagetitle" id="title" value="{$page['title']}"></li>
-<li><input type=checkbox id="access"><label for="access">Limit access to this page?</label></li>
-<li><label for="private">Groups that have access:</label> <input type=text name="private" id="private" disabled=disabled value="editor,members"></li>
+<li><label for="title">Page Title:</label> <input type=text name="title" id="title" value="{$page['title']}"></li>
+<li><label for="status">Page Status:</label> <select name="status">{$status_opts}</select></li>
+<li><label for="private">Groups that have access:</label> <input type=text name="has_access" id="private" disabled=disabled value="editor,members"></li>
 <li><div id="pagebody">
-{$page['body']}
+{$this->inner_body}
 </div></li>
 </ul>
 </form>
@@ -421,37 +386,20 @@ HTML;
 
  public function get()
  {
-  $authorized=true;
-  if (file_exists($GLOBALS['SET']['pagedir'].pathinfo($this->cur_path,PATHINFO_DIRNAME).'/private.txt'))
-  {
-   $authorized=false;
-   $private=explode(",",file_get_contents($GLOBALS['SET']['pagedir'].pathinfo($this->cur_path,PATHINFO_DIRNAME).'/private.txt'));
-   $authorized=$this->hasAccess($private);
-  }
+  $authorized=$this->hasAccess();
 
-  if ($authorized && file_exists($GLOBALS['SET']['pagedir'].$this->cur_path))
+  if ($authorized && $this->text)
   {
-   return file_get_contents($GLOBALS['SET']['pagedir'].$this->cur_path);
-  }
-  elseif (pathinfo($this->cur_path,PATHINFO_FILENAME) == 'new_page')
-  {
-   if (file_exists($GLOBALS['SET']['pagedir'].$this->cur_path))
-   {
-    return unlink($GLOBALS['SET']['pagedir'].$this->cur_path);
-   }
-   else
-   {
-    return file_get_contents($GLOBALS['SET']['basedir'].'/assets/templates/new_page.tpl.htm');
-   }
+   return $this->text;
   }
   elseif (!$authorized)
   {
-   $page=new MomokoError("Forbidden");
+   $page=new MomokoError("403 Forbidden");
    return $page->full_html;
   }
   else
   {
-   $page=new MomokoError("Not_Found");
+   $page=new MomokoError("404 Not Found");
    return $page->full_html;
   }
  }
@@ -467,73 +415,33 @@ HTML;
    
    return $vars;
  }
-
- private function readInfo()
- {
-  if (pathinfo($this->cur_path,PATHINFO_BASENAME) == 'map.mmk')
-  {
-   $info['title']='Site Map';
-   $nav=new MomokoNavigation(null,'display=list');
-   $dir=explode('/',$this->cur_path);
-   $file=array_pop($dir);
-   $map['@children']=$nav->map;
-   foreach ($dir as $section)
-   {
-    foreach ($map['@children'] as $node)
-    {
-     if ($node['@name'] == 'site' && rtrim($node['@attributes']['dir'],'/') == $section)
-     {
-      $map=$node;
-     }
-    }
-   }
-   $info['inner_body']=$nav->getModule('html',$map['@children'],$map['@text'],$map['@attributes']['dir']);
-  }
-  else
-  {
-   $data=$this->get();
-   if (preg_match("/<title>(?P<title>.*?)<\/title>/smU",$data,$match) > 0) //Find page title in $data
-   {
-    if (@$match['title'] && ($match['title'] != "[Blank]" && $match['title'] != "Blank")) //accept titles other than Blank and [Blank]
-    {
-     $info['title']=$match['title'];
-    }
-   }
-   if (preg_match("/<private>(?P<private>.*?)<\/private>/smU",$data,$match) > 0) //Find page private in $data
-   {
-    if (@$match['private'])
-    {
-     $info['private']=explode(",",$match['private']);
-    }
-   }
-   if (preg_match("/<body>(?P<body>.*?)<\/body>/smU",$data,$match) > 0) // Find page body in $data
-   {
-    $info['inner_body']=trim($match['body'],"\n\r"); //Replace the $body variable with just the page body found triming out the fat
-   }
-   if ((isset($info['private']) && is_array($info['private'])) && !$this->hasAccess($info['private']))
-   {
-    $page=new MomokoError("Forbidden");
-    $info['title']=$page->title;
-    $info['inner_body']=$page->inner_body;
-    $info['full_html']=$page->full_html;
-   }
-   else
-   {
-    $info['full_html']=$data;
-    $info['name']=pathinfo($this->cur_path,PATHINFO_BASENAME);
-    $info['path']=$this->cur_path;
-    $info['type']='page';
-   }
-  }
-
-  return $info;
- }
  
- private function hasAccess(array $grouplist)
+ private function hasAccess()
  {
+  $grouplist=explode(",",$this->has_access);
   if ($GLOBALS['USR']->inGroup('admin'))
   {
    return true;
+  }
+  elseif ($this->status != 'private')
+  {
+   switch ($this->status)
+   {
+    case 'locked':
+    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
+    {
+     return true;
+    }
+    else
+    {
+     return false;
+    }
+    break;
+    case 'cloaked':
+    case 'public':
+    default:
+    return true;
+   }
   }
   else
   {
@@ -556,9 +464,9 @@ class MomokoError implements MomokoObject
  private $inner_body;
  private $error_msg;
 
- public function __construct($name,$msg=null,array $additional_vars=null)
+ public function __construct($title,$msg=null,array $additional_vars=null)
  {
-  $this->page=new MomokoPage('/error/'.$name.'.htm');
+  $this->page=new MomokoPage($title);
   $this->error_msg=$msg;
   header("Status: ".$this->page->title);
   header("HTTP/1.0 ".$this->page->title);
@@ -705,7 +613,7 @@ HTML;
   }
   else
   {
-   $page=new MomokoError('Tea_Time');
+   $page=new MomokoError("418 I'm a teapot");
   }
   $vars['pagetitle']=@$page->title;
   $vars['softwareversion']=MOMOKOVERSION;
