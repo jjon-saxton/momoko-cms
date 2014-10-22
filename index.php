@@ -91,12 +91,12 @@ if(isset($_GET['action']) && !empty($_GET['action']))
     }
     else
     {
-     $child=new MomokoError('Unauthorized');
+     $child=new MomokoError('401 Unauthorized');
     }
    }
    else
    {
-    header("Location: //".$GLOBALS['SET']['baseuri']."/mk_login.php");
+    header("Location: //".$GLOBALS['SET']['baseuri']."/mk-login.php");
 	exit();
    }
    break;

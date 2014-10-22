@@ -261,17 +261,24 @@ class MomokoPage implements MomokoObject
  
  public function __construct($path, array $additional_vars=null)
  {
-  $category_tree=dirname($path);
+  $category_tree=trim(dirname($path),"./");
   $title=basename($path);
   
-  $where="title='{$title}'";
-  if (!empty($category_tree))
+  if ($title == NULL)
   {
-   $where.=",category_tree='{$category_treeu}'";
+   $where="status:'home'";
+  }
+  else
+  {
+   $where="title:'{$title}'";
+  }
+  if ($category_tree != NULL)
+  {
+   $where.=",category_tree:'{$category_tree}'";
   }
   $this->table=new DataBaseTable('content');
-  $this->page=$this->table->getData($where,null,null,1);
-  $this->info=$this->page->fetch();
+  $query=$this->table->getData($where,null,null,1);
+  $this->info=$query->fetch();
 
   $body=$this->get();
   $vars=$this->setVars($additional_vars);
@@ -315,7 +322,7 @@ class MomokoPage implements MomokoObject
    $editorroot='//'.$GLOBALS['SET']['baseuri'].'/scripts/elrte';
    $finderroot='//'.$GLOBALS['SET']['baseuri'].'/scripts/elfinder';
    
-   $statuses=array('public'=>"Public",'cloaked'=>"Hidden From Navigation",'private'=>"Private",'"locked'=>"In Production");
+   $statuses=array('home'=>"Is a Home Page",'public'=>"Public",'cloaked'=>"Hidden From Navigation",'private'=>"Private",'"locked'=>"In Production");
    $status_opts=null;
    foreach($statuses as $value=>$name)
    {
@@ -609,10 +616,6 @@ HTML;
   if (@$child && (is_object($child)) && ($child instanceof MomokoObject))
   {
    $page=$child;
-  }
-  else
-  {
-   $page=new MomokoError("418 I'm a teapot");
   }
   $vars['pagetitle']=@$page->title;
   $vars['softwareversion']=MOMOKOVERSION;

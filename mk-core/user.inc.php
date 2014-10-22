@@ -26,19 +26,26 @@ class MomokoSession
     $r=new MomokoUser($name);
     $user=$r->get();
     
-    $log=fopen($GLOBALS['SET']['logdir'].'/access.log','a') or die(exit());
+    $log=new DataBaseTable('log');
     
     if (crypt($password,$user->password) == $user->password)
     {
       $this->name=$name;
       $this->user=$user;
       $this->groups=$this->updateGroups();
-      fwrite($log,"[".date('Y-m-d H:i:s')."] Session started for user ".$name." at ".$_SERVER['REMOTE_ADDR'].".\n");
+      
+      $data['time']=date('Y-m-d H:i:s');
+      $data['action']="logged in";
+      $data['message']="Session started for user ".$name." at ".$_SERVER['REMOTE_ADDR'];
+      $log->putData($data);
       return true;
     }
     else
     {
-      fwrite($log,"[".date('Y-m-d H:i:s')."] Authentication failed for user ".$name.".\n");
+      $data['time']=date('Y-m-d H:i:s');
+      $data['action']="login failed";
+      $data['message']="Authentication failed for user ".$name;
+      $log->putData($data);
       return false;
     }
   }
@@ -69,8 +76,11 @@ class MomokoSession
     
     if ($this->inGroup('admin'))
     {
-      $log=fopen($GLOBALS['SET']['logdir'].'/access.log','a');
-      fwrite($log,"[".date('Y-m-d H:i:s')."] An administrator logged in as ".$name." (".$this->name.").\n");
+      $log=new DataBaseTable('log');
+      $data['time']=date('Y-m-d H:i:s');
+      $data['action']="logged in";
+      $data['message']="An administrator logged in as ".$name." (".$this->name.")";
+      $log->putData($data);
     }
    
     return true;
@@ -83,8 +93,11 @@ class MomokoSession
 
   public function logout()
   {    
-    $log=fopen($GLOBALS['SET']['logdir']."/access.log",'a');
-    fwrite($log,"[".date('Y-m-d H:i:s')."] Session ended for user ".$this->name.".\n");
+    $log=new DataBaseTable('log');
+    $data['time']=date('Y-m-d H:i:s');
+    $data['action']="logged out";
+    $data['message']="Session ended for user ".$this->name;
+    $log->putData($data);
 
     $this->name='guest';
     $r=new MomokoUser($this->name);

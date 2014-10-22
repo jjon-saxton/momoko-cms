@@ -90,7 +90,7 @@ function configure_database()
 <td align=right><label for="password">Password:</label></td><td><input type=password id="password" name="password"></td>
 </tr>
 <tr>
-<td align=right><label for="prefix">Table Prefix:</label></td><td><input type=text id="prefix" name="tableprefix" value="mk_"></td>
+<td align=right><label for="prefix">Table Prefix:</label></td><td><input type=text id="prefix" name="tableprefix" value="mk2_"></td>
 </tr>
 </table>
 </div>
@@ -197,7 +197,7 @@ HTML;
 <td align=right><label for="name">Site Name:</label></td><td><input type=text id="name" name="settings[name]"><input type=hidden name="settings[rewrite]" value=""></td>
 </tr>
 <tr>
-<td align=right><label for="session">Simple name for Sessions:</label></td><td><input type=text id="session" name="settings[session]" value="MK"></td>
+<td align=right><label for="session">Simple name for Sessions:</label></td><td><input type=text id="session" name="settings[session]" value="MK2"></td>
 </tr>
 <tr>
 <td align=right><label for="baseuri">URI Where MomoKO lives:</label></td><td><input type=text id="baseuri" name="settings[baseuri]" placeholder="Autodetect"></td>

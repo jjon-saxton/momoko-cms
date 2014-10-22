@@ -18,12 +18,13 @@ function create_tables($config)
   $def['content'][2]="`type` VARCHAR(15) NOT NULL";
   $def['content'][3]="`date_created` DATETIME NOT NULL";
   $def['content'][4]="`date_modified` DATETIME";
-  $def['content'][5]="`author` INT(255)";
-  $def['content'][6]="`has_access` VARCHAR(20)";
-  $def['content'][7]="`mime_type` VARCHAR(20)";
-  $def['content'][8]="`category_tree` TEXT";
-  $def['content'][9]="`text` TEXT";
-  $def['content'][10]="`link` TEXT";
+  $def['content'][5]="`status` VARCHAR(15) NOT NULL";
+  $def['content'][6]="`author` INT(255)";
+  $def['content'][7]="`has_access` VARCHAR(20)";
+  $def['content'][8]="`mime_type` VARCHAR(20)";
+  $def['content'][9]="`category_tree` TEXT";
+  $def['content'][10]="`text` TEXT";
+  $def['content'][11]="`link` TEXT";
   
   $def['log'][0]="`num` INT (11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['log'][1]="`time` DATETIME";
@@ -127,8 +128,8 @@ HTML;
   $rows['addins'][]=array('dir'=>'settings','incp'=>'n','enabled'=>'y','shortname'=>'User Settings','longname'=>'Manage Use Settings','description'=>'Addin providing users the ability to change there settings.');
   $rows['addins'][]=array('dir'=>'passreset','incp'=>'n','enabled'=>'y','shortname'=>'Password Resetter','longname'=>'Password Resetter','description'=>'Allows users to reset their own password.');
   
-  $rows['content'][]=array('title'=>"Hello World!",'date_created'=>date("Y-m-d H:i:s"),'type'=>'page','author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');
-  $rows['content'][]=array('title'=>"Welcome!",'date_created'=>date("Y-m-d H:i:s"),'type'=>'post','author'=>1,'text'=>$firstpost,'mime_type'=>'text/html');
+  $rows['content'][]=array('title'=>"Hello World!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"home",'type'=>'page','author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');
+  $rows['content'][]=array('title'=>"Welcome!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'post','author'=>1,'text'=>$firstpost,'mime_type'=>'text/html');
   foreach (glob($site['basedir']."/mk-content/error/*.htm") as $file)
   {
    $raw=file_get_contents($file);
@@ -142,7 +143,33 @@ HTML;
    }
    unset($match);
    $page['date_created']=date("Y-m-d H:i:s");
+   $page['status']="claoked";
    $page['type']="error page";
+   $page['author']=1;
+   if (preg_match("/<body>(?P<body>.*?)<\/body>/smU",$raw,$match) > 0)
+   {
+    $page['text']=$match['body'];
+   }
+   unset($match);
+   $page['mime_type']="text/html";
+   
+   $rows['content'][]=$page;
+  }
+  foreach (glob($site['basedir']."/mk-content/forms/*.htm") as $file)
+  {
+   $raw=file_get_contents($file);
+   if (preg_match("/<title>(?P<title>.*?)<\/title>/smU",$raw,$match) > 0)
+   {
+    $page['title']=$match['title'];
+   }
+   else
+   {
+    $page['title']="Untitled Form";
+   }
+   unset($match);
+   $page['date_created']=date("Y-m-d H:i:s");
+   $page['status']="claoked";
+   $page['type']="form";
    $page['author']=1;
    if (preg_match("/<body>(?P<body>.*?)<\/body>/smU",$raw,$match) > 0)
    {
@@ -160,7 +187,7 @@ HTML;
   $rows['users'][]=array('name'=>'guest','password'=>'guest','email'=>$admin['email'],'groups'=>"nobody",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'rowspertable'=>$defaults['rpt']);
   $rows['users'][]=$admin;
   
-  $rows['settings'][]=array('key'=>'version','value'=>'1.2');
+  $rows['settings'][]=array('key'=>'version','value'=>'2');
   $rows['settings'][]=array('key'=>'name','value'=>$site['name']);
   $rows['settings'][]=array('key'=>'template','value'=>'quirk');
   $rows['settings'][]=array('key'=>'support_email','value'=>$admin['email']);
