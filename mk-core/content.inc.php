@@ -7,30 +7,104 @@ class MomokoNavigation implements MomokoModuleInterface
  public $user;
  public $options=array();
  public $map=array();
+ private $table;
 
  public function __construct($user,$options)
  {
   $this->user=$user;
-  //TODO Members and methods need to be rewritten for database drive content
+  parse_str($options,$this->options);
+  $this->table=new DataBaseTable('content');
+  $this->map=$this->scanContent();
  }
  
  public function getModule($format='html')
  {
-  //TODO must convert database entries into link lines and/or lists
+  switch ($format)
+  {
+   //Other format cases?
+   //break;
+   case 'html':
+   switch ($this->options['display'])
+   {
+    case 'menu':
+    $text="<ul id=\"NavList\" class=\"topnav\">".$this->getListItems($this->map)."\n</ul>";
+    break;
+    case 'list':
+    if (!@$name)
+    {
+     $name="Site Map";
+    }
+    $html="<h2>{$name}</h2>\n<ul id=\"MapList\" class=\"sitemap\">\n".$this->getListItems($this->map)."\n</ul>";
+    break;
+    case'simple':
+    default:
+    $html=$this->getListItems($this->map);
+   }
+  }
+  
+  return $text;
+ }
+ 
+ private function scanContent($parent=0)
+ {
+  $query=$this->table->getData("parent:'{$parent}'");
+  $content=array();
+  while ($data=$query->fetch(PDO::FETCH_ASSOC))
+  {
+   if ($data['type'] == "category")
+   {
+    $content[]=array('id'=>$data['num'],'title'=>$data['title'],'href'=>"/".urlencode($data['title'])."/",'children'=>scanContent($data['num']));
+   }
+   elseif ($data['type'] == "page" && ($data['status'] != "cloaked" && $data['status'] != "locked"))
+   {
+    $content[]=array('id'=>$data['num'],'title'=>$data['title'],'href'=>"/".urlencode($data['title']).".htm");
+   }
+  }
+  
+  return $content;
+ }
+ 
+ private function getListItems(array $map)
+ {
+  $text=null;
+  foreach ($this->map as $item)
+  {
+   if ($GLOBALS['SET']['rewrite'] == true)
+   {
+    $href="//".$GLOALS['SET']['baseuri']."/".$item['href'];
+   }
+   else
+   {
+    $href="//".$GLOBALS['SET']['baseuri']."/?p=".$item['id'];
+   }
+   if ($item['children'])
+   {
+    $text.="<li id=\"{$item['id']}\" class=\"category\"><a href=\"{$href}\">{$item['title']}</a>\n";
+    $text.="<ul id=\"{$id}\" class=\"subnav\">\n".$this->getListItems($item['children'])."\n</ul>\n</li>\n";
+   }
+   else
+   {
+    $text.="<li id=\"{$item['id']}\"><a href=\"{$href}\">{$item['title']}</a></li>\n";
+   }
+  }
+  
+  return $text;
  }
 }
 
 class MomokoNews implements MomokoModuleInterface
 {
 	public $user;
-	public $news_list;
+	public $list;
 	public $options;
+	private $table;
 	
 	public function __construct($user,$options)
 	{
   $this->user=$user;
   parse_str($options,$this->options);
-  //Load news from database
+  $this->table=new DataBaseTable('content');
+  //TODO Load news from database
 	}
 	
 	public function getModule ($format='html')
@@ -261,8 +335,11 @@ class MomokoPage implements MomokoObject
  
  public function __construct($path, array $additional_vars=null)
  {
-  $category_tree=trim(dirname($path),"./");
+  $table=new DataBaseTable('content');
+  
   $title=basename($path);
+  $category_tree=trim(dirname($path),"./");
+  $parent=basename($category_tree);
   
   if ($title == NULL)
   {
@@ -272,12 +349,14 @@ class MomokoPage implements MomokoObject
   {
    $where="title:'{$title}'";
   }
-  if ($category_tree != NULL)
+  if ($parent != NULL)
   {
-   $where.=",category_tree:'{$category_tree}'";
+   $pq=$table->getData("title:'{$parent}'",array('num'),null,1);
+   $pinfo=$pg->fetch(PDO::FETCH_ASSOC);
+   $where.=",parent:'{$pinfo['num']}'";
   }
-  $this->table=new DataBaseTable('content');
-  $query=$this->table->getData($where,null,null,1);
+  $query=$table->getData($where,null,null,1);
+  $this->table=$table;
   $this->info=$query->fetch();
 
   $body=$this->get();
@@ -302,6 +381,17 @@ class MomokoPage implements MomokoObject
  {
   $this->info[$key]=$value;
   return true;
+ }
+ 
+ public function fetchByID($num)
+ {
+  $query=$this->table->getData("num:={$num}",null,null,1);
+  $this->info=$query->fetch();
+
+  $body=$this->get();
+  $vars=$this->setVars($additional_vars);
+  $ch=new MomokoVariableHandler($vars);
+  $this->inner_body=$ch->replace($body);
  }
  
  public function put($data)
