@@ -95,7 +95,7 @@ class MomokoNavigation implements MomokoModuleInterface
 class MomokoNews implements MomokoModuleInterface
 {
 	public $user;
-	public $list;
+	public $news_list;
 	public $options;
 	private $table;
 	
@@ -104,7 +104,8 @@ class MomokoNews implements MomokoModuleInterface
   $this->user=$user;
   parse_str($options,$this->options);
   $this->table=new DataBaseTable('content');
-  //TODO Load news from database
+  $query=$this->table->getData("type:'post'");
+  $this->news_list=$query->fetchAll(PDO::FETCH_ASSOC);
 	}
 	
 	public function getModule ($format='html')
@@ -112,27 +113,38 @@ class MomokoNews implements MomokoModuleInterface
 		$data=array();
 		
 		if (is_array($this->news_list))
-                {
-		 foreach ($this->news_list as $news_item)
-		 {
-			if ($news_item['@name'] == 'item')
-			{
-				foreach ($news_item['@children'] as $node)
-				{
-					$item[$node['@name']]=$node['@text'];
-				}
-			}
-			$item['date']=strtotime($item['update']);
-			$data[$item['date']]=$item;
-		 }
-  		}
+  {
+   foreach ($this->news_list as $post)
+   {
+    if ($post['date_modified'])
+    {
+     $item['timestamp']=time($post['date_modiefied']);
+    }
+    else
+    {
+     $item['timestamp']=time($post['date_created']);
+    }
+    $item['headline']=$post['title'];
+    if ($GLOBALS['SET']['rewrite'])
+    {
+     $item['href']="news/".urlencode($post['title']).".htm";
+    }
+    else
+    {
+     $item['href']="/?p=".$post['num'];
+    }
+    $item['summary']=preg_replace("/<h2>(.*?)<\/h2>/smU",'',$post['text']);
+    $data[]=$item;
+    unset($item);
+   }
+		}
 		
 		switch ($format)
 		{
 			case 'array':
 			return $data;
 			case 'rss':
-			$uri_root='http://'.$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].'/';
+			$uri_root='http://'.$GLOBALS['SET']['baseuri'].'/';
    $dom=new DOMDocument('1.0', 'UTF-8');
 			$rss=$dom->appendChild(new DOMElement('rss'));
 			$rss_version=$rss->setAttribute('version','2.0');
@@ -144,16 +156,16 @@ class MomokoNews implements MomokoModuleInterface
 			{
 				$item=$channel->appendChild(new DOMElement('item'));
 				$title=$item->appendChild(new DOMElement('title',$news['headline']));
-				$link=$item->appendChild(new DOMElement('link',$uri_root.'news.php/'.$news['date'].'.htm'));
-				$pubdate=$item->appendChild(new DOMElement('pubDate',gmdate('Y-m-d\TH:i:s\Z',$news['date'])));
-				$guid=$item->appendChild(new DOMElement('guid',$this->generateUUID(null,$news['date'])));
+				$link=$item->appendChild(new DOMElement('link',$uri_root.$news['file']));
+				$pubdate=$item->appendChild(new DOMElement('pubDate',gmdate('Y-m-d\TH:i:s\Z',$news['timestamp'])));
+				$guid=$item->appendChild(new DOMElement('guid',$this->generateUUID(null,$news['timestamp'])));
 				$des=$item->appendChild(new DOMElement('description',$news['summary']));
 			}
 			$xml=$dom->saveXML();
 			return $xml;
 			break;
 			case 'atom':
-			$uri_root='//'.$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].'/';
+			$uri_root='//'.$GLOBALS['SET']['baseuri'].'/';
    $dom=new DOMDocument('1.0', 'UTF-8');
    $feed=$dom->appendChild(new DOMElement('feed',null,'http://www.w3.org/2005/Atom'));
 			$ftitle=$feed->appendChild(new DOMElement('title',$GLOBALS['SET']['name'].' News Feed','http://www.w3.org/2005/Atom'));
@@ -168,14 +180,14 @@ class MomokoNews implements MomokoModuleInterface
 				$entry=$feed->appendChild(new DOMElement('entry',null,'http://www.w3.org/2005/Atom'));
 				$title=$entry->appendChild(new DOMElement('title',$news['headline']));
 				$link=$entry->appendChild(new DOMElement('link'));
-				$link_href=$link->setAttribute('href',$uri_root.'news.php/'.$news['date']);
+				$link_href=$link->setAttribute('href',$uri_root.$new['href']);
 				$link_alt=$entry->appendChild(new DOMElement('link'));
 				$link_alt_rel=$link_alt->setAttribute('rel','alternate');
 				$link_alt_type=$link_alt->setAttribute('type','text/html');
-				$link_alt_href=$link_alt->setAttribute('href',$uri_root.'news.php/'.$news['date'].'.htm');
-				$uuid=$entry->appendChild(new DOMElement('id',$this->generateUUID("urn:uuid:",$news['date'])));
-				$date=$entry->appendChild(new DOMElement('updated',gmdate('Y-m-d\TH:i:s\Z',$news['date'])));
-				$summary=$entry->appendChild(new DOMElement('summary',$news['txt_summary']));
+				$link_alt_href=$link_alt->setAttribute('href',$uri_root.$news['href']);
+				$uuid=$entry->appendChild(new DOMElement('id',$this->generateUUID("urn:uuid:",$news['timestamp'])));
+				$date=$entry->appendChild(new DOMElement('updated',gmdate('Y-m-d\TH:i:s\Z',$news['timestamp'])));
+				$summary=$entry->appendChild(new DOMElement('summary',$news['summary']));
 			}
    $xml=$dom->saveXML();
 			return $xml;
@@ -200,19 +212,19 @@ class MomokoNews implements MomokoModuleInterface
 		 $c=1;
 		 foreach($data as $news)
 		 {
-			 $news['file']=$news['date'].'.htm';
-			 $news['date']=date($GLOBALS['USR']->shortdateformat,$news['date']);
+			 $news['file']=$GLOBALS['SET']['baseuri'].$news['href'];
+			 $news['date']=date($GLOBALS['USR']->shortdateformat,$news['timestamp']);
 			 if ($max > 0 && $c<=$max)
 			 {
 			  if (strlen($news['summary']) > $this->options['length'])
                           {
                            $matches = array();
   			   preg_match("/^(.{1,".$this->options['length']."})[\s]/i", $news['summary'], $matches);
-                           $text=$matches[0].'... <a href="//'.$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].NEWSROOT.$news['file'].'">more</a>';
+                           $text=$matches[0].'... <a href="//'.$news['file'].'">more</a>';
                           }
 			  else
                           {
-                           $text=$news['summary'].' <a href="//'.$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].NEWSROOT.$news['file'].'">view/comment on article</a>';
+                           $text=$news['summary'].' <a href="//'.$news['file'].'">view/comment on article</a>';
                           }
 			  $html.=<<<HTML
 <div id="{$news['date']}" class="news item">
