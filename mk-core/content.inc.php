@@ -397,8 +397,8 @@ class MomokoPage implements MomokoObject
  
  public function fetchByID($num)
  {
-  $query=$this->table->getData("num:={$num}",null,null,1);
-  $this->info=$query->fetch();
+  $query=$this->table->getData("num:'{$num}'",null,null,1);
+  $this->info=$query->fetch(PDO::FETCH_ASSOC);
 
   $body=$this->get();
   $vars=$this->setVars($additional_vars);

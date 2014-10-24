@@ -136,17 +136,19 @@ else
  switch($path_parts[0])
  {
   case "addin":
-  case "news":
+  case "post":
   case "help":
   case "file":
   case "page":
   $run="do_".$path_parts[0];
   $path_parts=array_splice($path_parts,1);
+  $letter=substr($path_parts[0],0,1);
   break;
   default:
   $run="do_page";
+  $letter='p';
  }
 
- $run(implode("/",$path_parts));
+ $run(implode("/",$path_parts),$_GET[$letter]);
 }
 ?>

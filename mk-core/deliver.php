@@ -53,7 +53,7 @@ if (@$path && (pathinfo($path,PATHINFO_EXTENSION) != 'html' || pathinfo($path,PA
 echo($data);
 }
 
-function do_page($path)
+function do_page($path,$id=null)
 {
 if (@$path && (pathinfo($path,PATHINFO_EXTENSION) == 'htm' || pathinfo($path,PATHINFO_EXTENSION) == 'html'))
 {
@@ -105,16 +105,16 @@ elseif (@$path && pathinfo(@$path,PATHINFO_EXTENSION) == 'xml')
 {
  $nav=new MomokoNavigation(null,'display=none');
  $path=$nav->getIndex($path);
-}
-else
-{
-  $nav=new MomokoNavigation(null,'display=none');
-  $path=$nav->getIndex();
-} Not sure why I have this, figure it out or remove! */
+}*/
 
-if (@$path && !@$child)
+if (!@$child)
 {
  $child=new MomokoPage($path);
+ if ($id)
+ {
+  $child->fetchByID($id);
+ }
+
  if (@!empty($_GET['action']))
  {
   switch ($_GET['action'])
