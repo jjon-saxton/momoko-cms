@@ -111,7 +111,6 @@ HTML;
   $firstpost=<<<HTML
 <html>
 <body>
-<h2>Welcome!</h2>
 <p>As of today I have a new site running MomoKO!</p>
 </body>
 </html> 

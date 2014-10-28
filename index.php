@@ -131,24 +131,39 @@ if(isset($_GET['action']) && !empty($_GET['action']))
 else
 {
  include dirname(__FILE__)."/mk-core/deliver.php";
- @$str=$_GET['q'];
- $path_parts=explode("/",$str);
- switch($path_parts[0])
+ $path_parts=explode("/",@$_GET['q']);
+ 
+ if (!$path_parts[0] && $_GET['content'])
+ {
+  $type=$_GET['content'];
+ }
+ else
+ {
+  $type=$path_parts[0];
+ }
+ 
+ if (isset($_GET['p']))
+ {
+  $id=$_GET['p'];
+ }
+ else
+ {
+  $id=$_GET['id'];
+ }
+ 
+ switch($type)
  {
   case "addin":
   case "post":
-  case "help":
-  case "file":
+  case "attachment":
   case "page":
-  $run="do_".$path_parts[0];
+  $run="do_".$type;
   $path_parts=array_splice($path_parts,1);
-  $letter=substr($path_parts[0],0,1);
   break;
   default:
   $run="do_page";
-  $letter='p';
  }
 
- $run(implode("/",$path_parts),$_GET[$letter]);
+ $run(implode("/",$path_parts),$id);
 }
 ?>

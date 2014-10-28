@@ -92,11 +92,12 @@ class MomokoNavigation implements MomokoModuleInterface
  }
 }
 
-class MomokoNews implements MomokoModuleInterface
+class MomokoNews implements MomokoModuleInterface, MomokoObject
 {
 	public $user;
 	public $news_list;
 	public $options;
+	private $info=array();
 	private $table;
 	
 	public function __construct($user,$options)
@@ -106,6 +107,16 @@ class MomokoNews implements MomokoModuleInterface
   $this->table=new DataBaseTable('content');
   $query=$this->table->getData("type:'post'");
   $this->news_list=$query->fetchAll(PDO::FETCH_ASSOC);
+	}
+	
+	public function __get($key)
+	{
+	 return $this->info[$key];
+	}
+	
+	public function __set($key,$var)
+	{
+	 //TODO Set a new key in $this->info
 	}
 	
 	public function getModule ($format='html')
@@ -127,11 +138,11 @@ class MomokoNews implements MomokoModuleInterface
     $item['headline']=$post['title'];
     if ($GLOBALS['SET']['rewrite'])
     {
-     $item['href']="news/".urlencode($post['title']).".htm";
+     $item['href']="post/".urlencode($post['title']).".htm";
     }
     else
     {
-     $item['href']="/?p=".$post['num'];
+     $item['href']="/?content=post&p=".$post['num'];
     }
     $item['summary']=preg_replace("/<h2>(.*?)<\/h2>/smU",'',$post['text']);
     $data[]=$item;
@@ -242,6 +253,37 @@ HTML;
 		 $html.="</div>";
 		 return $html;
 		}
+	}
+	
+	public function getPostByHeadline($title)
+	{
+	 $query=$this->table->getData("title:'".$title."'",array('num'),null,1);
+	 $data=$query->fetch(PDO::FETCH_ASSOC);
+	 $this->getPostByID($data['num']);
+	}
+	
+	public function getPostByID($num)
+	{
+	 $query=$this->table->getData("num:'".$num."'",null,null,1);
+	 $info=$query->fetch(PDO::FETCH_ASSOC);
+	 $post_created=strtotime($info['date_created']);
+	 if ($info['date_modified'])
+	 {
+	  $post_modified=strtotime($info['date_modified']);
+	 }
+	 $date=date($GLOBALS['USR']->longdateformat,$post_created);
+	 $this->info=$info;
+	 $this->info['inner_body']=<<<HTML
+<h2>{$info['title']}</h2>
+<div class="date">{$date}</div>
+<artcile class="box">{$info['text']}</article>
+HTML;
+  $this->info['full_html']="<html>\n<body>\n{$this->info['inner_body']}\n</body>\n</html>";
+	}
+	
+	public function get()
+	{
+	 //TODO Get something?
 	}
 
  public function put($data,$prepend=true)

@@ -1,6 +1,6 @@
 <?php
 
-function do_file($path)
+function do_attachement($path,$id=null)
 {
 require_once $GLOBALS['SET']['basedir'].'/core/ximager.inc.php';
 if (@$path && (pathinfo($path,PATHINFO_EXTENSION) != 'html' || pathinfo($path,PATHINFO_EXTENSTION) != 'php'))
@@ -212,7 +212,24 @@ $tpl=new MomokoTemplate(pathinfo($path,PATHINFO_DIRNAME));
 print $tpl->toHTML($child);
 }
 
-function do_addin($path,$action=null)
+function do_post($path,$id=null)
+{
+ $child=new MomokoNews($GLOBALS['USR'],"format=html");
+ if (!$id)
+ {
+  $headline=basenmae($path);
+  $child->getPostByHeadline($headline);
+ }
+ else
+ {
+  $child->getPostByID($id);
+ }
+ 
+ $tpl=new MomokoTemplate(dirname($path));
+ print $tpl->toHTML($child);
+}
+
+function do_addin($path,$id=null,$action=null)
 {
 if (@$action == 'login' || @$action == 'logout' || @$action == 'register')
 {
