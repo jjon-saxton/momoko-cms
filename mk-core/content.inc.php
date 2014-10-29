@@ -719,13 +719,68 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   $split['body']=$match['body'];
   unset($match);
   
+  $umopts=null;
+  $contentlists=null;
+  if ($GLOBALS['USR']->inGroup('admin'))
+  {
+   $umopts="\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=new\">Register</a></li>";
+  }
+  if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
+  {
+   $contentlists.=<<<HTML
+<h4>Page/Post</h4>
+<ul id="PostPlugs" class="plug list">
+<li><a href="?action=new">New</a></li>
+<li><a href="?action=edit">Edit</a></li>
+<li><a href="?action=delete">Delete</a></li>
+</ul>
+<h4>Content</h4>
+<ul id="ContentPlugs" class="plug list">
+<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=pages">Pages</a></li>
+<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=posts">Posts</a></li>
+<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
+</ul>
+HTML;
+  }
+  if ($GLOBALS['USR']->inGroup('admin'))
+  {
+   $contentlists.=<<<HTML
+<h4>Site</h4>
+<ul id="SitePlugs" class="plug list">
+<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=stats">Statistics</a></li>
+<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=settings">Settings</a></li>
+<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=addins">Addins</a></li>
+<li><a href="//{$GLOBASL['SET']['baseuri']}/mk-dash.php?section=site&action=map">Map</a></li>
+</ul>
+HTML;
+  }
+  
   $split['head']=<<<HTML
 <title>~{sitename} - ~{pagetitle}</title>
 <!-- Meta Tags? -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+<script src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/sidebar/dashbar.js" type="text/javascript"></script>
+<link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/mk-core/styles/momoko.css" type="text/css">
 {$split['head']}
+HTML;
+  $split['body']=<<<HTML
+<div id="dashboard" class="sidebar" onclick="toggleSidebar();">
+<h1>{$GLOBALS['SET']['name']}</h1>
+<h4>User</h4>
+<ul id="UserPlugs" class="plug list">
+<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=settings">Settings</a></li>
+<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=profile">Profile</a></li>{$umopts}
+</ul>
+{$contentlists}
+<h4>Exit</h4>
+<ul id="ExitPlugs" class="plug list">
+<li><a href="javascript:void();">Close Dashboard</a></li>
+<li><a href="?action=logout">Logout</a>
+</ul>
+</div>
+{$split['body']}
 HTML;
   
   $split['full']=<<<HTML

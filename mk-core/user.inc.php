@@ -338,43 +338,17 @@ HTML;
 
  private function listUserActions($wrapper="__LINK__")
  {
-  if ($GLOBALS['USR']->inGroup('admin'))
-  {
-   $atitle="AdminCP";
-   if (!empty($this->opts['admin_title']))
-   {
-    $atitle=$this->opts['admin_title'];
-   }
-   $actions[]=array('href'=>'//'.$GLOBALS['SET']['baseuri'].ADMINROOT,'title'=>'AdminCP');
-   $actions[]=array('href'=>'//'.$GLOBALS['SET']['baseuri'].ADDINROOT.QUERYSTARTER."action=list",'title'=>'Manage Addins');
-  }
-  if (is_array($this->opts['custom_links']))
-  {
-   foreach ($this->opts['custom_links'] as $group=>$link)
-   {
-    if ($this->usr->inGroup($group))
-    {
-     @list($link,$text,)=explode(">",$link);
-     $link=str_replace("\\","/",$link);
-     if (preg_match("/\/\//",$link) <= 0)
-     {
-      $link='//'.$GLOBALS['SET']['baseuri'].$link;
-     }
-     if (empty($text))
-     {
-      $text=$link;
-     }
-     $actions[]=array('href'=>$link,'title'=>$text);
-    }
-   }
-  }
-  $actions[]=array('href'=>'//'.$GLOBALS['SET']['baseuri'].ADDINROOT.'settings','title'=>'Change Settings');
+  $actions[]=array('href'=>'javascript:void();','onclick'=>"toggleSidebar();",'title'=>'My Dashboard');
   $actions[]=array('href'=>'?action=logout','title'=>'Logout');
   $html=null;
 
   foreach ($actions as $action)
   {
-   $html.=preg_replace("/__LINK__/","<a href=\"".$action['href']."\" title=\"".$action['title']."\">".$action['title']."</a>",$wrapper);
+   if (@$action['onclick'])
+   {
+    $props=" onclick=\"{$action['onclick']}\"";
+   }
+   $html.=preg_replace("/__LINK__/","<a href=\"{$action['href']}\"{$props} title=\"".$action['title']."\">".$action['title']."</a>",$wrapper);
   }
 
   return $html;
