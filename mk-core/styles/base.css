@@ -112,6 +112,10 @@ ul.sitemap ul.subnav
   margin-bottom: 0;
 }
 
+div.hidden {
+ display:none;
+}
+
 div#Content {
  min-height: 25em;
-}
+}

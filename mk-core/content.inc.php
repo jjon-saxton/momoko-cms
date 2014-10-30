@@ -761,12 +761,17 @@ HTML;
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-<script src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/sidebar/dashbar.js" type="text/javascript"></script>
+<script src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/rainbow/dash.js" type="text/javascript"></script>
 <link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/mk-core/styles/momoko.css" type="text/css">
 {$split['head']}
 HTML;
   $split['body']=<<<HTML
-<div id="dashboard" class="sidebar" onclick="toggleSidebar();">
+<div id="modal" title="Loeading Awesomeness!" style="display:none">
+<p>Becoming 20% more awesome...</p>
+</div>
+<div id="overlay" class="ui-widget-overlay" style="display:none" onclick="toggleSidebar();">&nbsp;</div>
+<div id="dashboard" class="sidebar">
+<button style="float:right" id="sidebarClose" onclick="toggleSidebar()">Close Dashboard</button>
 <h1>{$GLOBALS['SET']['name']}</h1>
 <h4>User</h4>
 <ul id="UserPlugs" class="plug list">
@@ -776,7 +781,7 @@ HTML;
 {$contentlists}
 <h4>Exit</h4>
 <ul id="ExitPlugs" class="plug list">
-<li><a href="javascript:void();">Close Dashboard</a></li>
+<li><a href="javascript:void();" onclick="toggleSidebar();">Close Dashboard</a></li>
 <li><a href="?action=logout">Logout</a>
 </ul>
 </div>

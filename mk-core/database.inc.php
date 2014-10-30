@@ -161,19 +161,19 @@ class DataBaseTable extends DataBaseSchema
  {
   $update=array();
 
-  $q="UPDATE `{$this->table}` SET";
+  $q="UPDATE `{$this->table}` SET ";
   foreach ($fieldarray as $field=>$value)
   {
    if (in_array($field,$this->fieldlist))
    {
     if ($this->indices['primary'] == $field)
     {
-     $q="WHERE `{$field}`='{$value}'";
+     $where="WHERE `{$field}`='{$value}'";
      $key=$value;
     }
     else
     {
-     $q.=" `{$field}`=:{$field}";
+     $q.=" `{$field}`=:{$field}, ";
      $update[":{$field}"]=$value;
     }
    }
@@ -182,13 +182,17 @@ class DataBaseTable extends DataBaseSchema
     unset($fieldarray[$field]);
    }
   }
+  $q=rtrim($q,", ").' '.$where;
   $query=$this->prepare($q);
+
+  $this->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
   if ($query->execute($update))
   {
    return $key;
   }
   else
   {
+   throw new Exception("Could not update data!");
    return false;
   }
  }
@@ -209,12 +213,14 @@ class DataBaseTable extends DataBaseSchema
   }
   $query=$this->prepare($q);
 
+  $this->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
   if ($query->execute())
   {
    return $key;
   }
   else
   {
+   throw new Exception("Could not delete data");
    return false;
   }
  }
@@ -260,4 +266,3 @@ class DataBaseTable extends DataBaseSchema
   }
  }
 }
-
