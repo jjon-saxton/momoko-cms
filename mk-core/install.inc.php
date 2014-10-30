@@ -12,6 +12,7 @@ function create_tables($config)
   $def['addins'][4]="`shortname` VARCHAR(72) NOT NULL";
   $def['addins'][5]="`longname` VARCHAR(125) NOT NULL";
   $def['addins'][6]="`description` TEXT";
+  $def['addins'][7]="`headtags` TEXT";
   
   $def['content'][0]="`num` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['content'][1]="`title` VARCHAR(100) NOT NULL";

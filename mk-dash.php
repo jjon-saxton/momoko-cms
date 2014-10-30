@@ -50,7 +50,7 @@ class MomokoDashboard implements MomokoObject
   
   switch ($list)
   {
-   case 'Stats':
+   case 'stats':
    default:
    break;
   }
