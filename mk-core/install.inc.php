@@ -23,7 +23,7 @@ function create_tables($config)
   $def['content'][6]="`author` INT(255)";
   $def['content'][7]="`has_access` VARCHAR(20)";
   $def['content'][8]="`mime_type` VARCHAR(20)";
-  $def['content'][9]="`category_tree` TEXT";
+  $def['content'][9]="`parent` TEXT";
   $def['content'][10]="`text` TEXT";
   $def['content'][11]="`link` TEXT";
   
