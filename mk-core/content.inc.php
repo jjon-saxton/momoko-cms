@@ -87,7 +87,7 @@ class MomokoNavigation implements MomokoModuleInterface
     $text.="<li id=\"{$item['id']}\"><a href=\"{$href}\">{$item['title']}</a></li>\n";
    }
   }
-  
+
   return $text;
  }
 }
