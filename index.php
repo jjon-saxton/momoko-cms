@@ -10,11 +10,11 @@ require dirname(__FILE__)."/mk-core/content.inc.php";
 
 if (is_writable($GLOBALS['SET']['basedir']))
 {
- trigger_error("Security Warning: MomoKO's base directory is writable!",E_USER_WARNING);
+ trigger_error("Security Notice: MomoKO's base directory is writable!",E_USER_NOTICE);
 }
 if (!is_writable($GLOBALS['SET']['filedir']))
 {
- trigger_error("MomoKO's content storage directory is not writable!",E_USER_WARNING);
+ trigger_error("MomoKO's content storage directory is not writable!",E_USER_NOTICE);
 }
 
 if(isset($_GET['action']) && !empty($_GET['action']))
