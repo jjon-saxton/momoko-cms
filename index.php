@@ -30,7 +30,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
     exit();
    }
   }
-  $path_parts=array_splice($path_parts,1);
+  $path_parts=array_splice($path_parts,1); //TODO this seems to execute even when no query string is given!
   $path=implode("/",$path_parts);
   $child=new MomokoPage($path);
   switch ($_GET['action'])

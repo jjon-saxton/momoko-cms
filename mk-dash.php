@@ -11,6 +11,8 @@ class MomokoDashboard implements MomokoObject
  {
   switch ($section)
   {
+   case 'site':
+   $this->table=new DataBaseTable('settings');
    case 'user':
    default:
    $this->table=new DataBaseTable('users');
@@ -50,7 +52,31 @@ class MomokoDashboard implements MomokoObject
   
   switch ($list)
   {
-   case 'stats':
+   case 'logs':
+   $table=new DataBaseTable('log');
+   $text="<div id=\"Logs\" class=\"box\">\n<table width=100% cellspacing=1 cellpadding=1>\n<tr>\n";
+   foreach ($table->fieldlist as $th)
+   {
+    if ($th != "num")
+    {
+     $text.="<th>".ucwords($th)."</th>";
+    }
+   }
+   $text.="</tr>";
+   $query=$table->getData(@$_GET['q']);
+   while ($log=$query->fetch(PDO::FETCH_ASSOC))
+   {
+    $text.="<tr>\n";
+    foreach ($log as $col=>$value)
+    {
+     if ($col != 'num')
+     {
+      $text.="<td id=\"{$col}\">{$value}</td>";
+     }
+    }
+    $text.="</tr>\n";
+   }
+   $info['inner_body']=$text."</table>\n</div>";
    default:
    break;
   }
