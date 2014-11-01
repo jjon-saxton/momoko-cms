@@ -11,6 +11,9 @@ class MomokoDashboard implements MomokoObject
  {
   switch ($section)
   {
+   case'content':
+   $this->table=new DataBaseTable('content');
+   break;
    case 'site':
    $this->table=new DataBaseTable('settings');
    case 'user':
@@ -52,6 +55,42 @@ class MomokoDashboard implements MomokoObject
   
   switch ($list)
   {
+   case 'pages':
+   case 'posts':
+   case 'attachments':
+   $cols=array('num','title','status','mime_type');
+   $text="<div id=\"Content\" class=\"box\">\n<table width=100% cellspacing=1 cellpadding=1>\n<tr>\n";
+   foreach ($cols as $th)
+   {
+    if ($th != "num")
+    {
+     $text.="<th>".ucwords(str_replace("_"," ",$th))."</th>";
+    }
+   }
+   $text.="</tr>";
+   $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols);
+   $row_c=$query->rowCount();
+   if ($row_c>0)
+   {
+    while($content=$query->fetch(PDO::FETCH_ASSOC))
+    {
+     $text.="<tr>\n";
+     foreach ($content as $col=>$value)
+     {
+      if ($col != "num")
+      {
+       $text.="<td>{$value}</td>";
+      }
+     }
+     $text.="</tr>\n";
+    }
+   }
+   else
+   {
+    $text.="<tr><td colspan=5 align=center><span class=\"notice\">- You have no {$list} yet! -</td></tr>";
+   }
+   $info['inner_body']="<h2>".ucwords($list)."</h2>\n".$text."</table></div>";
+   break;
    case 'logs':
    $table=new DataBaseTable('log');
    $text="<div id=\"Logs\" class=\"box\">\n<table width=100% cellspacing=1 cellpadding=1>\n<tr>\n";
@@ -76,7 +115,7 @@ class MomokoDashboard implements MomokoObject
     }
     $text.="</tr>\n";
    }
-   $info['inner_body']=$text."</table>\n</div>";
+   $info['inner_body']="<h2>Event Logs</h2>\n".$text."</table>\n</div>";
    default:
    break;
   }
@@ -122,7 +161,7 @@ HTML;
    case 'delete':
    break;
    case 'settings':
-   $page['title']="User Settings";
+   $page['title']=ucwords($_GET['section'])." Settings";
    if (!$user_data['send'])
    {
     $page['body']="";
