@@ -229,10 +229,10 @@ HTML;
 <td align=right><label for="shortdate">Short Date Format:</label></td><td><input type=text id="shortdate" name="defaults[sdf]" value="m/d/Y"></td>
 </tr>
 <tr>
-<td align=right><label for="longdate">Long Date Format:</label></td><td><input type=text id="longdate" name="defaults[ldf]" value="I F j, Y"></td>
+<td align=right><label for="longdate">Long Date Format:</label></td><td><input type=text id="longdate" name="defaults[ldf]" value="F j, Y"></td>
 </tr>
 <tr>
-<td align=right><label for="numrows">Number of Rows in a Table (dashboard and addins):</label></td><td><input type=number id="numrows" name="defaults[rpt]" value="20"></td>
+<td align=right><label for="numrows">Number of Rows in a Table (dashboard and addins):</label></td><td><input type=number id="numrows" name="defaults[rpt]" value="50"></td>
 </tr>
 <table>
 </div>

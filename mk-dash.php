@@ -70,6 +70,11 @@ class MomokoDashboard implements MomokoObject
    $text.="</tr>";
    $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols);
    $row_c=$query->rowCount();
+   $pages=paginate($row_c);
+   if (count($pages) > 3)
+   {
+    $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols,NULL,$GLOBALS['USR']->rowspertable,@$_GET['offset']);
+   }
    if ($row_c>0)
    {
     while($content=$query->fetch(PDO::FETCH_ASSOC))
