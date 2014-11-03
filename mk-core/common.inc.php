@@ -454,12 +454,11 @@ function momoko_basic_changes($user,$action,$target,$message=null)
 function paginate($total,$offset=0)
 {
  $total_pp=ceil($total/$GLOBALS['USR']->rowspertable);
- $pages['prev']=$offset-$GLOBALS['USR']->rowspertable;
  for($c=1;$c<=$total_pp;$c++)
  {
-  $pages[]=array('offest'=>($c*$GLOBALS['USR']->rowspertable)-$GLOBALS['USR']->rowspertable,'number'=>$c);
+  $offset_c=($c*$GLOBALS['USR']->rowspertable)-$GLOBALS['USR']->rowspertable;
+  $pages[]=array('offset'=>$offset_c,'number'=>$c);
  }
- $pages['next']=$offset+$GLOBALS['USR']->rowspertable;
 
  return $pages;
 }

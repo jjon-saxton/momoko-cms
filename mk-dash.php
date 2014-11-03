@@ -71,9 +71,8 @@ class MomokoDashboard implements MomokoObject
    $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols);
    $row_c=$query->rowCount();
    $pages=paginate($row_c);
-   $prev=$pages['prev'];
-   $next=$pages['next'];
-   unset($pages['prev'],$pages['next']);
+   $prev=@$_GET['offset']-$GLOBALS['USR']->rowspertable;
+   $next=@$_GET['offset']+$GLOBALS['USR']->rowspertable;
    if ($prev >= 0)
    {
     $prev=0;
@@ -81,12 +80,19 @@ class MomokoDashboard implements MomokoObject
    if (count($pages) > 1)
    {
     $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols,NULL,$GLOBALS['USR']->rowspertable,@$_GET['offset']);
-    $page_div="<div id=\"Page\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td><a href=\"{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list={$list}&offset={$prev}\">Previous</a></td><td>";
+    $page_div="<div id=\"Page\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list={$list}&offset={$prev}\">Previous</a></td><td align=center>";
     foreach ($pages as $page)
     {
-     $page_div.="<a href=\"{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list={$list}&offest={$page['offset']}\">{$page['number']}</a>";
+     if ($page['offset'] == @$_GET['offset'])
+     {
+      $page_div.="<strong class=\"curpage\">{$page['number']}</strong>";
+     }
+     else
+     {
+      $page_div.="<a href=\"{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list={$list}&offest={$page['offset']}\">{$page['number']}</a>";
+     }
     }
-    $page_div.="</td><td><a href=\"{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list={$list}&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
+    $page_div.="</td><td align=right><a href=\"{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list={$list}&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
    }
    else
    {
@@ -111,7 +117,7 @@ class MomokoDashboard implements MomokoObject
    {
     $text.="<tr><td colspan=5 align=center><span class=\"notice\">- You have no {$list} yet! -</td></tr>";
    }
-   $info['inner_body']="<h2>".ucwords($list)."</h2>\n".$text."</table></div>";
+   $info['inner_body']="<h2>".ucwords($list)."</h2>\n".$text."</table></div>".$page_div;
    break;
    case 'logs':
    $table=new DataBaseTable('log');
@@ -125,6 +131,46 @@ class MomokoDashboard implements MomokoObject
    }
    $text.="</tr>";
    $query=$table->getData(@$_GET['q']);
+   $row_c=$query->rowCount();
+
+   if ($row_c > $GLOBALS['USR']->rowspertable)
+   {
+    unset($query);
+    $query=$table->getData(@$_GET['q'],NULL,NULL,$GLOBALS['USR']->rowspertable,@$_GET['offset']);
+   }
+
+   $pages=paginate($row_c,@$_GET['offset']);
+   $prev=@$_GET['offset']-$GLOBALS['USR']->rowspertable;
+   $next=@$_GET['offset']+$GLOBALS['USR']->rowspertable;
+   if ($prev < 0)
+   {
+    $prev=0;
+   }
+   if ($next > $row_c)
+   {
+    $next=0;
+   }
+   if (count($pages) > 1)
+   {
+    $page_div="<div id=\"Pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs&offset={$prev}\">Previous</a></td><td align=center";
+    foreach ($pages as $page)
+    {
+     if ($page['offset'] == @$_GET['offset'])
+     {
+      $page_div.="<strong class=\"currentpage\">{$page['number']}</strong> ";
+     }
+     else
+     {
+      $page_div.="<a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs&offset={$page['offset']}\">{$page['number']}</a> ";
+     }
+    }
+    $page_div.="</td><td align=right><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
+   }
+   else
+   {
+    $page_div=NULL;
+   }
+
    while ($log=$query->fetch(PDO::FETCH_ASSOC))
    {
     $text.="<tr>\n";

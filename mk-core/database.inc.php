@@ -152,6 +152,13 @@ class DataBaseTable extends DataBaseSchema
    }
   }
 
+  //TODO add sort by
+  $sql.=" LIMIT ".$limit;
+  if ($offset > 0)
+  {
+   $sql.=" OFFSET ".$offset;
+  }
+
   $result=$this->query($sql);
 
   return $result;
