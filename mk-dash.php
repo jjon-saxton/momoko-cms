@@ -16,6 +16,7 @@ class MomokoDashboard implements MomokoObject
    break;
    case 'site':
    $this->table=new DataBaseTable('settings');
+   break;
    case 'user':
    default:
    $this->table=new DataBaseTable('users');
@@ -235,7 +236,55 @@ HTML;
     switch($_GET['section'])
     {
      case 'site':
-     $page['body']=""; //TODO write site settings form
+     $page['body']=<<<HTML
+<form method=post>
+<h3>All Settings</h3>
+<ul id="SettingsForm" class="noindent nobullet">
+HTML;
+     $query=$this->table->getData();
+     $settings=$query->fetchALL(PDO::FETCH_ASSOC);
+     foreach ($settings as $setting)
+     {
+      $title=str_replace("_"," ",$setting['key']);
+      switch ($setting['key'])
+      {
+       case 'sessionname':
+       $title="session name";
+       break;
+       case 'rewrite':
+       $title="human readable URLs";
+       break;
+      }
+      $title=ucwords($title);
+      $page['body'].="<li><label for=\"{$setting['key']}\">{$title}: </label>";
+      switch ($setting['key'])
+      {
+       case 'version':
+       $page['body'].="<span id=\"{$setting['key']}\">{$setting['value']}</span>";
+       break;
+       //TODO add special case for template
+       case 'security_logging':
+       case 'error_logging':
+       $page['body'].="<input type=number id=\"{$setting['key']}\" name=\"{$settings['key']}\" value=\"{$setting['value']}\">";
+       break;
+       //TODO add special cases for e-mail settings
+       case 'rewrite':
+       if ($setting['key'])
+       {
+        $page['body'].="<span id=\"{$setting['key']}\"><input type=radio id=\"{$setting['key']}1\" name=\"{$setting['key']}\" value=\"1\"> <label for=\"{$setting['key']}1\">Yes</label> <input type=radio id=\"{$setting['key']}0\" name=\"{$setting['key']}\" checked=checked value=\"\"> <label for=\"{$setting['key']}0\">No</label></span>";
+       }
+       else
+       {
+       $page['body'].="<span id=\"{$setting['key']}\"><input type=radio id=\"{$setting['key']}1\" name=\"{$setting['key']}\" checked=checked value=\"1\"> <label for=\"{$setting['key']}1\">Yes</label> <input type=radio id=\"{$setting['key']}0\" name=\"{$setting['key']}\" value=\"\"> <label for=\"{$setting['key']}0\">No</label></span>";
+       }
+       break;
+       default:
+       $page['body'].="<input type=text id=\"{$setting['key']}\" name=\"{$settings['key']}\" value=\"{$setting['value']}\"></li>\n";
+       break;
+      }
+      $page['body'].="</li>\n";
+     }
+     $page['body'].="</ul>\n<h3>Save</h3>\n<div class=\"box\" align=\"center\"><button type=submit name=\"send\" value=\"1\">Save Changes</button>\n</div>\n</form>";
      break;
      case 'user':
      $page['body']=<<<HTML
@@ -278,7 +327,7 @@ HTML;
       }
       $page['body'].="<li><label for=\"{$form_field}\">{$title}: </label><input type=\"{$type}\" id=\"{$form_field}\" name=\"{$form_field}\" value=\"{$user[$form_field]}\"></li>\n";
      }
-     $page['body'].="</ul>\n<h3>Save</h3><div class=\"box\" align=center><button type=submit name=\"send\" value=\"1\">Save Changes</button></div>\n</form>"; //TODO write user settings form
+     $page['body'].="</ul>\n<h3>Save</h3><div class=\"box\" align=center><button type=submit name=\"send\" value=\"1\">Save Changes</button></div>\n</form>";
      break;
     }
    }
