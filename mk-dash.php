@@ -257,6 +257,39 @@ HTML;
    }
    $page['body'].="</tr>";
    $query=$this->table->getData(null,$columns);
+   $row_c=$query->rowCount();
+   if ($row_c > $GLOBALS['USR']->rowspertable)
+   {
+    $query=$this->table->getData(null,$columns,null,$GLOBALS['USR']->rowspertable,@$_GET['offset']);
+    $prev=@$_GET['offset']-$GLOBALS['USR']->rowspertable;
+    if ($prev < 0)
+    {
+     $prev=0;
+    }
+    $page_div="<div id=\"UserPags\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=users&action=list&offset={$prev}\">Previous</a></td><td align=center>";
+    $pages=paginate($row_c,@$_GET['offset']);
+    foreach ($pages as $page)
+    {
+     if ($page['offset'] == @$_GET['offset'])
+     {
+      $page_div.="<strong class=\"currentpage\">{$page['number']}</strong>";
+     }
+     else
+     {
+      $page_div.="<a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=users&action=list&offset={$page['offset']}\">{$page['number']}</a> ";
+     }
+    }
+    $next=@$_GET['offset']+$GLOBALS['USR']->rowspertable;
+    if ($next > $row_C)
+    {
+     $next=0;
+    }
+    $page_div.="</td><td align=right><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=users&action=list&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
+   }
+   else
+   {
+    $page_div=null;
+   }
    $row=null;
    while ($user=$query->fetch(PDO::FETCH_ASSOC))
    {
@@ -276,7 +309,7 @@ HTML;
    }
    $page['body'].=$row;
    unset($row);
-   $page['body'].="</table>\n</div>";
+   $page['body'].="</table>\n</div>".$page_div;
    break;
   }
   if (!$_GET['ajax'])
