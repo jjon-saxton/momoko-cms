@@ -331,6 +331,57 @@ HTML;
      break;
     }
    }
+   else
+   {
+    switch ($_GET['section'])
+    {
+     case 'site':
+     $update=false;
+     foreach($user_data as $nkey=>$nval)
+     {
+      $ndata=array('key'=>$nkey,'value'=>$nval);
+      try
+      {
+g       $update=$this->table->updateData($ndata);
+      }
+      catch (Exception $e)
+      {
+       trigger_error("Caught exception '".$e->getMessage()."' while attempting to change site settings",E_USER_WARNING);
+      }
+     }
+     break;
+     case 'user':
+     default:
+     try
+     {
+      $update=$this->table->updateData($user_data);
+     }
+     catch (Exception $e)
+     {
+      trigger_error("Caught exception '".$e->getMessage()."' while attempting to update settings for user #{$user_data['num']}",E_USER_ERROR);
+     }
+     break;
+    }
+    $section=ucwords($_GET['section']);
+    if ($update)
+    {
+     $page['body']=<<<HTML
+<div id="SettingsChanged" class="message box">
+<h3 class="message title">{$section} Settings Changed</h3>
+<p>{$section} settings have been changed succesfully! Please feel free to <a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section={$_GET['section']}&action=settings">Return</a> to the previous page, or select another page or action.</p>
+</div>
+HTML;
+    }
+    else
+    {
+     $page['body']=<<<HTML
+<div id="SettingsChanged" class="message error box">
+<h3 class="message error title">{$section} Settings Not Changed!</h3>
+<p>{$section} settings could not be changed. If you are an administrator, please review the event logs for more information. Other users, should report this error to the sie administrator</p>
+</div>
+HTML;
+    }
+   }
    break;
    case 'list':
    default:

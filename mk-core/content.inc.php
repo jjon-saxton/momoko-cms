@@ -775,8 +775,7 @@ HTML;
 <h1>{$GLOBALS['SET']['name']}</h1>
 <h4>User</h4>
 <ul id="UserPlugs" class="plug list">
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=settings">Settings</a></li>
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=profile">Profile</a></li>{$umopts}
+<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=settings">Settings</a></li>{$umopts}
 </ul>
 {$contentlists}
 <h4>Exit</h4>
