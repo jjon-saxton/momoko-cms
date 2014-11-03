@@ -71,9 +71,26 @@ class MomokoDashboard implements MomokoObject
    $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols);
    $row_c=$query->rowCount();
    $pages=paginate($row_c);
-   if (count($pages) > 3)
+   $prev=$pages['prev'];
+   $next=$pages['next'];
+   unset($pages['prev'],$pages['next']);
+   if ($prev >= 0)
+   {
+    $prev=0;
+   }
+   if (count($pages) > 1)
    {
     $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols,NULL,$GLOBALS['USR']->rowspertable,@$_GET['offset']);
+    $page_div="<div id=\"Page\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td><a href=\"{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list={$list}&offset={$prev}\">Previous</a></td><td>";
+    foreach ($pages as $page)
+    {
+     $page_div.="<a href=\"{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list={$list}&offest={$page['offset']}\">{$page['number']}</a>";
+    }
+    $page_div.="</td><td><a href=\"{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list={$list}&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
+   }
+   else
+   {
+    $page_div=NULL;
    }
    if ($row_c>0)
    {
@@ -120,7 +137,7 @@ class MomokoDashboard implements MomokoObject
     }
     $text.="</tr>\n";
    }
-   $info['inner_body']="<h2>Event Logs</h2>\n".$text."</table>\n</div>";
+   $info['inner_body']="<h2>Event Logs</h2>\n".$text."</table>\n</div>".$page_div;
    default:
    break;
   }
