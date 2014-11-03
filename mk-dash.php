@@ -232,7 +232,15 @@ HTML;
    $page['title']=ucwords($_GET['section'])." Settings";
    if (!$user_data['send'])
    {
-    $page['body']="";
+    switch($section)
+    {
+     case 'site':
+     $page['body']=""; //TODO write site settings form
+     break;
+     case 'user':
+     $page['body']=""; //TODO write user settings form
+     break;
+    }
    }
    break;
    case 'list':
