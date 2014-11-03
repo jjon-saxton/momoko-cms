@@ -232,13 +232,53 @@ HTML;
    $page['title']=ucwords($_GET['section'])." Settings";
    if (!$user_data['send'])
    {
-    switch($section)
+    switch($_GET['section'])
     {
      case 'site':
      $page['body']=""; //TODO write site settings form
      break;
      case 'user':
-     $page['body']=""; //TODO write user settings form
+     $page['body']=<<<HTML
+<form method=post>
+<h3>Password</h3>
+<ul id="PassForm" class="noindent nobullet">
+<li><input type=checkbox id="pc" name="pass_change" value=1> <label for="pc">Do you wish to change your password?</label></li>
+<li><label for="cpass">Current Password: </label><input type=password id="cpass" name="oldpassword"></li>
+<li><label for="npass1">New Password: </label><input type=password id="npass1" name="newpassword1"></li>
+<li><label for="npass2">Confirm New Password: </label><input type=password id="npass2" name="newpassword2"></li>
+</ul>
+<h3>Settings</h3>
+<ul id="UserForm" class="noindent nobullet">
+<input type=hidden name="num" value="{$GLOBALS['USR']->num}">
+HTML;
+     $columns=array('name','email','shortdateformat','longdateformat','rowspertable');
+     $query=$this->table->getData("num:'".$GLOBALS['USR']->num."'",$columns,null,1);
+     $user=$query->fetch(PDO::FETCH_ASSOC);
+     foreach ($columns as $form_field)
+     {
+      $type="text";
+      switch ($form_field)
+      {
+       case 'email':
+       $title="E-Mail";
+       break;
+       case 'shortdateformat':
+       $title="Short Date Format";
+       break;
+       case 'longdateformat':
+       $title="Long Date Format";
+       break;
+       case 'rowspertable':
+       $title="# of Rows in a Given Table";
+       $type="number";
+       break;
+       default:
+       $title=ucwords($form_field);
+       break;
+      }
+      $page['body'].="<li><label for=\"{$form_field}\">{$title}: </label><input type=\"{$type}\" id=\"{$form_field}\" name=\"{$form_field}\" value=\"{$user[$form_field]}\"></li>\n";
+     }
+     $page['body'].="</ul>\n<h3>Save</h3><div class=\"box\" align=center><button type=submit name=\"send\" value=\"1\">Save Changes</button></div>\n</form>"; //TODO write user settings form
      break;
     }
    }
@@ -266,7 +306,7 @@ HTML;
     {
      $prev=0;
     }
-    $page_div="<div id=\"UserPags\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=users&action=list&offset={$prev}\">Previous</a></td><td align=center>";
+    $page_div="<div id=\"UserPags\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list&offset={$prev}\">Previous</a></td><td align=center>";
     $pages=paginate($row_c,@$_GET['offset']);
     foreach ($pages as $page)
     {
@@ -276,7 +316,7 @@ HTML;
      }
      else
      {
-      $page_div.="<a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=users&action=list&offset={$page['offset']}\">{$page['number']}</a> ";
+      $page_div.="<a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list&offset={$page['offset']}\">{$page['number']}</a> ";
      }
     }
     $next=@$_GET['offset']+$GLOBALS['USR']->rowspertable;
@@ -284,7 +324,7 @@ HTML;
     {
      $next=0;
     }
-    $page_div.="</td><td align=right><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=users&action=list&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
+    $page_div.="</td><td align=right><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
    }
    else
    {
