@@ -16,16 +16,17 @@ function create_tables($config)
   
   $def['content'][0]="`num` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['content'][1]="`title` VARCHAR(100) NOT NULL";
-  $def['content'][2]="`type` VARCHAR(15) NOT NULL";
-  $def['content'][3]="`date_created` DATETIME NOT NULL";
-  $def['content'][4]="`date_modified` DATETIME";
-  $def['content'][5]="`status` VARCHAR(15) NOT NULL";
-  $def['content'][6]="`author` INT(255)";
-  $def['content'][7]="`has_access` VARCHAR(20)";
-  $def['content'][8]="`mime_type` VARCHAR(20)";
-  $def['content'][9]="`parent` TEXT";
-  $def['content'][10]="`text` TEXT";
-  $def['content'][11]="`link` TEXT";
+  $def['content'][2]="`order` INT(11)";
+  $def['content'][3]="`type` VARCHAR(15) NOT NULL";
+  $def['content'][4]="`date_created` DATETIME NOT NULL";
+  $def['content'][5]="`date_modified` DATETIME";
+  $def['content'][6]="`status` VARCHAR(15) NOT NULL";
+  $def['content'][7]="`author` INT(255)";
+  $def['content'][8]="`has_access` VARCHAR(20)";
+  $def['content'][9]="`mime_type` VARCHAR(20)";
+  $def['content'][10]="`parent` TEXT";
+  $def['content'][11]="`text` TEXT";
+  $def['content'][12]="`link` TEXT";
   
   $def['log'][0]="`num` INT (11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['log'][1]="`time` DATETIME";
