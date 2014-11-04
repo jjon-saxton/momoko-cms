@@ -60,7 +60,7 @@ class MomokoDashboard implements MomokoObject
    case 'posts':
    case 'attachments':
    $cols=array('num','title','status','mime_type');
-   $text="<div id=\"Content\" class=\"box\">\n<table width=100% cellspacing=1 cellpadding=1>\n<tr>\n";
+   $text="<div id=\"Content\" class=\"box\">\n<table width=100% class=\"dashboard row-select\">\n<tr>\n";
    foreach ($cols as $th)
    {
     if ($th != "num")
@@ -122,7 +122,7 @@ class MomokoDashboard implements MomokoObject
    break;
    case 'logs':
    $table=new DataBaseTable('log');
-   $text="<div id=\"Logs\" class=\"box\">\n<table width=100% cellspacing=1 cellpadding=1>\n<tr>\n";
+   $text="<div id=\"Logs\" class=\"box\">\n<table width=100% class=\"dashboard\">\n<tr>\n";
    foreach ($table->fieldlist as $th)
    {
     if ($th != "num")
@@ -442,10 +442,13 @@ HTML;
     }
    }
    break;
+   case 'map':
+   $page['title']="Site Map";
+   break;
    case 'list':
    default:
    $page['title']="Manage Users";
-   $page['body']="<div class=\"list plug box\"><table width=100% colspacing=1 cellspacing=1>\n<tr>\n";
+   $page['body']="<div class=\"list plug box\"><table width=100% class=\"dashboard row-select\">\n<tr>\n";
    $columns=array('num','name','email','groups');
    foreach ($columns as $column)
    {

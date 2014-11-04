@@ -750,7 +750,7 @@ HTML;
 <li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs">Logs</a></li>
 <li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=settings">Settings</a></li>
 <li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=addins">Addins</a></li>
-<li><a href="//{$GLOBASL['SET']['baseuri']}/mk-dash.php?section=site&action=map">Map</a></li>
+<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=map">Map</a></li>
 </ul>
 HTML;
   }
