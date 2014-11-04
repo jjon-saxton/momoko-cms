@@ -185,7 +185,11 @@ class MomokoDashboard implements MomokoObject
     $text.="</tr>\n";
    }
    $info['inner_body']="<h2>Event Logs</h2>\n".$text."</table>\n</div>".$page_div;
+   break;
+   case 'addins':
    default:
+   $form=new MomokoAddinForm('list');
+   $info['inner_body']=$form->inner_body;
    break;
   }
   

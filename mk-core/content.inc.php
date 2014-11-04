@@ -962,7 +962,7 @@ class MomokoAddinForm implements MomokoObject
   
   public function get()
   {
-    return file_get_contents($GLOBALS['SET']['pagedir']."/forms/addin".$this->form.".htm");
+    return file_get_contents($GLOBALS['SET']['filedir']."/forms/addin".$this->form.".htm");
   }
   
   private function parse()
