@@ -47,7 +47,7 @@ class MomokoNavigation implements MomokoModuleInterface
  
  private function scanContent($parent=0)
  {
-  $query=$this->table->getData("parent:'{$parent}'");
+  $query=$this->table->getData("parent:'= {$parent}'",null,"order");
   $content=array();
   while ($data=$query->fetch(PDO::FETCH_ASSOC))
   {

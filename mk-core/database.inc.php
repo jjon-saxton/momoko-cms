@@ -151,8 +151,25 @@ class DataBaseTable extends DataBaseSchema
     $sql.=" ".$where_sql;
    }
   }
-
-  //TODO add sort by
+  
+  if ($sort)
+  {
+   if (preg_match("/(?P<col>.*)( )(?P<operator><|>)/",$sort,$orderby))
+   {
+    if ($orderby['operator'] == '>')
+    {
+     $sql.=" ORDER BY `".$orderby['col']."` DESC";
+    }
+    else
+    {
+     $sql.=" ORDER BY `".$orderby['col']."` ASC";
+    }
+   }
+   else
+   {
+    $sql.=" ORDER BY `".$sort."` ASC";
+   }
+  }
   $sql.=" LIMIT ".$limit;
   if ($offset > 0)
   {
