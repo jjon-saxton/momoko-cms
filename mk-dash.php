@@ -444,6 +444,8 @@ HTML;
    break;
    case 'map':
    $page['title']="Site Map";
+   $map=new MomokoNavigation($GLOBALS['USR'],'display=list');
+   $page['body']=$map->getModule('html');
    break;
    case 'list':
    default:

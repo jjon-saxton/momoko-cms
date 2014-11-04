@@ -30,15 +30,11 @@ class MomokoNavigation implements MomokoModuleInterface
     $text="<ul id=\"NavList\" class=\"topnav\">".$this->getListItems($this->map)."\n</ul>";
     break;
     case 'list':
-    if (!@$name)
-    {
-     $name="Site Map";
-    }
-    $html="<h2>{$name}</h2>\n<ul id=\"MapList\" class=\"sitemap\">\n".$this->getListItems($this->map)."\n</ul>";
+    $text="<ul id=\"MapList\" class=\"sitemap\">\n".$this->getListItems($this->map)."\n</ul>";
     break;
     case'simple':
     default:
-    $html=$this->getListItems($this->map);
+    $text=$this->getListItems($this->map);
    }
   }
   
