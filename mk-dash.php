@@ -197,6 +197,61 @@ class MomokoDashboard implements MomokoObject
   switch ($action)
   {
    case 'new':
+   $page['title']="New ".ucwords($_GET['section']);
+   switch ($_GET['section'])
+   {
+    case 'user':
+    default:
+    if (!$user_data['send'])
+    {
+     $query=$this->table->getData("name:'guest'",NULL,NULL,1);
+     $default=$query->fetch(PDO::FETCH_ASSOC);
+     $page['body']=<<<HTML
+<form method=post>
+<h3>Basic Information</h3>
+<ul id="NewUserForm" class="noindent nobullet">
+<li><label for="name">Name: </label><input type=text id="name" name="name"></li>
+<li><label for="email">E-Mail: </label><input type=email id="email" name="email"></li>
+</ul>
+<h3>Password</h3>
+<ul id="PasswordForm" class="noindent nobullet">
+<li><label for="pass1">Password: </label><input type=password id="pass1" name="password"></li>
+<li><label for="pass2">Confirm Password: </lable><input type=password id="pass2" name="password2"></li>
+</ul>
+<h3>Setting</h3>
+<ul id="UserSettings" class="noindent nobullet">
+<li><label for="groups">Groups: </label><input type=text id="groups" name="groups" value="users"></li>
+<li><label for="sdf">Short Date Format: </label><input type=text id="sdf" name="shortdateform" value="{$default['shortdateformat']}"></li>
+<li><label for="ldf">Long Date Format: </label><input type=text id="ldf" name="longdateform" value="{$default['longdateformat']}"></li>
+<li><label for="rpt">Rows Per Table: </label><input type=number id="rpt" name="rowspertable" value="{$default['rowspertable']}"></li>
+</ul>
+<h3>Next</h3>
+<div class="box" align=center><button type=submit name="send" value="1">Register User</div>
+</form>
+HTML;
+    }
+    else
+    {
+     try
+     {
+      $update=$this->table->putData($user_data);
+     }
+     catch (Exception $err)
+     {
+      trigger_error("Caught exception '".$err->getMessage()."' while attempting to add a new user via dashboard",E_USER_WARNING);
+     }
+     if ($update)
+     {
+      $page['body']=<<<HTML
+<div id="NewUserAdded" class="message box">
+<h3 class="message title">New User Added</h3>
+<p>A new user was added to MomoKO. You may <a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=new">return</a> to add another user, or continue on to other actions</p>
+</div>
+HTML;
+     }
+    }
+   }
+   $info['inner_body']="<h2>{$page['title']}</h2>".$page['body'];
    break;
    case 'edit':
    $page['title']="Edit User";
@@ -342,7 +397,7 @@ HTML;
       $ndata=array('key'=>$nkey,'value'=>$nval);
       try
       {
-g       $update=$this->table->updateData($ndata);
+       $update=$this->table->updateData($ndata);
       }
       catch (Exception $e)
       {
