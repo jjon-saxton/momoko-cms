@@ -541,10 +541,16 @@ class MomokoPage implements MomokoObject
 <script language="javascript">
 $(function(){
  $("textarea").jqte();
+ $("div#PageEditor").tabs();
 });
 </script>
 <form method=post>
 <h2>Edit Page: <input type=text name="title" id="title" value="{$this->title}"></h2>
+<div id="PageEditor">
+<ul id="tabs">
+<li><a href="#PageBody">Body</a></li>
+<li><a href="#PageProps">Properties</a></li>
+</ul>
 <div id="PageBody">
 <textarea id="pagebody">
 {$this->inner_body}
@@ -556,8 +562,9 @@ $(function(){
 <li><label for="private">Groups that have access:</label> <input type=text name="has_access" id="private" disabled=disabled value="editor,members"></li>
 </ul>
 </div>
-<div id="PageSave">
+<div id="PageSave" align=center>
 <button type=submit name="save" value="1">Save</button>
+</div>
 </div>
 </form>
 HTML;
