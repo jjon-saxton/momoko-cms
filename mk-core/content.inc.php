@@ -538,49 +538,27 @@ class MomokoPage implements MomokoObject
    
    $info['title']="Edit Page: ".$this->title;
    $info['inner_body']=<<<HTML
-	<!-- elFinder -->
-	<script src="{$finderroot}/js/elfinder.min.js" type="text/javascript" charset="utf-8"></script>
-	<link rel="stylesheet" href="{$finderroot}/css/elfinder.min.css" type="text/css" media="screen" charset="utf-8">
-	<!-- elRTE -->
-	<script src="{$editorroot}/js/elrte.min.js" type="text/javascript" charset="utf-8"></script>
-	<link rel="stylesheet" href="{$editorroot}/css/elrte.min.css" type="text/css" media="screen" charset="utf-8">
-	<script type="text/javascript" charset="utf-8">
-		$().ready(function() {
-			var opts = {
-				cssClass : 'el-rte',
-				fmOpen : function(callback) {
-				$('<div />').dialogelfinder({
-      						url: '{$finderroot}/php/connector.php',
-      						commandsOptions: {
-        						getfile: {
-          							oncomplete: 'destroy' // destroy elFinder after file selection
-        						}
-      						},
-      						getFileCallback: callback // pass callback to file manager
-    					});
-  				},
-				// lang     : 'ru',
-				height   : 375,
-				toolbar  : 'maxi',
-				cssfiles : ['{$editorroot}/css/elrte-inner.css']
-			}
-			$('#pagebody').elrte(opts);
-
-			$('#access').click(function(){
-				$('input#private').attr('disabled',!this.checked);
-			});
-		});
-	</script>
-<h2>Edit Page: {$this->title}</h2>
+<script language="javascript">
+$(function(){
+ $("textarea").jqte();
+});
+</script>
 <form method=post>
+<h2>Edit Page: <input type=text name="title" id="title" value="{$this->title}"></h2>
+<div id="PageBody">
+<textarea id="pagebody">
+{$this->inner_body}
+</textarea>
+</div>
+<div id="PageProps">
 <ul class="noindent nobullet">
-<li><label for="title">Page Title:</label> <input type=text name="title" id="title" value="{$page['title']}"></li>
 <li><label for="status">Page Status:</label> <select name="status">{$status_opts}</select></li>
 <li><label for="private">Groups that have access:</label> <input type=text name="has_access" id="private" disabled=disabled value="editor,members"></li>
-<li><div id="pagebody">
-{$this->inner_body}
-</div></li>
 </ul>
+</div>
+<div id="PageSave">
+<button type=submit name="save" value="1">Save</button>
+</div>
 </form>
 HTML;
    $this->info=$info;
@@ -810,13 +788,25 @@ HTML;
 HTML;
   }
   
+  $metatags="<!-- Meta Tags? -->";
+  if ($_GET['action'] == 'edit' || $_GET['action'] == 'new')
+  {
+   $editor=<<<HTML
+<link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/mk-core/styles/editor.css" type=text/css>
+<script type="text/javascript" src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/editor.js"></script>
+HTML;
+  }
+  else
+  {
+   $editor=null;
+  }
   $split['head']=<<<HTML
 <title>~{sitename} - ~{pagetitle}</title>
 <!-- Meta Tags? -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-<script src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/dash.js" type="text/javascript"></script>
+{$editor}<script src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/dash.js" type="text/javascript"></script>
 <link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/mk-core/styles/momoko.css" type="text/css">
 {$split['head']}
 HTML;
