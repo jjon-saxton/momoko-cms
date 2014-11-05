@@ -545,7 +545,7 @@ $(function(){
 });
 </script>
 <form method=post>
-<h2>Edit Page: <input type=text name="title" id="title" value="{$this->title}"></h2>
+<h2>Edit Page: <input type=text name="title" placeholder="Page Title" id="title" value="{$this->title}"></h2>
 <div id="PageEditor">
 <ul id="tabs">
 <li><a href="#PageBody">Body</a></li>
