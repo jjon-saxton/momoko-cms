@@ -1,4 +1,10 @@
 $(function(){
+ $("button").button();
+ $("button#MapSave").click(function(){
+  var raw=$("div#MapList").html()
+  $("input#map").val(raw);
+  $("form#MapForm").submit();
+ });
  $(".dashboard").each(function(){
   $(this).addClass("ui-widget");
   $(this).addClass("ui-widget-content");

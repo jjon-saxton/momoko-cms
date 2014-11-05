@@ -444,18 +444,35 @@ HTML;
    break;
    case 'map':
    $page['title']="Site Map";
-   $map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
-   $maplist=$map->getModule('html');
-   $page['body']=<<<HTML
+   if (!$user_data['raw_dom'])
+   {
+    $map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
+    $maplist=$map->getModule('html');
+    $page['body']=<<<HTML
 <div id="MapList" class="box ui-widget-content">
 <ul id="Map" class="nobullet">
 {$maplist}
 </ul>
-<div id="ItemRemoveDialog" style="display:none">
-<p>Are you sure you want to remove this item from the site map? If the selected item is a section, all sub-pages and sections will also be removed. This action will not be saved until you select 'save'.</p>
 </div>
+<button id="MapSave">Save</button>
+<form method=post id="MapForm"><input type="hidden" name="raw_dom" id="map"></form>
+<div id="ItemRemoveDialog" title="Remove Item" style="display:none">
+<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Are you sure you want to remove this item from the site map? If the selected item is a section, all sub-pages and sections will also be removed. This action will not be saved until you select 'save'.</p>
 </div>
 HTML;
+   }
+   else
+   {
+    $new_map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
+    if ($new_html=$new_map->put($user_data['raw_dom']))
+    {
+     header("Location:http://{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=map");
+    }
+    else
+    {
+     //TODO write error message
+    }
+   }
    break;
    case 'list':
    default:

@@ -1,6 +1,5 @@
 <?php
-require_once $GLOBALS['SET']['basedir'].'/mk-core/Array2XML.class.php';
-require_once $GLOBALS['SET']['basedir'].'/mk-core/XML2Array.class.php';
+require_once $GLOBALS['SET']['basedir'].'/mk-core/class.htmlParser.php';
 
 class MomokoNavigation implements MomokoModuleInterface
 {
@@ -85,6 +84,66 @@ class MomokoNavigation implements MomokoModuleInterface
   }
 
   return $text;
+ }
+ 
+ public function put($raw_map)
+ {
+  $parser=new htmlParser($raw_map);
+  $map_array=$parser->toArray();
+  $new_map=$this->HTMLArraytoMap($map_array);
+  $order=1;
+  foreach ($new_map as $item)
+  {
+   $save['num']=$item['id'];
+   $save['order']=$order;
+   $order++;
+   try
+   {
+    $update=$this->table->updateData($save);
+   }
+   catch (Exception $err)
+   {
+    trigger_error("Caught exception '{$err->getMessage()}' while attempting to save a new site map",E_USER_WARNING);
+   }
+   finally
+   {
+    return $new_map;
+   }
+  }
+ }
+ 
+ public function HTMLArraytoMap(array $array)
+ {
+  foreach ($array as $node)
+  {
+   if ($node['tag'] == 'ul')
+   {
+    foreach ($node['childNodes'] as $child)
+    {
+     $attrs=array();
+     unset($this->map);
+     if ($child['tag'] == 'li')
+     {
+      $new['id']=$child['attributes']['id'];
+      foreach ($child['childNodes'] as $grandchild)
+      {
+	      $title=$grandchild['innerHTML'];
+       $new['title']=$title;
+       if ($grandchild['tag'] == 'a')
+       {
+	       $new['link']=$grandchild['attributes']['href'];
+       }
+      }
+      if ($child['attributes']['type'] == 'category')
+      {
+       $new['children']=$this->HTMLArraytoMap($child['childNodes']);
+      }
+      $map[]=$new;
+     }
+    }
+   }
+  }
+  return $map;
  }
 }
 
