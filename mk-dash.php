@@ -444,8 +444,18 @@ HTML;
    break;
    case 'map':
    $page['title']="Site Map";
-   $map=new MomokoNavigation($GLOBALS['USR'],'display=list');
-   $page['body']=$map->getModule('html');
+   $map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
+   $maplist=$map->getModule('html');
+   $page['body']=<<<HTML
+<div id="MapList" class="box ui-widget-content">
+<ul id="Map" class="nobullet">
+{$maplist}
+</ul>
+<div id="ItemRemoveDialog" style="display:none">
+<p>Are you sure you want to remove this item from the site map? If the selected item is a section, all sub-pages and sections will also be removed. This action will not be saved until you select 'save'.</p>
+</div>
+</div>
+HTML;
    break;
    case 'list':
    default:

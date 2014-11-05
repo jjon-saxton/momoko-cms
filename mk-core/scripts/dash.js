@@ -31,6 +31,47 @@ $(function(){
   $( "#add-addin" )
       .button()
       .click(function(){ showAdd() }); 
+      
+$("#MapList .subnav").parent()
+		.prepend("<span class='droparrow ui-icon ui-icon-carat-1-e'></span>");
+	$("#MapList span.droparrow").click(function(event){
+		event.stopPropagation();
+		$(this).parent().find("ul.subnav").toggle("slow");
+		if ($(this).hasClass('ui-icon-carat-1-e'))
+		{
+			$(this).removeClass('ui-icon-carat-1-e');
+			$(this).addClass('ui-icon-carat-1-se');
+		}
+		else
+		{
+			$(this).removeClass('ui-icon-carat-1-se');
+			$(this).addClass('ui-icon-carat-1-e');
+		}
+	});
+	$( "#MapList ul" )
+    		.sortable({
+			connectWith: 'ul',
+			placeholder: 'ui-state-highlight',
+			handle: ".handle" 
+		})
+    		.find( "li" )
+        		.addClass( "ui-state-default ui-corner-all" )
+        		.prepend( "<span class='handle ui-icon ui-icon-carat-2-n-s'></span>" )
+			.click(function(event){
+				event.stopPropagation();
+				if ($(this).hasClass('ui-state-highlight')){
+					$(this).removeClass('ui-state-highlight');
+					$(this).removeAttr('id');
+	 			}
+				else{
+					$('.ui-state-highlight').removeAttr('id');
+					$('.ui-state-highlight').removeClass('ui-state-highlight');
+					$(this).addClass('ui-state-highlight');
+					$(this).attr('id','selected_item');
+				}
+			})
+			.find("a")
+				.click(function(event){ event.preventDefault(); });
 });
 
 function toggleSidebar()
