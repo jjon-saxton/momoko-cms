@@ -1,5 +1,9 @@
 $(function(){
  $("button").button();
+ $("button.answer#false").click(function(event){
+  event.preventDefault();
+  history.back();
+ });
  $("button#MapSave").click(function(){
   var raw=$("div#MapList").html()
   $("input#map").val(raw);

@@ -231,7 +231,7 @@ class DataBaseTable extends DataBaseSchema
    {
     if ($this->indices['primary'] == $field)
     {
-     $q.="WHERE `{$field}`='{$value}'";
+     $q.=" WHERE `{$field}`='{$value}'";
     }
    }
   }
@@ -240,7 +240,7 @@ class DataBaseTable extends DataBaseSchema
   $this->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
   if ($query->execute())
   {
-   return $key;
+   return true;
   }
   else
   {

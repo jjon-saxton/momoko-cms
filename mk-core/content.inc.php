@@ -518,7 +518,30 @@ class MomokoPage implements MomokoObject
    }
   }
   else
-  {   
+  {
+   $findparents=$this->table->getData("type:'page'",array('num','title'));
+   if ($this->info['parent'] == 0)
+   {
+    $parent_opts="<option selected=selected value=0>-- Top Level --</option>";
+   }
+   else
+   {
+    $parent_opts="<option value=0>-- Top Level --</option>";
+   }
+   while ($parent=$findparents->fetch(PDO::FETCH_ASSOC))
+   {
+    if ($parent['num'] != $this->info['num'])
+    {
+     if ($parent['num'] == $this->info['parent'])
+     {
+      $parent_opts.="<option selected=selected value={$parent['num']}>{$parent['title']}</option>";
+     }
+     else
+     {
+      $parent_opts.="<option value={$parent['num']}>{$parent['title']}</option>";
+     }
+    }
+   }
    $statuses=array('public'=>"Public",'cloaked'=>"Hidden From Navigation",'private'=>"Private",'locked'=>"In Production");
    $status_opts=null;
    foreach($statuses as $value=>$name)
@@ -548,6 +571,7 @@ class MomokoPage implements MomokoObject
 <input type=hidden name="type" value="{$type}">
 <input type=hidden name="date_created" value="{$now}">
 <input type=hidden name="author" value="{$GLOBALS['USR']->num}">
+<input type=hidden name="mime_type" value="text/html">
 HTML;
    }
    else
@@ -566,7 +590,19 @@ $(function(){
   $("input#private").removeAttr('disabled');
  }
   
- $("textarea").jqte();
+ $("textarea").jqte({
+  color:false,
+  strike:false,
+  formats:[
+   ["p","Normal"],
+   ["h2","Header 2"],
+   ["h3","Header 3"],
+   ["h4","Header 4"],
+   ["pre","Preformatted"]
+  ],
+  fsize:false,
+  placeholder: "Page body..."
+ });
  $("div#PageEditor").tabs();
  
  $("select#status").change(function(){
@@ -594,6 +630,7 @@ $(function(){
 </div>
 <div id="PageProps">
 <ul class="noindent nobullet">
+<li><label for="parent">Parent Page:</label> <select id="parent" name="parent">{$parent_opts}</select></li>
 <li><label for="status">Page Status:</label> <select id="status" name="status">{$status_opts}</select></li>
 <li><label for="private">Groups that have access:</label> <input type=text id="private" name="has_access" disabled=disabled value="editor,members"></li>
 </ul>
@@ -627,6 +664,58 @@ HTML;
    $page=new MomokoError("404 Not Found");
    return $page->full_html;
   }
+ }
+ 
+ public function drop()
+ {
+  $info['title']="Delete Page: ".$this->info['title'];
+  if ($_POST['drop'])
+  {
+   $data['num']=$this->info['num'];
+   try
+   {
+    $delete=$this->table->deleteData($data);
+   }
+   catch (Exception $err)
+   {
+    trigger_error("Caught exception '{$err->getMessage()}' while attempting to remove a page or post.",E_USER_WARNING);
+   }
+   
+   if ($delete)
+   {
+    $info['inner_body']=<<<HTML
+<div id="DeletePage" class="message box">
+<h3 class="message title">Page Gone</h3>
+<p>The page you selected was removed! You may now <a href="//{$GLOBALS['SET']['baseuri']}/">return</a> to your home page!</p>
+</div>
+HTML;
+   }
+   else
+   {
+    $info['inner_body']=<<<HTML
+<div id="DeletePage" class="message error box">
+<h3 class="error title">Page Still there</h3>
+<p>Could not delete the selected page! Please contact your site administrator!</p>
+</div>
+HTML;
+   }
+  }
+  else
+  {
+   $info['inner_body']=<<<HTML
+<form method=post>
+<div id="DeletePage" class="message box">
+<h3 class="message confirmation title">Do you wish to delete this page?</h3>
+<p>You are about to delete a page or post. Content in MomoKO cannot be retrieved once it is deleted. If you would like to hide a page from navigation without removing it, there are several options for you in the page's properties tab under 'status'.</p>
+<p class="confirmation question">Are you sure you want to delete '{$this->info['title']}'?</p>
+<div class="confirmation buttons"><button class="answer" type=submit name="drop" id="true" value="1">Yes</button> <button class="answer" id="false">No</button></div>
+</div>
+</form>
+HTML;
+  }
+  
+  $this->info=$info;
+  return true;
  }
  
  private function setVars(array $vars=null)

@@ -1,7 +1,7 @@
 <?php
 if (!file_exists(dirname(__FILE__)."/database.ini")) //database.ini does not exist! go to mk_install.php to create it.
 {
- header("Location: http://".$_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT'].dirname($_SERVER['SCRIPT_NAME'])."mk-install.php");
+ header("Location: http://".$_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT'].dirname($_SERVER['SCRIPT_NAME'])."/mk-install.php");
  exit();
 }
 
@@ -65,11 +65,11 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    case 'delete':
    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
    {
-    if ($child->drop())
+    if ($_GET['p'])
     {
-     header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location);
-     exit();
+     $child->fetchByID($_GET['p']);
     }
+    $child->drop();
    }
    else
    {
