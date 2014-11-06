@@ -507,7 +507,6 @@ class MomokoPage implements MomokoObject
  {
   if (@$data['text'])
   {
-   var_dump($data); exit();
    if (($_GET['action'] == 'edit' && $data['num']) && $update=$this->table->updateData($data))
    {
     header("Location: http://{$GLOBALS['SET']['baseuri']}/?p={$update['num']}");
@@ -566,8 +565,21 @@ HTML;
    $info['inner_body']=<<<HTML
 <script language="javascript">
 $(function(){
+ if ($("select#status").val() == "private"){
+  $("input#private").removeAttr('disabled');
+ }
+  
  $("textarea").jqte();
  $("div#PageEditor").tabs();
+ 
+ $("select#status").change(function(){
+  if ($("select#status").val() == "private"){
+   $("input#private").removeAttr('disabled');
+  }
+  else{
+   $("input#private").attr('disabled','disabled');
+  }
+ });
 });
 </script>
 <form method=post>
@@ -586,7 +598,7 @@ $(function(){
 <div id="PageProps">
 <ul class="noindent nobullet">
 <li><label for="status">Page Status:</label> <select id="status" name="status">{$status_opts}</select></li>
-<li><label for="private">Groups that have access:</label> <input type=text id="private" name="has_access" id="private" disabled=disabled value="editor,members"></li>
+<li><label for="private">Groups that have access:</label> <input type=text id="private" name="has_access" disabled=disabled value="editor,members"></li>
 </ul>
 </div>
 <div id="PageSave" align=center>
