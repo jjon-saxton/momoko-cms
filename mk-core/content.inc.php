@@ -509,7 +509,7 @@ class MomokoPage implements MomokoObject
   {
    if (($_GET['action'] == 'edit' && $data['num']) && $update=$this->table->updateData($data))
    {
-    header("Location: http://{$GLOBALS['SET']['baseuri']}/?p={$update['num']}");
+    header("Location: http://{$GLOBALS['SET']['baseuri']}/?p={$data['num']}");
    }
    elseif ($_GET['action'] == 'new' && $new=$this->table->putData($data))
    {
@@ -806,12 +806,20 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   }
   if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
   {
+   if($_SERVER['QUERY_STRING'])
+   {
+    $qstr="?".$_SERVER['QUERY_STRING']."&";
+   }
+   else
+   {
+    $qstr="?";
+   }
    $contentlists.=<<<HTML
 <h4>Page/Post</h4>
 <ul id="PostPlugs" class="plug list">
-<li><a href="?action=new">New</a></li>
-<li><a href="?action=edit">Edit</a></li>
-<li><a href="?action=delete">Delete</a></li>
+<li><a href="{$qstr}action=new">New</a></li>
+<li><a href="{$qstr}action=edit">Edit</a></li>
+<li><a href="{$qstr}action=delete">Delete</a></li>
 </ul>
 <h4>Content</h4>
 <ul id="ContentPlugs" class="plug list">

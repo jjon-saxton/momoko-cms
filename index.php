@@ -50,6 +50,10 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    case 'edit':
    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
    {
+    if ($_GET['p'])
+    {
+     $child->fetchByID($_GET['p']);
+    }
     $child->put($_POST);
    }
    else
