@@ -42,17 +42,31 @@ class MomokoNavigation implements MomokoModuleInterface
  
  private function scanContent($parent=0)
  {
-  $query=$this->table->getData("parent:'= {$parent}'",null,"order");
+  $pinfo=$this->table->getData("num:'= {$parent}'",array('num','title'),null,1);
+  $has_info=$pinfo->rowCount();
+  if ($has_info)
+  {
+   $parent=$pinfo->fetch(PDO::FETCH_ASSOC);
+   $query=$this->table->getData("parent:'= {$parent['num']}'",null,"order");
+   $pfolder=urlencode($parent['title'])."/";
+  }
+  else
+  {
+   $query=$this->table->getData("parent:'= {$parent}'",null,"order");
+   $pfolder=null;
+  }
   $content=array();
   while ($data=$query->fetch(PDO::FETCH_ASSOC))
   {
-   if ($data['type'] == "category")
+   $is_parent=$this->table->getData("parent:'= {$data['num']}'",array('num'), null, 1);
+   $has_child=$is_parent->rowCount();
+   if ($has_child)
    {
-    $content[]=array('id'=>$data['num'],'title'=>$data['title'],'href'=>"/".urlencode($data['title'])."/",'children'=>scanContent($data['num']));
+    $content[]=array('id'=>$data['num'],'title'=>$data['title'],'href'=>"/".$pfolder.urlencode($data['title']).".htm",'children'=>$this->scanContent($data['num']));
    }
    elseif ($data['type'] == "page" && ($data['status'] != "cloaked" && $data['status'] != "locked"))
    {
-    $content[]=array('id'=>$data['num'],'title'=>$data['title'],'href'=>"/".urlencode($data['title']).".htm");
+    $content[]=array('id'=>$data['num'],'title'=>$data['title'],'href'=>"/".$pfolder.urlencode($data['title']).".htm");
    }
   }
   
@@ -62,7 +76,7 @@ class MomokoNavigation implements MomokoModuleInterface
  private function getListItems(array $map)
  {
   $text=null;
-  foreach ($this->map as $item)
+  foreach ($map as $item)
   {
    if ($GLOBALS['SET']['rewrite'] == true)
    {
@@ -72,10 +86,10 @@ class MomokoNavigation implements MomokoModuleInterface
    {
     $href="//".$GLOBALS['SET']['baseuri']."/?p=".$item['id'];
    }
-   if ($item['children'])
+   if (is_array($item['children']))
    {
     $text.="<li id=\"{$item['id']}\" class=\"category\"><a href=\"{$href}\">{$item['title']}</a>\n";
-    $text.="<ul id=\"{$id}\" class=\"subnav\">\n".$this->getListItems($item['children'])."\n</ul>\n</li>\n";
+    $text.="<ul id=\"{$item['id']}\" class=\"subnav\">\n".$this->getListItems($item['children'])."\n</ul>\n</li>\n";
    }
    else
    {
