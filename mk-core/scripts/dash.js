@@ -42,7 +42,7 @@ $(function(){
       .button()
       .click(function(){ showAdd() }); 
       
-$("#MapList .subnav").parent()
+$("#MapList .subnav").hide().parent()
 		.prepend("<span class='droparrow ui-icon ui-icon-carat-1-e'></span>");
 	$("#MapList span.droparrow").click(function(event){
 		event.stopPropagation();
@@ -60,7 +60,6 @@ $("#MapList .subnav").parent()
 	});
 	$( "#MapList ul" )
     		.sortable({
-			connectWith: 'ul',
 			placeholder: 'ui-state-highlight',
 		})
     		.find( "li" )
@@ -69,13 +68,10 @@ $("#MapList .subnav").parent()
 				event.stopPropagation();
 				if ($(this).hasClass('ui-state-highlight')){
 					$(this).removeClass('ui-state-highlight');
-					$(this).removeAttr('id');
 	 			}
 				else{
-					$('.ui-state-highlight').removeAttr('id');
 					$('.ui-state-highlight').removeClass('ui-state-highlight');
 					$(this).addClass('ui-state-highlight');
-					$(this).attr('id','selected_item');
 				}
 			})
 			.find("a")
