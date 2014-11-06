@@ -105,11 +105,8 @@ class MomokoNavigation implements MomokoModuleInterface
    {
     trigger_error("Caught exception '{$err->getMessage()}' while attempting to save a new site map",E_USER_WARNING);
    }
-   finally
-   {
-    return $new_map;
-   }
   }
+  return $new_map;
  }
  
  public function HTMLArraytoMap(array $array)

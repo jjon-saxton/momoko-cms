@@ -129,7 +129,7 @@ HTML;
   $rows['addins'][]=array('dir'=>'settings','incp'=>'n','enabled'=>'y','shortname'=>'User Settings','longname'=>'Manage Use Settings','description'=>'Addin providing users the ability to change there settings.');
   $rows['addins'][]=array('dir'=>'passreset','incp'=>'n','enabled'=>'y','shortname'=>'Password Resetter','longname'=>'Password Resetter','description'=>'Allows users to reset their own password.');
   
-  $rows['content'][]=array('title'=>"Hello World!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"home",'type'=>'page','parent'=>0,'author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');
+  $rows['content'][]=array('title'=>"Hello World!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'page','parent'=>0,'author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');
   $rows['content'][]=array('title'=>"Welcome!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'post','parent'=>0,'author'=>1,'text'=>$firstpost,'mime_type'=>'text/html');
   foreach (glob($site['basedir']."/mk-content/error/*.htm") as $file)
   {

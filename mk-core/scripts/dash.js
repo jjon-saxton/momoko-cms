@@ -58,11 +58,9 @@ $("#MapList .subnav").parent()
     		.sortable({
 			connectWith: 'ul',
 			placeholder: 'ui-state-highlight',
-			handle: ".handle" 
 		})
     		.find( "li" )
         		.addClass( "ui-state-default ui-corner-all" )
-        		.prepend( "<span class='handle ui-icon ui-icon-carat-2-n-s'></span>" )
 			.click(function(event){
 				event.stopPropagation();
 				if ($(this).hasClass('ui-state-highlight')){
