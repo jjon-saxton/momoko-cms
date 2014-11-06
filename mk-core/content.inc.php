@@ -452,7 +452,7 @@ class MomokoPage implements MomokoObject
   
   if ($title == NULL)
   {
-   $where="status:'home'";
+   $where="status:'public'";
   }
   else
   {
@@ -507,9 +507,14 @@ class MomokoPage implements MomokoObject
  {
   if (@$data['text'])
   {
-   if ($this->table->putData($data))
+   var_dump($data); exit();
+   if (($_GET['action'] == 'edit' && $data['num']) && $update=$this->table->updateData($data))
    {
-    //TODO on success
+    header("Location: http://{$GLOBALS['SET']['baseuri']}/?p={$update['num']}");
+   }
+   elseif ($_GET['action'] == 'new' && $new=$this->table->putData($data))
+   {
+    header("Location: http://{$GLOBALS['SET']['baseuri']}/?p={$new}");
    }
    else
    {
@@ -517,23 +522,44 @@ class MomokoPage implements MomokoObject
    }
   }
   else
-  {
-   $editorroot='//'.$GLOBALS['SET']['baseuri'].'/scripts/elrte';
-   $finderroot='//'.$GLOBALS['SET']['baseuri'].'/scripts/elfinder';
-   
-   $statuses=array('home'=>"Is a Home Page",'public'=>"Public",'cloaked'=>"Hidden From Navigation",'private'=>"Private",'"locked'=>"In Production");
+  {   
+   $statuses=array('public'=>"Public",'cloaked'=>"Hidden From Navigation",'private'=>"Private",'locked'=>"In Production");
    $status_opts=null;
    foreach($statuses as $value=>$name)
    {
-    if ($value=$this->status)
+    if ($value == $this->status)
     {
-     $sel=" selected=selected";
+     $status_opts.="<option selected=selected value=\"{$value}\">{$name}</option>\n";
     }
     else
     {
-     $sel=null;
+     $status_opts.="<option value=\"{$value}\">{$name}</option>\n";
     }
-    $status_opts.="<option{$sel} value=\"{$value}\">{$name}</option>\n";
+   }
+   
+   $now=date("Y-m-d H:i:s");
+   if ($_GET['action'] == 'new')
+   {
+    if ($_GET['content'])
+    {
+     $type=$_GET['content'];
+    }
+    else
+    {
+     $type="page";
+    }
+    $hiddenvals=<<<HTML
+<input type=hidden name="type" value="{$type}">
+<input type=hidden name="date_created" value="{$now}">
+<input type=hidden name="author" value="{$GLOBALS['USR']->num}">
+HTML;
+   }
+   else
+   {
+    $hiddenvals=<<<HTML
+<input type=hidden name="num" value="{$this->info['num']}">
+<input type=hidden name="date_modified" value="{$now}">
+HTML;
    }
    
    $info['title']="Edit Page: ".$this->title;
@@ -545,6 +571,7 @@ $(function(){
 });
 </script>
 <form method=post>
+{$hiddenvals}
 <h2>Edit Page: <input type=text name="title" placeholder="Page Title" id="title" value="{$this->title}"></h2>
 <div id="PageEditor">
 <ul id="tabs">
@@ -552,14 +579,14 @@ $(function(){
 <li><a href="#PageProps">Properties</a></li>
 </ul>
 <div id="PageBody">
-<textarea id="pagebody">
+<textarea id="pagebody" name="text">
 {$this->inner_body}
 </textarea>
 </div>
 <div id="PageProps">
 <ul class="noindent nobullet">
-<li><label for="status">Page Status:</label> <select name="status">{$status_opts}</select></li>
-<li><label for="private">Groups that have access:</label> <input type=text name="has_access" id="private" disabled=disabled value="editor,members"></li>
+<li><label for="status">Page Status:</label> <select id="status" name="status">{$status_opts}</select></li>
+<li><label for="private">Groups that have access:</label> <input type=text id="private" name="has_access" id="private" disabled=disabled value="editor,members"></li>
 </ul>
 </div>
 <div id="PageSave" align=center>
