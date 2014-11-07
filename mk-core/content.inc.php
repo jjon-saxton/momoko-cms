@@ -916,13 +916,18 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
    {
     $qstr="?";
    }
-   $contentlists.=<<<HTML
+   if($_GET['content'] == "addin" || basename($_SERVER['PHP_SELF']) != "mk-dash.php")
+   {
+    $contentlists.=<<<HTML
 <h4>Page/Post</h4>
 <ul id="PostPlugs" class="plug list">
 <li><a href="{$qstr}action=new">New</a></li>
 <li><a href="{$qstr}action=edit">Edit</a></li>
 <li><a href="{$qstr}action=delete">Delete</a></li>
 </ul>
+HTML;
+   }
+   $contentlists.=<<<HTML
 <h4>Content</h4>
 <ul id="ContentPlugs" class="plug list">
 <li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=pages">Pages</a></li>
@@ -938,8 +943,8 @@ HTML;
 <ul id="SitePlugs" class="plug list">
 <li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs">Logs</a></li>
 <li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=settings">Settings</a></li>
+<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance">Appearance</a></li>
 <li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=addins">Addins</a></li>
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=map">Map</a></li>
 </ul>
 HTML;
   }

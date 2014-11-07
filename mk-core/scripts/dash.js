@@ -3,11 +3,6 @@ $(function(){
   event.preventDefault();
   history.back();
  });
- $("button#MapSave").click(function(){
-  var raw=$("div#MapList").html()
-  $("input#map").val(raw);
-  $("form#MapForm").submit();
- });
  $(".dashboard").each(function(){
   $(this).addClass("ui-widget");
   $(this).addClass("ui-widget-content");
@@ -41,40 +36,6 @@ $(function(){
       .button()
       .click(function(){ showAdd() }); 
       
-$("#MapList .subnav").hide().parent()
-		.prepend("<span class='droparrow ui-icon ui-icon-carat-1-e'></span>");
-	$("#MapList span.droparrow").click(function(event){
-		event.stopPropagation();
-		$(this).parent().find("ul.subnav").toggle("slow");
-		if ($(this).hasClass('ui-icon-carat-1-e'))
-		{
-			$(this).removeClass('ui-icon-carat-1-e');
-			$(this).addClass('ui-icon-carat-1-se');
-		}
-		else
-		{
-			$(this).removeClass('ui-icon-carat-1-se');
-			$(this).addClass('ui-icon-carat-1-e');
-		}
-	});
-	$( "#MapList ul" )
-    		.sortable({
-			placeholder: 'ui-state-highlight',
-		})
-    		.find( "li" )
-        		.addClass( "ui-state-default ui-corner-all" )
-			.click(function(event){
-				event.stopPropagation();
-				if ($(this).hasClass('ui-state-highlight')){
-					$(this).removeClass('ui-state-highlight');
-	 			}
-				else{
-					$('.ui-state-highlight').removeClass('ui-state-highlight');
-					$(this).addClass('ui-state-highlight');
-				}
-			})
-			.find("a")
-				.click(function(event){ event.preventDefault(); });
 });
 
 function toggleSidebar()

@@ -442,31 +442,110 @@ HTML;
     }
    }
    break;
-   case 'map':
-   $page['title']="Site Map";
+   case 'appearance':
+   $page['title']="Site Appearance";
    if (!$user_data['raw_dom'])
    {
     $map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
     $maplist=$map->getModule('html');
     $page['body']=<<<HTML
-<div id="MapList" class="box ui-widget-content">
+<script language="javascript">
+$(function(){
+ $(".dialog").hide();
+ $(".dialog#MapList").dialog({
+  autoOpen:false,
+  resizable:false,
+  modal:true,
+  buttons:{
+   "Finished":function(){
+    var raw=$("div#MapList").html()
+    $("input#map").val(raw);
+    $("form#MapForm").submit();
+   },
+   "Cancel":function(){
+    $(this).dialog("close");
+   }
+  }
+ });
+ 
+ $("button#ReOrder").click(function(){
+  $(".dialog#MapList").dialog("open");
+ });
+ $("ul.map ul").addClass("nobullet");
+ 
+ $("#MapList .subnav").parent()
+		.prepend("<span class='droparrow ui-icon ui-icon-carat-1-se'></span>");
+	$("#MapList span.droparrow").click(function(event){
+		event.stopPropagation();
+		$(this).parent().find("ul.subnav").toggle("slow");
+		if ($(this).hasClass('ui-icon-carat-1-e'))
+		{
+			$(this).removeClass('ui-icon-carat-1-e');
+			$(this).addClass('ui-icon-carat-1-se');
+		}
+		else
+		{
+			$(this).removeClass('ui-icon-carat-1-se');
+			$(this).addClass('ui-icon-carat-1-e');
+		}
+	});
+	$( "#MapList ul" )
+    		.sortable({
+			placeholder: 'ui-state-highlight',
+		})
+    		.find( "li" )
+        		.addClass( "ui-state-default ui-corner-all" )
+			.click(function(event){
+				event.stopPropagation();
+				if ($(this).hasClass('ui-state-highlight')){
+					$(this).removeClass('ui-state-highlight');
+	 			}
+				else{
+					$('.ui-state-highlight').removeClass('ui-state-highlight');
+					$(this).addClass('ui-state-highlight');
+				}
+			})
+			.find("a")
+				.click(function(event){ event.preventDefault(); });
+});
+</script>
+<div id="AppearancePlugs" class="box">
+<div id="Templates" class="box" style="width:45%;float:left">
+<h3>Template</h3>
+</div>
+<div id="MiniMap class="box" style="width:49%;float:left">
+<h3>Navigation</h3>
+<ul class="map nobullet">
+{$maplist}
+</ul>
+<button id="ReOrder">Re-Order</button>
+</div>
+<div id="Modules" class="box" style="width:100%;float:left">
+<h3>Modules</h3>
+<div id="ModuleGrid" style="width:100%">
+</div>
+</div>
+</div>
+<div id="MapList" Title="Re-order Navigation" class="dialog">
 <ul id="Map" class="nobullet">
 {$maplist}
 </ul>
+<form method=post id="MapForm">
+<input type="hidden" name="section" value="map">
+<input type="hidden" name="raw_dom" id="map">
+</form>
 </div>
-<button id="MapSave">Save</button>
-<form method=post id="MapForm"><input type="hidden" name="raw_dom" id="map"></form>
-<div id="ItemRemoveDialog" title="Remove Item" style="display:none">
+<div id="ItemRemoveDialog" title="Remove Item" class="dialog">
 <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Are you sure you want to remove this item from the site map? If the selected item is a section, all sub-pages and sections will also be removed. This action will not be saved until you select 'save'.</p>
 </div>
 HTML;
    }
-   else
+   elseif ($user_data['section'] == 'map')
    {
     $new_map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
     if ($new_html=$new_map->put($user_data['raw_dom']))
     {
-     header("Location:http://{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=map");
+     header("Location:http://{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance");
     }
     else
     {
