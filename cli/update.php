@@ -49,7 +49,7 @@ else
 
 if (strtolower($update) == 'y')
 {
-  require '../assets/core/install.inc.php'; //Update function resides in this file for global interface use
+  require '../mk-core/install.inc.php'; //Update function resides in this file for global interface use
   if ($version == 1.1)
   {
    fwrite(STDOUT,"MomoKO 1.5 moved a few settings to the database and introduced other new setting values for better and easier customization. I will now begin asking you a series of questions so you may set these new values. Just like when you first installed MomoKO, if you see brackets [], it means I can fill in the default value presented within if you leave the answer blank. Otherwise all questions are required!\n");
