@@ -8,7 +8,7 @@ function create_tables($config)
   $def['addins'][0]="`num` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['addins'][1]="`dir` VARCHAR(75) NOT NULL";
   $def['addins'][2]="`type` VARCHAR(15) NOT NULL";
-  $def['addins'][3]="`sidebar` INT(1)";
+  $def['addins'][3]="`zone` INT(1)";
   $def['addins'][4]="`order` INT(11)";
   $def['addins'][5]="`enabled` CHAR(1) NOT NULL";
   $def['addins'][6]="`shortname` VARCHAR(72) NOT NULL";
@@ -127,8 +127,8 @@ HTML;
   $admin['rowspertable']=$defaults['rpt'];
   
   $rows['addins'][]=array('dir'=>'passreset'=>'page','shortname'=>'Password Resetter','longname'=>"User Password Resetter",'description'=>"A simple addin page that allows users to reset their own passwords.");
-  $rows['addins'][]=array('dir'=>'posts','type'=>'module','sidebar'=>1,'order'=>1,'enabled'=>'y','shortname'=>'Mini Post List','longname'=>'Mini Post List','description'=>"A sidebar module that loads a small list of posts.");
-  $rows['addins'][]=array('dir'=>'metalinks','type'=>'module','sidebar'=>1,'order'=>2,'enabled'=>'y','shortname'=>'Meta Link Box','longname'=>'Meta Link Box','description'=>"Provides links such as RSS feeds and login. When logged in this is how users will access their dashboard.");
+  $rows['addins'][]=array('dir'=>'posts','type'=>'module','zone'=>1,'order'=>1,'enabled'=>'y','shortname'=>'Mini Post List','longname'=>'Mini Post List','description'=>"A sidebar module that loads a small list of posts.");
+  $rows['addins'][]=array('dir'=>'metalinks','type'=>'module','zone'=>1,'order'=>2,'enabled'=>'y','shortname'=>'Meta Link Box','longname'=>'Meta Link Box','description'=>"Provides links such as RSS feeds and login. When logged in this is how users will access their dashboard.");
   $rows['addins'][]=array('dir'=>'quirk','type'=>'template','shortname'=>'Quirk','longname'=>"Quirk Layout",'discription'=>"A two column layout with head and foot bar.");
   
   $rows['content'][]=array('title'=>"Hello World!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'page','order'=>1, 'parent'=>0,'author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');

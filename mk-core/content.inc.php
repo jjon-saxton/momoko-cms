@@ -1,7 +1,7 @@
 <?php
 require_once $GLOBALS['SET']['basedir'].'/mk-core/class.htmlParser.php';
 
-class MomokoNavigation implements MomokoModuleInterface
+class MomokoNavigation
 {
  public $user;
  public $options=array();
@@ -166,15 +166,13 @@ class MomokoNavigation implements MomokoModuleInterface
  }
 }
 
-class MomokoNews implements MomokoModuleInterface, MomokoObject
+class MomokoNews implements MomokoObject
 {
 	public $user;
 	public $news_list;
-	public $options;
-	private $info=array();
 	private $table;
 	
-	public function __construct($user,$options)
+	public function __construct($user)
 	{
   $this->user=$user;
   parse_str($options,$this->options);
@@ -191,142 +189,6 @@ class MomokoNews implements MomokoModuleInterface, MomokoObject
 	public function __set($key,$var)
 	{
 	 //TODO Set a new key in $this->info
-	}
-	
-	public function getModule ($format='html')
-	{
-		$data=array();
-		
-		if (is_array($this->news_list))
-  {
-   foreach ($this->news_list as $post)
-   {
-    if ($post['date_modified'])
-    {
-     $item['timestamp']=time($post['date_modiefied']);
-    }
-    else
-    {
-     $item['timestamp']=time($post['date_created']);
-    }
-    $item['headline']=$post['title'];
-    if ($GLOBALS['SET']['rewrite'])
-    {
-     $item['href']="post/".urlencode($post['title']).".htm";
-    }
-    else
-    {
-     $item['href']="/?content=post&p=".$post['num'];
-    }
-    $item['summary']=preg_replace("/<h2>(.*?)<\/h2>/smU",'',$post['text']);
-    $data[]=$item;
-    unset($item);
-   }
-		}
-		
-		switch ($format)
-		{
-			case 'array':
-			return $data;
-			case 'rss':
-			$uri_root='http://'.$GLOBALS['SET']['baseuri'].'/';
-   $dom=new DOMDocument('1.0', 'UTF-8');
-			$rss=$dom->appendChild(new DOMElement('rss'));
-			$rss_version=$rss->setAttribute('version','2.0');
-			$channel=$rss->appendChild(new DOMElement('channel'));
-			$ftitle=$channel->appendChild(new DOMElement('title',$GLOBALS['SET']['name'].' News Feed'));
-			$flink=$channel->appendChild(new DOMElement('link',$uri_root));
-			$fdes=$channel->appendChild(new DOMElement('description',$GLOBALS['SET']['name']." Atom Feed for news items"));
-			foreach ($data as $news)
-			{
-				$item=$channel->appendChild(new DOMElement('item'));
-				$title=$item->appendChild(new DOMElement('title',$news['headline']));
-				$link=$item->appendChild(new DOMElement('link',$uri_root.$news['file']));
-				$pubdate=$item->appendChild(new DOMElement('pubDate',gmdate('Y-m-d\TH:i:s\Z',$news['timestamp'])));
-				$guid=$item->appendChild(new DOMElement('guid',$this->generateUUID(null,$news['timestamp'])));
-				$des=$item->appendChild(new DOMElement('description',$news['summary']));
-			}
-			$xml=$dom->saveXML();
-			return $xml;
-			break;
-			case 'atom':
-			$uri_root='//'.$GLOBALS['SET']['baseuri'].'/';
-   $dom=new DOMDocument('1.0', 'UTF-8');
-   $feed=$dom->appendChild(new DOMElement('feed',null,'http://www.w3.org/2005/Atom'));
-			$ftitle=$feed->appendChild(new DOMElement('title',$GLOBALS['SET']['name'].' News Feed','http://www.w3.org/2005/Atom'));
-			$fstitle=$feed->appendChild(new DOMElement('subtitle',$GLOBALS['SET']['name']." Atom Feed for news items"));
-			$flink_self=$feed->appendChild(new DOMElement('link'));
-			$flink_self_href=$flink_self->setAttribute('href',$uri_root."index.php/atom.xml");
-			$flink_self_rel=$flink_self->setAttribute('rel','self');
-			$flink_site=$feed->appendChild(new DOMElement('link'));
-			$flink_self_href=$flink_site->setAttribute('href',$uri_root."index.php");
-			foreach ($data as $news)
-			{
-				$entry=$feed->appendChild(new DOMElement('entry',null,'http://www.w3.org/2005/Atom'));
-				$title=$entry->appendChild(new DOMElement('title',$news['headline']));
-				$link=$entry->appendChild(new DOMElement('link'));
-				$link_href=$link->setAttribute('href',$uri_root.$new['href']);
-				$link_alt=$entry->appendChild(new DOMElement('link'));
-				$link_alt_rel=$link_alt->setAttribute('rel','alternate');
-				$link_alt_type=$link_alt->setAttribute('type','text/html');
-				$link_alt_href=$link_alt->setAttribute('href',$uri_root.$news['href']);
-				$uuid=$entry->appendChild(new DOMElement('id',$this->generateUUID("urn:uuid:",$news['timestamp'])));
-				$date=$entry->appendChild(new DOMElement('updated',gmdate('Y-m-d\TH:i:s\Z',$news['timestamp'])));
-				$summary=$entry->appendChild(new DOMElement('summary',$news['summary']));
-			}
-   $xml=$dom->saveXML();
-			return $xml;
-			break;
-			case 'html':
-			default:
-		 $html="<div id=\"NewsList\" class=\"news box\">\n";
-		
-		 if (isset($this->options['sort']))
-		 {
-			 switch ($this->options['sort'])
-			 {
-				 case 'recent':
-				 break;
-				 case 'oldest':
-				 usort($data,build_sorter('date'));
-				 break;
-			 }
-		 }
-		 $max=$this->options['num'];
-		
-		 $c=1;
-		 foreach($data as $news)
-		 {
-			 $news['file']=$GLOBALS['SET']['baseuri'].$news['href'];
-			 $news['date']=date($GLOBALS['USR']->shortdateformat,$news['timestamp']);
-			 if ($max > 0 && $c<=$max)
-			 {
-			  if (strlen($news['summary']) > $this->options['length'])
-                          {
-                           $matches = array();
-  			   preg_match("/^(.{1,".$this->options['length']."})[\s]/i", $news['summary'], $matches);
-                           $text=$matches[0].'... <a href="//'.$news['file'].'">more</a>';
-                          }
-			  else
-                          {
-                           $text=$news['summary'].' <a href="//'.$news['file'].'">view/comment on article</a>';
-                          }
-			  $html.=<<<HTML
-<div id="{$news['date']}" class="news item">
-<h4 class="headline">{$news['headline']}</h4>
-<div class="date">{$news['date']}</div>
-<div class="summary">
-{$text}
-</div>
-</div>
-HTML;
-			 }
-			 $c++;
-		 }
-		
-		 $html.="</div>";
-		 return $html;
-		}
 	}
 	
 	public function getPostByHeadline($title)
@@ -1053,93 +915,6 @@ HTML;
   $html=$ch->replace($html);
 
   return $html;
- }
-}
-
-class MomokoPCModule implements MomokoModuleInterface
-{
- public $opts=array();
- private $user;
-
- public function __construct($user,$opts)
- {
-  parse_str($opts,$this->opts);
-  $this->user=$user;
- }
-
- public function getModule($format='html')
- {
-  $ext=pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_EXTENSION);
-  if ((empty($_SERVER['PATH_INFO']) || $ext == 'htm' || $ext == 'html') && (@$_GET['action'] != 'edit' && @$_GET['action'] != 'new'))
-  {
-    if ($this->opts['nouser'] == 'hidden' && ($this->user->inGroup('admin') || $this->user->inGroup('editor')))
-    {
-      return $this->buildControls($format);
-    }
-    elseif (@empty($this->opts['nouser']) || @$this->opts['nouser'] == 'visible')
-    {
-      return $this->buildControls($format);
-    }
-  }
-  else
-  {
-   return null;
-  }
- }
-
- private function buildControls($format)
- {
-  switch ($this->opts['display'])
-  {
-   //TODO add icon and text cases for icons only and text only mode
-   case 'toolbar':
-   if (empty($this->opts['text']) || !$this->opts['text'] || $this->opts['text'] == 'none')
-   {
-    $text="false";
-   }
-   else
-   {
-    $text="true";
-   }
-   return <<<HTML
-<style type="text/css">
-.toolbar {
-	float:left;
-	width:100%;
-}
-</style>
-<script language=javascript type="text/javascript">
-$(function(){
-	$("a#np").button({
-		text:{$text},
-		icons:{
-			primary:'ui-icon-document'
-		}
-	});
-	$("a#ep").button({
-		text:{$text},
-		icons:{
-			primary:'ui-icon-pencil'
-		}
-	});
-	$("a#rp").button({
-		text:{$text},
-		icons:{
-			primary:'ui-icon-trash'
-		}
-	});
-});
-</script>
-<span class="toolbar ui-widget-header ui-corner-all"><a id="np" href="//{$GLOBALS['SET']['baseuri']}/?q={$_GET['q']}&action=new">New Page</a><a id="ep" href="//{$GLOBALS['SET']['baseuri']}/?q={$_GET['q']}&action=edit">Edit Page</a><a id="rp" href="//{$GLOBALS['SET']['baseuri']}/?q={$_GET['q']}&action=delete">Delete Page</a></span>
-HTML;
-   break;
-   case "icontext":
-   default:
-   return <<<HTML
-<span class="pagecontrols"><a href="//{$GLOBALS['SET']['baseuri']}/?q={$_GET['q']}&action=new"><i class="controls c1"></i>New Page</a> <a href="//{$GLOBALS['SET']['baseuri']}/?q={$_GET['q']}&action=edit"><i class="controls pc2"></i>Edit This Page</a> <a href="//{$GLOBALS['SET']['baseuri']}/?q={$_GET['q']}&action=delete"><i class="controls pc3"></i>Delete This Page</a><span>
-HTML;
-   break;
-  }
  }
 }
 

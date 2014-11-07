@@ -61,7 +61,7 @@ if ($GLOBALS['SET']['error_logging'] > 0)
 
 interface MomokoModuleInterface
 {
-  public function __construct($user,$options);
+  public function __construct();
   public function getModule($format='html');
 }
 
@@ -128,52 +128,35 @@ class MomokoVariableHandler
       $mod=new MomokoNavigation(null,$argstr);
       return $mod->getModule('html');
       break;
-      case 'news':
-      $mod=new MomokoNews(null,$argstr);
-      return $mod->getModule('html');
-      break;
       default: //TODO: add code to look for plugin modules
       return "<!-- Module '{$item}' not found -->";
       break;
     }
   }
 
-  private function loadAddin($addin,$mod,$argstr)
+  private function loadModsByZone($q)
   {
-   $tbl=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
-   $data=$tbl->getData('dir','shortname~'.$addin,null,1);
-   $data=$data->first();
-   if ($data->dir)
+   parse_str($q,$info);
+   $table=new DataBaseTable("addins");
+   $query=$table->getData("zone:'= ".$info['id']."'",array('num','dir','type'),'order');
+   $text=null;
+
+   if($query->rowCount() > 0)
    {
-    $xml=simplexml_load_string(file_get_contents($GLOBALS['CFG']->basedir.'/assets/addins/'.$data->dir.'/manifest.xml'));
-   }
-   elseif (file_exists($GLOBALS['CFG']->basedir.'/assets/'.$addin.'/manifest.xml'))
-   {
-    $xml=simplexml_load_string(file_get_contents($GLOBALS['CFG']->basedir.'/assets/'.$addin.'/manifest.xml'));
+    while ($module=$query->fetch(PDO::FETCH_ASSOC))
+    {
+     require_once $GLOBALS['SET']['filedir']."addins/{$module['dir']}/".$module['type'].".php";
+     $class="Momoko".ucwords($module['dir'])."Module";
+     $mod=new $class();
+     $text.=$mod->getModule('html');
+    }
    }
    else
    {
-    return "<!-- Addin '{$addin}' not found -->";
+    $text.="<!-- No Modules Set for Zone: {$info['id']} -->";
    }
-
-   $nav=new MomokoNavigation(null,'display=none');
-   $nav->convertXmlObjToArr($xml,$manifest);
-   foreach ($manifest as $node)
-   {
-    if ($node['@name'] == 'dirroot')
-    {
-     $dirroot=$GLOBALS['CFG']->basedir.$node['@text'];
-    }
-    elseif ($node['@name'] == 'module' && $node['@text'] == strtolower($mod))
-    {
-     $include=$node['@attributes']['file'];
-     $class=$node['@attributes']['class'];
-    }
-   }
-
-   require_once $dirroot.$include;
-   $mod=new $class(@$GLOBALS['USR'],$argstr);
-   return $mod->getModule('html');
+   
+   return $text;
   }
 
   public function evalIf($exp,$true_block,$false_block=null)
@@ -302,23 +285,18 @@ class MomokoVariableHandler
       }
      }
 
-    //Replace module blocks
-    if (preg_match_all("/<!-- MODULE:(?P<item>.*?) -->/",$text,$list))
+    //Replace Navigation comment
+    if (preg_match("/<!-- NAVIGATION:(?P<arguments>.*?) -->/",$text,$list))
     {
-      foreach ($list['item'] as $item)
-      {
-        list($name,$options,)=explode(":",$item);
-        $text=preg_replace("/<!-- MODULE:".preg_quote($item,"/")." -->/",$this->loadMod($name,$options),$text);
-      }
+     $text=preg_replace("/<!-- NAVIGATION:".preg_quote($list['arguments'],"/")." -->/",$this->loadMod('nav',$list['arguments']),$text);
     }
 
-    //Replace addin module blocks
-    if (preg_match_all("/<!-- ADDIN:(?P<item>.*?) -->/",$text,$list))
+    //Replace module zone blocks
+    if (preg_match_all("/<!-- MODULEZONE:(?P<arguments>.*?) -->/",$text,$list))
     {
-      foreach ($list['item'] as $item)
+      foreach ($list['arguments'] as $query)
       {
-        list($addin,$name,$options,)=explode(":",$item);
-        $text=preg_replace("/<!-- ADDIN:".preg_quote($item)." -->/",$this->loadAddin($addin,$name,$options),$text);
+        $text=preg_replace("/<!-- MODULEZONE:".preg_quote($query)." -->/",$this->loadModsByZone($query),$text);
       }
     }
 
