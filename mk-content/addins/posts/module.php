@@ -2,12 +2,15 @@
 
 class MomokoPostsModule implements MomokoModuleInterface
 {
- private $table;
 	public $news_list;
+ public $info=array();
+ private $table;
+ private $settings=array();
  
  public function __construct()
  {
-  parse_str($options,$this->options);
+  $this->info=$this->getInfoFromDB();
+  parse_str($this->info->settings,$this->settings);
   $this->table=new DataBaseTable('content');
   $query=$this->table->getData("type:'post'");
   $this->news_list=$query->fetchAll(PDO::FETCH_ASSOC);
@@ -101,9 +104,9 @@ class MomokoPostsModule implements MomokoModuleInterface
 			default:
 		 $html="<div id=\"NewsList\" class=\"news box\">\n";
 		
-		 if (isset($this->options['sort']))
+		 if (isset($this->settings['sort']))
 		 {
-			 switch ($this->options['sort'])
+			 switch ($this->settings['sort'])
 			 {
 				 case 'recent':
 				 break;
@@ -112,7 +115,7 @@ class MomokoPostsModule implements MomokoModuleInterface
 				 break;
 			 }
 		 }
-		 $max=$this->options['num'];
+		 $max=$this->settings['num'];
 		
 		 $c=1;
 		 foreach($data as $news)
@@ -121,10 +124,10 @@ class MomokoPostsModule implements MomokoModuleInterface
 			 $news['date']=date($GLOBALS['USR']->shortdateformat,$news['timestamp']);
 			 if ($max > 0 && $c<=$max)
 			 {
-			  if (strlen($news['summary']) > $this->options['length'])
+			  if (strlen($news['summary']) > $this->settings['length'])
                           {
                            $matches = array();
-  			   preg_match("/^(.{1,".$this->options['length']."})[\s]/i", $news['summary'], $matches);
+  			   preg_match("/^(.{1,".$this->settings['length']."})[\s]/i", $news['summary'], $matches);
                            $text=$matches[0].'... <a href="//'.$news['file'].'">more</a>';
                           }
 			  else
@@ -147,5 +150,12 @@ HTML;
 		 $html.="</div>";
 		 return $html;
 		}
+	}
+		
+	public function getInfoFromDB()
+	{
+	 $table=new DataBaseTable("addins");
+	 $query=$table->getData("dir:'".basename(dirname(__FILE__))."'",null,null,1);
+	 return $query->fetch(PDO::FETCH_OBJ);
 	}
 }

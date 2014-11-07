@@ -1,11 +1,15 @@
 <?php
 class MomokoMetalinksModule implements MomokoModuleInterface
 {
+ public $info;
  private $usr;
+ private $settings=array();
 
  public function __construct()
  {
+  $this->info=$this->getInfoFromDB();
   $this->usr=$GLOBALS['USR'];
+  parse_str($this->info->settings,$this->settings);
  }
 
  public function getModule($format='html')
@@ -20,7 +24,7 @@ class MomokoMetalinksModule implements MomokoModuleInterface
    {
     $protocol='http';
    }
-   if ($this->opts['display'] == 'box')
+   if ($this->settings['display'] == 'box')
    {
     return <<<HTML
 <div id="LoginBox" class="ucp box">
@@ -35,13 +39,13 @@ HTML;
   else
   {
    return <<<HTML
-<span id="LoginLine" class="ucp"><a href="{$protocol}://mk-login.php">Login</a> | <a href="{$protocol}://mk-login.php?action=new">New Account?</a></span>
+<span id="LoginLine" class="ucp"><a href="{$protocol}://{$GLOBALS['SET']['baseuri']}/mk-login.php">Login</a> | <a href="{$protocol}://{$GLOBALS['SET']['baseuri']}/mk-login.php?action=new">New Account?</a></span>
 HTML;
   }
  }
  else
  {
-  if ($this->opts['display'] == 'box')
+  if ($this->settings['display'] == 'box')
   {
    $userlinks=$this->listUserActions("<li>__LINK__</li>\n");
    return <<<HTML
@@ -80,4 +84,11 @@ HTML;
 
   return $html;
  }
-}
+		
+	public function getInfoFromDB()
+	{
+	 $table=new DataBaseTable("addins");
+	 $query=$table->getData("dir:'".basename(dirname(__FILE__))."'",null,null,1);
+	 return $query->fetch(PDO::FETCH_OBJ);
+	}
+}

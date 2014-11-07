@@ -63,6 +63,7 @@ interface MomokoModuleInterface
 {
   public function __construct();
   public function getModule($format='html');
+  function getInfoFromDB();
 }
 
 interface MomokoPageObject
