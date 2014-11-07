@@ -1,0 +1,83 @@
+<?php
+class MomokoMetalinksModule implements MomokoModuleInterface
+{
+ private $usr;
+
+ public function __construct()
+ {
+  $this->usr=$GLOBALS['USR'];
+ }
+
+ public function getModule($format='html')
+ {
+  if ($this->usr->inGroup('nobody'))
+  {
+   if ($GLOBALS['SET']['use_ssl'] == TRUE)
+   {
+    $protocol='https';
+   }
+   else
+   {
+    $protocol='http';
+   }
+   if ($this->opts['display'] == 'box')
+   {
+    return <<<HTML
+<div id="LoginBox" class="ucp box">
+<ul class="noindent nobullet">
+<li><a href="{$protocol}://{$GLOBALS['SET']['baseuri']}/mk-login.php">Login</a></li>
+<li><a href="{$protocol}://{$GLOBALS['SET']['baseuri']}/mk-login.php?action=new">New Account?</a></li>
+</ul>
+</form>
+</div>
+HTML;
+  }
+  else
+  {
+   return <<<HTML
+<span id="LoginLine" class="ucp"><a href="{$protocol}://mk-login.php">Login</a> | <a href="{$protocol}://mk-login.php?action=new">New Account?</a></span>
+HTML;
+  }
+ }
+ else
+ {
+  if ($this->opts['display'] == 'box')
+  {
+   $userlinks=$this->listUserActions("<li>__LINK__</li>\n");
+   return <<<HTML
+<div id="UCPBox" class="ucp box">
+<ul class="nobullet noindent">
+<li>Welcome <strong>{$this->usr->name}</strong>!</li>
+{$userlinks}
+</ul>
+</div>
+HTML;
+  }
+  else
+  {
+   $userlink=$this->listUserActions();
+   return <<<HTML
+<span id="UCPLine" class="ucp">Welcome <strong>{$this->usr->name}</strong> | <a href="?action=logout">Logout</a></span>
+HTML;
+  }
+ }
+ }
+
+ private function listUserActions($wrapper="__LINK__")
+ {
+  $actions[]=array('href'=>'javascript:void();','onclick'=>"toggleSidebar();",'title'=>'My Dashboard');
+  $actions[]=array('href'=>'?action=logout','title'=>'Logout');
+  $html=null;
+
+  foreach ($actions as $action)
+  {
+   if (@$action['onclick'])
+   {
+    $props=" onclick=\"{$action['onclick']}\"";
+   }
+   $html.=preg_replace("/__LINK__/","<a href=\"{$action['href']}\"{$props} title=\"".$action['title']."\">".$action['title']."</a>",$wrapper);
+  }
+
+  return $html;
+ }
+}
