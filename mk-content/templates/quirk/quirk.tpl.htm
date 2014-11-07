@@ -21,6 +21,7 @@ $window.scroll(function() {
 var windowTop = $window.scrollTop();
 $stickyEl.toggleClass('sticky', windowTop > elTop);
 });
+$("button, input[type=button], input[type=submit]").button();
 //Auto add icons to links based on href attribute, exclude header (h) and footer (f) links
 $("a[href^='mailto:']:not(.hf):not(marquee)").addClass("email");
 /*if we want to add icons to file types, here is an example of how to do that

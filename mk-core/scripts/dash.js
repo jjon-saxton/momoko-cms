@@ -1,5 +1,4 @@
 $(function(){
- $("button").button();
  $("button.answer#false").click(function(event){
   event.preventDefault();
   history.back();

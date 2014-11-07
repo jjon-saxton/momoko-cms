@@ -521,10 +521,12 @@ class MomokoPage implements MomokoObject
    if (($_GET['action'] == 'edit' && $data['num']) && $update=$this->table->updateData($data))
    {
     header("Location: http://{$GLOBALS['SET']['baseuri']}/?p={$data['num']}");
+    exit();
    }
    elseif ($_GET['action'] == 'new' && $new=$this->table->putData($data))
    {
     header("Location: http://{$GLOBALS['SET']['baseuri']}/?p={$new}");
+    exit();
    }
    else
    {
