@@ -543,7 +543,7 @@ HTML;
    elseif ($user_data['section'] == 'map')
    {
     $new_map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
-    if ($new_html=$new_map->put($user_data['raw_dom']))
+    if ($new_html=$new_map->reOrderbyHTML($user_data['raw_dom']))
     {
      header("Location:http://{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance");
     }
