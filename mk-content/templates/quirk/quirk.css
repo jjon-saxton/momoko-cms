@@ -19,7 +19,6 @@ div#Content h4, div#Victorique h4 {font-size: 14pt; font-weight:bold}
 div#Content h5, div#Victorique h5 {font-size: 12pt; font-weight:bold; font-style:italic}
 div#Content h6, div#Victorique h6 {padding-bottom:0; padding-top:.5em; font-size:12pt; text-decoration:underline}
 div#Content p, div#News p, div#Victorique p {text-align:justify}
-div#Content div, div#Victorique div {padding-left:1em}
 
 div#Content div.date { font: 10pt "Courier New", Courier, monospace; text-align: center; color: #777; margin-bottom: 1em }
 
