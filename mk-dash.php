@@ -475,6 +475,21 @@ HTML;
     }
     $templatesettings.="</select></li>\n</ul>";
     $modulelayout=file_get_contents($GLOBALS['SET']['filedir']."templates/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm");
+    if (preg_match_all("/<!-- MODULEPLACEHOLDER:(?P<arguments>.*?) -->/",$modulelayout,$list))
+    {
+      foreach ($list['arguments'] as $query)
+      {
+        $table=new DataBaseTable('addins');
+        parse_str($query,$opts);
+        $dbquery=$table->getData("zone:'= {$opts['zone']}'",array('dir','shortname'));
+        $modulelist=NULL;
+        while ($module=$dbquery->fetch(PDO::FETCH_ASSOC))
+        {
+         $modulelist.="<div id=\"{$module['dir']}\" class=\"module box\">{$module['shortname']}</div>\n";
+        }
+        $modulelayout=preg_replace("/<!-- MODULEPLACEHOLDER:".preg_quote($query)." -->/",$modulelist,$modulelayout);
+      }
+    }
     $page['body']=<<<HTML
 <script language="javascript">
 $(function(){

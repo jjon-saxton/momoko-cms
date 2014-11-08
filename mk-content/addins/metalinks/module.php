@@ -2,6 +2,7 @@
 class MomokoMetalinksModule implements MomokoModuleInterface
 {
  public $info;
+ public $opt_keys=array();
  private $usr;
  private $settings=array();
 
@@ -9,7 +10,16 @@ class MomokoMetalinksModule implements MomokoModuleInterface
  {
   $this->info=$this->getInfoFromDB();
   $this->usr=$GLOBALS['USR'];
+  $this->opt_keys=array('options'=>array('line','box'));
   parse_str($this->info->settings,$this->settings);
+ }
+
+ public function __get($key)
+ {
+  if (array_key_exists($key,$this->opt_keys))
+  {
+   return $this->opt_key[$key];
+  }
  }
 
  public function getModule($format='html')
