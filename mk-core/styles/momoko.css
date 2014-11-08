@@ -5,6 +5,15 @@ div.sidebar {width:30%;height:100%; display:none; position:absolute; left:0; top
 .sidebar h4{padding-left:2px; color:black}
 ul.plug.list {padding-left:5px; list-style:none}
 
+.preview {border:1px dashed #999; min-height:20px; background-color:#efefff; color:#888}
+.preview h1 {font-size:1.75em; color:#777}
+.preview h2 {font-size:1.5em; color:#777}
+.preview h3 {font-size:1.25em; color:#777}
+.preview h4 {font-size:1em; color:#777}
+.preview h5 {font-size:1em; color:#777}
+.preview h6 {font-size:1em; color:#777}
+.no-drag {background-color:#dedeee}
+
 #MapList ul { list-style-type: none; margin: 0; padding: 0; min-height: 10px }
 #MapList ul li { margin: 3px; padding: 0.4em; }
 #MapList ul .ui-icon { display: inline-block; }

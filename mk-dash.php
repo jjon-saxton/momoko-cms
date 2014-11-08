@@ -319,9 +319,11 @@ HTML;
       switch ($setting['key'])
       {
        case 'version':
-       $page['body'].="<span id=\"{$setting['key']}\">{$setting['value']}</span>";
+       $page['body'].="<span id=\"{$setting['key']}\">{$setting['value']} <em class=\"message\">changed only by update script!</em></span>";
        break;
-       //TODO add special case for template
+       case 'template':
+       $page['body'].="<span id=\"{$setting['key']}\">{$setting['value']} <em class=\"message\">Change in <a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance\">site appearance</a> section</em></span>";
+       break;
        case 'security_logging':
        case 'error_logging':
        $page['body'].="<input type=number id=\"{$setting['key']}\" name=\"{$settings['key']}\" value=\"{$setting['value']}\">";
@@ -444,10 +446,35 @@ HTML;
    break;
    case 'appearance':
    $page['title']="Site Appearance";
-   if (!$user_data['raw_dom'])
+   if (!$user_data['raw_dom'] || !$user_data['save'])
    {
     $map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
     $maplist=$map->getModule('html');
+    $templates=new DataBaseTable('addins');
+    $query=$templates->getData("type:'template'",array('dir','shortname'),"shortname");
+    $templatesettings="<ul class=\"nobullet noindent\">\n<li><label for=\"layout\">Layout:</label> <select id=\"layout\" name=\"template\">\n";
+    while ($template=$query->fetch(PDO::FETCH_ASSOC))
+    {
+     if ($template['dir'] == $GLOBALS['SET']['template'])
+     {
+      $templatesettings.="<option selected=selected value=\"{$template['dir']}\">{$template['shortname']}</option>\n";
+     }
+     else
+     {
+      $templatesettings.="<option value=\"{$template['dir']}\">{$template['shortname']}</option>\n";
+     }
+    }
+    $templatesettings.="</select></li>\n<li><label for=\"style\">Style:</label> <select id=\"style\" name=\"style\">";
+    foreach (glob($GLOBALS['SET']['filedir']."templates/".$GLOBALS['SET']['template']."/*.css") as $file)
+    {
+     if (preg_match("/((?:[a-z][a-z]+))(-)((?:[a-z][a-z\\.\\d_]+)\\.(?:[a-z\\d]{3}))(?![\\w\\.])/",$file,$matches) == 0)
+     {
+      $name=basename($file);
+      $templatesettings.="<option>{$name}</option>\n";
+     }
+    }
+    $templatesettings.="</select></li>\n</ul>";
+    $modulelayout=file_get_contents($GLOBALS['SET']['filedir']."templates/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm");
     $page['body']=<<<HTML
 <script language="javascript">
 $(function(){
@@ -512,6 +539,11 @@ $(function(){
 <div id="AppearancePlugs" class="box">
 <div id="Templates" class="box" style="width:45%;float:left">
 <h3>Template</h3>
+<form method=post id="Template">
+<input type=hidden name="section" value="template">
+{$templatesettings}
+<button type=submit name="send" value="1">Change Template</button>
+</form>
 </div>
 <div id="MiniMap class="box" style="width:49%;float:left">
 <h3>Navigation</h3>
@@ -523,7 +555,12 @@ $(function(){
 <div id="Modules" class="box" style="width:100%;float:left">
 <h3>Modules</h3>
 <div id="ModuleGrid" style="width:100%">
+{$modulelayout}
 </div>
+<form method=post id="ModuleForm">
+<input type=hidden name="section" value="modules">
+<input type=hidden name="raw_dom">
+<div align=center><button id="SaveMods">Update Modules</buttons></div>
 </div>
 </div>
 <div id="MapList" Title="Re-order Navigation" class="dialog">
