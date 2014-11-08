@@ -59,9 +59,9 @@ HTML;
   }
   else
   {
-   $userlink=$this->listUserActions();
+   $userlink=$this->listUserActions(" | __LINK__");
    return <<<HTML
-<span id="UCPLine" class="ucp">Welcome <strong>{$this->usr->name}</strong> | <a href="?action=logout">Logout</a></span>
+<span id="UCPLine" class="ucp">Welcome <strong>{$this->usr->name}</strong>{$userlink}</span>
 HTML;
   }
  }

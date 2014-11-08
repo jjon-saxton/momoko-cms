@@ -126,10 +126,10 @@ HTML;
   $admin['longdateformat']=$defaults['ldf'];
   $admin['rowspertable']=$defaults['rpt'];
   
-  $rows['addins'][]=array('dir'=>'passreset'=>'page','shortname'=>'Password Resetter','longname'=>"User Password Resetter",'description'=>"A simple addin page that allows users to reset their own passwords.");
+  $rows['addins'][]=array('dir'=>'passreset','type'=>'page','enabled'=>'y','shortname'=>'Password Resetter','longname'=>"User Password Resetter",'description'=>"A simple addin page that allows users to reset their own passwords.");
   $rows['addins'][]=array('dir'=>'posts','type'=>'module','zone'=>1,'order'=>1,'enabled'=>'y','shortname'=>'Mini Post List','longname'=>'Mini Post List','description'=>"A sidebar module that loads a small list of posts.");
   $rows['addins'][]=array('dir'=>'metalinks','type'=>'module','zone'=>1,'order'=>2,'enabled'=>'y','shortname'=>'Meta Link Box','longname'=>'Meta Link Box','description'=>"Provides links such as RSS feeds and login. When logged in this is how users will access their dashboard.");
-  $rows['addins'][]=array('dir'=>'quirk','type'=>'template','shortname'=>'Quirk','longname'=>"Quirk Layout",'discription'=>"A two column layout with head and foot bar.");
+  $rows['addins'][]=array('dir'=>'quirk','type'=>'template','enabled'=>'y','shortname'=>'Quirk','longname'=>"Quirk Layout",'discription'=>"A two column layout with head and foot bar.");
   
   $rows['content'][]=array('title'=>"Hello World!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'page','order'=>1, 'parent'=>0,'author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');
   $rows['content'][]=array('title'=>"Welcome!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'post','parent'=>0,'author'=>1,'text'=>$firstpost,'mime_type'=>'text/html');
