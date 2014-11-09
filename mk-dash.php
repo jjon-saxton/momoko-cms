@@ -486,9 +486,9 @@ HTML;
         $modulelist=NULL;
         while ($module=$dbquery->fetch(PDO::FETCH_ASSOC))
         {
-         $modulelist.="<li id=\"{$module['dir']}\" class=\"module box\">{$module['shortname']}</li>\n";
+         $modulelist.="<div id=\"{$module['dir']}\" class=\"module portlet box\">\n<div class=\"portlet-header\">{$module['shortname']}</div>\n<div class=\"portlet-content\"></div>\n</div>\n";
         }
-        $modulelayout=preg_replace("/<!-- MODULEPLACEHOLDER:".preg_quote($query)." -->/","<ul {$query} class=\"nobullet noindent module zone\">\n".$modulelist."\n</ul>",$modulelayout);
+        $modulelayout=preg_replace("/<!-- MODULEPLACEHOLDER:".preg_quote($query)." -->/",$modulelist,$modulelayout);
       }
     }
     if (preg_match_all("/<!-- MODULESOURCE -->/",$modulelayout,$list))
@@ -497,9 +497,9 @@ HTML;
      $modulelist=NULL;
      while ($module=$dbquery->fetch(PDO::FETCH_ASSOC))
      {
-      $modulelist.="<li id=\"{$module['dir']}\" class=\"module box\">{$module['shortname']}</li>\n";
+      $modulelist.="<div id=\"{$module['dir']}\" class=\"module portlet box\">\n<div class=\"portlet-header\">{$module['shortname']}</div>\n<div class=\"portlet-content\"></div>\n</div>\n";
      }
-     $modulelayout=preg_replace("/<!-- MODULESOURCE -->/","<ul id=\"ModSouce\" class=\"nobullet noindent module source\">\n".$modulelist."\n</ul>",$modulelayout);
+     $modulelayout=preg_replace("/<!-- MODULESOURCE -->/",$modulelist,$modulelayout);
     }
 
     $page['body']=<<<HTML
@@ -543,9 +543,23 @@ $(function(){
 			$(this).addClass('ui-icon-carat-1-e');
 		}
 	});
-    $(".source, .zone").sortable({
-       connectWith: "div.preview ul" 
-    }).disableSelection();
+    $(".column").sortable({
+      connectWith: ".column",
+      handle: ".portlet-header",
+      cancel: ".portlet-toggle",
+      placeholder: "portlet-placeholder ui-corner-all"
+    });
+    $(".portlet")
+      .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+      .find( ".portlet-header" )
+        .addClass( "ui-widget-header ui-corner-all" )
+        .prepend( "<span class='ui-icon ui-icon-plusthick portlet-toggle'></span>");
+    $(".portlet-content").hide();
+    $(".portlet-toggle").click(function() {
+      var icon = $( this );
+      icon.toggleClass( "ui-icon-plusthick ui-icon-minusthick" );
+      icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
+    });
 	$( "#MapList ul" )
     		.sortable({
 			placeholder: 'ui-state-highlight',
