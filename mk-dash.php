@@ -474,22 +474,34 @@ HTML;
      }
     }
     $templatesettings.="</select></li>\n</ul>";
+
     $modulelayout=file_get_contents($GLOBALS['SET']['filedir']."templates/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm");
+    $addins=new DataBaseTable('addins');
     if (preg_match_all("/<!-- MODULEPLACEHOLDER:(?P<arguments>.*?) -->/",$modulelayout,$list))
     {
       foreach ($list['arguments'] as $query)
       {
-        $table=new DataBaseTable('addins');
         parse_str($query,$opts);
-        $dbquery=$table->getData("zone:'= {$opts['zone']}'",array('dir','shortname'));
+        $dbquery=$addins->getData("zone:'= {$opts['zone']}'",array('dir','shortname'));
         $modulelist=NULL;
         while ($module=$dbquery->fetch(PDO::FETCH_ASSOC))
         {
-         $modulelist.="<div id=\"{$module['dir']}\" class=\"module box\">{$module['shortname']}</div>\n";
+         $modulelist.="<li id=\"{$module['dir']}\" class=\"module box\">{$module['shortname']}</li>\n";
         }
-        $modulelayout=preg_replace("/<!-- MODULEPLACEHOLDER:".preg_quote($query)." -->/",$modulelist,$modulelayout);
+        $modulelayout=preg_replace("/<!-- MODULEPLACEHOLDER:".preg_quote($query)." -->/","<ul {$query} class=\"nobullet noindent module zone\">\n".$modulelist."\n</ul>",$modulelayout);
       }
     }
+    if (preg_match_all("/<!-- MODULESOURCE -->/",$modulelayout,$list))
+    {
+     $dbquery=$addins->getData("type:'module'",array('dir','shortname'));
+     $modulelist=NULL;
+     while ($module=$dbquery->fetch(PDO::FETCH_ASSOC))
+     {
+      $modulelist.="<li id=\"{$module['dir']}\" class=\"module box\">{$module['shortname']}</li>\n";
+     }
+     $modulelayout=preg_replace("/<!-- MODULESOURCE -->/","<ul id=\"ModSouce\" class=\"nobullet noindent module source\">\n".$modulelist."\n</ul>",$modulelayout);
+    }
+
     $page['body']=<<<HTML
 <script language="javascript">
 $(function(){
@@ -531,6 +543,9 @@ $(function(){
 			$(this).addClass('ui-icon-carat-1-e');
 		}
 	});
+    $(".source, .zone").sortable({
+       connectWith: "div.preview ul" 
+    }).disableSelection();
 	$( "#MapList ul" )
     		.sortable({
 			placeholder: 'ui-state-highlight',
