@@ -59,11 +59,47 @@ if ($GLOBALS['SET']['error_logging'] > 0)
  set_error_handler("momoko_html_errors"); //TODO need to set cli handler if we are running in cli mode
 }
 
+class MomokoModule
+{
+	public function settingsToHTML(array $values)
+	{
+	 $html="<ul id=\"settings\" class=\"noindent nobullet\">\n";
+	 foreach ($this->opt_keys as $key=>$value)
+	 {
+	  $item="<li><label for=\"{$this->info->dir}-{$key}\">{$key}: </label>";
+	  switch ($value['type'])
+	  {
+	   case 'text':
+	   case 'number':
+	   $item.="<input id=\"{$this->info->dir}-{$key}\" type={$value['type']} size=10 name=\"{$this->info->dir}[{$key}]\" value=\"{$values[$key]}\"></li>\n";
+	   break;
+	   case 'select':
+	   $item.="<select id=\"{$this->info->dir}-{$key}\" name=\"{$this->info->dir}[{$key}]\">\n";
+	   foreach ($value['options'] as $option)
+	   {
+	    if ($option == $values[$key])
+	    {
+	     $item.="<option selected=selected>{$option}</option>\n";
+	    }
+	    else
+	    {
+	     $item.="<option>{$option}</option>\n";
+	    }
+	   }
+	   $item.="</select>";
+	   break;
+	  }
+	  $html.=$item;
+	 }
+	 return $html.="</ul>";
+	}
+}
+
 interface MomokoModuleInterface
 {
   public function __construct();
   public function getModule($format='html');
-  function getInfoFromDB();
+  public function getInfoFromDB();
 }
 
 interface MomokoPageObject

@@ -1,5 +1,5 @@
 <?php
-class MomokoMetalinksModule implements MomokoModuleInterface
+class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterface
 {
  public $info;
  public $opt_keys=array();
@@ -10,7 +10,7 @@ class MomokoMetalinksModule implements MomokoModuleInterface
  {
   $this->info=$this->getInfoFromDB();
   $this->usr=$GLOBALS['USR'];
-  $this->opt_keys=array('options'=>array('line','box'));
+  $this->opt_keys=array('display'=>array('type'=>'select','options'=>array('line','box')));
   parse_str($this->info->settings,$this->settings);
  }
 

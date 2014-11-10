@@ -477,29 +477,32 @@ HTML;
 
     $modulelayout=file_get_contents($GLOBALS['SET']['filedir']."templates/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm");
     $addins=new DataBaseTable('addins');
+    $dbquery=$addins->getData("type:'module'",array('dir','shortname','zone','settings'));
+    $modulelist=NULL;
+    while ($module=$dbquery->fetch(PDO::FETCH_ASSOC))
+    {
+     if (!$module['zone'])
+     {
+      $module['zone']=0;
+     }
+     parse_str($module['settings'],$module['settings']);
+     include_once $GLOBALS['SET']['filedir']."addins/".$module['dir']."/module.php";
+     $mod_obj="Momoko".ucwords($module['dir'])."Module";
+     $mod_obj=new $mod_obj();
+     $module['settings']=$mod_obj->settingsToHTML($module['settings']);
+     $modulelist[$module['zone']].="<div id=\"{$module['dir']}\" class=\"module portlet box\">\n<div class=\"portlet-header\">{$module['shortname']}</div>\n<div class=\"portlet-content\">{$module['settings']}</div>\n</div>\n";
+    }
     if (preg_match_all("/<!-- MODULEPLACEHOLDER:(?P<arguments>.*?) -->/",$modulelayout,$list))
     {
       foreach ($list['arguments'] as $query)
       {
         parse_str($query,$opts);
-        $dbquery=$addins->getData("zone:'= {$opts['zone']}'",array('dir','shortname'));
-        $modulelist=NULL;
-        while ($module=$dbquery->fetch(PDO::FETCH_ASSOC))
-        {
-         $modulelist.="<div id=\"{$module['dir']}\" class=\"module portlet box\">\n<div class=\"portlet-header\">{$module['shortname']}</div>\n<div class=\"portlet-content\"></div>\n</div>\n";
-        }
-        $modulelayout=preg_replace("/<!-- MODULEPLACEHOLDER:".preg_quote($query)." -->/",$modulelist,$modulelayout);
+        $modulelayout=preg_replace("/<!-- MODULEPLACEHOLDER:".preg_quote($query)." -->/",$modulelist[$opts['zone']],$modulelayout);
       }
     }
     if (preg_match_all("/<!-- MODULESOURCE -->/",$modulelayout,$list))
     {
-     $dbquery=$addins->getData("type:'module'",array('dir','shortname'));
-     $modulelist=NULL;
-     while ($module=$dbquery->fetch(PDO::FETCH_ASSOC))
-     {
-      $modulelist.="<div id=\"{$module['dir']}\" class=\"module portlet box\">\n<div class=\"portlet-header\">{$module['shortname']}</div>\n<div class=\"portlet-content\"></div>\n</div>\n";
-     }
-     $modulelayout=preg_replace("/<!-- MODULESOURCE -->/",$modulelist,$modulelayout);
+     $modulelayout=preg_replace("/<!-- MODULESOURCE -->/",$modulelist[0],$modulelayout);
     }
 
     $page['body']=<<<HTML
@@ -553,11 +556,10 @@ $(function(){
       .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
       .find( ".portlet-header" )
         .addClass( "ui-widget-header ui-corner-all" )
-        .prepend( "<span class='ui-icon ui-icon-plusthick portlet-toggle'></span>");
-    $(".portlet-content").hide();
+        .prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
     $(".portlet-toggle").click(function() {
       var icon = $( this );
-      icon.toggleClass( "ui-icon-plusthick ui-icon-minusthick" );
+      icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
       icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
     });
 	$( "#MapList ul" )

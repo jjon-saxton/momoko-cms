@@ -1,14 +1,16 @@
 <?php
 
-class MomokoPostsModule implements MomokoModuleInterface
+class MomokoPostsModule extends MomokoModule implements MomokoModuleInterface
 {
 	public $news_list;
  public $info=array();
+ public $opt_keys=array();
  private $table;
  private $settings=array();
  
  public function __construct()
  {
+  $this->opt_keys=array('sort'=>array('type'=>'select','options'=>array('recent')),'length'=>array('type'=>'number'),'num'=>array('type'=>'number'));
   $this->info=$this->getInfoFromDB();
   parse_str($this->info->settings,$this->settings);
   $this->table=new DataBaseTable('content');

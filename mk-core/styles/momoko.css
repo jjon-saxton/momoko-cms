@@ -18,7 +18,8 @@ ul.plug.list {padding-left:5px; list-style:none}
 .portlet-header {padding: 0.2em 0.3em; margin-bottom: 0.5em; position: relative}
 .portlet-toggle {position: absolute; top: 50%; right: 0; margin-top: -8px}
 .portlet-content {padding: 0.4em}
-.portlet-placeholder {border: 1px dotted black; margin: 0 1em 1em 0; height: 50px}
+.portlet-content input {max-width:50px}
+.portlet-placeholder {width:100%;max-width:150px;border: 1px dotted black; margin: 0 1em 1em 0; height: 50px}
 
 #MapList ul { list-style-type: none; margin: 0; padding: 0; min-height: 10px }
 #MapList ul li { margin: 3px; padding: 0.4em; }
