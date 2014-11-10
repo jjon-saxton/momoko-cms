@@ -71,10 +71,10 @@ class MomokoModule
 	  {
 	   case 'text':
 	   case 'number':
-	   $item.="<input id=\"{$this->info->dir}-{$key}\" type={$value['type']} size=10 name=\"{$this->info->dir}[{$key}]\" value=\"{$values[$key]}\"></li>\n";
+	   $item.="<input id=\"{$this->info->dir}-{$key}\" type={$value['type']} size=10 name=\"{$this->info->num}[{$key}]\" value=\"{$values[$key]}\"></li>\n";
 	   break;
 	   case 'select':
-	   $item.="<select id=\"{$this->info->dir}-{$key}\" name=\"{$this->info->dir}[{$key}]\">\n";
+	   $item.="<select id=\"{$this->info->dir}-{$key}\" name=\"{$this->info->num}[{$key}]\">\n";
 	   foreach ($value['options'] as $option)
 	   {
 	    if ($option == $values[$key])

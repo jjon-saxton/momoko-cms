@@ -446,7 +446,7 @@ HTML;
    break;
    case 'appearance':
    $page['title']="Site Appearance";
-   if (!$user_data['raw_dom'] || !$user_data['save'])
+   if (!$user_data['raw_dom'] && !$user_data['save'])
    {
     $map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
     $maplist=$map->getModule('html');
@@ -477,7 +477,7 @@ HTML;
 
     $modulelayout=file_get_contents($GLOBALS['SET']['filedir']."templates/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm");
     $addins=new DataBaseTable('addins');
-    $dbquery=$addins->getData("type:'module'",array('dir','shortname','zone','settings'));
+    $dbquery=$addins->getData("type:'module'",array('num','dir','shortname','zone','settings'));
     $modulelist=NULL;
     while ($module=$dbquery->fetch(PDO::FETCH_ASSOC))
     {
@@ -490,7 +490,7 @@ HTML;
      $mod_obj="Momoko".ucwords($module['dir'])."Module";
      $mod_obj=new $mod_obj();
      $module['settings']=$mod_obj->settingsToHTML($module['settings']);
-     $modulelist[$module['zone']].="<div id=\"{$module['dir']}\" class=\"module portlet box\">\n<div class=\"portlet-header\">{$module['shortname']}</div>\n<div class=\"portlet-content\">{$module['settings']}</div>\n</div>\n";
+     $modulelist[$module['zone']].="<div id=\"{$module['num']}\" class=\"module portlet box\">\n<div class=\"portlet-header\">{$module['shortname']}</div>\n<div class=\"portlet-content\">{$module['settings']}</div>\n</div>\n";
     }
     if (preg_match_all("/<!-- MODULEPLACEHOLDER:(?P<arguments>.*?) -->/",$modulelayout,$list))
     {
@@ -515,7 +515,7 @@ $(function(){
   modal:true,
   buttons:{
    "Finished":function(){
-    var raw=$("div#MapList").html()
+    var raw=$("div#MapList").html();
     $("input#map").val(raw);
     $("form#MapForm").submit();
    },
@@ -523,6 +523,13 @@ $(function(){
     $(this).dialog("close");
    }
   }
+ });
+ 
+ $("button#SaveMods").click(function(event){
+  event.preventDefault();
+  var raw=$("div.container").html();
+  $("input#mods").val(raw);
+  $("form#ModuleForm").submit();
  });
  
  $("button#ReOrder").click(function(){
@@ -598,15 +605,15 @@ $(function(){
 </ul>
 <button id="ReOrder">Re-Order</button>
 </div>
+<form method=post id="ModuleForm">
 <div id="Modules" class="box" style="width:100%;float:left">
 <h3>Modules</h3>
 <div id="ModuleGrid" style="width:100%">
 {$modulelayout}
 </div>
-<form method=post id="ModuleForm">
 <input type=hidden name="section" value="modules">
-<input type=hidden name="raw_dom">
-<div align=center><button id="SaveMods">Update Modules</buttons></div>
+<input type=hidden id="mods" name="raw_dom">
+<div align=center><button id="SaveMods">Update Modules</button></div>
 </div>
 </div>
 <div id="MapList" Title="Re-order Navigation" class="dialog">
@@ -634,6 +641,17 @@ HTML;
     {
      //TODO write error message
     }
+   }
+   elseif ($user_data['section'] == 'modules')
+   {
+    $parser=new htmlParser($user_data['raw_dom']);
+    $mod_array=$parser->toArray();
+    var_dump($mod_array); exit();
+    //TODO parse the html array for modules; set order, zone, and settings
+   }
+   else
+   {
+    //TODO save template changes
    }
    break;
    case 'list':
