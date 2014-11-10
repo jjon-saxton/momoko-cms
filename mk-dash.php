@@ -646,7 +646,15 @@ HTML;
    {
     $parser=new htmlParser($user_data['raw_dom']);
     $mod_array=$parser->toArray();
-    var_dump($mod_array); exit();
+
+    foreach ($mod_array as $nodes)
+    {
+     if (array_key_exists('column',$nodes['attributes']))
+     {
+      var_dump($nodes);
+     }
+    }
+    exit();
     //TODO parse the html array for modules; set order, zone, and settings
    }
    else
