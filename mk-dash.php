@@ -322,7 +322,7 @@ HTML;
        $page['body'].="<span id=\"{$setting['key']}\">{$setting['value']} <em class=\"message\">changed only by update script!</em></span>";
        break;
        case 'template':
-       $page['body'].="<span id=\"{$setting['key']}\">{$setting['value']} <em class=\"message\">Change in <a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance\">site appearance</a> section</em></span>";
+       $page['body'].="<span id=\"{$setting['key']}\">{$setting['value']} <em class=\"message\">change in <a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance\">site appearance</a></em></span>";
        break;
        case 'security_logging':
        case 'error_logging':
