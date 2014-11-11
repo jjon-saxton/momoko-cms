@@ -533,7 +533,10 @@ $(function(){
  });
  
  $("button#ReOrder").click(function(){
-  $(".dialog#MapList").dialog("open");
+  event.preventDefault();
+  var raw=$("div#MapList").html();
+  $("input#map").val(raw);
+  $("form#MapForm").submit();;
  });
  $("ul.map ul").addClass("nobullet");
  
@@ -598,13 +601,17 @@ $(function(){
 <button type=submit name="send" value="1">Change Template</button>
 </form>
 </div>
-<div id="MiniMap class="box" style="width:49%;float:left">
+<form method=post id="MapForm">
+<div id="MapList" class="box" style="width:49%;float:left">
 <h3>Navigation</h3>
 <ul class="map nobullet">
 {$maplist}
 </ul>
-<button id="ReOrder">Re-Order</button>
+<input type=hidden name="section" value="map">
+<input type=hidden id="map" name="raw_dom">
+<div align=right><button id="ReOrder">Re-Order</button></div>
 </div>
+</form>
 <form method=post id="ModuleForm">
 <div id="Modules" class="box" style="width:100%;float:left">
 <h3>Modules</h3>
@@ -614,16 +621,8 @@ $(function(){
 <input type=hidden name="section" value="modules">
 <input type=hidden id="mods" name="raw_dom">
 <div align=center><button id="SaveMods">Update Modules</button></div>
-</div>
-</div>
-<div id="MapList" Title="Re-order Navigation" class="dialog">
-<ul id="Map" class="nobullet">
-{$maplist}
-</ul>
-<form method=post id="MapForm">
-<input type="hidden" name="section" value="map">
-<input type="hidden" name="raw_dom" id="map">
 </form>
+</div>
 </div>
 <div id="ItemRemoveDialog" title="Remove Item" class="dialog">
 <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Are you sure you want to remove this item from the site map? If the selected item is a section, all sub-pages and sections will also be removed. This action will not be saved until you select 'save'.</p>
@@ -633,14 +632,9 @@ HTML;
    elseif ($user_data['section'] == 'map')
    {
     $new_map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
-    if ($new_html=$new_map->reOrderbyHTML($user_data['raw_dom']))
-    {
-     header("Location:http://{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance");
-    }
-    else
-    {
-     //TODO write error message
-    }
+    $new_map->reOrderbyHTML($user_data['raw_dom']);
+    header("Location:http://{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance");
+    exit();
    }
    elseif ($user_data['section'] == 'modules')
    {

@@ -100,69 +100,38 @@ class MomokoNavigation
   return $text;
  }
  
- public function put(array $map)
+ public function put($map=null)
  {
-  $order=1;
-  foreach ($map as $item)
+  if (!$map)
   {
-   if (is_array($item['children']))
-   {
-    $item['children']=$this->put($item['children']);
-   }
-   $save['num']=$item['id'];
-   $save['order']=$order;
-   $order++;
-   try
-   {
-    $update=$this->table->updateData($save);
-   }
-   catch (Exception $err)
-   {
-    trigger_error("Caught exception '{$err->getMessage()}' while attempting to save a new site map",E_USER_WARNING);
-   }
+   $map=$this->map;
   }
+  
+  //TODO parse map and save to database
+  
   return $map;
  }
  
  public function reOrderByHTML($raw_map)
  {
-  unset($this->map);
-  $parser=new htmlParser($raw_map);
-  $map_array=$parser->toArray();
-  $this->map=$this->HTMLArraytoMap($map_array);
-  return $this->put($this->map);
- }
- 
- public function HTMLArraytoMap(array $array)
- {
-  foreach ($array as $node)
+  $html=str_get_html($raw_map);
+  foreach ($html->find('ul') as $map)
   {
-   if ($node['tag'] == 'ul')
+   $data['order']=1;
+   foreach ($map->find('li') as $item)
    {
-    foreach ($node['childNodes'] as $child)
+    $data['num']=$item->id;
+    try
     {
-     $attrs=array();
-     if ($child['tag'] == 'li')
-     {
-      $new['id']=$child['attributes']['id'];
-      foreach ($child['childNodes'] as $grandchild)
-      {
-	      $new['title']=$grandchild['htmlText'];
-       if ($grandchild['tag'] == 'a')
-       {
-	       $new['link']=$grandchild['attributes']['href'];
-       }
-      }
-      if ($child['attributes']['class'] == 'category')
-      {
-       $new['children']=$this->HTMLArraytoMap($child['childNodes']);
-      }
-      $map[]=$new;
-     }
+     $update=$this->table->updateData($data);
     }
+    catch (Exception $err)
+    {
+     trigger_error("Caught exception '".$err->getMessage()."' while attempting to re-order site map.",E_USER_WARNING);
+    }
+    $data['order']++;
    }
   }
-  return $map;
  }
 }
 
