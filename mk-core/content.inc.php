@@ -937,17 +937,13 @@ class MomokoAddinForm implements MomokoObject
       break;
       default:
       $table=new DataBaseTable('addins');
-      $cols=$table->getFields();
+      $cols=array('num','shortname','longname','type');
       $vars['addin_cols']=null;
-      foreach ($cols as $properties)
+      foreach ($cols as $col)
       {
-	if ($properties->Field != 'num')
+	if ($col != 'num')
 	{
-	  if ($properties->Field == "incp")
-	  {
-	    $properties->Field="AdminCP Module";
-	  }
-	  $vars['addin_cols'].="<th class=\"ui-state-default\">".ucwords($properties->Field)."</th>";
+	  $vars['addin_cols'].="<th class=\"ui-state-default\">".ucwords($col)."</th>";
 	}
       }
       $vars['addin_cols'].="<th class=\"ui-state-default\">Actions</th>";
@@ -958,7 +954,7 @@ class MomokoAddinForm implements MomokoObject
       while ($row=$data->fetch())
       {
 	$vars['addin_list'].="<tr id=\"".$row['num']."\">\n";
-	foreach ($cols as $name=>$properties)
+	foreach ($cols as $name)
 	{
 	  if ($name != 'num')
 	  {
