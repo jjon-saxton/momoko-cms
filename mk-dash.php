@@ -477,7 +477,7 @@ HTML;
 
     $modulelayout=file_get_contents($GLOBALS['SET']['filedir']."templates/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm");
     $addins=new DataBaseTable('addins');
-    $dbquery=$addins->getData("type:'module'",array('num','dir','shortname','zone','settings'));
+    $dbquery=$addins->getData("type:'module'",array('num','dir','shortname','zone','settings'),'order');
     $modulelist=NULL;
     while ($module=$dbquery->fetch(PDO::FETCH_ASSOC))
     {
@@ -644,18 +644,29 @@ HTML;
    }
    elseif ($user_data['section'] == 'modules')
    {
-    $parser=new htmlParser($user_data['raw_dom']);
-    $mod_array=$parser->toArray();
-
-    foreach ($mod_array as $nodes)
+    $table=new DataBaseTable('addins');
+    $html=str_get_html($user_data['raw_dom']);
+    foreach ($html->find("div.column") as $node)
     {
-     if (array_key_exists('column',$nodes['attributes']))
+     $data['zone']=$node->id;
+     $data['order']=1;
+     foreach ($node->find("div.module") as $mod)
      {
-      var_dump($nodes);
+      $data['num']=$mod->id;
+      $data['settings']=http_build_query($user_data[$data['num']]);
+      try
+      {
+       $update=$table->updateData($data);
+      }
+      catch (Exception $err)
+      {
+       trigger_error("Caught exception '".$err->getMessage()."' while attempting to update modules");
+      }
+      $data['order']++;
      }
     }
+    header("Location: http://{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance");
     exit();
-    //TODO parse the html array for modules; set order, zone, and settings
    }
    else
    {

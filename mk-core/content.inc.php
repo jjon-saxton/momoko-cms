@@ -1,5 +1,5 @@
 <?php
-require_once $GLOBALS['SET']['basedir'].'/mk-core/class.htmlParser.php';
+require_once $GLOBALS['SET']['basedir'].'/mk-core/simple_html_dom.php';
 
 class MomokoNavigation
 {
@@ -1370,4 +1370,4 @@ HTML;
   return $array;
  }
 }
-
+
