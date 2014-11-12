@@ -43,7 +43,7 @@ html ul.topnav li ul.subnav li a {color: #E6E9EC}
 html ul.topnav li ul.subnav li a:hover {background: #06C; color: #fff}
 html ul.topnav li ul.subnav li hr {border-color: #E6E9EC}
 
-h4.headline {padding:0;margin-bottom:0}
+h4.headline, h4.module {padding:0;margin-bottom:0}
 div.news div.item {background-color:#ffffff; border-radius: 2px; margin-bottom: 5px }
 div.news div.date {font-style:italic}
 div.news div.article p {font:10pt Arial, Helvetica, sans-serif; margin:0; padding:0; text-indent:1em}

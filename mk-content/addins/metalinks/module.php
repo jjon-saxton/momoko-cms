@@ -60,6 +60,7 @@ HTML;
   {
    $userlinks=$this->listUserActions("<li>__LINK__</li>\n");
    return <<<HTML
+<h4 class="module">Meta</h4>
 <div id="UCPBox" class="ucp box">
 <ul class="nobullet noindent">
 <li>Welcome <strong>{$this->usr->name}</strong>!</li>
@@ -81,7 +82,6 @@ HTML;
  private function listUserActions($wrapper="__LINK__")
  {
   $actions[]=array('href'=>'javascript:void();','onclick'=>"toggleSidebar();",'title'=>'My Dashboard');
-  $actions[]=array('href'=>'?action=logout','title'=>'Logout');
   $html=null;
 
   foreach ($actions as $action)
