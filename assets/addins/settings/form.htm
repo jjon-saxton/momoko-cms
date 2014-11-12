@@ -1,0 +1,100 @@
+<html>
+  <head>
+    <title>Change Settings</title>
+  </head>
+  <body>
+  <script>
+  $(document).ready(function(){
+    $("input#newpass2").keyup(function(){
+      var password=$("input#newpass1").val();
+      var confirm=$(this).val();
+      
+      if (password == confirm)
+      {
+	$("#passmsg").fadeOut("fast");
+	$("#submit").removeAttr("disabled");
+      }
+      else
+      {
+	$("#passmsg").fadeIn("normal");
+	$("#submit").attr("disabled","disabled");
+      }
+    });
+    
+    $("select").change(function(){
+      var dateform=$(this).val();
+      var id=$(this).attr('id');
+      $("input#"+id).val(dateform).focus();
+    });
+  });
+  </script>
+  <h2>Change Settings</h2>
+  <form method=post>
+  <table width=100% border=0 cellspacing=1 cellpadding=1>
+  <tr>
+  <th colspan=2>Password</th>
+  </tr>
+  <tr>
+  <td align=right><label for="curpass">Current Password:</label> </td><td><input type=password name="check" id="curpass"></td>
+  </tr>
+  <tr>
+  <td align=right><label for="newpass1">New Password:</label> </td><td><input type=password name="newpass1" id="newpass1"></td>
+  </tr>
+  <tr>
+  <td align=right><label for="newpass2">Confirm New Password:</label> </td><td><input type=password name="newpass2" id="newpass2"><span id="passmsg" class="redflag" style="display:none">Password mismatch!</span></td>
+  </tr>
+  <tr>
+  <th colspan=2>Your Settings</th>
+  </tr>
+  <tr valign=top>
+  <td align=right><label for="sdf">Short Date Format:</label> </td><td><select name="commonsdf" id="sdf"><var>sdfopts</var></select> <input type=text name="shortdateformat" id="sdf" value="~{shortdateformat}"></td>
+  </tr>
+  <tr valign=top>
+  <td align=right><label for="ldf">Long Date Format:</label> </td><td><select name="commonldf" id="ldf"><var>ldfopts</var></select> <input type=text name="longdateformat" id="ldf" value="~{longdateformat}"></td>
+  </tr>
+  <tr>
+  <td align=right><label for="rpg">Items Per Page:</label> </td><td><input type=number name="rowspertable" value="~{rowspertable}"></td>
+  </tr>
+<!-- TemplateIF:$GLOBALS['USR']->inGroup('admin')// -->
+  <tr>
+  <th colspan=2>Site Settings</th>
+  </tr>
+  <tr>
+  <td align=right><label for="sn">Site Name:</label> </td><td><input type=text id="sn" name="site[name]" value="~{site_name}"></td>
+  </tr>
+  <tr>
+  <td align=right><label for="st">Main Template:</label> </td><td><input type=text id="st" name="site[template]" value="~{site_template}"></td>
+  </tr>
+  <tr>
+  <td align=right><label for="se">Support E-Mail:</label> </td><td><input id="se" type=text name="site[support_email]" value="~{support_email}"></td>
+  </tr>
+  <tr>
+  <td align=right><label for="sl">Security Logging:</label> </td><td><var>security_logging_radio</var></td>
+  </tr>
+  <tr>
+  <td align=right><label for="el">Error Logging:</label> </td><td><var>error_logging_radio</var></td>
+  </tr>
+  <tr>
+  <td align=right><label for="mta">Mail Transport Authority:</label> </td><td><select name="site[email_mta]" id="mta">~{mta_options}</select></td>
+  </tr>
+  <tr>
+  <td align=right><label for="eserv">Mail Sever:</label> </td><td><table id="eserv"><tr><td align=right><label for="host">Hostname:</label></td><td><input type=text name="site[email_server][host]" id="host" value="~{email_host}"></td></tr>
+  <tr><td align=right><label for="port">Port:</label></td><td><input type=text name="site[email_server][port]" id="port" value="~{email_port}"></td></tr>
+  <tr><td align=right><label for="security">Security:</label></td><td><var>email_security_radio</var></td></tr>
+  <tr><td align=right><label for="user">User Name:</label></td><td><input type=text name="site[email_server][username]" value="~{email_username}"></td><tr>
+  <tr><td align=right><label for="pass">Password:</label></td><td><input type=password name="site[email_server][password]" value="~{email_password}"> <a href="#">unmask</a></td></tr></table></td>
+  </tr>
+  <tr>
+  <td align=right><label for="efrom">Mail From Line:</label> </td><td><table id="efrom"><tr><td align=right><label for="from_name">Name:</label></td><td><input type=text name="site[email_from][name]" id="from_name" value="~{email_from_name}"></td></tr>
+<tr><td align=right><label for="from_address">Address:</label></td><td><input type=text name="site[email_from][address]" id="from_address" value="~{email_from_address}"></td></tr></table></td>
+  </tr>
+<!-- //EndIF -->
+  <tr>
+  <th colspan=2>Save</th>
+  </tr>
+  <tr>
+  <td align=center colspan=2><input type=submit name="send" id="submit" value="Save Changes"></td>
+  </tr>
+  </table>
+  </body>
+</html>

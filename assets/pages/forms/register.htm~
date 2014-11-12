@@ -1,0 +1,21 @@
+<html>
+<head>
+<<<<<<< HEAD
+<title>User Registration</title>
+</head>
+<body>
+<h2>User Registration</h2>
+<p>Please fill out the form below to request a user account for this site. User accounts my be limited to only certain sections of this site based on the owner's preferences. By registering below, you agree to the <a href="/help/tos.htm">Terms of Service</a> as outlined by the owner.
+<form method=post>
+<ul class="nobullet">
+<li><label for="fname">First Name:</label> <input type=text name="first" id="fname"></li>
+<li><label for="lname">Last Name:</label> <input type=text name="last" id="lname"></li>
+<li><label for="uname">Desired User Name:</label> <input type=text name="name" id="uname" maxlength=75></li>
+<li><label for="email">E-Mail Address:</label> <input type=email name="email" id="email"></li>
+<li><label for="pass1">Desired Password:</label> <input type=password name="password" id="pass1"></li>
+<li><label for="pass2">Confirm Password:</label> <input type=password name="cpass" id="pass2"></li>
+<li><input type=submit class="mainopt" value="Register"></li>
+</ul>
+</form>
+</body>
+</html>

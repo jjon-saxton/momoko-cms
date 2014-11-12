@@ -1,6 +1,6 @@
 <?php
 
-class UMDialog implements MomokoLITEObject
+class UMDialog implements MomokoObject
 {
  public $path;
  private $info=array();
@@ -40,7 +40,7 @@ class UMDialog implements MomokoLITEObject
 
  public function build($eid='dialog-form')
  {
-  return <<<HTML
+  $this->inner_body=<<<HTML
 <div id="{$eid}">
 {$this->inner_body}
 </div>

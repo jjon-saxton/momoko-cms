@@ -1,13 +1,18 @@
-#{sitename:MomoKO Development Site}
+#{sitename:Your Site}
 #{basedir:/home/momoko/public_html}
 #{pagedir:/home/momoko/public_html/assets/pages}
 #{datadir:/home/momoko/public_html/assets/files}
 #{tempdir:/home/momoko/public_html/assets/temp}
+#{logdir:/home/momoko/public_html/assets/logs}
 #{domain:}
 #{location:/~momoko} 
 
-#{default_template:/assets/templates/quirk.tpl.htm}
+#{default_template:/assets/templates/quirk/quirk.tpl.htm}
 
 #{session:mk}
 #{salt:mk}
 #{rewrite:}
+
+#{emailprotocol:smtp}
+#{server:true,ssl,smtp.host.com,user,password}
+#{from:First Last,name@domain.com}

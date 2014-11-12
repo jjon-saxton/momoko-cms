@@ -1,9 +1,9 @@
 <?php
-require_once dirname(__FILE__).'/assets/php/common.inc.php';
-require_once $GLOBALS['CFG']->basedir.'/assets/php/content.inc.php';
-require_once $GLOBALS['CFG']->basedir.'/assets/php/markdown.inc.php';
+require_once dirname(__FILE__).'/assets/core/common.inc.php';
+require_once $GLOBALS['CFG']->basedir.'/assets/core/content.inc.php';
+require_once $GLOBALS['CFG']->basedir.'/assets/core/markdown.inc.php';
 
-class MomokoLITEDoc implements MomokoLITEObject
+class MomokoDoc implements MomokoObject
 {
  public $doc;
  public $txt;
@@ -58,7 +58,7 @@ class MomokoLITEDoc implements MomokoLITEObject
  public function readInfo()
  {
 	$info['inner_body']=Markdown($this->txt);
-	$info['title']="MomoKO LITE Docs";
+	$info['title']="MomoKO Docs";
 	if (preg_match("/<h1>(?P<title>.*?)<\/h1>/",$info['inner_body'],$match) > 0)
 	{
 	 $info['title'].=" - ".$match['title'];
@@ -72,7 +72,7 @@ class MomokoLITEDoc implements MomokoLITEObject
 
 if (@$_SERVER['PATH_INFO'])
 {
- $child=new MomokoLITEDoc($_SERVER['PATH_INFO']);
+ $child=new MomokoDoc($_SERVER['PATH_INFO']);
 }
 else
 {
@@ -80,7 +80,7 @@ else
  exit();
 }
 
-$tpl=new MomokoLITETemplate('/assets/docs/main.tpl.htm');
+$tpl=new MomokoTemplate('/assets/docs/main.tpl.htm');
 print $tpl->toHTML($child);
 
 ?>

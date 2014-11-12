@@ -1,8 +1,8 @@
 <?php
-require "./assets/php/common.inc.php";
-require "./assets/php/content.inc.php";
+require dirname(__FILE__)."/assets/core/common.inc.php";
+require dirname(__FILE__)."/assets/core/content.inc.php";
 
-class MomokoACP implements MomokoLITEObject
+class MomokoACP implements MomokoObject
 {
  public $path;
  private $info=array();
@@ -64,8 +64,8 @@ else
  }
  else
  {
-  $child=new MomokoLITEError('Forbidden');
+  $child=new MomokoError('Forbidden');
  }
- $tpl=new MomokoLITETemplate('/');
+ $tpl=new MomokoTemplate('/');
  echo $tpl->toHTML($child);
 }

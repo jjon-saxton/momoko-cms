@@ -1,6 +1,6 @@
 <?php
 
-class FinderPage implements MomokoLITEObject
+class FinderPage implements MomokoObject
 {
  public $connector;
  private $info=array();
@@ -47,15 +47,12 @@ class FinderPage implements MomokoLITEObject
    $info=parse_page($data);
    $varlist['finderroot']='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elfinder';
    $varlist['connectoruri']='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.$this->connector;
-   $ch=new MomokoCommentHandler($varlist);
+   $ch=new MomokoVariableHandler($varlist);
    $info['inner_body']=$ch->replace($info['inner_body']);
   }
   else
   {
-   $page=new MomokoLITEError('Server_Error');
-   $info['full_html']=$page->full_html;
-   $info['title']=$page->title;
-   $info['inner_body']=$page->inner_body;
+   trigger_error("Cannot open finder window! Check permissions on ".FINDERPATH."/templates/window.tpl.htm",E_USER_ERROR);
   }
   $this->info=$info;
  }

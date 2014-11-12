@@ -1,10 +1,10 @@
 <?php
-require_once dirname(__FILE__).'/assets/php/common.inc.php';
-require_once $GLOBALS['CFG']->basedir.'/assets/php/ximager.inc.php';
+require_once dirname(__FILE__).'/assets/core/common.inc.php';
+require_once $GLOBALS['CFG']->basedir.'/assets/core/ximager.inc.php';
 
 if (@$_SERVER['PATH_INFO'] && (pathinfo($_SERVER['PATH_INFO'],PATHINFO_EXTENSION) != 'html' || pathinfo($_SERVER['PATH_INFO'],PATHINFO_EXTENSTION) != 'php'))
 {
- $img=new MomoKOImage($GLOBALS['CFG']->datadir.$_SERVER['PATH_INFO']);
+ $img=new MomokoImage($GLOBALS['CFG']->datadir.$_SERVER['PATH_INFO']);
  if ($img->isImage())
  {
   if (!empty($_GET['w']) && empty($_GET['h']))

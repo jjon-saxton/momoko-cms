@@ -3,8 +3,8 @@
 <title>500 Internal Server Error</title>
 </head>
 <body>
-<h2>Internal Server Error</h2>
-<p>An unknown error or exception was encountered while processing your request! Please <a href="mailto:~{admin_email}?subject=Internal Server Error">report</a> this error to the administrator. Include any information including the resource your were attempting to access and the action you were attempting to perform. Additional information may appear below...</p>
-<p><!-- VAR:error_message --></p>
+<h2>Internal Server Error (Num: <var>error_type</var>)</h2>
+<p>An error or exception was encountered while processing your request! This error may be reported automatically to the site administrator. To follow up you may <a href="mailto:~{admin_email}?subject=Internal Server Error">contact</a> the administrator yourself. Include any information including the resource your were attempting to access and the action you were attempting to perform. Additional information may appear below...</p>
+<p><span class=error_msg><var>error_msg</var></span></p>
 </body>
 </html>

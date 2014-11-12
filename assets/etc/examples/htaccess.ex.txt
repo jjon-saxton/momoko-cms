@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^addin/(.*)$ /~momoko/addin.php/$1 [L]
+RewriteRule ^file/(.*)$ /~momoko/file.php/$1 [L]
+RewriteRule ^news/(.*)$ /~momoko/news.php/$1 [L]
+RewriteRule ^help/(.*)$ /~momoko/help.php/$1 [L]
+RewriteRule ^page/(.*)$ /~momoko/index.php/$1 [NC]
+RewriteRule ^admin/(.*)$ /~momoko/admin.php/$1 [L]
+</IfModule>
+
+<Limit *>
+Order allow,deny
+Allow from all
+</Limit>

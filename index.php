@@ -1,6 +1,6 @@
 <?php
-require "./assets/php/common.inc.php";
-require "./assets/php/content.inc.php";
+require dirname(__FILE__)."/assets/core/common.inc.php";
+require dirname(__FILE__)."/assets/core/content.inc.php";
 
 if (@$_SERVER['PATH_INFO'] && (pathinfo($_SERVER['PATH_INFO'],PATHINFO_EXTENSION) == 'htm' || pathinfo($_SERVER['PATH_INFO'],PATHINFO_EXTENSION) == 'html'))
 {
@@ -10,13 +10,13 @@ elseif (@$_SERVER['PATH_INFO'] && pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_EXTEN
 {
  $path=$_SERVER['PATH_INFO'];
  include $GLOBALS['CFG']->basedir.$_SERVER['PATH_INFO'];
- $child=new MomokoLITECustom($_GET);
+ $child=new MomokoCustom($_GET);
 }
 elseif (@$_SERVER['PATH_INFO'] && pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_EXTENSION) == 'txt')
 {
  if (pathinfo($_SERVER['PATH_INFO'],PATHINFO_FILENAME) == 'sitemap')
 	{
-		$nav=new MomokoLITENavigation(null,'display=list');
+		$nav=new MomokoNavigation(null,'display=list');
 		header("Content-type: text/plain");
 		echo ($nav->getModule('plain'));
 	}
@@ -34,13 +34,13 @@ elseif (@$_SERVER['PATH_INFO'] && pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_EXTEN
 		case 'rss':
 		$format='rss';
 		header("Content-type: application/rss+xml");
-		$mod=new MomokoLITENews(null,'type=recent');
+		$mod=new MomokoNews(null,'type=recent');
 		echo ($mod->getModule('rss'));
 		break;
 		case  'atom':
 		$format='atom';
 		header("Content-type: application/atom-xml");
-		$nav=new MomokoLITENews(null,'type=recent');
+		$nav=new MomokoNews(null,'type=recent');
 		echo ($nav->getModule($format));
 	 break;
 		default:
@@ -50,18 +50,18 @@ elseif (@$_SERVER['PATH_INFO'] && pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_EXTEN
 }
 elseif (@$_SERVER['PATH_INFO'])
 {
- $nav=new MomokoLITENavigation(null,'display=none');
+ $nav=new MomokoNavigation(null,'display=none');
  $path=$nav->getIndex($_SERVER['PATH_INFO']);
 }
 else
 {
-  $nav=new MomokoLITENavigation(null,'display=none');
+  $nav=new MomokoNavigation(null,'display=none');
   $path=$nav->getIndex();
 }
 
 if (@$path && !@$child)
 {
- $child=new MomokoLITEPage($path);
+ $child=new MomokoPage($path);
  if (@!empty($_GET['action']))
  {
   switch ($_GET['action'])
@@ -69,12 +69,12 @@ if (@$path && !@$child)
    case 'new':
    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
    {
-    $child=new MomokoLITEPage(pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_DIRNAME).'/new_page.htm');
+    $child=new MomokoPage(pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_DIRNAME).'/new_page.htm');
     $child->put($_POST);
    }
    else
    {
-    header("Location: ?action=login&re=new");
+    header("Location: https://".CURURI."?action=login&re=new");
     exit();
    }
    case 'edit':
@@ -84,7 +84,7 @@ if (@$path && !@$child)
    }
    else
    {
-    header("Location: ?action=login&re=edit");
+    header("Location: https://".CURURI."?action=login&re=edit");
     exit();
    }
    break;
@@ -95,6 +95,10 @@ if (@$path && !@$child)
     {
      header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location);
      exit();
+    }
+    else
+    {
+     trigger_error("Cannot remove page, please check permissions!",E_USER_ERROR);
     }
    }
    else
@@ -111,22 +115,23 @@ if (@$path && !@$child)
      $_SESSION['data']=serialize($GLOBALS['USR']);
      if (@!empty($_GET['re']))
      {
-      header("Location: ?action=".$_GET['re']);
+      header("Location: http://".CURURI."?action=".$_GET['re']);
      }
      else
      {
-      header("Location: ?loggedin=1");
+      header("Location: http://".CURURI."?loggedin=1");
      }
      exit();
     }
     else
     {
-     $child=new MomokoLITEError('Unauthorized');
+     $child=new MomokoError('Unauthorized');
     }
    }
    else
    {
-    $child=new MomokoForm('login');
+    header("Location://".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location."/login.php");
+     exit();
    }
    break;
    case 'register':
@@ -135,13 +140,14 @@ if (@$path && !@$child)
     $usr=new MomokoUser($_POST['name']);
     if ($usr->put($_POST))
     {
-     header("Location:/?action=login");
+     header("Location://".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location."/login.php");
      exit();
     }
    }
    else
    {
-    $child=new MomokoForm('register');
+    header ("Location://".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location."/login.php?action=create");
+    exit();
    }
    break;
    case 'logout':
@@ -155,7 +161,7 @@ if (@$path && !@$child)
  }
 }
 
-$tpl=new MomokoLITETemplate(pathinfo($path,PATHINFO_DIRNAME));
+$tpl=new MomokoTemplate(pathinfo($path,PATHINFO_DIRNAME));
 print $tpl->toHTML($child);
 
 ?>

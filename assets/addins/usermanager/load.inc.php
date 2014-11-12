@@ -12,16 +12,14 @@ if (@$_GET['dialog'])
 {
  include UMPATH.'/dialogs.inc.php';
  $child=new UMDialog($_GET['dialog']);
- echo ($child->build('dialog-'.$_GET['dialog']));
+ $child->build('dialog-'.$_GET['dialog']);
 }
 elseif (@$_GET['ajax'])
 {
  header("Content-type: application/json");
- echo(json_encode($child->get()));
+ $child->getJSON();
 }
 else
 {
  $child->setInfo();
- $tpl=new MomokoLITETemplate($dirroot.'/templates/main.tpl.htm');
- echo ($tpl->toHTML($child));
 }

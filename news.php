@@ -1,21 +1,21 @@
 <?php
-require "./assets/php/common.inc.php";
-require "./assets/php/content.inc.php";
+require dirname(__FILE__)."/assets/core/common.inc.php";
+require dirname(__FILE__)."/assets/core/content.inc.php";
 
-class MomokoLITENewsPage implements MomokoLITEObject
+class MomokoNewsPage implements MomokoObject
 {
-	private $path;
-	private $id;
-	private $info;
-	
-	public function __construct($path)
-	{
-		$this->path=$path;
-		$this->id=pathinfo($path,PATHINFO_FILENAME);
-		$this->info=$this->fillProperties();
-		$this->info['inner_body']=$this->get();
-		$this->info['title']=$this->info['headline'];
-		$this->info['full_html']=<<<HTML
+  private $path;
+  private $id;
+  private $info;
+
+  public function __construct($path)
+  {
+    $this->path=$path;
+    $this->id=pathinfo($path,PATHINFO_FILENAME);
+    $this->info=$this->fillProperties();
+    $this->info['inner_body']=$this->get();
+    $this->info['title']=$this->info['headline'];
+    $this->info['full_html']=<<<HTML
 <head>
 <html>
 <title>{$this->info['title']}</title>
@@ -25,55 +25,55 @@ class MomokoLITENewsPage implements MomokoLITEObject
 </body>
 </html>
 HTML;
-	}
+  }
+
+  public function __get($key)
+  {
+    if (array_key_exists($key,$this->info))
+    {
+      return $this->info[$key];
+    }
+    else
+    {
+      return false;
+    }
+  }
+
+  public function __set($key,$value)
+  {
+    if (array_key_exists($key,$this->info))
+    {
+      return $this->info[$key]=$value;
+    }
+    else
+    {
+      return false;
+    }
+  }
+
+  public function get()
+  {
+    $type=pathinfo($this->path,PATHINFO_EXTENSION);
+    switch ($type)
+    {
+      case 'htm':
+      case 'html':
+      $this->info['type']='html';
+      return $this->toHTML();
+      break;
+      case 'xml':
+      default:
+      $this->info['type']='xml';
+      return $this->toXML();
+      break;
+    }
+  }
 	
-	public function __get($key)
-	{
-		if (array_key_exists($key,$this->info))
-		{
-			return $this->info[$key];
-		}
-		else
-		{
-			return false;
-		}
-	}
-	
-	public function __set($key,$value)
-	{
-		if (array_key_exists($key,$this->info))
-		{
-			return $this->info[$key]=$value;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	
-	public function get()
-	{
-		$type=pathinfo($this->path,PATHINFO_EXTENSION);
-		switch ($type)
-		{
-			case 'htm':
-			case 'html':
-			$this->info['type']='html';
-			return $this->toHTML();
-			break;
-			case 'xml':
-			default:
-			$this->info['type']='xml';
-			return $this->toXML();
-			break;
-		}
-	}
-	
-	public function toHTML()
-	{
-		$fdate=date($GLOBALS['USR']->longdateformat,$this->date);
-		$self=pathinfo($this->path,PATHINFO_BASENAME);
-		$html=<<<HTML
+  public function toHTML()
+  {
+    $fdate=date($GLOBALS['USR']->longdateformat,$this->date);
+    $self=pathinfo($this->path,PATHINFO_BASENAME);
+    $html=<<<HTML
 <h2 class="headline">{$this->headline}</h2>
 <div id="fb-root"></div>
 <script>(function(d, s, id) {
@@ -87,29 +87,29 @@ HTML;
 <div class="article">{$this->article}</div>
 <div class="fb-comments" data-href="//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/news.php/{$self}" data-num-posts="2" data-width="470"></div>
 HTML;
-  return $html;
-	}
+    return $html;
+  }
+
+  public function toXML()
+  {
+    $dom=new DOMDocument('1.0', 'UTF-8');
+    $feed=$dom->appendChild(new DOMElement('feed',null,'http://www.w3.org/2005/Atom'));
+    $title=$feed->appendChild(new DOMElement('title',$this->headline));
+    $update=$feed->appendChild(new DOMElement('updated',gmdate('Y-m-d\TH:i:s\Z',$this->update)));
+    $summary=$feed->appendChild(new DOMElement('summary',$this->summary));
 	
-	public function toXML()
-	{
-  $dom=new DOMDocument('1.0', 'UTF-8');
-  $feed=$dom->appendChild(new DOMElement('feed',null,'http://www.w3.org/2005/Atom'));
-		$title=$feed->appendChild(new DOMElement('title',$this->headline));
-		$update=$feed->appendChild(new DOMElement('updated',gmdate('Y-m-d\TH:i:s\Z',$this->update)));
-		$summary=$feed->appendChild(new DOMElement('summary',$this->summary));
-		
-		return $dom->saveXML();
-	}
-	
-	private function fillProperties()
-	{
-		$news_reel=new MomokoLITENews($GLOBALS['USR'],'sort=recent');
-		$list=$news_reel->getModule('array');
-		return $list[$this->id];
-	}
+    return $dom->saveXML();
+  }
+
+  private function fillProperties()
+  {
+    $news_reel=new MomokoNews($GLOBALS['USR'],'sort=recent');
+    $list=$news_reel->getModule('array');
+    return $list[$this->id];
+  }
 }
 
-class MomokoLITENewsManager implements MomokoLITEObject
+class MomokoNewsManager implements MomokoObject
 {
  public $path;
  private $info=array();
@@ -148,7 +148,7 @@ class MomokoLITENewsManager implements MomokoLITEObject
   }
   else
   {
-   $news_reel=new MomokoLITENews($GLOBALS['USR'],'sort=recent');
+   $news_reel=new MomokoNews($GLOBALS['USR'],'sort=recent');
    $list=$news_reel->getModule('array');
    $info=$list[pathinfo($this->path,PATHINFO_FILENAME)];
    $info['ndate']=date('d M Y',$info['date']);
@@ -171,9 +171,7 @@ class MomokoLITENewsManager implements MomokoLITEObject
    }
    else
    {
-    $page=new MomokoLITEError('Server_Error');
-    $info['title']=$page->title;
-    $info['inner_body']=$page->inner_body;
+    trigger_error("Could not write changes to news reel!",E_USER_ERROR);
    }
    break;
    case 'new':
@@ -262,7 +260,7 @@ HTML;
    }
    else
    {
-    $news_reel=new MomokoLITENews($GLOBALS['USR'],'sort=recent');
+    $news_reel=new MomokoNews($GLOBALS['USR'],'sort=recent');
     if (@$_GET['action'] == 'new')
     {
      $data=$news_reel->put($_POST);
@@ -279,9 +277,7 @@ HTML;
     }
     else
     {
-     $page=new MomokoLITEError('Server_Error');
-     $info['title']=$page->title;
-     $info['inner_body']=$page->inner_body;
+      trigger_error("Could not write to news reel!",E_USER_ERROR);
     }
    }
   }
@@ -320,7 +316,7 @@ switch (@$_GET['action'])
   }
   else
   {
-   $child=new MomokoLITEError('Unauthorized');
+   $child=new MomokoError('Unauthorized');
   }
  }
  else
@@ -353,16 +349,16 @@ switch (@$_GET['action'])
  case 'new':
  case 'edit':
  case 'delete':
- $child=new MomokoLITENewsManager($path);
+ $child=new MomokoNewsManager($path);
  $child->getPage($_GET['action']);
  break;
  default:
- $child=new MomokoLITENewsPage($path);
+ $child=new MomokoNewsPage($path);
 }
 
 if ($child->type == 'html')
 {
- $tpl=new MomokoLITETemplate(pathinfo($path,PATHINFO_DIRNAME));
+ $tpl=new MomokoTemplate(pathinfo($path,PATHINFO_DIRNAME));
  print $tpl->toHTML($child);
 }
 else

@@ -1,6 +1,6 @@
 <?php
 
-class UserManager implements MomokoLITEObject
+class UserManager implements MomokoObject
 {
  public $action;
  public $dbtable;
@@ -42,14 +42,19 @@ class UserManager implements MomokoLITEObject
    {
     $cols=null;
    }
-   $where="num=".$_GET['u'];
-   $query=$this->dbtable->getData($cols,$where,null,1);
+   $query=$this->dbtable->getData("num:'".$_GET['u']."'",$cols,null,1);
    $rows=$query->toArray();
    return $rows[0];
    break;
    case 'put':
+   $user=new MomokoUser('guest');
+   $settings=$user->get();
    $data=$_POST;
    $data['num']=@$_GET['u'];
+   $data['password']=crypt($data['password'],$GLOBALS['CFG']->salt);
+   $data['shortdateformat']=$settings->shortdateformat;
+   $data['longdateformat']=$settings->longdateformat;
+   $data['rowspertable']=$settings->rowspertable;
    return $this->put($data);
    break;
    case 'drop';
@@ -81,12 +86,7 @@ class UserManager implements MomokoLITEObject
    }
    $table.="<th>Actions</th>\n</tr>\n";
 
-
-   if (@$_GET['filter'])
-   {
-    $where=explode(",",$_GET['filter']);
-   }
-   $query=$this->dbtable->getData($cols,$where,@$_GET['sort'],@$_GET['limit'],@$_GET['offset']);
+   $query=$this->dbtable->getData(@$_GET['q'],$cols,@$_GET['sort'],@$_GET['limit'],@$_GET['offset']);
    
    while ($row=$query->next())
    {
@@ -171,6 +171,11 @@ HTML;
   }
  }
 
+ public function getJSON()
+ {
+  $this->info['inner_body']=json_encode($this->get());
+ }
+
  public function setInfo()
  {
   if ($data=$this->get())
@@ -178,7 +183,7 @@ HTML;
    $info=parse_page($data);
    $varlist['finderroot']='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.'/assets/scripts/elfinder';
    $varlist['connectoruri']='//'.$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.$this->connector;
-   $ch=new MomokoCommentHandler($varlist);
+   $ch=new MomokoVariableHandler($varlist);
    $info['inner_body']=$ch->replace($info['inner_body']);
   }
   else
