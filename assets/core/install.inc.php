@@ -129,14 +129,14 @@ function db_upgrade($version,array $settings,$backup=null)
  $tables['addins']=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
  echo("Altering addin table columns...\n");
  $tables['addins']->putField("enabled","char",1,"NOT NULL") or die(trigger_error("could not add 'enabled' column, you may need to manually add this column, see our release notes for more details!",E_USER_WARNING));
- echo("Adding core addins!")
+ echo("Adding core addins!");
  $addins[]=array('dir'=>"finder",'incp'=>'y','enabled'=>'y','shortname'=>"elFinder",'longname'=>"elFinder",'description'=>"A simple file managment addins, which simpl loads elFinder on a page");
  $addins[]=array('dir'=>"usermanager",'incp'=>'y','enabled'=>'y','shortname'=>"User Manager",'longname'=>"User Manaber",'description'=>"Addin providing rudementary user management functions.");
  $addins[]=array('dir'=>"usersettings",'incp'=>'n','enabled'=>'y','shortname'=>"User Settings",'longname'=>"Manage User Settings",'description'=>"Addin providing users the ability to change their settings.");
  $addins[]=array('dir',"passreset",'incp'=>'n','enabled'=>'y','shortname'=>"Password Resetter",'longname'=>"Password Resetter",'description'=>"Allows users to reset their own password.");
  foreach ($addin as $row)
  {
-  $tables['addin']=>putData($row);
+  $tables['addin']->putData($row);
  }
  echo("Dropping old/unused tables...\n");
  $db->dropTable(DAL_TABLE_PRE.'merchants',DAL_DB_DEFAULT) or die(trigger_error("Unable to drop old table '".DAL_TABLE_PRE."merchants'!",E_USER_ERROR));
