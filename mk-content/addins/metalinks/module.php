@@ -4,6 +4,7 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
  public $info;
  public $opt_keys=array();
  private $usr;
+ private $actions=array();
  private $settings=array();
 
  public function __construct()
@@ -12,6 +13,21 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
   $this->usr=$GLOBALS['USR'];
   $this->opt_keys=array('display'=>array('type'=>'select','options'=>array('line','box')));
   parse_str($this->info->settings,$this->settings);
+  
+  if ($GLOBALS['SET']['rewrite'])
+  {
+   $feeds="feeds.xml";
+  }
+  else
+  {
+   $feeds="?content=feeds";
+  }
+  $actions[]=array('href'=>GLOBAL_PROTOCOL."//".$GLOBALS['SET']['baseuri']."/".$feeds,'title'=>"RSS Feeds");
+  if (!$GLOBALS['USR']->inGroup('nobody'))
+  {
+   $actions[]=array('href'=>'javascript:void();','onclick'=>"toggleSidebar();",'title'=>'My Dashboard');
+  }
+  $this->actions=$actions;
  }
 
  public function __get($key)
@@ -24,46 +40,27 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
 
  public function getModule($format='html')
  {
-  if ($this->usr->inGroup('nobody'))
-  {
-   if ($GLOBALS['SET']['use_ssl'] == TRUE)
-   {
-    $protocol='https';
-   }
-   else
-   {
-    $protocol='http';
-   }
-   if ($this->settings['display'] == 'box')
-   {
-    return <<<HTML
-<h4 class="module">Meta</h4>
-<div id="LoginBox" class="ucp box">
-<ul class="noindent nobullet">
-<li><a href="{$protocol}://{$GLOBALS['SET']['baseuri']}/mk-login.php">Login</a></li>
-<li><a href="{$protocol}://{$GLOBALS['SET']['baseuri']}/mk-login.php?action=new">New Account?</a></li>
-</ul>
-</form>
-</div>
-HTML;
-  }
-  else
-  {
-   return <<<HTML
-<span id="LoginLine" class="ucp"><a href="{$protocol}://{$GLOBALS['SET']['baseuri']}/mk-login.php">Login</a> | <a href="{$protocol}://{$GLOBALS['SET']['baseuri']}/mk-login.php?action=new">New Account?</a></span>
-HTML;
-  }
- }
- else
- {
+  $protocol=SECURE_PROTOCOL;
   if ($this->settings['display'] == 'box')
   {
    $userlinks=$this->listUserActions("<li>__LINK__</li>\n");
+   if ($GLOBALS['USR']->inGroup('nobody'))
+   {
+    $userinfo=<<<HTML
+<li><a href="{$protocol}//{$GLOBALS['SET']['baseuri']}/mk-login.php">Login</a></li>
+HTML;
+   }
+   else
+   {
+    $userinfo=<<<HTML
+<li>Welcome <strong>{$this->usr->name}</strong>!</li>
+HTML;
+   }
    return <<<HTML
 <h4 class="module">Meta</h4>
 <div id="UCPBox" class="ucp box">
 <ul class="nobullet noindent">
-<li>Welcome <strong>{$this->usr->name}</strong>!</li>
+{$userinfo}
 {$userlinks}
 </ul>
 </div>
@@ -72,19 +69,28 @@ HTML;
   else
   {
    $userlink=$this->listUserActions(" | __LINK__");
+   if ($GLOBALS['USR']->inGroup('nobody'))
+   {
+    $userinfo=<<<HTML
+<a href="{$protocol}//{$GLOBALS['SET']['baseuri']}/mk-login.php">Login</a>";
+HTML;
+   }
+   else
+   {
+    $userinfo=<<<HTML
+Welcome <strong>{$this->usr->name}</strong>
+HTML;
+   }
    return <<<HTML
-<span id="UCPLine" class="ucp">Welcome <strong>{$this->usr->name}</strong>{$userlink}</span>
+<span id="UCPLine" class="ucp">{$userinfo}{$userlink}</span>
 HTML;
   }
- }
  }
 
  private function listUserActions($wrapper="__LINK__")
  {
-  $actions[]=array('href'=>'javascript:void();','onclick'=>"toggleSidebar();",'title'=>'My Dashboard');
   $html=null;
-
-  foreach ($actions as $action)
+  foreach ($this->actions as $action)
   {
    if (@$action['onclick'])
    {

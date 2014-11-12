@@ -33,6 +33,23 @@ else
  define("QUERYSTARTER","&");
 }
 define("TEMPLATEROOT","/mk-content/templates/");
+if ($GLOBALS['SET']['use_ssl'])
+{
+ define("SECURE_PROTOCOL",'https');
+ if ($GLOBALS['SET']['use_ssl'] == "strict")
+ {
+  define ("GLOBAL_PROTOCOL",'https:');
+ }
+ else
+ {
+  define ("GLOBAL_PROTOCOL","http:");
+ }
+}
+else
+{
+ define ("GLOBAL_PROTOCOL","http:");
+ define ("SECURE_PROTOCOL",GLOBAL_PROTOCOL);
+}
 
 
 unset($setting,$pairs);
@@ -588,4 +605,4 @@ function join_dom(DOMDocument $DOMParent, DOMDocument $DOMChild, $tag = null)
  }
 
  return $DOMParent;
-}
+}

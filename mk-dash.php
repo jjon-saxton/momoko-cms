@@ -310,6 +310,9 @@ HTML;
        case 'sessionname':
        $title="session name";
        break;
+       case 'use_ssl':
+       $title="use SSL";
+       break;
        case 'rewrite':
        $title="human readable URLs";
        break;
@@ -326,9 +329,25 @@ HTML;
        break;
        case 'security_logging':
        case 'error_logging':
-       $page['body'].="<input type=number id=\"{$setting['key']}\" name=\"{$settings['key']}\" value=\"{$setting['value']}\">";
+       $page['body'].="<input type=number id=\"{$setting['key']}\" name=\"{$setting['key']}\" value=\"{$setting['value']}\">";
        break;
        //TODO add special cases for e-mail settings
+       case 'use_ssl':
+       $page['body'].="<select id=\"${setting['key']}\" name=\"{$setting['key']}\">\n";
+       $opts=array(array('value'=>'','title'=>"No"),array('value'=>'yes','title'=>"Only in senstive areas"),array('value'=>'strict','title'=>"For entire site"));
+       foreach ($opts as $option)
+       {
+        if ($option['value'] == $setting['value'])
+        {
+         $page['body'].="<option selected=selected value=\"{$option['value']}\">{$option['title']}</option>\n";
+        }
+        else
+        {
+         $page['body'].="<option value=\"{$option['value']}\">{$option['title']}</option>\n";
+        }
+       }
+       $page['body'].="</select>";
+       break;
        case 'rewrite':
        if ($setting['key'])
        {

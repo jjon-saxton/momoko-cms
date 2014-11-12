@@ -207,6 +207,7 @@ HTML;
   $rows['settings'][]=array('key'=>'basedir','value'=>$site['basedir']);
   $rows['settings'][]=array('key'=>'filedir','value'=>$site['filedir']);
   $rows['settings'][]=array('key'=>'tempdir','value'=>$site['tempdir']);
+  $rows['settings'][]=array('key'=>'use_ssl','value'=>$site['use_ssl']);
   $rows['settings'][]=array('key'=>'rewrite','value'=>$site['rewrite']);
   
   $okay=0;
