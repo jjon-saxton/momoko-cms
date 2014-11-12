@@ -37,6 +37,7 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
    if ($this->settings['display'] == 'box')
    {
     return <<<HTML
+<h4 class="module">Meta</h4>
 <div id="LoginBox" class="ucp box">
 <ul class="noindent nobullet">
 <li><a href="{$protocol}://{$GLOBALS['SET']['baseuri']}/mk-login.php">Login</a></li>
@@ -101,4 +102,4 @@ HTML;
 	 $query=$table->getData("dir:'".basename(dirname(__FILE__))."'",null,null,1);
 	 return $query->fetch(PDO::FETCH_OBJ);
 	}
-}
+}
