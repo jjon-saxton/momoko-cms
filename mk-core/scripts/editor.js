@@ -65,6 +65,7 @@
 			'title'			: true,
 			'titletext'		: varsTitle,
 			'button'		: "OK",
+			'browse' : "Browse...",
 			'format'		: true,
 			'formats'		: formats,
 			'fsize' 		: true,
@@ -220,11 +221,12 @@
 			var emphasize		= vars.css+"_tool_depressed"; // highlight style of the toolbar buttons
 			
 			// add to some tools in link form area
-			linkform.append('<div class="'+vars.css+'_linktypeselect" unselectable></div><input class="'+vars.css+'_linkinput" type="text/css" value=""><div class="'+vars.css+'_linkbutton" unselectable>'+vars.button+'</div> <div style="height:1px;float:none;clear:both"></div>');
+			linkform.append('<div class="'+vars.css+'_linktypeselect" unselectable></div><input class="'+vars.css+'_linkinput" type="text/css" value=""><div class="'+vars.css+'_linkbrowse" unselectable>'+vars.browse+'</div> <div class="'+vars.css+'_linkbutton" unselectable>'+vars.button+'</div> <div style="height:1px;float:none;clear:both"></div>');
 			
 			var linktypeselect	= linkform.find("."+vars.css+"_linktypeselect"); // the tool of link-type-selector
 			var linkinput		= linkform.find("."+vars.css+"_linkinput"); // the input of insertion link
 			var linkbutton		= linkform.find("."+vars.css+"_linkbutton"); // the button of insertion link
+			var linkbrowse	= linkform.find("."+vars.css+"_linkbrowse"); // the button for browsing for a uri
 			
 			// add to the link-type-selector sub tool parts
 			linktypeselect.append('<div class="'+vars.css+'_linktypeview" unselectable></div><div class="'+vars.css+'_linktypes" role="menu" unselectable></div>');
@@ -648,6 +650,12 @@
 					linkbutton.click(function()
 					{
 						linkRecord(jQTE.find("["+setdatalink+"]"));
+					});
+					
+					linkbrowse.click(function()
+					{
+					 //TODO create/open uri browser
+					 alert ("Function not implemented!");
 					});
 				}
 				else
