@@ -655,8 +655,9 @@
 					
 					linkbrowse.click(function()
 					{
-					 $("div#modal").load(vars.dashuri+"?section=content&action=gethref&ajax=1"); //TODO Load dialog via ajax
-					 $("#vtabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
+					 $("div#modal").load(vars.dashuri+"?section=content&action=gethref&ajax=1",function(){
+					  $("#vtabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
+					 });
 					 $("div#modal").dialog({
 					  height: 500,
 					  width: 800,

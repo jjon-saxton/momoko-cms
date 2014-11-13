@@ -691,13 +691,16 @@ HTML;
    $page['body']=<<<HTML
 <div id="vtabs">
 <ul>
-<li><a href="#External">External Source</li>
+<li><a href="#External">External Source</a></li>
 <li><a href="#Pages">Current Page</a></li>
 <li><a href="#Posts">Current Post</a></li>
 <li><a href="#Attachments">Current Attachment</a></li>
 </ul>
 <div id="External">
-<input type=text name="uri" placeholder="http://">
+<h4 class="module">Upload</h4>
+<div id="ExtURI"><label for="uri">A file from the web: </label><input type=text id="uri" name="uri" placeholder="http://"></div>
+<div id="ExtFile"><label for="file">A file on your computer: </label><input type=file id="file" name="lfile"></div>
+<div id="FileInfo"></div>
 </div>
 <div id="Pages">
 {$pages}
