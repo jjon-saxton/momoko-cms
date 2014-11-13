@@ -59,16 +59,8 @@ class MomokoDashboard implements MomokoObject
    case 'pages':
    case 'posts':
    case 'attachments':
-   $cols=array('num','title','status','mime_type');
-   $text="<div id=\"Content\" class=\"box\">\n<table width=100% class=\"dashboard row-select\">\n<tr>\n";
-   foreach ($cols as $th)
-   {
-    if ($th != "num")
-    {
-     $text.="<th>".ucwords(str_replace("_"," ",$th))."</th>";
-    }
-   }
-   $text.="</tr>";
+   $cols=null; //TODO remove this from all queries
+   $text="<div id=\"ContentList\" class=\"box\">\n";
    $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols);
    $row_c=$query->rowCount();
    $pages=paginate($row_c);
@@ -81,7 +73,7 @@ class MomokoDashboard implements MomokoObject
    if (count($pages) > 1)
    {
     $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols,NULL,$GLOBALS['USR']->rowspertable,@$_GET['offset']);
-    $page_div="<div id=\"Page\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list={$list}&offset={$prev}\">Previous</a></td><td align=center>";
+    $page_div="<div id=\"pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list={$list}&offset={$prev}\">Previous</a></td><td align=center>";
     foreach ($pages as $page)
     {
      if ($page['offset'] == @$_GET['offset'])
@@ -101,22 +93,50 @@ class MomokoDashboard implements MomokoObject
    }
    if ($row_c>0)
    {
+    $summary_len=300;
     while($content=$query->fetch(PDO::FETCH_ASSOC))
     {
-     $text.="<tr>\n";
-     foreach ($content as $col=>$value)
+     $content['date_created']=date($GLOBALS['USR']->shortdateformat,strtotime($content['date_created']));
+     if ($content['date_modified'])
      {
-      if ($col != "num")
+      $content['date_modified']=date($GLOBALS['USR']->shortdateformat,strtotime($content['date_modified']));
+     }
+     else
+     {
+      $content['date_modified']=date($GLOBALS['USR']->shortdateformat,strtotime($content['date_created']));
+     }
+     $content['author']=get_author($content['author']); //Fetches the author object
+     $content['author']=ucwords($content['author']->name); //Narrows down to just the name
+     $content['text']=preg_replace("/<h2>(.*?)<\/h2>/smU",'',$content['text']); //get rid of page title, it will be styleized and placed elsewhere.
+     if (strlen($content['text']) > $summary_len)
+     {
+      preg_match("/^(.{1,".$summary_len."})[\s]/i", $content['text'], $matches);
+      $content['text']=$matches[0].'...';
+     }
+     if (!$content['link'])
+     {
+      if ($GLOBALS['SET']['rewrite'])
       {
-       $text.="<td>{$value}</td>";
+       $content['link']=urlencode($content['title'].".htm?");
+      }
+      else
+      {
+       $content['link']="?p=".$content['num']."&";
       }
      }
-     $text.="</tr>\n";
+     
+     $text.=<<<HTML
+<div id="{$content['num']}" class="page box {$content['status']}"><span class="{$content['status']} icon"></span><h4 class="module">{$content['title']}</h4>
+<div class="page properties">{$content['date_created']}, {$content['date_modified']}, {$content['author']}, {$content['mime_type']}</div>
+<p class="summary">{$content['text']}</p>
+<div id="location" style="display:none">//{$GLOBALS['SET']['baseuri']}/{$content['link']}</div>
+</div>
+HTML;
     }
    }
    else
    {
-    $text.="<tr><td colspan=5 align=center><span class=\"notice\">- You have no {$list} yet! -</td></tr>";
+    $text.="<div id=\"NoContent\" class=\"page box empty\"><span class=\"empty icon\"></span>- You have no {$list} yet! -</div>";
    }
    $info['inner_body']="<h2>".ucwords($list)."</h2>\n".$text."</table></div>".$page_div;
    break;
@@ -703,12 +723,15 @@ HTML;
 <div id="FileInfo"></div>
 </div>
 <div id="Pages">
+<h4 class="module">Select a Page</h4>
 {$pages}
 </div>
 <div id="Posts">
+<h4 class="module">Select a Post</h4>
 {$posts}
 </div>
 <div id="Attachments">
+<h4 class="module">Select an Attachment</h4>
 {$attachments}
  </div>
 </div>

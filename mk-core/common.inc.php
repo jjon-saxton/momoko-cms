@@ -589,6 +589,15 @@ function parse_page($data)
  return $array;
 }
 
+function get_author($num)
+{
+ $auth_table=new DataBaseTable('users');
+ $auth_query=$auth_table->getData("num:'= {$num}'",null,null,1);
+ $author=$auth_query->fetch(PDO::FETCH_OBJ);
+ 
+ return $author;
+}
+
 function join_dom(DOMDocument $DOMParent, DOMDocument $DOMChild, $tag = null)
 {
  $node = $DOMChild->documentElement;
