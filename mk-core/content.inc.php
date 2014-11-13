@@ -446,6 +446,7 @@ $(function(){
  }
   
  $("textarea").jqte({
+  dashuri:"//{$GLOBALS['SET']['baseuri']}/mk-dash.php",
   color:false,
   strike:false,
   formats:[

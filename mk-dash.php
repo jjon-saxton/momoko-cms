@@ -686,6 +686,31 @@ HTML;
     //TODO save template changes
    }
    break;
+   case 'gethref':
+   $page['title']="Browse Site";
+   $page['body']=<<<HTML
+<div id="vtabs">
+<ul>
+<li><a href="#External">External Source</li>
+<li><a href="#Pages">Current Page</a></li>
+<li><a href="#Posts">Current Post</a></li>
+<li><a href="#Attachments">Current Attachment</a></li>
+</ul>
+<div id="External">
+<input type=text name="uri" placeholder="http://">
+</div>
+<div id="Pages">
+{$pages}
+</div>
+<div id="Posts">
+{$posts}
+</div>
+<div id="Attachments">
+{$attachments}
+ </div>
+</div>
+HTML;
+   break;
    case 'list':
    default:
    $page['title']="Manage Users";

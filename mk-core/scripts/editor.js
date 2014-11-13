@@ -66,6 +66,7 @@
 			'titletext'		: varsTitle,
 			'button'		: "OK",
 			'browse' : "Browse...",
+			'dashuri' : "/",
 			'format'		: true,
 			'formats'		: formats,
 			'fsize' 		: true,
@@ -654,8 +655,14 @@
 					
 					linkbrowse.click(function()
 					{
-					 //TODO create/open uri browser
-					 alert ("Function not implemented!");
+					 $("div#modal").load(vars.dashuri+"?section=content&action=gethref&ajax=1"); //TODO Load dialog via ajax
+					 $("#vtabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
+					 $("div#modal").dialog({
+					  height: 500,
+					  width: 800,
+					  modal: true,
+					  title: "Browse Site"
+					 });
 					});
 				}
 				else
