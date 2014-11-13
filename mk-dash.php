@@ -117,19 +117,20 @@ class MomokoDashboard implements MomokoObject
      {
       if ($GLOBALS['SET']['rewrite'])
       {
-       $content['link']=urlencode($content['title'].".htm?");
+       $content['link']=$content['type']."/".urlencode($content['title'].".htm?");
       }
       else
       {
-       $content['link']="?p=".$content['num']."&";
+       $content['link']="?content={$content['type']}p={$content['num']}&";
       }
      }
      
      $text.=<<<HTML
-<div id="{$content['num']}" class="page box {$content['status']}"><span class="{$content['status']} icon"></span><h4 class="module">{$content['title']}</h4>
-<div class="page properties">{$content['date_created']}, {$content['date_modified']}, {$content['author']}, {$content['mime_type']}</div>
-<p class="summary">{$content['text']}</p>
+<div id="{$content['num']}" class="page box {$content['status']}"><h4 style="display:inline-block;clear:left" class="module">{$content['title']}</h4>
 <div id="location" style="display:none">//{$GLOBALS['SET']['baseuri']}/{$content['link']}</div>
+<div class="page actions"style="float:right"><span id="view" class="ui-icon ui-icon-folder-open" style="display:inline-block" title="View"></span> <span id="edit" class="ui-icon ui-icon-pencil" style="display:inline-block" title="Edit"></span> <span id="delete" class="ui-icon ui-icon-trash" style="display:inline-block" title="Delete"></span></div>
+<div class="page properties">{$content['date_created']}, {$content['date_modified']}, {$content['author']}, {$content['mime_type']}</div>
+<div class="summary">{$content['text']}</div>
 </div>
 HTML;
     }
