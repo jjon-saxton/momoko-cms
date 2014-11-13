@@ -31,6 +31,20 @@ $(function(){
    
    $(this).children("td").toggleClass("ui-state-highlight");
   });
+  
+  $(".page div.actions").find("span").click(function(){
+   var location=$(this).parent().find("a#location").attr('href');
+   var action=$(this).attr('id');
+   if (action != 'view')
+   {
+    window.location=location+"action="+action;
+   }
+   else
+   {
+    location=location.slice(0,-1);
+    window.location=location;
+   }
+  });
              
   $( "#add-addin" )
       .button()

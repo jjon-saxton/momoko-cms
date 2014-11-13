@@ -21,6 +21,8 @@ ul.plug.list {padding-left:5px; list-style:none}
 .portlet-content input {max-width:50px}
 .portlet-placeholder {width:100%;max-width:150px;border: 1px dotted black; margin: 0 1em 1em 0; height: 50px}
 
+div.page {border:1px solid #999; border-radius:4px}
+
 #MapList ul { list-style-type: none; margin: 0; padding: 0; min-height: 10px }
 #MapList ul li { margin: 3px; padding: 0.4em; }
 #MapList ul .ui-icon { display: inline-block; }
