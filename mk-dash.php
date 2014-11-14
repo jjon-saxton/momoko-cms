@@ -707,14 +707,46 @@ HTML;
    }
    break;
    case 'gethref':
+   $list=$this->table->getData(null,null,'order');
+   while ($content=$list->fetch(PDO::FETCH_OBJ))
+   {
+    if (!$content->link)
+    {
+     if ($GLOBALS['SET']['rewrite'])
+     {
+      $href=GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}/{$content->type}/".urlencode($content->title).".htm";
+     }
+     elseif ($content->type == 'page')
+     {
+      $href=GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}/?p={$content->num}";
+     }
+     else
+     {
+      $href=GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}/?content={$content->type}&p={$content->num}";
+     }
+    }
+    $temp="<div id=\"{$content->num}\" class=\"page selectable box\"><a id=\"location\" href=\"{$href}\" style=\"display:none\">[insert]</a><h4 class=\"module\">{$content->title}</h4></div>";
+    switch($content->type)
+    {
+     case 'page':
+     $pages.=$temp;
+     break;
+     case 'post':
+     $posts.=$temp;
+     break;
+     case 'attachment':
+     $attachments.=$temp;
+     break;
+    }
+   }
    $page['title']="Browse Site";
    $page['body']=<<<HTML
 <div id="vtabs">
 <ul>
 <li><a href="#External">External Source</a></li>
-<li><a href="#Pages">Current Page</a></li>
-<li><a href="#Posts">Current Post</a></li>
-<li><a href="#Attachments">Current Attachment</a></li>
+<li><a href="#Pages">Page</a></li>
+<li><a href="#Posts">Post</a></li>
+<li><a href="#Attachments">Attachment</a></li>
 </ul>
 <div id="External">
 <h4 class="module">Upload</h4>
