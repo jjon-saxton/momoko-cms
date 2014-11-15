@@ -706,6 +706,103 @@ HTML;
     //TODO save template changes
    }
    break;
+   case 'upload':
+   $page['title']="Upload a file from your computer";
+   if ($_FILES['file']['tmp_name'])
+   {
+    $upload_info=new finfo(FILEINFO_MIME_TYPE);
+    $finfo=$_FILES['file'];
+    $finfo['mime_type']=$upload_info->file($finfo['tmp_name']);
+    $finfo['temp']=$GLOBALS['SET']['filedir']."/temp/".crypt(time());
+    
+    if (is_writable($GLOBALS['SET']['filedir']."/temp"))
+    {
+     move_uploaded_file($_FILES['file']['tmp_name'],$finfo['temp']);
+     //TODO put file in database and move to permenant location if needed.
+     if ($finfo['mime_type'] == "text/html")
+     {
+      $finfo['type']='page';
+      if($html=file_get_contents($finfo['temp']))
+      {
+       //TODO find title and body
+      }
+      else
+      {
+       $finfo['error']="HTML file detected, but I could not process it!";
+      }
+      unlink($finfo['temp']);
+     }
+     else
+     {
+      $finfo['type']='attachment';
+      $finfo['title']=$finfo['name'];
+      if(rename($finfo['temp'],$GLOBALS['SET']['filedir']."/".$finfo['name']))
+      {
+       //TODO add attachment to database!
+      }
+      else
+      {
+       $finfo['error']="Could not move attachment to its permenant location!";
+      }
+     }
+    }
+    else
+    {
+     trigger_error("Cannot write to temporary storage directory!",E_USER_WARNING);
+     if (file_exists($GLOBALS['SET']['filedir']."/temp"))
+     {
+      $finfo['error']="Temp folder not writable!";
+     }
+     else
+     {
+      $finfo['error']="Temp folder does not exist!";
+     }
+    }
+    
+    if (!$finfo['error'])
+    {
+     $script_body=<<<TXT
+$('span#msg',pDoc).html("File uploaded!").addClass("success");
+$('div#FileInfo',pDoc).append("<div class=\"page selectable box\"><a id=\"location\" href=\"{$finfo['link']}\" style=\"display:none\">[insert]</a><strong>{$finfo['title']}</strong></div>");
+window.setTimeout(function(){
+ $("span#msg",pDoc).remove();
+ $('input#file',pDoc).removeAttr('disabled');
+}, 1500);
+TXT;
+    }
+    else
+    {
+     $script_body=<<<TXT
+$('span#msg',pDoc).html('{$finfo['error']}').addClass("error");
+window.setTimeout(function(){
+ $('input#file',pDoc).removeAttr('disabled');
+}, 1500);
+TXT;
+    }
+     
+    $page['body']=<<<HTML
+<html>
+<head>
+<title>File Upload</title>
+<script language=javascript src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript"></script>
+<body>
+<script language="javascript" type="text/javascript">
+var pDoc=window.parent.document;
+
+{$script_body}
+</script>
+<p>Processing complete. Check below for further debugging.</p>
+</body>
+</html>
+HTML;
+   }
+   else
+   {
+    $page['body']=<<<HTML
+<p>Ready for upload!</p>
+HTML;
+   }
+   break;
    case 'gethref':
    $list=$this->table->getData(null,null,'order');
    while ($content=$list->fetch(PDO::FETCH_OBJ))
@@ -725,7 +822,7 @@ HTML;
       $href=GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}/?content={$content->type}&p={$content->num}";
      }
     }
-    $temp="<div id=\"{$content->num}\" class=\"page selectable box\"><a id=\"location\" href=\"{$href}\" style=\"display:none\">[insert]</a><h4 class=\"module\">{$content->title}</h4></div>";
+    $temp="<div id=\"{$content->num}\" class=\"page selectable box\"><a id=\"location\" href=\"{$href}\" style=\"display:none\">[insert]</a><strong>{$content->title}</strong></div>";
     switch($content->type)
     {
      case 'page':
@@ -750,9 +847,11 @@ HTML;
 </ul>
 <div id="External">
 <h4 class="module">Upload</h4>
+<form enctype="multipart/form-data" action="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=upload&ajax=1" method="post" target="droptarget">
 <div id="ExtURI"><label for="uri">A file from the web: </label><input type=text id="uri" name="uri" placeholder="http://"></div>
-<div id="ExtFile"><label for="file">A file on your computer: </label><input type=file id="file" name="lfile"></div>
-<div id="FileInfo"></div>
+<div id="ExtFile"><label for="file">A file on your computer: </label><input type=file id="file" name="file" onchange="iUpload(this)"></div>
+</form>
+<div id="FileInfo"><iframe id="FileTarget" name="droptarget" style="display:none" src="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=upload&ajax=1"></iframe></div>
 </div>
 <div id="Pages">
 <h4 class="module">Select a Page</h4>
