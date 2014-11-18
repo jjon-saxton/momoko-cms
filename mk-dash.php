@@ -489,7 +489,7 @@ HTML;
    break;
    case 'appearance':
    $page['title']="Site Appearance";
-   if (!$user_data['raw_dom'] && !$user_data['save'])
+   if (!$user_data['raw_dom'] && !$user_data['send'])
    {
     $map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
     $maplist=$map->getModule('html');
@@ -508,7 +508,7 @@ HTML;
      }
     }
     $templatesettings.="</select></li>\n<li><label for=\"style\">Style:</label> <select id=\"style\" name=\"style\">";
-    foreach (glob($GLOBALS['SET']['filedir']."templates/".$GLOBALS['SET']['template']."/*.css") as $file)
+    foreach (glob($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."templates/".$GLOBALS['SET']['template']."/*.css") as $file)
     {
      if (preg_match("/((?:[a-z][a-z]+))(-)((?:[a-z][a-z\\.\\d_]+)\\.(?:[a-z\\d]{3}))(?![\\w\\.])/",$file,$matches) == 0)
      {
@@ -529,7 +529,7 @@ HTML;
       $module['zone']=0;
      }
      parse_str($module['settings'],$module['settings']);
-     include_once $GLOBALS['SET']['filedir']."addins/".$module['dir']."/module.php";
+     include_once $GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."addins/".$module['dir']."/module.php";
      $mod_obj="Momoko".ucwords($module['dir'])."Module";
      $mod_obj=new $mod_obj();
      $module['settings']=$mod_obj->settingsToHTML($module['settings']);
@@ -552,20 +552,9 @@ HTML;
 <script language="javascript">
 $(function(){
  $(".dialog").hide();
- $(".dialog#MapList").dialog({
-  autoOpen:false,
-  resizable:false,
-  modal:true,
-  buttons:{
-   "Finished":function(){
-    var raw=$("div#MapList").html();
-    $("input#map").val(raw);
-    $("form#MapForm").submit();
-   },
-   "Cancel":function(){
-    $(this).dialog("close");
-   }
-  }
+ 
+ $("select#template").change(function(){
+  $("select#style").disable();
  });
  
  $("button#SaveMods").click(function(event){
@@ -707,7 +696,19 @@ HTML;
    }
    else
    {
-    //TODO save template changes
+    $addins=new DataBaseTable('addins');
+    $list=$addins->getData("shortname:'{$user_data['template']}'",array('num','dir'),null,1);
+    $template=$list->fetch(PDO::FETCH_ASSOC);
+    $template['headtags']="<link rel=\"stylesheet\" href=\"".GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}{$GLOBALS['SET']['filedir']}templates/{$template['dir']}/{$user_data['style']}\" type=\"text/css\">";
+    $style=$addins->updateData($template);
+    
+    $settings=new DataBaseTable('settings');
+    $data['key']="template";
+    $data['value']=$user_data['template'];
+    $template=$settings->updateData($data);
+    
+    header("Location: http://{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance");
+    exit();
    }
    break;
    case 'upload':

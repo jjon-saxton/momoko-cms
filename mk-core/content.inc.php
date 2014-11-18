@@ -801,6 +801,7 @@ HTML;
   {
    $editor=null;
   }
+  $addin_tags=compile_head();
   $split['head']=<<<HTML
 <title>~{sitename} - ~{pagetitle}</title>
 <!-- Meta Tags? -->
@@ -809,6 +810,7 @@ HTML;
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 {$editor}<script src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/dash.js" type="text/javascript"></script>
 <link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/mk-core/styles/momoko.css" type="text/css">
+{$addin_tags}
 {$split['head']}
 HTML;
   $split['body']=<<<HTML

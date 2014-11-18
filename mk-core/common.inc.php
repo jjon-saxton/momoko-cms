@@ -598,20 +598,18 @@ function get_author($num)
  return $author;
 }
 
-function join_dom(DOMDocument $DOMParent, DOMDocument $DOMChild, $tag = null)
+function compile_head()
 {
- $node = $DOMChild->documentElement;
- $node = $DOMParent->importNode($node, true);
-
- if ($tag !== null)
+ $html=null;
+ $table=new DataBaseTable('addins');
+ $list=$table->getData("enabled:'y'",array('headtags'));
+ while ($addin=$list->fetch(PDO::FETCH_OBJ))
  {
-  $tag = $DOMParent->getElementsByTagName($tag)->item(0);
-  $tag->appendChild($node);
+  if ($addin->headtags)
+  {
+   $html.=$addin->headtags."\n";
+  }
  }
- else
- {
-  $DOMParent->documentElement->appendChild($node);
- }
-
- return $DOMParent;
+ 
+ return $html;
 }
