@@ -657,17 +657,15 @@
 					{
 					 $("div#modal").load(vars.dashuri+"?section=content&action=gethref&ajax=1",function(){
 					  $("#vtabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
-					  $("div.selectable").hover(function(){
+					 }).on('mouseenter',"div.selectable",function(){
 					   $(this).addClass("ui-state-hover");
-					  },
-					  function(){
+					  }).on('mouseleave',"div.selectable",function(){
 					   $(this).removeClass("ui-state-hover");
-					  }).click(function(){
+					  }).on('click',"div.selectable",function(){
 					   var location=$(this).find("a#location").attr('href');
 					   $(linkinput).val(location);
 					   $("div#modal").dialog('close');
 					  });
-					 });
 					 $("div#modal").dialog({
 					  height: 500,
 					  width: 800,

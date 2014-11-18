@@ -762,7 +762,7 @@ HTML;
     if (!$finfo['error'])
     {
      $script_body=<<<TXT
-$('span#msg',pDoc).html("File uploaded!").addClass("success");
+$('span#msg',pDoc).html("Uploaded!").addClass("success");
 $('div#FileInfo',pDoc).append("<div class=\"page selectable box\"><a id=\"location\" href=\"{$finfo['link']}\" style=\"display:none\">[insert]</a><strong>{$finfo['title']}</strong></div>");
 window.setTimeout(function(){
  $("span#msg",pDoc).remove();
