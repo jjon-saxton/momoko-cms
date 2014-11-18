@@ -697,8 +697,13 @@ HTML;
    else
    {
     $addins=new DataBaseTable('addins');
+    $list=$addins->getData("shortname:'{$GLOBALS['SET']['template']}'",array('num','dir'),NULL,1);
+    $cur_template=$list->fetch(PDO::FETCH_ASSOC);
+    $cur_template['enabled']='n';
+    $kill_template=$addins->updataData($cur_template);
     $list=$addins->getData("shortname:'{$user_data['template']}'",array('num','dir'),null,1);
     $template=$list->fetch(PDO::FETCH_ASSOC);
+    $template['enabled']='y';
     $template['headtags']="<link rel=\"stylesheet\" href=\"".GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}{$GLOBALS['SET']['filedir']}templates/{$template['dir']}/{$user_data['style']}\" type=\"text/css\">";
     $style=$addins->updateData($template);
     
