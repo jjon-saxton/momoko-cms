@@ -124,6 +124,10 @@ class MomokoDashboard implements MomokoObject
        $content['link']="?content={$content['type']}&p={$content['num']}&";
       }
      }
+     else
+     {
+      $content['link']="?content={$content['type']}&link={$content['link']}&";
+     }
      
      $text.=<<<HTML
 <div id="{$content['num']}" class="page box {$content['status']}"><h4 style="display:inline-block;clear:left" class="module">{$content['title']}</h4>
@@ -736,9 +740,19 @@ HTML;
      {
       $finfo['type']='attachment';
       $finfo['title']=$finfo['name'];
-      if(rename($finfo['temp'],$GLOBALS['SET']['filedir']."/".$finfo['name']))
+      $finfo['link']=$GLOBALS['SET']['filedir']."/".$finfo['name'];
+      if(rename($finfo['temp'],$GLOBALS['SET']['baseuri']."/".$finfo['link']))
       {
-       //TODO add attachment to database!
+       try
+       {
+        $new_ko=$this->table->putData($finfo);
+       }
+       catch (Exception $err)
+       {
+        trigger_error("Caught exception '".$err->getMessage()."' while attempting to add attachment to database",E_USER_ERROR);
+        ulink($finfo['link']);
+        $finfo['error']=$err->getMessage();
+       }
       }
       else
       {
@@ -821,6 +835,10 @@ HTML;
      {
       $href=GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}/?content={$content->type}&p={$content->num}";
      }
+    }
+    else
+    {
+     $href=GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}/".$content->link;
     }
     $temp="<div id=\"{$content->num}\" class=\"page selectable box\"><a id=\"location\" href=\"{$href}\" style=\"display:none\">[insert]</a><strong>{$content->title}</strong></div>";
     switch($content->type)

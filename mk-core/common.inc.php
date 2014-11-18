@@ -199,7 +199,7 @@ class MomokoVariableHandler
    {
     while ($module=$query->fetch(PDO::FETCH_ASSOC))
     {
-     require_once $GLOBALS['SET']['filedir']."addins/{$module['dir']}/".$module['type'].".php";
+     require_once $GLOBALS['SET']['basedir']."/".$GLOBALS['SET']['filedir']."addins/{$module['dir']}/".$module['type'].".php";
      $class="Momoko".ucwords($module['dir'])."Module";
      $mod=new $class();
      $text.=$mod->getModule('html');

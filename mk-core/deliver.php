@@ -1,56 +1,8 @@
 <?php
 
-function do_attachement($path,$id=null)
+function do_attachment($path,$id=null)
 {
-require_once $GLOBALS['SET']['basedir'].'/core/ximager.inc.php';
-if (@$path && (pathinfo($path,PATHINFO_EXTENSION) != 'html' || pathinfo($path,PATHINFO_EXTENSTION) != 'php'))
-{
- $img=new MomokoImage($GLOBALS['CFG']->datadir.$path);
- if ($img->isImage())
- {
-  if (!empty($_GET['w']) && empty($_GET['h']))
-  {
-   $img->resizeToWidth($_GET['w']);
-  }
-  elseif (empty($_GET['w']) && !empty($_GET['h']))
-  {
-   $img->resizeToHeight($_GET['h']);
-  }
-  elseif (!empty($_GET['w']) && !empty($_GET['h']))
-  {
-   $img->resize($_GET['w'],$_GET['h']);
-  }
-  elseif (!empty($_GET['scale']))
-  {
-   $img->scale($_GET['scale']);
-  }
-  header("Content-type: image/png");
-  if (@$_GET['download'] == TRUE)
-  {
-   header('Content-Disposition: attachment; filename="'.pathinfo($path,PATHINFO_FILENAME).'.png"');
-  }
-  else
-  {
-   header('Content-Disposition: inline; filename="'.pathinfo($path,PATHINFO_FILENAME).'.png"');
-  }
-  $data=$img->get();
-  unset($img);
- }
- else
- {
-  $filename=$GLOBALS['CFG']->datadir.$path;
-  $finfo=new finfo(FILEINFO_MIME);
-  $mime=$finfo->file($filename);
-  if (@$_GET['download'] == TRUE)
-  {
-   header('Content-Disposition: attachment');
-  }
-  header("Content-type: ".$mime);
-  $data=file_get_contents($filename);
- }
-}
-
-echo($data);
+ header("Location: ".GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}/{$_GET['link']}");
 }
 
 function do_page($path,$id=null)
@@ -340,4 +292,4 @@ else
 }
 }
 
-?>
+?>

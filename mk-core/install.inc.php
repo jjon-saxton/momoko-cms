@@ -96,12 +96,12 @@ function fill_tables(array $site, array $admin,array $defaults=null)
 
   if (empty($site['filedir']))
   {
-   $site['filedir']=$site['basedir']."/files/";
+   $site['filedir']="/mk-content/";
   }
 
   if (empty($site['tempdir']))
   {
-   $site['tempdir']=$site['basedir'].$site['filedir']."/temp/";
+   $site['tempdir']=$site['filedir']."/temp/";
   }
   
   $firstpage=<<<HTML

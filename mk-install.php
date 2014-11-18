@@ -206,7 +206,7 @@ HTML;
 <td align=right><label for="basedir">Absolute path where MomoKO lives:</label></td><td><input type=text id="basedir" name="settings[basedir]" value="{$basedir}"></td>
 </tr>
 <tr>
-<td align=right><label for="filedir">Path where attachments and other content will be uploaded:</label></td><td><input type=text id="filedir" name="settings[filedir]" value="{$basedir}/mk-content/"></td>
+<td align=right><label for="filedir">Path where attachments and other content will be uploaded:</label></td><td><span id="basedir">{$basedir}/</span><input type=text id="filedir" name="settings[filedir]" value="/mk-content/"></td>
 </tr>
 <table>
 </div>
