@@ -103,6 +103,11 @@ function fill_tables(array $site, array $admin,array $defaults=null)
   {
    $site['tempdir']=$site['filedir']."/temp/";
   }
+
+  if (empty($site['use_ssl']))
+  {
+   $site['use_ssl']=FALSE;
+  }
   
   $firstpage=<<<HTML
 <html>
@@ -221,7 +226,7 @@ HTML;
     {
       if ($dbtbl->putData($data))
       {
-	$addedrows++;
+	   $addedrows++;
       }
       $numrows++;
     }
