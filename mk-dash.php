@@ -518,7 +518,7 @@ HTML;
     }
     $templatesettings.="</select></li>\n</ul>";
 
-    $modulelayout=file_get_contents($GLOBALS['SET']['filedir']."templates/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm");
+    $modulelayout=file_get_contents($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."templates/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm");
     $addins=new DataBaseTable('addins');
     $dbquery=$addins->getData("type:'module'",array('num','dir','shortname','zone','settings'),'order');
     $modulelist=NULL;
@@ -700,7 +700,7 @@ HTML;
     $list=$addins->getData("shortname:'{$GLOBALS['SET']['template']}'",array('num','dir'),NULL,1);
     $cur_template=$list->fetch(PDO::FETCH_ASSOC);
     $cur_template['enabled']='n';
-    $kill_template=$addins->updataData($cur_template);
+    $kill_template=$addins->updateData($cur_template);
     $list=$addins->getData("shortname:'{$user_data['template']}'",array('num','dir'),null,1);
     $template=$list->fetch(PDO::FETCH_ASSOC);
     $template['enabled']='y';
