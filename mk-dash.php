@@ -720,9 +720,17 @@ HTML;
    $page['title']="Upload a file from your computer";
    if ($_FILES['file']['tmp_name'])
    {
-    $upload_info=new finfo(FILEINFO_MIME_TYPE);
     $finfo=$_FILES['file'];
-    $finfo['mime_type']=$upload_info->file($finfo['tmp_name']);
+    if (class_exists("finfo"))
+    {
+     $upload_info=new finfo(FILEINFO_MIME_TYPE);
+     $finfo['mime_type']=$upload_info->file($finfo['tmp_name']);
+    }
+    else
+    {
+     trigger_error("Could not reliably determine mime type of an uploaded file! finfo class does not exist, so mime type set by browser. Recommend updating PHP or installing the fileinfo PECL extension to avoid mime type spoofing.",E_USER_WARNING);
+     $finfo['mime_type']=$finfo['type'];
+    }
     $finfo['temp']=$GLOBALS['SET']['filedir']."/temp/".crypt(time());
     
     if (is_writable($GLOBALS['SET']['filedir']."/temp"))
