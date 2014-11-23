@@ -720,70 +720,117 @@ HTML;
    $page['title']="Upload a file from your computer";
    if ($_FILES['file']['tmp_name'])
    {
-    $finfo=$_FILES['file'];
-    if (class_exists("finfo"))
+    if ($_FILES['file']['error'] == UPLOAD_ERR_OK)
     {
-     $upload_info=new finfo(FILEINFO_MIME_TYPE);
-     $finfo['mime_type']=$upload_info->file($finfo['tmp_name']);
-    }
-    else
-    {
-     trigger_error("Could not reliably determine mime type of an uploaded file! finfo class does not exist, so mime type set by browser. Recommend updating PHP or installing the fileinfo PECL extension to avoid mime type spoofing.",E_USER_WARNING);
-     $finfo['mime_type']=$finfo['type'];
-    }
-    $finfo['temp']=$GLOBALS['SET']['filedir']."/temp/".crypt(time());
+     $finfo=$_FILES['file'];
+     if (class_exists("finfo"))
+     {
+      $upload_info=new finfo(FILEINFO_MIME_TYPE);
+      $finfo['mime_type']=$upload_info->file($finfo['tmp_name']);
+     }
+     else
+     {
+      trigger_error("Could not reliably determine mime type of an uploaded file! finfo class does not exist, so mime type set by browser. Recommend updating PHP or installing the fileinfo PECL extension to avoid mime type spoofing.",E_USER_WARNING);
+      $finfo['mime_type']=$finfo['type'];
+     }
+     $finfo['author']=$GLOBALS['USR']->num;
+     $finfo['date_created']=date("Y-m-d H:i:s");
+     $finfo['temp']=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].crypt(time());
     
-    if (is_writable($GLOBALS['SET']['filedir']."/temp"))
-    {
-     move_uploaded_file($_FILES['file']['tmp_name'],$finfo['temp']);
-     //TODO put file in database and move to permenant location if needed.
-     if ($finfo['mime_type'] == "text/html")
+     if (is_writable($GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir']))
      {
-      $finfo['type']='page';
-      if($html=file_get_contents($finfo['temp']))
+      move_uploaded_file($_FILES['file']['tmp_name'],$finfo['temp']);
+      if ($finfo['mime_type'] == "text/html")
       {
-       //TODO find title and body
+       $finfo['type']='page';
+       if($raw=file_get_contents($finfo['temp']))
+       {
+        preg_match("/<title>(?P<title>.*?)<\/title>/smU",$raw,$match);
+        $finfo['title']=$match['title'];
+        unset($match);  
+        preg_match("/<body>(?P<body>.*?)<\/body>/smU",$raw,$match);
+        $finfo['text']=$match['body'];
+        unset($match);
+        try
+        {
+         $new_ko=$this->table->putData($finfo);
+        }
+        catch (Exception $err)
+        {
+         trigger_error("Caught exception '".$err->getMessage()."' while attempting to add attachment to database",E_USER_ERROR);
+         $finfo['error']=$err->getMessage();
+        }
+        if ($GLOBALS['SET']['rewrite'])
+        {
+         //TODO set $finfo['link'] to human readable URI
+        }
+        else
+        {
+         $finfo['link']=GLOBAL_PROTOCOL."//".$GLOBALS['SET']['baseuri']."?p=".$new_ko;
+        }
+       }
+       else
+       {
+        $finfo['error']="HTML file detected, but I could not process it!";
+       }
+       unlink($finfo['temp']);
       }
       else
       {
-       $finfo['error']="HTML file detected, but I could not process it!";
+       $finfo['type']='attachment';
+       $finfo['title']=$finfo['name'];
+       $finfo['link']=GLOBAL_PROTOCOL."//".$GLOBALS['SET']['baseuri'].$GLOBALS['SET']['filedir'].$finfo['name'];
+       if(rename($finfo['temp'],$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$finfo['name']))
+       {
+        try
+        {
+         $new_ko=$this->table->putData($finfo);
+        }
+        catch (Exception $err)
+        {
+         trigger_error("Caught exception '".$err->getMessage()."' while attempting to add attachment to database",E_USER_ERROR);
+         ulink($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$finfo['name']);
+         $finfo['error']=$err->getMessage();
+        }
+       }
+       else
+       {
+        $finfo['error']="Could not move attachment to its permenant location (".$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$finfo['name'].")!";
+       }
       }
-      unlink($finfo['temp']);
      }
      else
      {
-      $finfo['type']='attachment';
-      $finfo['title']=$finfo['name'];
-      $finfo['link']=$GLOBALS['SET']['filedir']."/".$finfo['name'];
-      if(rename($finfo['temp'],$GLOBALS['SET']['baseuri']."/".$finfo['link']))
+      trigger_error("Cannot write to temporary storage directory!",E_USER_WARNING);
+      if (file_exists($GLOBALS['SET']['filedir']."/temp"))
       {
-       try
-       {
-        $new_ko=$this->table->putData($finfo);
-       }
-       catch (Exception $err)
-       {
-        trigger_error("Caught exception '".$err->getMessage()."' while attempting to add attachment to database",E_USER_ERROR);
-        ulink($finfo['link']);
-        $finfo['error']=$err->getMessage();
-       }
+       $finfo['error']="Temp folder not writable!";
       }
       else
       {
-       $finfo['error']="Could not move attachment to its permenant location!";
+       $finfo['error']="Temp folder does not exist!";
       }
      }
     }
     else
     {
-     trigger_error("Cannot write to temporary storage directory!",E_USER_WARNING);
-     if (file_exists($GLOBALS['SET']['filedir']."/temp"))
+     switch ($_FILES['file']['error'])
      {
-      $finfo['error']="Temp folder not writable!";
-     }
-     else
-     {
-      $finfo['error']="Temp folder does not exist!";
+      case UPLOAD_ERR_INI_SIZE:
+      $finfo['error']="Uploaded file is too large. Try increasing PHP's max upload size in 'php.ini'";
+      break;
+      case UPLOAD_ERR_PARTIAL:
+      $finfo['error']="Uploaded file was only partially recieved!";
+      break;
+      case UPLOAD_ERR_NO_FILE:
+      $finfo['error']="No file was received!";
+      break;
+      case UPLOAD_ERR_CANT_WRITE:
+      $finfo['error']="Failed to write uploaded file to disk";
+      break;
+      default:
+      $finfo['error']="Unknown error encountered while attempting to upload a file, please try again!";
+      break;
      }
     }
     
@@ -880,7 +927,7 @@ HTML;
 <div id="External">
 <h4 class="module">Upload</h4>
 <form enctype="multipart/form-data" action="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=upload&ajax=1" method="post" target="droptarget">
-<div id="ExtURI"><label for="uri">A file from the web: </label><input type=text id="uri" name="uri" placeholder="http://"></div>
+<div id="ExtURI"><label for="uri">A file from the web: </label><input type=url id="uri" name="uri" placeholder="http://"></div>
 <div id="ExtFile"><label for="file">A file on your computer: </label><input type=file id="file" name="file" onchange="iUpload(this)"></div>
 </form>
 <div id="FileInfo"><iframe id="FileTarget" name="droptarget" style="display:none" src="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=upload&ajax=1"></iframe></div>

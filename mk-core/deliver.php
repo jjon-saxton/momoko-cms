@@ -2,7 +2,7 @@
 
 function do_attachment($path,$id=null)
 {
- header("Location: ".GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}/{$_GET['link']}");
+ header("Location: {$_GET['link']}");
 }
 
 function do_page($path,$id=null)
