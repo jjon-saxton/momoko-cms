@@ -32,7 +32,19 @@ if(isset($_GET['action']) && !empty($_GET['action']))
   }
   $path_parts=array_splice($path_parts,1); //TODO this seems to execute even when no query string is given!
   $path=implode("/",$path_parts);
-  $child=new MomokoPage($path);
+  switch ($_GET['content'])
+  {
+   case 'attachment':
+   $child=new MomokoAttachment($path);
+   break;
+   case 'post':
+   //TODO possibly seperate post and page, even though the actions would be the same
+   //break;
+   case 'page':
+   default:
+   $child=new MomokoPage($path);
+   break;
+  }
   switch ($_GET['action'])
   {
    case 'new':
@@ -54,6 +66,10 @@ if(isset($_GET['action']) && !empty($_GET['action']))
     {
      $child->fetchByID($_GET['p']);
     }
+    elseif ($_GET['link'])
+    {
+     $child->fetchByLink($_GET['link']);
+    }
     $child->put($_POST);
    }
    else
@@ -68,6 +84,10 @@ if(isset($_GET['action']) && !empty($_GET['action']))
     if ($_GET['p'])
     {
      $child->fetchByID($_GET['p']);
+    }
+    elseif ($_GET['link'])
+    {
+     $child->fetchByLink($_GET['link']);
     }
     $child->drop();
    }
@@ -170,4 +190,4 @@ else
 
  $run(implode("/",$path_parts),$id);
 }
-?>
+?>

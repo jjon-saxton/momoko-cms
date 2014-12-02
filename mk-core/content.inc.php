@@ -286,6 +286,240 @@ XML;
  }
 }
 
+class MomokoAttachment implements MomokoObject
+{
+ private $table;
+ private $page;
+ private $info=array();
+ 
+ public function __construct($path, array $additional_vars=null)
+ {
+  $table=new DataBaseTable('content');
+  
+  $title=basename($path);
+  $category_tree=trim(dirname($path),"./");
+  $parent=basename($category_tree);
+  
+  if ($title == NULL)
+  {
+   $where="status:'public'";
+  }
+  else
+  {
+   $where="title:'{$title}'";
+  }
+  if ($parent != NULL)
+  {
+   $pq=$table->getData("title:'{$parent}'",array('num'),null,1);
+   $pinfo=$pg->fetch(PDO::FETCH_ASSOC);
+   $where.=",parent:'{$pinfo['num']}'";
+  }
+  $query=$table->getData($where,null,null,1);
+  $this->table=$table;
+  $this->info=$query->fetch();
+ }
+ 
+ public function __get($var)
+ {
+  if (array_key_exists($var,$this->info))
+  {
+   return $this->info[$var];
+  }
+  else
+  {
+   return false;
+  }
+ }
+ 
+ public function __set($key,$value)
+ {
+  $this->info[$key]=$value;
+  return true;
+ }
+ 
+ public function fetchByID($num)
+ {
+  $query=$this->table->getData("num:'{$num}'",null,null,1);
+  $this->info=$query->fetch(PDO::FETCH_ASSOC);
+ }
+ 
+ public function fetchByLink($uri)
+ {
+  $query=$this->table->getData("link:'{$uri}'",null,null,1);
+  $this->info=$query->fetch(PDO::FETCH_ASSOC);
+ }
+ 
+ public function put($data)
+ {
+  if (@$data['file'])
+  {
+   $file=$_FILES['file'];
+   //TODO need to work with uploaded file before adding or updating attachment information in database
+  }
+  else
+  {
+   $findparents=$this->table->getData("type:'page'",array('num','title'));
+   if ($this->info['parent'] == 0)
+   {
+    $parent_opts="<option selected=selected value=0>-- Top Level --</option>";
+   }
+   else
+   {
+    $parent_opts="<option value=0>-- Top Level --</option>";
+   }
+   while ($parent=$findparents->fetch(PDO::FETCH_ASSOC))
+   {
+    if ($parent['num'] != $this->info['num'])
+    {
+     if ($parent['num'] == $this->info['parent'])
+     {
+      $parent_opts.="<option selected=selected value={$parent['num']}>{$parent['title']}</option>";
+     }
+     else
+     {
+      $parent_opts.="<option value={$parent['num']}>{$parent['title']}</option>";
+     }
+    }
+   }
+   
+   $now=date("Y-m-d H:i:s");
+   if ($_GET['action'] == 'new')
+   {
+    $hiddenvals=<<<HTML
+<input type=hidden name="type" value="attachment">
+<input type=hidden name="date_created" value="{$now}">
+<input type=hidden name="author" value="{$GLOBALS['USR']->num}">
+HTML;
+   }
+   else
+   {
+    $hiddenvals=<<<HTML
+<input type=hidden name="num" value="{$this->info['num']}">
+<input type=hidden name="date_modified" value="{$now}">
+HTML;
+   }
+   
+   $info['title']="Edit Attachment: ".$this->title;
+   $info['inner_body']=/*TODO add image resampling fields -->*/<<<HTML
+<script language="javascript">
+$(function(){
+ if ($("select#status").val() == "private"){
+  $("input#private").removeAttr('disabled');
+ }
+ 
+ $("select#status").change(function(){
+  if ($("select#status").val() == "private"){
+   $("input#private").removeAttr('disabled');
+  }
+  else{
+   $("input#private").attr('disabled','disabled');
+  }
+ });
+});
+</script>
+<form method=post>
+{$hiddenvals}
+<h2>Edit Attachment: <input type=text name="title" placeholder="Filename" id="title" value="{$this->title}"></h2>
+<div id="PageEditor">
+<div id="PageProps">
+<ul class="noindent nobullet">
+<li><label for="parent">Parent Page:</label> <select id="parent" name="parent">{$parent_opts}</select></li>
+<li><label for="status">Attachment Status:</label> <select id="status" name="status">{$status_opts}</select></li>
+<li><label for="private">Groups that have access:</label> <input type=text id="private" name="has_access" disabled=disabled value="editor,members"></li>
+</ul>
+</div>
+<div id="PageSave" align=center>
+<button type=submit name="save" value="1">Save</button>
+</div>
+</div>
+</form>
+HTML;
+   $this->info=$info;
+   return true;
+  }
+ }
+
+ public function get()
+ {
+  $authorized=$this->hasAccess();
+
+  if ($authorized && $this->text)
+  {
+   return $this->text;
+  }
+  elseif (!$authorized)
+  {
+   $page=new MomokoError("403 Forbidden");
+   return $page->full_html;
+  }
+  else
+  {
+   $page=new MomokoError("404 Not Found");
+   return $page->full_html;
+  }
+ }
+ 
+ public function drop()
+ {
+  $info['title']="Delete Attachment: ".$this->info['title'];
+  if ($_POST['drop'])
+  {
+   $data['num']=$this->info['num'];
+   $file=$GLOBALS['SET']['basedir'].'/'.preg_replace("%http://".$GLOBALS['SET']['baseuri']."/%",'',$this->link);
+   if (unlink($file))
+   {
+    try
+    {
+     $delete=$this->table->deleteData($data);
+    }
+    catch (Exception $err)
+    {
+     trigger_error("Caught exception '{$err->getMessage()}' while attempting to remove a page or post.",E_USER_WARNING);
+    }
+   }
+   else
+   {
+    trigger_error("Could not delete attachment at '{$file}'",E_USER_WARNING);
+   }
+   
+   if ($delete)
+   {
+    $info['inner_body']=<<<HTML
+<div id="DeleteAttachment" class="message box">
+<h3 class="message title">Attachment Gone</h3>
+<p>The attachment you selected was deleted! You may now <a href="//{$GLOBALS['SET']['baseuri']}/">return</a> to your home page!</p>
+</div>
+HTML;
+   }
+   else
+   {
+    $info['inner_body']=<<<HTML
+<div id="DeleteAttachment" class="message error box">
+<h3 class="error title">Attachment Still there</h3>
+<p>Could not delete the selected attachment! Please contact your site administrator!</p>
+</div>
+HTML;
+   }
+  }
+  else
+  {
+   $info['inner_body']=<<<HTML
+<form method=post>
+<div id="DeletePage" class="message box">
+<h3 class="message confirmation title">Do you wish to delete this attachment?</h3>
+<p>You are about to delete an attachment. Content in MomoKO cannot be retrieved once it is deleted. If you would like to simply make the attachment private without removing it, there are several options for you in the attachment's edit page under 'status'.</p>
+<p class="confirmation question">Are you sure you want to delete '{$this->info['title']}'?</p>
+<div class="confirmation buttons"><button class="answer" type=submit name="drop" id="true" value="1">Yes</button> <button class="answer" id="false">No</button></div>
+</div>
+</form>
+HTML;
+  }
+  
+  $this->info=$info;
+  return true;
+ }
+}
+
 class MomokoPage implements MomokoObject
 {
  private $table;

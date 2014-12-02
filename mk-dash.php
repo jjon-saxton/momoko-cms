@@ -131,7 +131,7 @@ class MomokoDashboard implements MomokoObject
      
      $text.=<<<HTML
 <div id="{$content['num']}" class="page box {$content['status']}"><h4 style="display:inline-block;clear:left" class="module">{$content['title']}</h4>
-<div class="actions "style="float:right"><a href="//{$GLOBALS['SET']['baseuri']}/{$content['link']}" id="location" style="display:none">Open</a> <span id="view" class="ui-icon ui-icon-folder-open" style="display:inline-block" title="View"></span> <span id="edit" class="ui-icon ui-icon-pencil" style="display:inline-block" title="Edit"></span> <span id="delete" class="ui-icon ui-icon-trash" style="display:inline-block" title="Delete"></span></div>
+<div class="actions "style="float:right"><a href="//{$GLOBALS['SET']['baseuri']}/{$content['link']}" id="location" style="display:none">Open</a> <span id="view" class="ui-icon ui-icon-folder-open" style="display:inline-block" title="Open/Download"></span> <span id="edit" class="ui-icon ui-icon-pencil" style="display:inline-block" title="Edit"></span> <span id="delete" class="ui-icon ui-icon-trash" style="display:inline-block" title="Delete"></span></div>
 <div class="properties">{$content['date_created']}, {$content['date_modified']}, {$content['author']}, {$content['mime_type']}</div>
 <div class="summary">{$content['text']}</div>
 </div>
