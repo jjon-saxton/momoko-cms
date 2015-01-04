@@ -84,7 +84,7 @@ class DataBaseTable extends DataBaseSchema
   return $describe->fetchAll(PDO::FETCH_OBJ);
  }
 
- public function getData($q=null,array $cols=null,$sort=null,$limit=500,$offset=0, array $keycols=null)
+ public function getData($q=null,array $cols=null,$sort=null,$limit=0,$offset=0, array $keycols=null)
  {
   $fieldlist=$this->fieldlist;
   if (!empty($cols))
@@ -170,13 +170,23 @@ class DataBaseTable extends DataBaseSchema
     $sql.=" ORDER BY `".$sort."` ASC";
    }
   }
-  $sql.=" LIMIT ".$limit;
+  if ($limit > 0)
+  {
+   $sql.=" LIMIT ".$limit;
+  }
   if ($offset > 0)
   {
    $sql.=" OFFSET ".$offset;
   }
 
-  $result=$this->query($sql);
+  try
+  {
+   $result=$this->query($sql);
+  }
+  catch (Exception $err)
+  {
+   trigger_error("SQL Server Error: ".$err->getMessage(),E_USER_ERROR);
+  }
 
   return $result;
  }
