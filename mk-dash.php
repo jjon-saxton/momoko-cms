@@ -177,16 +177,35 @@ HTML;
    }
    if (count($pages) > 1)
    {
-    $page_div="<div id=\"Pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs&offset={$prev}\">Previous</a></td><td align=center";
-    foreach ($pages as $page)
+    $page_div="<div id=\"Pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs&offset={$prev}\">Previous</a></td><td align=center>";
+    if (count($pages) >= 10)
     {
-     if ($page['offset'] == @$_GET['offset'])
+     $page_div.="<select id=\"PageList\" onchange=\"window.location='//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs&offset='+$(this).val()\" name=\"page_dropdown\">\n";
+     foreach ($pages as $page)
      {
-      $page_div.="<strong class=\"currentpage\">{$page['number']}</strong> ";
+      if ($page['offset'] == @$_GET['offset'])
+      {
+       $page_div.="<option selected=selected value=\"{$page['offset']}\">Page {$page['number']}</option>\n";
+      }
+      else
+      {
+       $page_div.="<option value=\"{$page['offset']}\">Page {$page['number']}</option>\n";
+      }
      }
-     else
+     $page_div.="</select>";
+    }
+    else
+    {
+     foreach ($pages as $page)
      {
-      $page_div.="<a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs&offset={$page['offset']}\">{$page['number']}</a> ";
+      if ($page['offset'] == @$_GET['offset'])
+      {
+       $page_div.="<strong class=\"currentpage\">{$page['number']}</strong> ";
+      }
+      else
+      {
+       $page_div.="<a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs&offset={$page['offset']}\">{$page['number']}</a> ";
+      }
      }
     }
     $page_div.="</td><td align=right><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
