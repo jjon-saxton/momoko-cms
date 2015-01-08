@@ -148,8 +148,8 @@ HTML;
    $table=new DataBaseTable('log');
    //set options for filters
    $filters['type']=array(array('value'=>'cerror','name'=>"Errors"),array('value'=>"security",'name'=>"Security"),array('value'=>"notices",'name'=>"Notices"));
-   $filters['timeframe']=array(array('value'=>time(),'name'=>'Today'));
-   $type_opts="<option value=\"\">- Any -</option>";
+   $filters['timeframe']=array(array('value'=>date("Y-m-d H:i",strtotime('-1 day')),'name'=>'Past Day'),array('value'=>date("Y-m-d H:i",strtotime('-1 week')),'name'=>"Past Week"),array('value'=>date("Y-m-d H:i",strtotime('-1 month')),'name'=>"Past Month"),array('value'=>date("Y-m-d H:i",strtotime('-1 year')),'name'=>"Past Year"));
+   $type_opts="<option value=\"*\">- Any -</option>";
    foreach ($filters['type'] as $type)
    {
     if (!empty($_GET['filter']) && $_GET['filter']['type'] == $type['value'])
@@ -161,7 +161,7 @@ HTML;
      $type_opts.="<option value=\"{$type['value']}\">{$type['name']}</option>\n";
     }
    }
-   $time_opts="<option value=\"\">- All -</option>";
+   $time_opts="<option value=\"*\">- Since Creation -</option>";
    foreach ($filters['timeframe'] as $option)
    {
     if (!empty($_GET['filter']) && $_GET['filter']['time'] == $option['value'])
