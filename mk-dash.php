@@ -195,13 +195,32 @@ HTML;
     }
    }
    $text.="</tr>";
-   $query=$table->getData(@$_GET['q']);
+   
+   $where=null;
+   if (is_array(@$_GET['filter']))
+   {
+    foreach($_GET['filter'] as $col=>$value)
+    {
+     if ($col == 'time')
+     {
+      $value=">".$value;
+     }
+     
+     if ($value != "*")
+     {
+      $where.=$col.": '".$value."', ";
+     }
+    }
+   }
+   $where=rtrim($where,", ");
+   
+   $query=$table->getData($where);
    $row_c=$query->rowCount();
 
    if ($row_c > $GLOBALS['USR']->rowspertable)
    {
     unset($query);
-    $query=$table->getData(@$_GET['q'],NULL,NULL,$GLOBALS['USR']->rowspertable,@$_GET['offset']);
+    $query=$table->getData($where,NULL,NULL,$GLOBALS['USR']->rowspertable,@$_GET['offset']);
    }
 
    $pages=paginate($row_c,@$_GET['offset']);
@@ -1113,3 +1132,6 @@ else
   echo $tpl->toHTML($child);
  }
 }
+   var_dump($_GET['filter']);
+   var_dump($_GET['filter']);
+   var_dump($col);

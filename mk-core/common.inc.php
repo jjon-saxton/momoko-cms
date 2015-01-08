@@ -389,7 +389,8 @@ function momoko_html_errors($num,$str,$file,$line,$context)
    }
    
    $error['time']=date("Y-m-d H:i:s");
-   $error['action']="caught error";
+   $error['type']="error";
+   $error['action']="error thrown";
    $error['message']=$text;
    
    if ($table instanceof DataBaseTable)
