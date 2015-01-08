@@ -146,7 +146,47 @@ HTML;
    break;
    case 'logs':
    $table=new DataBaseTable('log');
-   $text="<div id=\"Logs\" class=\"box\">\n<table width=100% class=\"dashboard\">\n<tr>\n";
+   //set options for filters
+   $filters['type']=array(array('value'=>'cerror','name'=>"Errors"),array('value'=>"security",'name'=>"Security"),array('value'=>"notices",'name'=>"Notices"));
+   $filters['timeframe']=array(array('value'=>time(),'name'=>'Today'));
+   $type_opts="<option value=\"\">- Any -</option>";
+   foreach ($filters['type'] as $type)
+   {
+    if (!empty($_GET['filter']) && $_GET['filter']['type'] == $type['value'])
+    {
+     $type_opts.="<option selected value=\"{$type['value']}\">{$type['name']}</option>\n";
+    }
+    else
+    {
+     $type_opts.="<option value=\"{$type['value']}\">{$type['name']}</option>\n";
+    }
+   }
+   $time_opts="<option value=\"\">- All -</option>";
+   foreach ($filters['timeframe'] as $option)
+   {
+    if (!empty($_GET['filter']) && $_GET['filter']['time'] == $option['value'])
+    {
+     $time_opts.="<option selected value=\"{$option['value']}\">{$option['name']}</option>\n";
+    }
+    else
+    {
+     $time_opts.="<option value=\"{$option['value']}\">{$option['name']}</option>\n";
+    }
+   }
+   
+   $text=<<<HTML
+   <div id="Logs" class="box">
+   <form id="Filter">
+   <input type=hidden name="action" value="{$_GET['action']}">
+   <input type=hidden name="list" value="{$_GET['list']}">
+   <table width=100% id="Filters">
+   <tr valign=middle><th>Filters:</th><td><label for="type">Type</label>: <select id="type" name="filter[type]">{$type_opts}</select></td><td><label for="time">Timeframe</label>: <select id="time" name="filter[time]">{$time_opts}</select></td><td align=left><button type=submit>Apply</button></td></tr>
+   </table>
+   </form>
+   <table width=100% class="dashboard">
+   <tr>
+HTML;
+
    foreach ($table->fieldlist as $th)
    {
     if ($th != "num")
