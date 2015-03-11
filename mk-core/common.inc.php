@@ -388,9 +388,27 @@ function momoko_html_errors($num,$str,$file,$line,$context)
     }
    }
    
+   switch ($num)
+   {
+    case E_USER_NOTICE
+    case E_NOTICE
+    $msg_type="notice";
+    break;
+    case E_USER_WARNING
+    case E_WARNING
+    $msg_type="warning";
+    break;
+    case E_USER_ERROR
+    case E_ERROR
+    $msg_type="cerror";
+    break
+    default:
+    $msg_type="uerror";
+   }
+   
    $error['time']=date("Y-m-d H:i:s");
-   $error['type']="error";
-   $error['action']="error thrown";
+   $error['type']=$msg_type;
+   $error['action']="error caught";
    $error['message']=$text;
    
    if ($table instanceof DataBaseTable)

@@ -32,8 +32,9 @@ function create_tables($config)
   
   $def['log'][0]="`num` INT (11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['log'][1]="`time` DATETIME";
-  $def['log'][2]="`action` VARCHAR(20) NOT NULL";
-  $def['log'][3]="`message` TEXT";
+  $def['log'][2]="`type` VARCHAR(8) NOT NULL";
+  $def['log'][3]="`action` VARCHAR(20) NOT NULL";
+  $def['log'][4]="`message` TEXT";
   
   $def['users'][0]="`num` INT(255) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['users'][1]="`name` VARCHAR(125) NOT NULL";
