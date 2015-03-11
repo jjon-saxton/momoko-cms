@@ -109,7 +109,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
      }
      else
      {
-      header("Location: http://".$GLOBALS['SET']['baseuri']."?loggedin=1");
+      header("Location: http://".$GLOBALS['SET']['baseuri']."#logged-in");
      }
      exit();
     }
@@ -144,7 +144,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    if ($GLOBALS['USR']->logout())
    {
     $_SESSION['data']=serialize($GLOBALS['USR']);
-    header("Location: ?loggedin=0");
+    header("Location: http://".$GLOBALS['SET']['baseuri']."#logged-out");
     exit();
    }
    break;

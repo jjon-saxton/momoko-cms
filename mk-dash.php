@@ -1132,6 +1132,3 @@ else
   echo $tpl->toHTML($child);
  }
 }
-   var_dump($_GET['filter']);
-   var_dump($_GET['filter']);
-   var_dump($col);
