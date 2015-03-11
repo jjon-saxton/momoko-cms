@@ -203,7 +203,7 @@ HTML;
     {
      if ($col == 'time')
      {
-      $value=">".$value;
+      $value="> ".$value;
      }
      
      if ($value != "*")

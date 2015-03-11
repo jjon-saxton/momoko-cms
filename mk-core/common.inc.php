@@ -390,18 +390,18 @@ function momoko_html_errors($num,$str,$file,$line,$context)
    
    switch ($num)
    {
-    case E_USER_NOTICE
-    case E_NOTICE
+    case E_USER_NOTICE:
+    case E_NOTICE:
     $msg_type="notice";
     break;
-    case E_USER_WARNING
-    case E_WARNING
+    case E_USER_WARNING:
+    case E_WARNING:
     $msg_type="warning";
     break;
-    case E_USER_ERROR
-    case E_ERROR
+    case E_USER_ERROR:
+    case E_ERROR:
     $msg_type="cerror";
-    break
+    break;
     default:
     $msg_type="uerror";
    }
