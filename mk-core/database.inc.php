@@ -129,11 +129,19 @@ class DataBaseTable extends DataBaseSchema
      $where_group=null;
      foreach ($value as $item)
      {
-      if (preg_match("/(<)(>)( )(?P<digit1>\\d+)( )(?P<digit2>\\d+)/",$item,$compare) > 0)
+      if (preg_match("/^(<)(>)( )(?P<date1>[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (\d{2}\:\d{2}))( )(?P<date2>[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (\d{2}\:\d{2}))/",$item,$compare) > 0)
+      {
+       $where_group.="`".$col."` BETWEEN '".$compare['date1']."' AND '".$compare['date2']."' OR ";
+      }
+      elseif (preg_match("/(<)(>)( )(?P<digit1>\\d+)( )(?P<digit2>\\d+)/",$item,$compare) > 0) // digits between
       {
        $where_group.="`".$col."` BETWEEN ".$compare['digit1']." AND ".$compare['digit2']." OR ";
       }
-      elseif (preg_match("/(?P<operator>.*)( )(?P<digit>\\d+)/",$item,$compare) > 0)
+      elseif (preg_match("/^(?P<operator>.*)( )(?P<date>[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (\d{2}\:\d{2})$)/",$item,$compare) > 0) //compare dates
+      {
+       $where_group.="`".$col."` ".$compare['operator']." '".$compare['date']."' OR ";
+      }
+      elseif (preg_match("/(?P<operator>.*)( )(?P<digit>\\d+)/",$item,$compare) > 0) //compare digits
       {
        $where_group.="`".$col."` ".$compare['operator']." ".$compare['digit']." OR ";
       }

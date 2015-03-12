@@ -208,7 +208,7 @@ HTML;
      
      if ($value != "*")
      {
-      $where.=$col.": '".$value."', ";
+      $where.=$col.":'".$value."', ";
      }
     }
    }
