@@ -147,7 +147,7 @@ HTML;
    case 'logs':
    $table=new DataBaseTable('log');
    //set options for filters
-   $filters['type']=array(array('value'=>'cerror','name'=>"Critical Errors"),array('value'=>"security",'name'=>"Security"),array('value'=>"warning",'name'=>"Warning"),array('value'=>"notices",'name'=>"Notices"));
+   $filters['type']=array(array('value'=>'cerror','name'=>"Critical Errors"),array('value'=>"security",'name'=>"Security Messages"),array('value'=>"warning",'name'=>"Warnings"),array('value'=>"notice",'name'=>"Notices"));
    $filters['timeframe']=array(array('value'=>date("Y-m-d H:i",strtotime('-1 day')),'name'=>'Past Day'),array('value'=>date("Y-m-d H:i",strtotime('-1 week')),'name'=>"Past Week"),array('value'=>date("Y-m-d H:i",strtotime('-1 month')),'name'=>"Past Month"),array('value'=>date("Y-m-d H:i",strtotime('-1 year')),'name'=>"Past Year"));
    $type_opts="<option value=\"*\">- Any -</option>";
    foreach ($filters['type'] as $type)
