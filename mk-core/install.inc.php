@@ -13,8 +13,9 @@ function create_tables($config)
   $def['addins'][5]="`enabled` CHAR(1) NOT NULL";
   $def['addins'][6]="`shortname` VARCHAR(72) NOT NULL";
   $def['addins'][7]="`longname` VARCHAR(125) NOT NULL";
-  $def['addins'][8]="`description` TEXT";
-  $def['addins'][9]="`headtags` TEXT";
+  $def['addins'][8]="`settings` TEXT";
+  $def['addins'][9]="`description` TEXT";
+  $def['addins'][10]="`headtags` TEXT";
   
   $def['content'][0]="`num` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['content'][1]="`title` VARCHAR(100) NOT NULL";
@@ -133,9 +134,9 @@ HTML;
   $admin['rowspertable']=$defaults['rpt'];
   
   $rows['addins'][]=array('dir'=>'passreset','type'=>'page','enabled'=>'y','shortname'=>'Password Resetter','longname'=>"User Password Resetter",'description'=>"A simple addin page that allows users to reset their own passwords.");
-  $rows['addins'][]=array('dir'=>'posts','type'=>'module','zone'=>1,'order'=>1,'enabled'=>'y','shortname'=>'Mini Post List','longname'=>'Mini Post List','description'=>"A sidebar module that loads a small list of posts.");
-  $rows['addins'][]=array('dir'=>'metalinks','type'=>'module','zone'=>1,'order'=>2,'enabled'=>'y','shortname'=>'Meta Link Box','longname'=>'Meta Link Box','description'=>"Provides links such as RSS feeds and login. When logged in this is how users will access their dashboard.");
-  $rows['addins'][]=array('dir'=>'quirk','type'=>'template','enabled'=>'y','shortname'=>'Quirk','longname'=>"Quirk Layout",'discription'=>"A two column layout with head and foot bar.");
+  $rows['addins'][]=array('dir'=>'posts','type'=>'module','zone'=>1,'order'=>1,'enabled'=>'y','shortname'=>'Mini Post List','longname'=>'Mini Post List','settings'=>"sort=recent&length=255&num=5",'description'=>"A sidebar module that loads a small list of posts.");
+  $rows['addins'][]=array('dir'=>'metalinks','type'=>'module','zone'=>1,'order'=>2,'enabled'=>'y','shortname'=>'Meta Link Box','longname'=>'Meta Link Box','settings'=>"display=box",'description'=>"Provides links such as RSS feeds and login. When logged in this is how users will access their dashboard.");
+  $rows['addins'][]=array('dir'=>'quirk','type'=>'template','enabled'=>'y','shortname'=>'Quirk','longname'=>"Quirk Layout",'discription'=>"A two column layout with head and foot bar.",'headtags'=>"<link rel=\"stylesheet\" href=\"http://localhost/~kuro/momoko2/mk-content/templates/quirk/quirk.css\" type=\"text/css\">");
   
   $rows['content'][]=array('title'=>"Hello World!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'page','order'=>1, 'parent'=>0,'author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');
   $rows['content'][]=array('title'=>"Welcome!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'post','parent'=>0,'author'=>1,'text'=>$firstpost,'mime_type'=>'text/html');
@@ -192,7 +193,7 @@ HTML;
    $rows['content'][]=$page;
   }
   
-  $rows['log'][]=array('time'=>date("Y-m-d H:i:s"),'action'=>'created','message'=>$site['name']." goes online!");
+  $rows['log'][]=array('time'=>date("Y-m-d H:i:s"),'type'=>"notice",'action'=>'created','message'=>$site['name']." goes online!");
   
   $rows['users'][]=array('name'=>'root','password'=>'root','email'=>$admin['email'],'groups'=>"admin,cli",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'rowspertable'=>$defaults['rpt']);
   $rows['users'][]=array('name'=>'guest','password'=>'guest','email'=>$admin['email'],'groups'=>"nobody",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'rowspertable'=>$defaults['rpt']);

@@ -1034,6 +1034,7 @@ HTML;
   else
   {
    $editor=null;
+   $editor=null;
   }
   $addin_tags=compile_head();
   $split['head']=<<<HTML
@@ -1048,7 +1049,7 @@ HTML;
 {$split['head']}
 HTML;
   $split['body']=<<<HTML
-<div id="modal" title="Loeading Awesomeness!" style="display:none">
+<div id="modal" title="Loading Awesomeness!" style="display:none">
 <p>Becoming 20% more awesome...</p>
 </div>
 <div id="overlay" class="ui-widget-overlay" style="display:none" onclick="toggleSidebar();">&nbsp;</div>

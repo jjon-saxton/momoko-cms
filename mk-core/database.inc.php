@@ -111,13 +111,14 @@ class DataBaseTable extends DataBaseSchema
    $q=trim(preg_replace("/(?P<key>(?:[a-z][a-z0-9_]*))(:)'(?P<values>.*?)'/is","",$q)." ");
   }
 
+  $q=rtrim($q,",");
   if (empty($q))
   {
    $where_sql=" WHERE";
   }
   else
   {
-   $Where_sql="WHERE MATCH (".$keycols." AGAINST ('".$q."')";
+   $where_sql=" WHERE MATCH (".$keycols." AGAINST ('".$q."')";
   }
 
   if (@is_array($where))
@@ -131,28 +132,29 @@ class DataBaseTable extends DataBaseSchema
      {
       if (preg_match("/^(<)(>)( )(?P<date1>[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (\d{2}\:\d{2}))( )(?P<date2>[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (\d{2}\:\d{2}))/",$item,$compare) > 0)
       {
-       $where_group.="`".$col."` BETWEEN '".$compare['date1']."' AND '".$compare['date2']."' OR ";
+       $where_group.="`".$col."` BETWEEN '".$compare['date1']."' AND '".$compare['date2']."'";
       }
       elseif (preg_match("/(<)(>)( )(?P<digit1>\\d+)( )(?P<digit2>\\d+)/",$item,$compare) > 0) // digits between
       {
-       $where_group.="`".$col."` BETWEEN ".$compare['digit1']." AND ".$compare['digit2']." OR ";
+       $where_group.="`".$col."` BETWEEN ".$compare['digit1']." AND ".$compare['digit2'];
       }
       elseif (preg_match("/^(?P<operator>.*)( )(?P<date>[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (\d{2}\:\d{2})$)/",$item,$compare) > 0) //compare dates
       {
-       $where_group.="`".$col."` ".$compare['operator']." '".$compare['date']."' OR ";
+       $where_group.="`".$col."` ".$compare['operator']." '".$compare['date']."'";
       }
       elseif (preg_match("/(?P<operator>.*)( )(?P<digit>\\d+)/",$item,$compare) > 0) //compare digits
       {
-       $where_group.="`".$col."` ".$compare['operator']." ".$compare['digit']." OR ";
+       $where_group.="`".$col."` ".$compare['operator']." ".$compare['digit'];
       }
       else
       {
-       $where_group.="`".$col."` LIKE '".$item."' OR ";
+       $where_group.="`".$col."` LIKE '".$item."'";
       }
      }
-     $where_sql.=" AND (".trim($where_group," OR").")";
+     $wheres[]="(".$where_group.")";
     }
    }
+   $where_sql.=" ".implode($wheres," AND ");
    $where_sql=preg_replace("/WHERE AND/","WHERE",$where_sql); //Prevents illegal WHERE AND combo
    if ($where_sql != "WHERE") //add the where string as long as it appears legal
    {

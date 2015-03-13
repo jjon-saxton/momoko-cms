@@ -201,7 +201,7 @@ HTML;
    {
     foreach($_GET['filter'] as $col=>$value)
     {
-     if ($col == 'time')
+     if ($col == 'time' && $value != "*")
      {
       $value="> ".$value;
      }
@@ -213,6 +213,7 @@ HTML;
     }
    }
    $where=rtrim($where,", ");
+   //var_dump($where);
    
    $query=$table->getData($where);
    $row_c=$query->rowCount();

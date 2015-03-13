@@ -36,6 +36,7 @@ class MomokoSession
       
       $data['time']=date('Y-m-d H:i:s');
       $data['action']="logged in";
+      $data['type']="security";
       $data['message']="Session started for user ".$name." at ".$_SERVER['REMOTE_ADDR'];
       $log->putData($data);
       return true;
@@ -96,6 +97,7 @@ class MomokoSession
     $log=new DataBaseTable('log');
     $data['time']=date('Y-m-d H:i:s');
     $data['action']="logged out";
+    $data['type']="security";
     $data['message']="Session ended for user ".$this->name;
     $log->putData($data);
 
