@@ -30,7 +30,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
     exit();
    }
   }
-  $path_parts=array_splice($path_parts,1); //TODO this seems to execute even when no query string is given!
+  $path_parts=array_splice($path_parts,1); //TODO this seems to execute whenever ?content=post!?
   $path=implode("/",$path_parts);
   switch ($_GET['content'])
   {

@@ -66,98 +66,6 @@ if (!@$child)
  {
   $child->fetchByID($id);
  }
-
- if (@!empty($_GET['action']))
- {
-  switch ($_GET['action'])
-  {
-   case 'new':
-   if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
-   {
-    $child=new MomokoPage(pathinfo(@$path,PATHINFO_DIRNAME).'/new_page.htm');
-    $child->put($_POST);
-   }
-   else
-   {
-    header("Location: https://".CURURI."?action=login&re=new");
-    exit();
-   }
-   case 'edit':
-   if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
-   {
-    $child->put($_POST);
-   }
-   else
-   {
-    header("Location: https://".CURURI."?action=login&re=edit");
-    exit();
-   }
-   break;
-   case 'delete':
-   if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
-   {
-    if ($child->drop())
-    {
-     header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location);
-     exit();
-    }
-   }
-   else
-   {
-    header("Location: ?action=login&re=delete");
-    exit();
-   }
-   break;
-   case 'login':
-   if (@!empty($_POST['password']))
-   {
-    if ($GLOBALS['USR']->login($_POST['name'],$_POST['password']))
-    {
-     $_SESSION['data']=serialize($GLOBALS['USR']);
-     if (@!empty($_GET['re']))
-     {
-      header("Location: http://".CURURI."?action=".$_GET['re']);
-     }
-     else
-     {
-      header("Location: http://".CURURI."?loggedin=1");
-     }
-     exit();
-    }
-    else
-    {
-     $child=new MomokoError('Unauthorized');
-    }
-   }
-   else
-   {
-    $child=new MomokoForm('login');
-   }
-   break;
-   case 'register':
-   if (@$_POST['first'])
-   {
-    $usr=new MomokoUser($_POST['name']);
-    if ($usr->put($_POST))
-    {
-     header("Location:?action=login");
-     exit();
-    }
-   }
-   else
-   {
-    $child=new MomokoForm('register');
-   }
-   break;
-   case 'logout':
-   if ($GLOBALS['USR']->logout())
-   {
-    $_SESSION['data']=serialize($GLOBALS['USR']);
-    header("Location: ?loggedin=0");
-   }
-   break;
-  }
- }
 }
 
 $tpl=new MomokoTemplate(pathinfo($path,PATHINFO_DIRNAME));
@@ -166,10 +74,10 @@ print $tpl->toHTML($child);
 
 function do_post($path,$id=null)
 {
- $child=new MomokoNews($GLOBALS['USR'],"format=html");
+ $child=new MomokoNews($GLOBALS['USR']);
  if (!$id)
  {
-  $headline=basenmae($path);
+  $headline=basename($path);
   $child->getPostByHeadline($headline);
  }
  else

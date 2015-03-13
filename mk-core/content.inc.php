@@ -139,6 +139,7 @@ class MomokoNews implements MomokoObject
 {
 	public $user;
 	public $news_list;
+	public $info;
 	private $table;
 	
 	public function __construct($user)
@@ -177,13 +178,13 @@ class MomokoNews implements MomokoObject
 	  $post_modified=strtotime($info['date_modified']);
 	 }
 	 $date=date($GLOBALS['USR']->longdateformat,$post_created);
-	 $this->info=$info;
-	 $this->info['inner_body']=<<<HTML
+	 $info['inner_body']=<<<HTML
 <h2>{$info['title']}</h2>
 <div class="date">{$date}</div>
 <artcile class="box">{$info['text']}</article>
 HTML;
-  $this->info['full_html']="<html>\n<body>\n{$this->info['inner_body']}\n</body>\n</html>";
+  $info['full_html']="<html>\n<body>\n{$this->info['inner_body']}\n</body>\n</html>";
+  $this->info=$info;
 	}
 	
 	public function get()
