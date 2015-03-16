@@ -671,8 +671,17 @@ HTML;
 <input type=hidden name="date_modified" value="{$now}">
 HTML;
    }
+   if ($type == 'page')
+   {
+    $formats='["p","Normal"], ["h2","Header 2"], ["h3","Header 3"], ["h4","Header 4"], ["pre","Preformatted"]';
+   }
+   else
+   {
+    $formats='["p","Normal"], ["h3","Header 3"], ["h4","Header 4"]';
+   }
+   $type=ucwords($type);
    
-   $info['title']="Edit Page: ".$this->title;
+   $info['title']="Edit {$type}: ".$this->title;
    $info['inner_body']=<<<HTML
 <script language="javascript">
 $(function(){
@@ -684,13 +693,7 @@ $(function(){
   dashuri:"//{$GLOBALS['SET']['baseuri']}/mk-dash.php",
   color:false,
   strike:false,
-  formats:[
-   ["p","Normal"],
-   ["h2","Header 2"],
-   ["h3","Header 3"],
-   ["h4","Header 4"],
-   ["pre","Preformatted"]
-  ],
+  formats:[{$formats}],
   fsize:false,
   placeholder: "Page body..."
  });
@@ -708,7 +711,7 @@ $(function(){
 </script>
 <form method=post>
 {$hiddenvals}
-<h2>Edit Page: <input type=text name="title" placeholder="Page Title" id="title" value="{$this->title}"></h2>
+<h2>Edit {$type}: <input type=text name="title" placeholder="{$type} Title" id="title" value="{$this->title}"></h2>
 <div id="PageEditor">
 <ul id="tabs">
 <li><a href="#PageBody">Body</a></li>
@@ -719,6 +722,10 @@ $(function(){
 {$this->inner_body}
 </textarea>
 </div>
+HTML;
+if ($content == 'Page')
+{
+ $info['inner_body'].=<<<HTML
 <div id="PageProps">
 <ul class="noindent nobullet">
 <li><label for="parent">Parent Page:</label> <select id="parent" name="parent">{$parent_opts}</select></li>
@@ -726,6 +733,9 @@ $(function(){
 <li><label for="private">Groups that have access:</label> <input type=text id="private" name="has_access" disabled=disabled value="editor,members"></li>
 </ul>
 </div>
+HTML;
+   }
+   $info['inner_body'].=<<<HTML
 <div id="PageSave" align=center>
 <button type=submit name="save" value="1">Save</button>
 </div>
