@@ -1120,7 +1120,7 @@ else
  }
  else
  {
-  $child=new MomokoError('Forbidden');
+  $child=new MomokoError('403 Forbidden');
  }
  
  if ($_GET['ajax'] == TRUE)

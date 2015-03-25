@@ -773,12 +773,12 @@ HTML;
   elseif (!$authorized)
   {
    $page=new MomokoError("403 Forbidden");
-   return $page->full_html;
+   return $page->inner_body;
   }
   else
   {
    $page=new MomokoError("404 Not Found");
-   return $page->full_html;
+   return $page->inner_body;
   }
  }
  
