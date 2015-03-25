@@ -646,17 +646,18 @@ class MomokoPage implements MomokoObject
     }
    }
    
+   if ($_GET['content'])
+   {
+    $type=$_GET['content'];
+   }
+   else
+   {
+    $type="page";
+   }
+   
    $now=date("Y-m-d H:i:s");
    if ($_GET['action'] == 'new')
    {
-    if ($_GET['content'])
-    {
-     $type=$_GET['content'];
-    }
-    else
-    {
-     $type="page";
-    }
     $hiddenvals=<<<HTML
 <input type=hidden name="type" value="{$type}">
 <input type=hidden name="date_created" value="{$now}">
