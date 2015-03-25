@@ -671,13 +671,22 @@ HTML;
 <input type=hidden name="date_modified" value="{$now}">
 HTML;
    }
+   $type_links=null;
    if ($type == 'page')
    {
     $formats='["p","Normal"], ["h2","Header 2"], ["h3","Header 3"], ["h4","Header 4"], ["pre","Preformatted"]';
+    if ($_GET['action'] == 'new')
+    {
+     $type_links="<div id=\"type_select\"><input type=\"radio\" id=\"page\" checked=checked name=\"type\" value=\"page\"><label for=\"page\">Page</label> <input type=\"radio\" id=\"post\" name=\"type\" value=\"post\"><label for=\"post\">Post</label></div>";
+    }
    }
    else
    {
     $formats='["p","Normal"], ["h3","Header 3"], ["h4","Header 4"]';
+    if ($_GET['action'] == 'new')
+    {
+     $type_links="<div id=\"type_select\"><input type=\"radio\" id=\"page\" name=\"type\" value=\"page\"><label for=\"page\">Page</label> <input type=\"radio\" id=\"post\" checked=checked name=\"type\" value=\"post\"><label for=\"post\">Post</label></div>";
+    }
    }
    $type=ucwords($type);
    
@@ -699,6 +708,10 @@ $(function(){
  });
  $("div#PageEditor").tabs();
  
+ $("#type_select").css("text-align","center").buttonset().change(function(){
+  window.location="?action=new&content="+$("input[name=type]:checked").val();
+ });
+ 
  $("select#status").change(function(){
   if ($("select#status").val() == "private"){
    $("input#private").removeAttr('disabled');
@@ -712,6 +725,7 @@ $(function(){
 <form method=post>
 {$hiddenvals}
 <h2>Edit {$type}: <input type=text name="title" placeholder="{$type} Title" id="title" value="{$this->title}"></h2>
+{$type_links}
 <div id="PageEditor">
 <ul id="tabs">
 <li><a href="#PageBody">Body</a></li>
