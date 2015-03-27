@@ -738,9 +738,9 @@ $(function(){
 </textarea>
 </div>
 HTML;
-if ($content == 'Page')
-{
- $info['inner_body'].=<<<HTML
+  if ($type == 'Page')
+  {
+   $info['inner_body'].=<<<HTML
 <div id="PageProps">
 <ul class="noindent nobullet">
 <li><label for="parent">Parent Page:</label> <select id="parent" name="parent">{$parent_opts}</select></li>
@@ -748,6 +748,32 @@ if ($content == 'Page')
 <li><label for="private">Groups that have access:</label> <input type=text id="private" name="has_access" disabled=disabled value="editor,members"></li>
 </ul>
 </div>
+HTML;
+   }
+   elseif ($type == 'Post')
+   {
+    $now_h=date($GLOBALS['USR']->shortdateformat);
+    unset($statuses['cloaked'],$statuses['private']);
+    $status_opts=null;
+    foreach($statuses as $value=>$name)
+    {
+     if ($value == $this->status)
+     {
+      $status_opts.="<option selected=selected value=\"{$value}\">{$name}</option>\n";
+     }
+     else
+     {
+      $status_opts.="<option value=\"{$value}\">{$name}</option>\n";
+     }
+    }
+    $info['inner_body'].=<<<HTML
+<div id="PageProps">
+<input type=hidden name="parent" value="0">
+<ul class="noindent nobullet">
+<li>Post Date: {$now_h}</li>
+<li>Post Author: {$GLOBALS['USR']->name}</li>
+<li><label for="status">Page Status</lable> <select id="status" name="status">{$status_opts}</select>
+</ul>
 HTML;
    }
    $info['inner_body'].=<<<HTML
