@@ -178,7 +178,7 @@ function doAdd(){
 	var longname=$("input#addin-title").val();
 	var description=$("input#addin-description").val();
 
-	$.post("?q=addin/manager/&action=add&ajax=1", { archive: archive,
+	$.post("?ajax=1&section=addin&action=new", { archive: archive,
 	  incp: incp,
 	  enabled: enabled,
 	  dir: dir,
@@ -197,7 +197,7 @@ function doUpdate(id)
 	var longname=$("input#addin-title").val();
 	var description=$("input#addin-description").val();
 
-	$.post("?q=addin/manager/&action=update&num="+id+"&ajax=1",{
+	$.post("?ajax=1&section=addin&action=edit&num="+id,{
 		dir: dir,
 		shortname: shortname,
 		longname: longname,
@@ -210,7 +210,7 @@ function doUpdate(id)
 }
 
 function doRemove(id) {
-	$.post("?q=addin/manager/&action=remove&num="+id+"&ajax=1", { confirm:"Yes"}, function(data){
+	$.post("?ajax=1&section=addin&action=delete&num="+id, { confirm:"Yes"}, function(data){
  	  if (data.succeed){
 	    $("tr#"+data.num).remove();
  	  }else{
