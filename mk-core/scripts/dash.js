@@ -210,7 +210,7 @@ function doUpdate(id)
 }
 
 function doRemove(id) {
-	$.post("?q=addin/manager/&action=remove&num="+id+"&ajax=1", { send:"Yes"}, function(data){
+	$.post("?q=addin/manager/&action=remove&num="+id+"&ajax=1", { confirm:"Yes"}, function(data){
  	  if (data.succeed){
 	    $("tr#"+data.num).remove();
  	  }else{

@@ -310,6 +310,17 @@ HTML;
    $page['title']="New ".ucwords($_GET['section']);
    switch ($_GET['section'])
    {
+    case 'addin':
+    $page['title']="Add Addin";
+    if ($user_data['archive'])
+    {
+     //TODO add addin to database
+    }
+    else
+    {
+     $page['body']=file_get_contents($GLOBALS['SET']['basedir'].'/mk-content/forms/addinadd.htm');
+    }
+    break;
     case 'user':
     default:
     if (!$user_data['send'])
@@ -368,17 +379,13 @@ HTML;
    {
     case 'addin':
     $page['title']="Update Addin";
-    if ($user_data['pkg'])
+    if ($user_data['archive'])
     {
      //TODO add addin to database
     }
-    elseif ($_FILES['pkg']['tempname'])
-    {
-     //TODO upload file to temporary location, read manifest, and create confirmation form
-    }
     else
     {
-     //TODO show package upload form
+     $page['body']=file_get_contents($GLOBALS['SET']['basedir'].'/mk-content/forms/addinadd.htm');
     }
     break;
     case 'user':
@@ -414,6 +421,23 @@ HTML;
    }
    break;
    case 'delete':
+   switch ($_GET['section'])
+   {
+    case 'addin':
+    $page['title']="Add Addin";
+    if ($user_data['confirm'] == "Yes")
+    {
+     //TODO remove addin to database
+    }
+    else
+    {
+     $page['body']=file_get_contents($GLOBALS['SET']['basedir'].'/mk-content/forms/addinremove.htm');
+    }
+    break;
+    case 'user':
+    default:
+    break;
+   }
    break;
    case 'settings':
    $page['title']=ucwords($_GET['section'])." Settings";
