@@ -95,7 +95,7 @@ function iUpload(field,pkg){
 }
 
 function showAdd(){
-	$("div#dialog-fill").load("?q=addin/manager/&action=add&ajax=1", function(data){
+	$("div#dialog-fill").load("?ajax=1&section=addin&action=new", function(data){
 	$(this).dialog({
 		autoOpen: true,
 		title: "Add Addin",
@@ -117,7 +117,7 @@ function showAdd(){
 
 function showUpdate(id,event) {
 	event.preventDefault();
-	$("div#dialog-fill").load("?q=addin/manager/&action=update&num="+id+"&ajax=1", function(data){
+	$("div#dialog-fill").load("?ajax=1&section=addin&action=edit&num="+id, function(data){
         $(this).dialog({
             autoOpen: true,
 	    title: "Update Addin",
@@ -144,7 +144,7 @@ function showUpdate(id,event) {
 
 function showRemove(id,event){
 	event.preventDefault();
-	$("div#dialog-fill").load("?q=addin/manager/&action=remove&num="+id+"&ajax=1", function(data){
+	$("div#dialog-fill").load("?ajax=1&section=addin&action=delete&num="+id, function(data){
 	$(this).dialog({
 		autoOpen: true,
 		title: "Remove Addin?",

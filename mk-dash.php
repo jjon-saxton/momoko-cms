@@ -11,6 +11,9 @@ class MomokoDashboard implements MomokoObject
  {
   switch ($section)
   {
+   case 'addin':
+   $this->table=new DataBaseTable('addins');
+   break;
    case'content':
    $this->table=new DataBaseTable('content');
    break;
@@ -361,12 +364,31 @@ HTML;
    $info['inner_body']="<h2>{$page['title']}</h2>".$page['body'];
    break;
    case 'edit':
-   $page['title']="Edit User";
-   if (!$user_data['name'])
+   switch ($_GET['section'])
    {
-    $query=$this->table->getData("num:'".$_GET['id']."'",null,null,1);
-    $user=$query->fetch(PDO::FETCH_ASSOC);
-    $page['body']=<<<HTML
+    case 'addin':
+    $page['title']="Update Addin";
+    if ($user_data['pkg'])
+    {
+     //TODO add addin to database
+    }
+    elseif ($_FILES['pkg']['tempname'])
+    {
+     //TODO upload file to temporary location, read manifest, and create confirmation form
+    }
+    else
+    {
+     //TODO show package upload form
+    }
+    break;
+    case 'user':
+    default:
+    $page['title']="Edit User";
+    if (!$user_data['name'])
+    {
+     $query=$this->table->getData("num:'".$_GET['id']."'",null,null,1);
+     $user=$query->fetch(PDO::FETCH_ASSOC);
+     $page['body']=<<<HTML
 <form id="UserForm" action="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=edit&id={$user['num']}" method=post>
 <input type=hidden name="num" value="{$user['num']}">
 <ul id="FormList" class="nobullet noindent">
@@ -376,17 +398,19 @@ HTML;
 </ul>
 </form>
 HTML;
-   }
-   else
-   {
-    if ($this->table->updateData($user_data))
-    {
-     header("Location: //{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list");
     }
     else
     {
-     $page['body']="<p>Could not edit user '{$user_data['name']}'</p>";
+     if ($this->table->updateData($user_data))
+     {
+      header("Location: //{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list");
+     }
+     else
+     {
+      $page['body']="<p>Could not edit user '{$user_data['name']}'</p>";
+     }
     }
+    break;
    }
    break;
    case 'delete':
@@ -1049,7 +1073,7 @@ HTML;
     {
      $prev=0;
     }
-    $page_div="<div id=\"UserPags\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list&offset={$prev}\">Previous</a></td><td align=center>";
+    $page_div="<div id=\"UserPages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list&offset={$prev}\">Previous</a></td><td align=center>";
     $pages=paginate($row_c,@$_GET['offset']);
     foreach ($pages as $page)
     {
