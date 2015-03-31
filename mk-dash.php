@@ -851,16 +851,18 @@ HTML;
     {
      if ($_FILES['addin']['error'] == UPLOAD_ERR_OK)
      {
-      $temp=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].'/'.time().$_FILES['addin']['name'];
+      $temp=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].time().$_FILES['addin']['name'];
       move_uploaded_file($_FILES['addin']['tmp_name'],$temp);
-      $zip=new ZipArchive
+      $zip=new ZipArchive();
       if ($zip->open($temp) === TRUE)
       {
-       if ($info=$zip->getFromName("MANIFEST"))
+       if ($manifest=$zip->getFromName("MANIFEST"))
        {
-        $values=$info['info'];
-        $values['dir']=$_FILES['addin']['name'];
-        $values['extractFrom']=$temp;
+        $manifest=parse_ini_string($manifest,true);
+        $values=$manifest['info'];
+        unset($manifest);
+        $values['dir']=pathinfo($_FILES['addin']['name'],PATHINFO_FILENAME);
+        $values['extractFrom']=basename($temp);
        }
        else
        {
@@ -899,7 +901,50 @@ HTML;
      $finfo['error']="Please select a file to upload!";
     }
     
-    //TODO go down copy/paste then edit the page printing section
+    if (!$finfo['error'])
+    {
+     $script_body=<<<TXT
+$('span#msg',pDoc).html("Uploaded!").addClass("success");
+$('input#addin-temp',pDoc).val("{$values['extractFrom']}");
+$('input#addin-dir',pDoc).val("{$values['dir']}");
+$('input#addin-shortname',pDoc).val("{$values['shortname']}");
+$('input#addin-longname',pDoc).val("{$values['longname']}");
+$('textarea#addin-description',pDoc).val("{$values['description']}");
+
+$('li#addin-hidden',pDoc).append(" {$values['dir']}").show();
+$('form',pDoc).find('input, textarea, button, select').removeAttr('disabled');
+
+window.setTimeout(function(){
+ $("span#msg",pDoc).remove();
+ $('input#file',pDoc).removeAttr('disabled');
+}, 1500);
+TXT;
+    }
+    else
+    {
+     $script_body=<<<TXT
+$('span#msg',pDoc).html('{$finfo['error']}').addClass("error");
+window.setTimeout(function(){
+ $('input#file',pDoc).removeAttr('disabled');
+}, 1500);
+TXT;
+    }
+     
+    $page['body']=<<<HTML
+<html>
+<head>
+<title>File Upload</title>
+<script language=javascript src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript"></script>
+<body>
+<script language="javascript" type="text/javascript">
+var pDoc=window.parent.document;
+
+{$script_body}
+</script>
+<p>Processing complete. Check below for further debugging.</p>
+</body>
+</html>
+HTML;
     break;
     case 'attachment':
     default:
