@@ -424,7 +424,7 @@ HTML;
    switch ($_GET['section'])
    {
     case 'addin':
-    $page['title']="Add Addin";
+    $page['title']="Remove Addin";
     if ($user_data['confirm'] == "Yes")
     {
      //TODO remove addin to database
@@ -844,126 +844,185 @@ HTML;
    }
    break;
    case 'upload':
-   $page['title']="Upload a file from your computer";
-   if ($_FILES['file']['tmp_name'])
+   switch ($_GET['section'])
    {
-    if ($_FILES['file']['error'] == UPLOAD_ERR_OK)
+    case 'addin':
+    if ($_FILES['addin']['tmp_name'])
     {
-     $finfo=$_FILES['file'];
-     if (class_exists("finfo"))
+     if ($_FILES['addin']['error'] == UPLOAD_ERR_OK)
      {
-      $upload_info=new finfo(FILEINFO_MIME_TYPE);
-      $finfo['mime_type']=$upload_info->file($finfo['tmp_name']);
-     }
-     else
-     {
-      trigger_error("Could not reliably determine mime type of an uploaded file! finfo class does not exist, so mime type set by browser. Recommend updating PHP or installing the fileinfo PECL extension to avoid mime type spoofing.",E_USER_WARNING);
-      $finfo['mime_type']=$finfo['type'];
-     }
-     $finfo['author']=$GLOBALS['USR']->num;
-     $finfo['date_created']=date("Y-m-d H:i:s");
-     $finfo['temp']=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].crypt(time());
-    
-     if (is_writable($GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir']))
-     {
-      move_uploaded_file($_FILES['file']['tmp_name'],$finfo['temp']);
-      if ($finfo['mime_type'] == "text/html")
+      $temp=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].'/'.time().$_FILES['addin']['name'];
+      move_uploaded_file($_FILES['addin']['tmp_name'],$temp);
+      $zip=new ZipArchive
+      if ($zip->open($temp) === TRUE)
       {
-       $finfo['type']='page';
-       if($raw=file_get_contents($finfo['temp']))
+       if ($info=$zip->getFromName("MANIFEST"))
        {
-        preg_match("/<title>(?P<title>.*?)<\/title>/smU",$raw,$match);
-        $finfo['title']=$match['title'];
-        unset($match);  
-        preg_match("/<body>(?P<body>.*?)<\/body>/smU",$raw,$match);
-        $finfo['text']=$match['body'];
-        unset($match);
-        try
-        {
-         $new_ko=$this->table->putData($finfo);
-        }
-        catch (Exception $err)
-        {
-         trigger_error("Caught exception '".$err->getMessage()."' while attempting to add attachment to database",E_USER_ERROR);
-         $finfo['error']=$err->getMessage();
-        }
-        if ($GLOBALS['SET']['rewrite'])
-        {
-         //TODO set $finfo['link'] to human readable URI
-        }
-        else
-        {
-         $finfo['link']=GLOBAL_PROTOCOL."//".$GLOBALS['SET']['baseuri']."?p=".$new_ko;
-        }
+        $values=$info['info'];
+        $values['dir']=$_FILES['addin']['name'];
+        $values['extractFrom']=$temp;
        }
        else
        {
-        $finfo['error']="HTML file detected, but I could not process it!";
+        $finfo['error']="Possible missing MANIFEST in archive! Please ensure this is a MomoKO addin package!";
        }
-       unlink($finfo['temp']);
       }
       else
       {
-       $finfo['type']='attachment';
-       $finfo['title']=$finfo['name'];
-       $finfo['link']=GLOBAL_PROTOCOL."//".$GLOBALS['SET']['baseuri'].$GLOBALS['SET']['filedir'].$finfo['name'];
-       if(rename($finfo['temp'],$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$finfo['name']))
-       {
-        try
-        {
-         $new_ko=$this->table->putData($finfo);
-        }
-        catch (Exception $err)
-        {
-         trigger_error("Caught exception '".$err->getMessage()."' while attempting to add attachment to database",E_USER_ERROR);
-         ulink($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$finfo['name']);
-         $finfo['error']=$err->getMessage();
-        }
-       }
-       else
-       {
-        $finfo['error']="Could not move attachment to its permenant location (".$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$finfo['name'].")!";
-       }
+       $finfo['error']="Could not open temporary archive ('{$temp}')! Is it a .zip, or .apkg!?";
       }
      }
      else
      {
-      trigger_error("Cannot write to temporary storage directory!",E_USER_WARNING);
-      if (file_exists($GLOBALS['SET']['filedir']."/temp"))
+      switch ($_FILES['file']['error'])
       {
-       $finfo['error']="Temp folder not writable!";
-      }
-      else
-      {
-       $finfo['error']="Temp folder does not exist!";
+       case UPLOAD_ERR_INI_SIZE:
+       $finfo['error']="Uploaded file is too large. Try increasing PHP's max upload size in 'php.ini'";
+       break;
+       case UPLOAD_ERR_PARTIAL:
+       $finfo['error']="Uploaded file was only partially recieved!";
+       break;
+       case UPLOAD_ERR_NO_FILE:
+       $finfo['error']="No file was received!";
+       break;
+       case UPLOAD_ERR_CANT_WRITE:
+       $finfo['error']="Failed to write uploaded file to disk";
+       break;
+       default:
+       $finfo['error']="Unknown error encountered while attempting to upload a file, please try again!";
+       break;
       }
      }
     }
     else
     {
-     switch ($_FILES['file']['error'])
-     {
-      case UPLOAD_ERR_INI_SIZE:
-      $finfo['error']="Uploaded file is too large. Try increasing PHP's max upload size in 'php.ini'";
-      break;
-      case UPLOAD_ERR_PARTIAL:
-      $finfo['error']="Uploaded file was only partially recieved!";
-      break;
-      case UPLOAD_ERR_NO_FILE:
-      $finfo['error']="No file was received!";
-      break;
-      case UPLOAD_ERR_CANT_WRITE:
-      $finfo['error']="Failed to write uploaded file to disk";
-      break;
-      default:
-      $finfo['error']="Unknown error encountered while attempting to upload a file, please try again!";
-      break;
-     }
+     $finfo['error']="Please select a file to upload!";
     }
     
-    if (!$finfo['error'])
+    //TODO go down copy/paste then edit the page printing section
+    break;
+    case 'attachment':
+    default:
+    $page['title']="Upload a file from your computer";
+    if ($_FILES['file']['tmp_name'])
     {
-     $script_body=<<<TXT
+     if ($_FILES['file']['error'] == UPLOAD_ERR_OK)
+     {
+      $finfo=$_FILES['file'];
+      if (class_exists("finfo"))
+      {
+       $upload_info=new finfo(FILEINFO_MIME_TYPE);
+       $finfo['mime_type']=$upload_info->file($finfo['tmp_name']);
+      }
+      else
+      {
+       trigger_error("Could not reliably determine mime type of an uploaded file! finfo class does not exist, so mime type set by browser. Recommend updating PHP or installing the fileinfo PECL extension to avoid mime type spoofing.",E_USER_NOTICE);
+       $finfo['mime_type']=$finfo['type'];
+      }
+      $finfo['author']=$GLOBALS['USR']->num;
+      $finfo['date_created']=date("Y-m-d H:i:s");
+      $finfo['temp']=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].crypt(time());
+    
+      if (is_writable($GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir']))
+      {
+       move_uploaded_file($_FILES['file']['tmp_name'],$finfo['temp']);
+       if ($finfo['mime_type'] == "text/html")
+       {
+        $finfo['type']='page';
+        if($raw=file_get_contents($finfo['temp']))
+        {
+         preg_match("/<title>(?P<title>.*?)<\/title>/smU",$raw,$match);
+         $finfo['title']=$match['title'];
+         unset($match);  
+         preg_match("/<body>(?P<body>.*?)<\/body>/smU",$raw,$match);
+         $finfo['text']=$match['body'];
+         unset($match);
+         try
+         {
+          $new_ko=$this->table->putData($finfo);
+         }
+         catch (Exception $err)
+         {
+          trigger_error("Caught exception '".$err->getMessage()."' while attempting to add attachment to database",E_USER_ERROR);
+          $finfo['error']=$err->getMessage();
+         }
+         if ($GLOBALS['SET']['rewrite'])
+         {
+          //TODO set $finfo['link'] to human readable URI
+         }
+         else
+         {
+          $finfo['link']=GLOBAL_PROTOCOL."//".$GLOBALS['SET']['baseuri']."?p=".$new_ko;
+         }
+        }
+        else
+        {
+         $finfo['error']="HTML file detected, but I could not process it!";
+        }
+        unlink($finfo['temp']);
+       }
+       else
+       {
+        $finfo['type']='attachment';
+        $finfo['title']=$finfo['name'];
+        $finfo['link']=GLOBAL_PROTOCOL."//".$GLOBALS['SET']['baseuri'].$GLOBALS['SET']['filedir'].$finfo['name'];
+        if(rename($finfo['temp'],$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$finfo['name']))
+        {
+         try
+         {
+          $new_ko=$this->table->putData($finfo);
+         }
+         catch (Exception $err)
+         {
+          trigger_error("Caught exception '".$err->getMessage()."' while attempting to add attachment to database",E_USER_ERROR);
+          ulink($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$finfo['name']);
+          $finfo['error']=$err->getMessage();
+         }
+        }
+        else
+        {
+         $finfo['error']="Could not move attachment to its permenant location (".$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$finfo['name'].")!";
+         }
+       }
+      }
+      else
+      {
+       trigger_error("Cannot write to temporary storage directory!",E_USER_WARNING);
+       if (file_exists($GLOBALS['SET']['filedir']."/temp"))
+       {
+        $finfo['error']="Temp folder not writable!";
+       }
+       else
+       {
+        $finfo['error']="Temp folder does not exist!";
+       }
+      }
+     }
+     else
+     {
+      switch ($_FILES['file']['error'])
+      {
+       case UPLOAD_ERR_INI_SIZE:
+       $finfo['error']="Uploaded file is too large. Try increasing PHP's max upload size in 'php.ini'";
+       break;
+       case UPLOAD_ERR_PARTIAL:
+       $finfo['error']="Uploaded file was only partially recieved!";
+       break;
+       case UPLOAD_ERR_NO_FILE:
+       $finfo['error']="No file was received!";
+       break;
+       case UPLOAD_ERR_CANT_WRITE:
+       $finfo['error']="Failed to write uploaded file to disk";
+       break;
+       default:
+       $finfo['error']="Unknown error encountered while attempting to upload a file, please try again!";
+       break;
+      }
+     }
+    
+     if (!$finfo['error'])
+     {
+      $script_body=<<<TXT
 $('span#msg',pDoc).html("Uploaded!").addClass("success");
 $('div#FileInfo',pDoc).append("<div class=\"page selectable box\"><a id=\"location\" href=\"{$finfo['link']}\" style=\"display:none\">[insert]</a><strong>{$finfo['title']}</strong></div>");
 window.setTimeout(function(){
@@ -971,18 +1030,18 @@ window.setTimeout(function(){
  $('input#file',pDoc).removeAttr('disabled');
 }, 1500);
 TXT;
-    }
-    else
-    {
+     }
+     else
+     {
      $script_body=<<<TXT
 $('span#msg',pDoc).html('{$finfo['error']}').addClass("error");
 window.setTimeout(function(){
  $('input#file',pDoc).removeAttr('disabled');
 }, 1500);
 TXT;
-    }
+     }
      
-    $page['body']=<<<HTML
+     $page['body']=<<<HTML
 <html>
 <head>
 <title>File Upload</title>
@@ -997,12 +1056,14 @@ var pDoc=window.parent.document;
 </body>
 </html>
 HTML;
-   }
-   else
-   {
-    $page['body']=<<<HTML
+    }
+    else
+    {
+     $page['body']=<<<HTML
 <p>Ready for upload!</p>
 HTML;
+    }
+    break;
    }
    break;
    case 'gethref':

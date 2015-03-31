@@ -1,9 +1,0 @@
-<manifest addin="PasswordReset">
-<dirroot>/addins/passreset/</dirroot>
-<dbtable>users</dbtable>
-<authority>
-	<whitelist>nobody</whitelist>
-	<blacklist>ALL</blacklist>
-</authority>
-<incp>No</incp>
-</manifest>

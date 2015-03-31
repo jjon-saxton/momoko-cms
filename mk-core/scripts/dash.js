@@ -78,11 +78,11 @@ function openAJAXModal(url,title)
 }
 
 function iUpload(field,pkg){
-    var re_img=/\.apkg|\.zip/i;
+    var re_pkg=/\.apkg|\.zip/i;
     var filename=field.value;
 
     /*Make sure the proper type is uploaded if we expect a package*/
-    if (pkg == true && filename.search(re_img) == -1){
+    if (pkg == true && filename.search(re_pkg) == -1){
       alert("File must be either a MomoKO .apkg or a .zip file!");
       field.form.reset();
       return false;
