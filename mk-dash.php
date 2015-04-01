@@ -311,14 +311,59 @@ HTML;
    switch ($_GET['section'])
    {
     case 'addin':
-    $page['title']="Add Addin";
     if ($user_data['archive'])
     {
-     //TODO add addin to database
+     $destination=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].'addins/'.$user_data['dir'];
+     $zip=new ZipArchive();
+     if ($zip->open($GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].$user_data['archive']))
+     {
+      $find=$this->table->getData("dir:'{$user_data['dir']}'");
+      if ($find->rowCount > 0)
+      {
+       $add=$this->table->updateData($user_data);
+      }
+      else
+      {
+       $add=$this->table->putData($user_data);
+      }
+      
+      if ($add && mkdir($destination))
+      {
+       if ($zip->extractTo($destination))
+       {
+        unlink($GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].$user_data['archive']);
+        $status=$add;
+        $status['code']=200;
+       }
+       else
+       {
+        $status['code']=501;
+        $status['message']="Could not extract archive, please try to extract it manually to {$destination}!";
+       }
+      }
+      else
+      {
+       $status['code']=501;
+       $status['message']="There was a problem adding the addin to {$destination}! Please ensure it was added to the database and that MomoKO has permission to create folders  in the addin directory.";
+      }
+     }
+     else
+     {
+      $status['code']=501;
+      $status['message']="Could not open {$user_data['archive']}! please ensure it has not been deleted and that MomoKO has permissions to read it.";
+     }
+     
+     if ($status['code'] == 501)
+     {
+      trigger_error($status['message'],E_USER_ERROR);
+     }
+     
+     $page['body']=json_encode($status);
     }
     else
     {
-     $page['body']=file_get_contents($GLOBALS['SET']['basedir'].'/mk-content/forms/addinadd.htm');
+     $form=new MomokoAddinForm('add');
+     $page['body']=$form->inner_body;
     }
     break;
     case 'user':
@@ -377,17 +422,6 @@ HTML;
    case 'edit':
    switch ($_GET['section'])
    {
-    case 'addin':
-    $page['title']="Update Addin";
-    if ($user_data['archive'])
-    {
-     //TODO add addin to database
-    }
-    else
-    {
-     $page['body']=file_get_contents($GLOBALS['SET']['basedir'].'/mk-content/forms/addinadd.htm');
-    }
-    break;
     case 'user':
     default:
     $page['title']="Edit User";
@@ -427,11 +461,38 @@ HTML;
     $page['title']="Remove Addin";
     if ($user_data['confirm'] == "Yes")
     {
-     //TODO remove addin to database
+     $q=$this->table->getData("num:'= {$_GET['num']}'");
+     $select=$q->fetch();
+     if ($delete=$this->table->deleteData($select))
+     {
+      if (rmdirr($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$select['dir']))
+      {
+       $status['code']=200;
+       $status['num']=$select['num'];
+      }
+      else
+      {
+       $status['code']=501;
+       $status['message']="Removed addin from database, but its folder could not be removed, please delete it manually!";
+      }
+     }
+     else
+     {
+      $status['code']=501;
+      $status['message']="Could not delete addin from database!";
+     }
+     
+     if ($status['code'] == 501)
+     {
+      trigger_error($status['message'],E_USER_ERROR);
+     }
+     
+     $page['body']=json_encode($status);
     }
     else
     {
-     $page['body']=file_get_contents($GLOBALS['SET']['basedir'].'/mk-content/forms/addinremove.htm');
+     $form=new MomokoAddinForm('remove');
+     $page['body']=$form->inner_body;
     }
     break;
     case 'user':
@@ -906,6 +967,7 @@ HTML;
      $script_body=<<<TXT
 $('span#msg',pDoc).html("Uploaded!").addClass("success");
 $('input#addin-temp',pDoc).val("{$values['extractFrom']}");
+$('input#addin-type',pDoc).val("{$values['type']}");
 $('input#addin-dir',pDoc).val("{$values['dir']}");
 $('input#addin-shortname',pDoc).val("{$values['shortname']}");
 $('input#addin-longname',pDoc).val("{$values['longname']}");

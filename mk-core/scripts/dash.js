@@ -115,33 +115,6 @@ function showAdd(){
 	});
 }
 
-function showUpdate(id,event) {
-	event.preventDefault();
-	$("div#dialog-fill").load("?ajax=1&section=addin&action=edit&num="+id, function(data){
-        $(this).dialog({
-            autoOpen: true,
-	    title: "Update Addin",
-            height: 300,
-            width: 350,
-            modal: true,
-            buttons: {
-		Apply: function(){
-			doUpdate(id);
-			$(this).dialog("close");
- },
-		Cancel: function(){
-			$(this).dialog("close");
-		}
-            }
-	 });
-        });
-	/*$.get("?q=addin/manager/&action=get&u="+id+"&ajax=1", function(data){
-		$("input#name").val(data.name);
-		$("input#email").val(data.email);
-		$("input#groups").val(data.groups);
-	},'json');*/
-}
-
 function showRemove(id,event){
 	event.preventDefault();
 	$("div#dialog-fill").load("?ajax=1&section=addin&action=delete&num="+id, function(data){
@@ -170,51 +143,35 @@ function toggleEnabled(id,event){
 }
 
 function doAdd(){
-	var archive=$("input#addin").val();
-	var incp=$("input#addin-incp").val();
-	var enabled=$("input#addin-enabled").val();
+	var archive=$("input#addin-temp").val();
+	var type=$("input#addin-type").val();
 	var dir=$("input#addin-dir").val();
-	var shortname=$("input#addin-name").val();
-	var longname=$("input#addin-title").val();
+	var shortname=$("input#addin-shortname").val();
+	var longname=$("input#addin-longname").val();
 	var description=$("input#addin-description").val();
 
 	$.post("?ajax=1&section=addin&action=new", { archive: archive,
-	  incp: incp,
-	  enabled: enabled,
+	  enabled: true,
+	  type: type,
 	  dir: dir,
 	  shortname: shortname,
 	  longname: longname,
 	  description: description
 	}, function(data){
-	  alert(data.longname+" Added!");
+	    if (data.status == 200){
+	     alert(data.longname+" Added!"); //TODO add or change effected row!
+	    }else{
+	     alert("Error! "+data.message);
+	    }
 	},'json');	
-}
-
-function doUpdate(id)
-{
-	var dir=$("input#name").val();
-	var shortname=$("input#addin-name").val();
-	var longname=$("input#addin-title").val();
-	var description=$("input#addin-description").val();
-
-	$.post("?ajax=1&section=addin&action=edit&num="+id,{
-		dir: dir,
-		shortname: shortname,
-		longname: longname,
-		description: description
-}, function(data){
-	$("tr#"+id).hide('slow');
-	$("tr#"+id).html("<td>"+data.num+"</td><td>"+data.name+"</td><td>"+data.groups+"</td><td>"+data.actions+"</td>");
-	$("tr#"+id).show('slow');
-},'json');
 }
 
 function doRemove(id) {
 	$.post("?ajax=1&section=addin&action=delete&num="+id, { confirm:"Yes"}, function(data){
- 	  if (data.succeed){
+ 	  if (data.status == 200){
 	    $("tr#"+data.num).remove();
  	  }else{
-	    alert(data.error);
+	    alert("Error!" +data.message);
  	  }
 	},'json');
 }
