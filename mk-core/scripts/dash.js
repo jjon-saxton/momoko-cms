@@ -137,11 +137,6 @@ function showRemove(id,event){
 	});
 }
 
-function toggleEnabled(id,event){
-  event.preventDefault();
-  $("tr#"+id+" > td#enabled").load("?q=addin/manager/&action=enable&num="+id+"&ajax=1");
-}
-
 function doAdd(){
 	var archive=$("input#addin-temp").val();
 	var type=$("input#addin-type").val();

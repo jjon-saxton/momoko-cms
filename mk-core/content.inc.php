@@ -1217,16 +1217,15 @@ class MomokoAddinForm implements MomokoObject
   {
     $info=parse_page($this->get());
     $vars['sitedir']=$GLOBALS['SET']['baseuri'];
+    $table=new DataBaseTable('addins');
     
     switch($this->form)
     {
       case 'remove':
-      $vars['num']=$this->info['addin']->num;
-      $vars['name']=$this->info['addin']->shortname;
-      $vars['dir']=$this->info['addin']->dir;
+      $q=$table->getData("num:'{$_GET['num']}'",array('num','longname','dir'));
+      $vars=$q->fetch(PDO::FETCH_ASSOC);
       break;
       default:
-      $table=new DataBaseTable('addins');
       $cols=array('num','shortname','longname','type');
       $vars['addin_cols']=null;
       foreach ($cols as $col)
@@ -1236,7 +1235,7 @@ class MomokoAddinForm implements MomokoObject
 	  $vars['addin_cols'].="<th class=\"ui-state-default\">".ucwords($col)."</th>";
 	}
       }
-      $vars['addin_cols'].="<th class=\"ui-state-default\">Actions</th>";
+      $vars['addin_cols'].="<th class=\"ui-state-default\">&nbsp;</th>";
       unset($name,$properties);
       
       $data=$table->getData();
@@ -1251,7 +1250,7 @@ class MomokoAddinForm implements MomokoObject
 	    $vars['addin_list'].="<td id=\"".$name."\" class=\"ui-widget-content\">".$row[$name]."</td>";
 	  }
 	}
-	$vars['addin_list'].="<td class=\"ui-widget-content\"><a class=\"ui-icon ui-icon-check\" style=\"display:inline-block\" onclick=\"toggleEnabled('".$row['num']."',event)\" title=\"Enable/Disable\" href=\"javascript:void()\"></a><a class=\"ui-icon ui-icon-trash\" style=\"display:inline-block\" onclick=\"showRemove('".$row['num']."',event)\" title=\"Delete\" href=\"javascript:void()\"></a></td>\n</tr>\n";
+	$vars['addin_list'].="<td class=\"ui-widget-content\"><a class=\"ui-icon ui-icon-trash\" style=\"display:inline-block\" onclick=\"showRemove('".$row['num']."',event)\" title=\"Delete\" href=\"javascript:void()\"></a></td>\n</tr>\n";
       }
     }
     $vars['site_location']=$GLOBALS['SET']['baseuri'];
