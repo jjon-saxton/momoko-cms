@@ -462,10 +462,10 @@ HTML;
     if ($user_data['confirm'] == "Yes")
     {
      $q=$this->table->getData("num:'= {$_GET['num']}'");
-     $select=$q->fetch();
+     $select=$q->fetch(PDO::FETCH_ASSOC);
      if ($delete=$this->table->deleteData($select))
      {
-      if (rmdirr($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$select['dir']))
+      if (rmdirr($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].'addins/'.$select['dir']))
       {
        $status['code']=200;
        $status['num']=$select['num'];
