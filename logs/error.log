@@ -198,3 +198,49 @@
 [2014-10-18 17:05:40] PHP Error (2; file_get_contents(/home/kuro/public_html/momoko/addins/manager//manifest.xml): failed to open stream: No such file or directory) in 503 of /home/kuro/public_html/momoko/core/common.inc.php!
 [2014-10-18 17:17:09] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/kuro/public_html/momoko/index.php!
 [2014-10-18 17:17:09] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/kuro/public_html/momoko/index.php!
+[2015-04-09 16:35:25] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-09 16:35:25] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-09 16:35:47] PHP Error (2048; Only variables should be passed by reference) in 645 of /home/ubuntu/workspace/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2015-04-09 16:35:47] PHP Error (2048; Only variables should be passed by reference) in 645 of /home/ubuntu/workspace/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2015-04-09 16:38:36] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-09 16:38:36] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:35:08] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:35:08] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:35:25] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:35:25] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:35:43] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:35:43] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:36:08] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:36:08] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:36:10] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:36:10] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:36:14] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:36:14] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:37:12] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:37:12] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:39:18] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:39:18] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:45:13] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:45:13] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:47:40] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:47:40] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:50:35] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:50:35] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:53:37] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:53:37] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:55:21] PHP Error (2; implode(): Argument must be an array) in 1048 of /home/ubuntu/workspace/core/content.inc.php!
+[2015-04-11 02:55:44] PHP Error (2; implode(): Argument must be an array) in 1048 of /home/ubuntu/workspace/core/content.inc.php!
+[2015-04-11 02:55:46] PHP Error (2; implode(): Argument must be an array) in 1048 of /home/ubuntu/workspace/core/content.inc.php!
+[2015-04-11 02:55:50] PHP Error (2; implode(): Argument must be an array) in 1048 of /home/ubuntu/workspace/core/content.inc.php!
+[2015-04-11 02:56:03] PHP Error (2; implode(): Argument must be an array) in 1048 of /home/ubuntu/workspace/core/content.inc.php!
+[2015-04-11 02:56:07] PHP Error (2; implode(): Argument must be an array) in 1048 of /home/ubuntu/workspace/core/content.inc.php!
+[2015-04-11 02:56:10] PHP Error (2; implode(): Argument must be an array) in 1048 of /home/ubuntu/workspace/core/content.inc.php!
+[2015-04-11 02:56:12] PHP Error (2; implode(): Argument must be an array) in 1048 of /home/ubuntu/workspace/core/content.inc.php!
+[2015-04-11 02:56:44] PHP Error (2; implode(): Argument must be an array) in 1048 of /home/ubuntu/workspace/core/content.inc.php!
+[2015-04-11 02:57:00] PHP Error (2; implode(): Invalid arguments passed) in 1048 of /home/ubuntu/workspace/core/content.inc.php!
+[2015-04-11 02:57:16] PHP Error (2; implode(): Invalid arguments passed) in 1048 of /home/ubuntu/workspace/core/content.inc.php!
+[2015-04-11 02:58:32] PHP Error (2; array_splice() expects parameter 1 to be array, null given) in 24 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:58:32] PHP Error (2; implode(): Invalid arguments passed) in 25 of /home/ubuntu/workspace/index.php!
+[2015-04-11 02:58:40] PHP Error (2; PDOStatement::fetch(): SQLSTATE[HY000]: General error: No fetch class specified) in 91 of /home/ubuntu/workspace/addins/usermanager/main.inc.php!
+[2015-04-11 02:58:53] PHP Error (2048; Only variables should be passed by reference) in 645 of /home/ubuntu/workspace/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2015-04-11 02:58:53] PHP Error (2048; Only variables should be passed by reference) in 645 of /home/ubuntu/workspace/scripts/elfinder/php/elFinderVolumeDriver.class.php!

@@ -1045,8 +1045,8 @@ class MomokoPCModule implements MomokoModuleInterface
 
  public function getModule($format='html')
  {
-  $ext=pathinfo(@$_SERVER['PATH_INFO'],PATHINFO_EXTENSION);
-  if ((empty($_SERVER['PATH_INFO']) || $ext == 'htm' || $ext == 'html') && (@$_GET['action'] != 'edit' && @$_GET['action'] != 'new'))
+  $path_parts=explode("/",$_GET['q']);
+  if (empty(@$_GET['action']) && $path_parts[0] != 'addin' && basename($_SERVER['REQUEST_URI']) != 'mk_dash.php')
   {
     if ($this->opts['nouser'] == 'hidden' && ($this->user->inGroup('admin') || $this->user->inGroup('editor')))
     {
