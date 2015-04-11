@@ -667,14 +667,14 @@ HTML;
     {
      momoko_changes($GLOBALS['USR'],'updated',$this,"Additionally the page was renamed from ".basename($this->path)." to ".$data['pagename']."!");
      $dir=ltrim($dir,"/");
-     header("Location: //".$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].PAGEROOT.$dir.'/'.$data['pagename']);
+     header("Location: //".$GLOBALS['SET']['baseuri'].PAGEROOT.$dir.$data['pagename']);
      exit();
     }
     else
     {
      momoko_changes($GLOBALS['USR'],'updated',$this);
      $file=ltrim($this->path,"/");
-     header("Location: //".$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].PAGEROOT.$file);
+     header("Location: //".$GLOBALS['SET']['baseuri'].PAGEROOT.$file);
      exit();
     }
    }
