@@ -244,3 +244,4 @@
 [2015-04-11 02:58:40] PHP Error (2; PDOStatement::fetch(): SQLSTATE[HY000]: General error: No fetch class specified) in 91 of /home/ubuntu/workspace/addins/usermanager/main.inc.php!
 [2015-04-11 02:58:53] PHP Error (2048; Only variables should be passed by reference) in 645 of /home/ubuntu/workspace/scripts/elfinder/php/elFinderVolumeDriver.class.php!
 [2015-04-11 02:58:53] PHP Error (2048; Only variables should be passed by reference) in 645 of /home/ubuntu/workspace/scripts/elfinder/php/elFinderVolumeDriver.class.php!
+[2015-04-11 03:03:17] PHP Error (2; PDOStatement::fetch(): SQLSTATE[HY000]: General error: No fetch class specified) in 91 of /home/ubuntu/workspace/addins/usermanager/main.inc.php!

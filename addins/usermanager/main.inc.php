@@ -88,7 +88,7 @@ class UserManager implements MomokoObject
 
    $query=$this->dbtable->getData(@$_GET['query'],$cols,@$_GET['sort'],@$_GET['limit'],@$_GET['offset']);
    
-   while ($row=$query->fetch(PDO::FETCH_CLASS))
+   while ($row=$query->fetch(PDO::FETCH_OBJ))
    {
     $table.="<tr id=\"".$row->num."\">\n";
     foreach ($cols as $col)
