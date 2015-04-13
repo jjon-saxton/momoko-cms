@@ -596,7 +596,14 @@ class MomokoPage implements MomokoObject
  
  public function __construct($path, array $additional_vars=null)
  {
-  $this->cur_path=$path;
+  if (empty($path))
+  {
+   $this->cur_path="/home.htm";
+  }
+  else
+  {
+   $this->cur_path=$path;
+  }
   $this->info=$this->readInfo();
 
   $body=$this->inner_body;
@@ -621,10 +628,6 @@ class MomokoPage implements MomokoObject
  {
   $this->info[$key]=$value;
   return true;
- }
- 
- public function listAll()
- {
  }
  
  public function getChildren()
@@ -655,7 +658,7 @@ class MomokoPage implements MomokoObject
 </body>
 </html>
 HTML;
-   if (file_put_contents($GLOBALS['SET']['pagedir'].$this->path,$full_html))
+   if (file_put_contents($GLOBALS['SET']['pagedir'].$this->cur_path,$full_html))
    {
     $dir=pathinfo($this->path,PATHINFO_DIRNAME);
     if (pathinfo($data['pagename'],PATHINFO_EXTENSION) != 'htm' && pathinfo($data['pagename'],PATHINFO_EXTENSION) != 'html')
