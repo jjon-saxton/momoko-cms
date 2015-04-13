@@ -793,6 +793,31 @@ HTML;
   }
  }
  
+ public function drop()
+ {
+  if (@$_POST['confirm'])
+  {
+   if (unlink($GLOBALS['SET']['pagedir'].$this->cur_path))
+   {
+    header("Location: {$GLOBALS['SET']['baseuri']}");
+   }
+   else
+   {
+    trigger_error("Could not delete page {$this->cur_path}!",E_USER_ERROR);
+   }
+  }
+  else
+  {
+   $this->inner_body=<<<HTML
+<h2>{$this->title}</h2>
+<form method=post>
+<p>Are you sure you want to delete '{$this->title}' ({$this->cur_path})? This action cannot be undone!</p>
+<div align=center><button type=submi name="confirm" value="yes">Yes</button> <button onclick="history.back()">No</button></div>
+</form>
+HTML;
+  }
+ }
+ 
  private function setVars(array $vars=null)
  {
    if (empty($vars))
