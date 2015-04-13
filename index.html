@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>MomoKO by jjon-saxton</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>MomoKO</h1>
+        <h2>MomoKO Content Managment System</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/jjon-saxton/momoko-cms/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/jjon-saxton/momoko-cms/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/jjon-saxton/momoko-cms" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a id="momoko" class="anchor" href="#momoko" aria-hidden="true"><span class="octicon octicon-link"></span></a>MomoKO</h1>
+
+<p>MomoKO Content Managment System - The web is <em>yours</em> again!</p>
+
+<h2>
+<a id="installation-instructions" class="anchor" href="#installation-instructions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation Instructions</h2>
+
+<h3>
+<a id="1-acquire-momoko" class="anchor" href="#1-acquire-momoko" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. Acquire MomoKO</h3>
+
+<p>There are two quick and easy methods for getting your hands on MomoKO's code. Both methods make use of her git repo. The first and best method is using git on your server, but this requires SSH access. If you don't have SSH access, or don't know what SSH is you can download a ZIP file from our repo. I will describe both methods below.</p>
+
+<h4>
+<a id="11-using-git" class="anchor" href="#11-using-git" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.1 Using git</h4>
+
+<p>The steps outlined here will help you set up a folder on your server as a local git repository. You will than be able to set our repo up as a remote origin and pull in MomoKO. This method is the quickest and allows you to easily upgrade when new updates are made available. SSH access to your web host is <strong>required</strong>!</p>
+
+<ol>
+<li>Log in to your server via SSH, instructions on this procedure vary depending on your SSH client. Consult your client's instruction manual for details.</li>
+<li>Once you have an shell prompt create a folder for MomoKO or change to your web folder either <code>mkdir momoko &amp;&amp; cd momoko</code> or <code>cd public_html</code> replace momoko or public_html with the correct folder name.</li>
+<li>Set-up git in the folder you switched to; <code>git init</code>
+</li>
+<li>Set our repo as this folder's remote origin: <code>git remote add origin https://github.com/jjon-saxton/momoko-cms.git</code>
+</li>
+<li>Download from git: <code>git pull origin latest_stable</code>
+</li>
+<li>Proceed to 'Configuring MomoKO'</li>
+</ol>
+
+<h4>
+<a id="12-using-a-zip-file-from-our-repo" class="anchor" href="#12-using-a-zip-file-from-our-repo" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.2 Using a ZIP file from our repo</h4>
+
+<p>If you don't have SSH access to your server, but are able to transfer files to your server you can go to our repo and download a ZIP file to your computer. A link will appear to the left of our repo URL at the top of the page. You will need to be able extract the ZIP file and upload it to your computer</p>
+
+<ol>
+<li>Download the ZIP file</li>
+<li>Extract the contents of the file into a temporary folder on your desktop</li>
+<li>Login into your server using your usual file transfer program and create a folder for momoko or change to your web site folder. Instructions vary depending on your client, consult your client's manual for more instructions.</li>
+<li>Navigate your local view to the folder you extracted MomoKO into on your desktop and transfer its contents into the current remote directory you selected above. You may now delete the temporary folder.</li>
+<li>Proceed to 'Configuring MomoKO'</li>
+</ol>
+
+<h3>
+<a id="2-configuring-momoko" class="anchor" href="#2-configuring-momoko" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Configuring MomoKO</h3>
+
+<p>Once you have MomoKO on your server and accessable to the world, you will have to configure her. In the folder you place MomoKO in on your server there is a sub-folder called <code>assets</code> in there is a sub-folder called <code>etc</code>. <code>etc</code> is where the configuration files are kept. Currently only one file, <code>version.nfo.txt</code> exists. This file simply holds the current version number. To configure MomoKO copy the contents of the sub-folder <code>examples</code> into the folder <code>etc</code>. Over SSH the following command should work: <code>cp -r ./examples/* ./</code></p>
+
+<p>You should get to files, <code>dal.conf.txt</code> and <code>main.conf.txt</code>. First open <code>main.conf.txt</code>, this is used to set up MomoKO's environment variables so she knows where things are and what things are called. We will define the settings below.</p>
+
+<h4>
+<a id="21-mainconftxt-settings" class="anchor" href="#21-mainconftxt-settings" aria-hidden="true"><span class="octicon octicon-link"></span></a>2.1 main.conf.txt Settings</h4>
+
+<p>basedir
+:   This sets the location of your MomoKO's scripts. This should be set to the <em>absolute</em> path to the folder MomoKO was put in when you acquired her.</p>
+
+<p>pagedir
+:   This sets the location where MomoKO's pages will be stored. In the example, we show the absolute path to assets/pages, but this can be <em>any</em> folder on your file system that your web server software can read and write to.</p>
+
+<p>filedir
+:   Like the above, but sets were MomoKO will look for photos, videos, and other types of files other than pages.</p>
+
+<p>tempdir
+:   Like the above, but sets where MomoKO will store temporary files</p>
+
+<p>domain
+:   Not set in the example, this is where you can store the fully qualified domain name of your site. If you leave this blank MomoKO will try to use global environment variables to guess your domain.</p>
+
+<p>location
+:   The location of you site according to your web server software. This is often just the folder underneath you web document folder where you put MomoKO, but this can be different if your server uses userdirs. Please consult your server documentation if this is the case. If in doubt, leave blank and see if there are errors.</p>
+
+<p>session
+:   Gives the MomoKO session a name, by default this is 'mk', there should be no need to change it unless you have multiple MomoKO instances on your server or something else that sets a cookie with that name.</p>
+
+<p>salt
+:   Used to encrypt passwords, the salt characters are prepended to the password and alters the output. The example sets this to 'mk', there should be no need to change this unless you simply want more security by being more unique.</p>
+
+<p>rewrite
+:   If your server supports mod_rewrite you can use included rewrite rules. Move the <code>.htaccess</code> file to your MomoKO's basedir and set this to true. This will generate more search-engine and human friendly URLS</p>
+
+<h4>
+<a id="22-dalconftxt-settings" class="anchor" href="#22-dalconftxt-settings" aria-hidden="true"><span class="octicon octicon-link"></span></a>2.2 dal.conf.txt Settings</h4>
+
+<p>type
+:   This is the type of database server you have. This instructs the Database Abstraction Layer on what driver to load. Please ensure a driver exists and/or as been installed for your server type. Also uses all lower-case for this value. If you use a MySQL server, type mysql here; for SQLite2 type sqlite, for SQLite3 use sqlite3.</p>
+
+<p>table_pre
+:   A prefix to prepend to table names. This can be anything you chose, but we advise you to have an underscore '_' character at the end. Leaving this blank will generate simple names with no prefix. You might do this for a dedicated database.
+file
+:   For SQLite2 and SQLite3, specify the <em>absolute</em> path to the database file.</p>
+
+<p>host
+:   For MySQL and others, specify the fully qualified domain name for your database server.</p>
+
+<p>user
+:   The user name of MomoKO's database user. This user must have full read write rights to the database listed below. The easiest method is to create this user and than chose to create a database with their name and grant them all privledges.</p>
+
+<p>password
+:   The password of the user above. Do <strong>NOT</strong> leave this blank. For security this user <strong>needs</strong> a password! The only exception would be an SQLite2 or SQLite3 database where no user is used.</p>
+
+<p>default
+:   The name of the default database. The user specified above needs full privledges for this database!</p>
+
+<h3>
+<a id="3-prepare-your-database" class="anchor" href="#3-prepare-your-database" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. Prepare your database</h3>
+
+<p>Once configured you need to set up required tables on your database and create an administrator for your site. Once this is done, you will be able to login, create pages, and additional users. Fortunately this task is made simple by the inclusion of a finalization script. This procedure can only be completed via SSH at this time. A web front-end will be created shortly, which will allow you to complete this procedure in your web browser.</p>
+
+<h4>
+<a id="31-run-installphp-cli-over-ssh" class="anchor" href="#31-run-installphp-cli-over-ssh" aria-hidden="true"><span class="octicon octicon-link"></span></a>3.1 Run install.php CLI over SSH</h4>
+
+<p>To use this method you will need SSH access to your server!</p>
+
+<ol>
+<li>Login to you server via SSH</li>
+<li>Navigate to your MomoKO installation and change to <code>assets/php/cli</code>
+</li>
+<li>Run <code>install.php</code>
+
+<ol>
+<li>Ensure <code>install.php</code> is executable and type: <code>./install.php</code>
+</li>
+<li>If this files try: <code>php ./install.php</code>
+</li>
+</ol>
+</li>
+<li>Follow the onscreen instructions.</li>
+</ol>
+
+<h3>
+<a id="congratulations" class="anchor" href="#congratulations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Congratulations!</h3>
+
+<p>Your site is now configured and ready. Login as the administrator you created above and begin adding content!</p>
+
+<h2>
+<a id="upgrading-momoko" class="anchor" href="#upgrading-momoko" aria-hidden="true"><span class="octicon octicon-link"></span></a>Upgrading MomoKO</h2>
+
+<p>Upgrading MomoKO can be simple if you used git to acquire her. Otherwise the procedure is a bit more difficult.</p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
