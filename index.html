@@ -31,7 +31,12 @@
         <h1>
 <a id="momoko" class="anchor" href="#momoko" aria-hidden="true"><span class="octicon octicon-link"></span></a>MomoKO</h1>
 
-<p>MomoKO Content Managment System - The web is <em>yours</em> again!</p>
+<h2>
+<a id="momoko-content-management-system---the-web-is-yours-again" class="anchor" href="#momoko-content-management-system---the-web-is-yours-again" aria-hidden="true"><span class="octicon octicon-link"></span></a>MomoKO Content Management System - The web is <em>yours</em> again!</h2>
+
+<p>Take back the web! MomoKO is a simple easy-to-use, easy-to-understand content management system, also known as a CMS. MomoKO is theme-able, customization, and powerful. All of her powerful features happen right on your site, but are only accessible to you. We designed MomoKO from the ground up to be easy to understand and use. If you've ever used a word-processor, you can add, edit, and delete pages from MomoKO with ease. She is also extensible through what we call addins.</p>
+
+<p>To get started with MomoKO you can get the latest stable version above and follow the installation instructions below. Need an example? <a href="http://www.cctmath.org">CCTM</a> runs MomoKO!</p>
 
 <h2>
 <a id="installation-instructions" class="anchor" href="#installation-instructions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation Instructions</h2>
@@ -39,42 +44,12 @@
 <h3>
 <a id="1-acquire-momoko" class="anchor" href="#1-acquire-momoko" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. Acquire MomoKO</h3>
 
-<p>There are two quick and easy methods for getting your hands on MomoKO's code. Both methods make use of her git repo. The first and best method is using git on your server, but this requires SSH access. If you don't have SSH access, or don't know what SSH is you can download a ZIP file from our repo. I will describe both methods below.</p>
-
-<h4>
-<a id="11-using-git" class="anchor" href="#11-using-git" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.1 Using git</h4>
-
-<p>The steps outlined here will help you set up a folder on your server as a local git repository. You will than be able to set our repo up as a remote origin and pull in MomoKO. This method is the quickest and allows you to easily upgrade when new updates are made available. SSH access to your web host is <strong>required</strong>!</p>
-
-<ol>
-<li>Log in to your server via SSH, instructions on this procedure vary depending on your SSH client. Consult your client's instruction manual for details.</li>
-<li>Once you have an shell prompt create a folder for MomoKO or change to your web folder either <code>mkdir momoko &amp;&amp; cd momoko</code> or <code>cd public_html</code> replace momoko or public_html with the correct folder name.</li>
-<li>Set-up git in the folder you switched to; <code>git init</code>
-</li>
-<li>Set our repo as this folder's remote origin: <code>git remote add origin https://github.com/jjon-saxton/momoko-cms.git</code>
-</li>
-<li>Download from git: <code>git pull origin latest_stable</code>
-</li>
-<li>Proceed to 'Configuring MomoKO'</li>
-</ol>
-
-<h4>
-<a id="12-using-a-zip-file-from-our-repo" class="anchor" href="#12-using-a-zip-file-from-our-repo" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.2 Using a ZIP file from our repo</h4>
-
-<p>If you don't have SSH access to your server, but are able to transfer files to your server you can go to our repo and download a ZIP file to your computer. A link will appear to the left of our repo URL at the top of the page. You will need to be able extract the ZIP file and upload it to your computer</p>
-
-<ol>
-<li>Download the ZIP file</li>
-<li>Extract the contents of the file into a temporary folder on your desktop</li>
-<li>Login into your server using your usual file transfer program and create a folder for momoko or change to your web site folder. Instructions vary depending on your client, consult your client's manual for more instructions.</li>
-<li>Navigate your local view to the folder you extracted MomoKO into on your desktop and transfer its contents into the current remote directory you selected above. You may now delete the temporary folder.</li>
-<li>Proceed to 'Configuring MomoKO'</li>
-</ol>
+<p>Use the links above to download and archive, then extract it, and upload it to your web server using FTP, WebDAV, or whatever protocol is available, or go to github to locate the best URL for you to clone our repository. You may then use git like so <code>git clone https://https://github.com/jjon-saxton/momoko-cms.git</code> to close the repository directly onto your web server.</p>
 
 <h3>
 <a id="2-configuring-momoko" class="anchor" href="#2-configuring-momoko" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Configuring MomoKO</h3>
 
-<p>Once you have MomoKO on your server and accessable to the world, you will have to configure her. In the folder you place MomoKO in on your server there is a sub-folder called <code>assets</code> in there is a sub-folder called <code>etc</code>. <code>etc</code> is where the configuration files are kept. Currently only one file, <code>version.nfo.txt</code> exists. This file simply holds the current version number. To configure MomoKO copy the contents of the sub-folder <code>examples</code> into the folder <code>etc</code>. Over SSH the following command should work: <code>cp -r ./examples/* ./</code></p>
+<p>Once you have MomoKO on your server and accessable to the world, you will have to configure her. These instructions assume your acquired the latest stable version. If you did not, please see the <code>README.md</code> included the repo you downloaded or cloned. In the folder you place MomoKO in on your server there is a sub-folder called <code>assets</code> in there is a sub-folder called <code>etc</code>. <code>etc</code> is where the configuration files are kept. Currently only one file, <code>version.nfo.txt</code> exists. This file simply holds the current version number. To configure MomoKO copy the contents of the sub-folder <code>examples</code> into the folder <code>etc</code>. Over SSH the following command should work: <code>cp -r ./examples/* ./</code></p>
 
 <p>You should get to files, <code>dal.conf.txt</code> and <code>main.conf.txt</code>. First open <code>main.conf.txt</code>, this is used to set up MomoKO's environment variables so she knows where things are and what things are called. We will define the settings below.</p>
 
@@ -161,11 +136,6 @@ file
 <a id="congratulations" class="anchor" href="#congratulations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Congratulations!</h3>
 
 <p>Your site is now configured and ready. Login as the administrator you created above and begin adding content!</p>
-
-<h2>
-<a id="upgrading-momoko" class="anchor" href="#upgrading-momoko" aria-hidden="true"><span class="octicon octicon-link"></span></a>Upgrading MomoKO</h2>
-
-<p>Upgrading MomoKO can be simple if you used git to acquire her. Otherwise the procedure is a bit more difficult.</p>
       </section>
     </div>
 
