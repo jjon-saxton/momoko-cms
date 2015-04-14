@@ -97,7 +97,7 @@ $(function(){
 		})
 		.click(function(event){
 			event.preventDefault();
-			$("div#NavEditDialog").load("//{$GLOBALS['SET']['domain']}{$GLOBALS['SET']['location']}/ajax.php?include=navhelper&action=build&dialog=map").dialog({
+			$("div#NavEditDialog").load("//{$GLOBALS['SET']['baseuri']}/ajax.php?include=navhelper&action=build&dialog=map").dialog({
 				autoLoad:false,
 				modal:true,
 				title:'Edit Site Map',
@@ -106,7 +106,7 @@ $(function(){
 				buttons:{
 					"Save":function(){
 						//Perform ajax save and site nav update
-						$.post("//{$GLOBALS['SET']['domain']}{$GLOBALS['SET']['location']}/ajax.php?include=navhelper&action=post",{ 'raw_dom':$("div#MapList").html() },function(data){
+						$.post("//{$GLOBALS['SET']['baseuri']}/ajax.php?include=navhelper&action=post",{ 'raw_dom':$("div#MapList").html() },function(data){
 							location.reload(true);
 						});
 						$(this).dialog('close');

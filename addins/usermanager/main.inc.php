@@ -43,8 +43,8 @@ class UserManager implements MomokoObject
     $cols=null;
    }
    $query=$this->dbtable->getData("num:'".$_GET['u']."'",$cols,null,1);
-   $rows=$query->fetch();
-   return $rows[0];
+   $rows=$query->fetch(PDO::FETCH_ASSOC);
+   return $rows;
    break;
    case 'put':
    $user=new MomokoUser('guest');
