@@ -30,7 +30,7 @@ $(function(){
 });
 
 function showNew(){
-	$("div#dialog-fill").load("?dialog=new", function(data){
+	$("div#dialog-fill").load("./?q=addin/usermanager&dialog=new", function(data){
 	$(this).dialog({
 		autoOpen: true,
 		title: "Add User",
@@ -52,7 +52,7 @@ function showNew(){
 
 function showEdit(id,event) {
 	event.preventDefault();
-	$("div#dialog-fill").load("?dialog=edit", function(data){
+	$("div#dialog-fill").load("./?q=addin/usermanager&dialog=edit", function(data){
         $(this).dialog({
             autoOpen: true,
 	    title: "Edit User #"+id,
@@ -70,7 +70,7 @@ function showEdit(id,event) {
             }
 	 });
         });
-	$.get("?action=get&u="+id+"&ajax=1", function(data){
+	$.get("./?q=addin/usermanager&action=get&u="+id+"&ajax=1", function(data){
 		$("input#name").val(data.name);
 		$("input#email").val(data.email);
 		$("input#groups").val(data.groups);
@@ -79,10 +79,10 @@ function showEdit(id,event) {
 
 function showDelete(id,event){
 	event.preventDefault();
-	$("div#dialog-fill").load("?dialog=confirm", function(data){
+	$("div#dialog-fill").load("./?q=addin/usermanager&dialog=confirm", function(data){
 	$(this).dialog({
 		autoOpen: true,
-		title: "Delete User?",
+		title: "Delete User #"+id,
 		height:250,
 		width:350,
 		modal: true,
@@ -105,7 +105,7 @@ function doNew(){
 	var password=$("input#password").val();
 	var groups="users,automated";
 
-	$.post("?action=put&ajax=1",{
+	$.post("./?q=addin/usermanager&action=put&ajax=1",{
 		name: name,
 		email: email,
 		groups: groups,
@@ -121,7 +121,7 @@ function doEdit(id)
 	var email=$("input#email").val();
 	var groups=$("input#groups").val();
 
-	$.post("?action=put&u="+id+"&ajax=1",{
+	$.post("./?q=addin/usermanager&action=put&u="+id+"&ajax=1",{
 		name: name,
 		email: email,
 		groups: groups
@@ -133,7 +133,7 @@ function doEdit(id)
 }
 
 function doDelete(id) {
-	$.post("?action=drop&u="+id+"&ajax=1", { send:"Yes"}, function(data){
+	$.post("./?q=addin/usermanager&action=drop&u="+id+"&ajax=1", { send:"Yes"}, function(data){
  	  $("tr#"+id).remove();
 	},'json');
 }

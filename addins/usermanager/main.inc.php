@@ -106,7 +106,7 @@ class UserManager implements MomokoObject
 <title>User Manager</title>
 </head>
 <body>
-<script language="javascript" type="text/javascript" src="//{$siteroot}/assets/addins/usermanager/scripts/umanager.js"></script>
+<script language="javascript" type="text/javascript" src="//{$siteroot}/addins/usermanager/scripts/umanager.js"></script>
 <style>
 label, input { display:block;  }
 div#dialog-form label, div#dialog-form p, div#dialog-form input { font-size: 10pt; }
