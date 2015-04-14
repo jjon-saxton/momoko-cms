@@ -9,7 +9,7 @@ if (!empty($_POST['send']))
   require USSPATH."/apply.inc.php";
   if (apply_settings($_POST))
   {
-    header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location.ADDINROOT.basename($dirroot));
+    header("Location: //".$GLOBALS['SET']['baseuri'].ADDINROOT.basename($dirroot));
     exit();
   }
   else

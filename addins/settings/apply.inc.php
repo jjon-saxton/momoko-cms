@@ -33,7 +33,14 @@ function apply_settings($data)
    {
     $new_settings['key']=$key;
     $new_settings['value']=$value;
-    $news[]=$stbl->updateData($new_settings) or die(trigger_error(mysql_error(),E_USER_ERROR));
+    try
+    {
+      $news[]=$stbl->updateData($new_settings);
+    }
+    catch (Exception $err)
+    {
+      trigger_error($err->getMessage(),E_USER_ERROR);
+    }
    }
    momoko_basic_changes($GLOBALS['USR'],'updated','Site Settings');
    $data['site']=serialize($news); //we could just empty this, but this is far more fun, if it causes to much overhead, we'll remove it!
