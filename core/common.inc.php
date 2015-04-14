@@ -413,13 +413,13 @@ function momoko_basic_changes($user,$action,$target,$message=null)
 {
   if ($GLOBALS['SET']['security_logging'] > 0)
   {
-    if (is_writable($GLOBALS['CFG']->logdir.'/changes.log'))
+    if (is_writable($GLOBALS['SET']['logdir'].'/changes.log'))
     {
       if (!empty($message))
       {
         $message=": ".$message;
       }
-      $log=fopen($GLOBALS['CFG']->logdir.'/changes.log','a');
+      $log=fopen($GLOBALS['SET']['logdir'].'/changes.log','a');
       fwrite($log,"[".date("Y-m-d H:i:s")."] ".$user->name." (".$user->num.":".$_SERVER['REMOTE_ADDR'].") ".$action." ".$target.$message."\n");
     }
     else
