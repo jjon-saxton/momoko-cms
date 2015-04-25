@@ -52,7 +52,7 @@ class htmlParser {
 				if (!empty($strpair))
 				{
 					@list($key,$value,$q)=explode("=",$strpair);
-					@$attarr[$key]=trim($value,"\"'").$q;
+					@$attarr[$key]=trim($value,"\"'")."=".$q;
 				}
 			}
 			
