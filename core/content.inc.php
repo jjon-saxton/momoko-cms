@@ -107,7 +107,13 @@ $(function(){
 					"Save":function(){
 						//Perform ajax save and site nav update
 						$.post("//{$GLOBALS['SET']['baseuri']}/ajax.php?include=navhelper&action=post",{ 'raw_dom':$("div#MapList").html() },function(data){
-							location.reload(true);
+						 console.debug(data);
+						 if (data.processed == 'suceeded'){
+							 location.reload(true);
+						 }
+						 else{
+						  alert ("Site map not saved, unknown error!");
+						 }
 						});
 						$(this).dialog('close');
 					},
@@ -284,21 +290,7 @@ HTML;
       {
        if ($grandchild['tag'] == 'a')
        {
-        if (preg_match("/".preg_quote($GLOBALS['SET']['domain'].$GLOBALS['SET']['location'],"/")."/",$grandchild['attributes']['href']) > 0)
-        {
-         $attrs['file']=preg_replace("/".preg_quote($GLOBALS['SET']['domain'].$GLOBALS['SET']['location'],"/")."/","",$grandchild['attributes']['href']);
-	 $attrs['file']=preg_replace("/http:/",'',$attrs['file']);
-	 $attrs['file']="/".trim($attrs['file'],"/"); //Since removing extra slashes (/) never seemed to work above we will trim them off here and readd a single slash to the front.
-        }
-	else
-	{
 	 $attrs['uri']=$grandchild['attributes']['href'];
-        }
-
-	/*if (!empty($grandchild['attributes']['index']))
-        {
-         $attrs['index']='index';
-        }*/
 
 	$title=$grandchild['innerHTML'];
        }

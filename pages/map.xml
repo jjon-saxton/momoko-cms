@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <site dir="/">
-	<page file="/index.php/home.htm">Home</page>
+  <page uri="../../..//?qpage/home.htm">Home</page>
 </site>

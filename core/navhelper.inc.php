@@ -314,6 +314,7 @@ HTML;
  $nav->HTMLArraytoMap($html);
  if ($nav->writeMap())
  {
+  $return['map']=$nav->map;
   $return['processed']='suceeded';
  }
  else
