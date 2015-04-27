@@ -214,9 +214,9 @@ HTML;
       $where.=$col.":'".$value."', ";
      }
     }
+    var_dump(http_build_query($_GET));
    }
    $where=rtrim($where,", ");
-   //var_dump($where);
    
    $query=$table->getData($where);
    $row_c=$query->rowCount();
@@ -227,6 +227,7 @@ HTML;
     $query=$table->getData($where,NULL,NULL,$GLOBALS['USR']->rowspertable,@$_GET['offset']);
    }
 
+   $query_str=http_build_query($_GET);
    $pages=paginate($row_c,@$_GET['offset']);
    $prev=@$_GET['offset']-$GLOBALS['USR']->rowspertable;
    $next=@$_GET['offset']+$GLOBALS['USR']->rowspertable;
@@ -240,10 +241,10 @@ HTML;
    }
    if (count($pages) > 1)
    {
-    $page_div="<div id=\"Pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs&offset={$prev}\">Previous</a></td><td align=center>";
+    $page_div="<div id=\"Pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?{$query_str}&offset={$prev}\">Previous</a></td><td align=center>";
     if (count($pages) >= 10)
     {
-     $page_div.="<select id=\"PageList\" onchange=\"window.location='//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs&offset='+$(this).val()\" name=\"page_dropdown\">\n";
+     $page_div.="<select id=\"PageList\" onchange=\"window.location='//{$GLOBALS['SET']['baseuri']}/mk-dash.php?{$query_str}&offset='+$(this).val()\" name=\"page_dropdown\">\n";
      foreach ($pages as $page)
      {
       if ($page['offset'] == @$_GET['offset'])
@@ -267,11 +268,11 @@ HTML;
       }
       else
       {
-       $page_div.="<a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs&offset={$page['offset']}\">{$page['number']}</a> ";
+       $page_div.="<a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?{$query_str}&offset={$page['offset']}\">{$page['number']}</a> ";
       }
      }
     }
-    $page_div.="</td><td align=right><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
+    $page_div.="</td><td align=right><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?{$query_str}&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
    }
    else
    {
