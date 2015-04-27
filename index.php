@@ -50,7 +50,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    case 'new':
    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
    {
-    $child=new MomokoPage(pathinfo(@$path,PATHINFO_DIRNAME).'/new_page.htm');
+    $child=new MomokoPage("New Page");
     $child->put($_POST);
    }
    else
