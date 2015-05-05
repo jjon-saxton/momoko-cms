@@ -7,9 +7,10 @@ define ('USSPATH',$GLOBALS['SET']['basedir'].$dirroot); //sets script base using
 if (!empty($_POST['send']))
 {
   require USSPATH."/apply.inc.php";
-  if (apply_settings($_POST))
+  if ($ok=apply_settings($_POST))
   {
-    header("Location: //".$GLOBALS['SET']['baseuri'].ADDINROOT.basename($dirroot));
+    //header("Location: //".$GLOBALS['SET']['baseuri'].ADDINROOT.basename($dirroot));
+    var_dump($ok);
     exit();
   }
   else

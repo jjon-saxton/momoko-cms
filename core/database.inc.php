@@ -183,12 +183,14 @@ class DataBaseTable extends DataBaseSchema
    }
   }
   $query=$this->prepare($q);
-  if ($query->execute($update))
+  try
   {
+   $query->execute($update);
    return $key;
   }
-  else
+  catch (Exception $err)
   {
+   trigger_error("SQL Error: ".$err->getMessage(),E_USER_WARNING);
    return false;
   }
  }

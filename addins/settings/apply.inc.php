@@ -12,7 +12,7 @@ function apply_settings($data)
   
   if (crypt($data['check'],$cur_data->password) == $cur_data->password && $data['newpass1'] == $data['newpass2'])
   {
-    $data['password']=crypt($data['newpass2'],$GLOBALS['CFG']->salt);
+    $data['password']=crypt($data['newpass2'],$GLOBALS['SET']['salt']);
     momoko_basic_changes($GLOBALS['USR'],"changed","their password");
     unset($data['newpass1'],$data['newpass2']);
   }
@@ -40,18 +40,21 @@ function apply_settings($data)
     catch (Exception $err)
     {
       trigger_error($err->getMessage(),E_USER_ERROR);
+      return false;
     }
    }
    momoko_basic_changes($GLOBALS['USR'],'updated','Site Settings');
-   $data['site']=serialize($news); //we could just empty this, but this is far more fun, if it causes to much overhead, we'll remove it!
+   $data['site']=null;
   }
   
-  if ($newu=$utbl->updateData($data))
+  try
   {
+    $newu=$utbl->updateData($data);
     return true;
   }
-  else
+  catch (Exception $err)
   {
+    trigger_error($err->getMessage(),E_USER_ERROR);
     return false;
   }
 }
