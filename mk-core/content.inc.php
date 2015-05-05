@@ -1408,7 +1408,7 @@ class MomokoAddin implements MomokoObject
   if (!empty($file))
   {
     $result=false;
-    $filename=$GLOBALS['CFG']->tempdir.'/'.$file['name'];
+    $filename=$GLOBALS['SET']['tempdir'].'/'.$file['name'];
     if ($file['error'] == UPLOAD_ERR_OK && move_uploaded_file($file['tmp_name'],$filename))
     {
       $result=true;
@@ -1437,7 +1437,7 @@ TXT;
     else
     {
       $script_body=<<<TXT
-$('span#msg',pDoc).html('{$error}');
+$('span#msg',pDoc).html("{$error}");
 $('input#file',pDoc).removeAttr('disabled');
 TXT;
     }

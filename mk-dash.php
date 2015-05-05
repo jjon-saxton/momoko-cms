@@ -696,8 +696,8 @@ HTML;
       $templatesettings.="<option value=\"{$template['dir']}\">{$template['shortname']}</option>\n";
      }
     }
-    $templatesettings.="</select></li>\n<li><label for=\"style\">Style:</label> <select id=\"style\" name=\"style\">";
-    foreach (glob($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."templates/".$GLOBALS['SET']['template']."/*.css") as $file)
+    $templatesettings.="</select> <a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=addins\" title=\"Add a template to your addins to add more layouts.\">Add Layout</a></li>\n<li><label for=\"style\">Style:</label> <select id=\"style\" name=\"style\">";
+    foreach (glob($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."addins/".$GLOBALS['SET']['template']."/*.css") as $file)
     {
      if (preg_match("/((?:[a-z][a-z]+))(-)((?:[a-z][a-z\\.\\d_]+)\\.(?:[a-z\\d]{3}))(?![\\w\\.])/",$file,$matches) == 0)
      {
@@ -707,7 +707,7 @@ HTML;
     }
     $templatesettings.="</select></li>\n</ul>";
 
-    $modulelayout=file_get_contents($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."templates/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm");
+    $modulelayout=file_get_contents($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."addins/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm");
     $addins=new DataBaseTable('addins');
     $dbquery=$addins->getData("type:'module'",array('num','dir','shortname','zone','settings'),'order');
     $modulelist=NULL;
@@ -893,7 +893,7 @@ HTML;
     $list=$addins->getData("shortname:'{$user_data['template']}'",array('num','dir'),null,1);
     $template=$list->fetch(PDO::FETCH_ASSOC);
     $template['enabled']='y';
-    $template['headtags']="<link rel=\"stylesheet\" href=\"".GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}{$GLOBALS['SET']['filedir']}templates/{$template['dir']}/{$user_data['style']}\" type=\"text/css\">";
+    $template['headtags']="<link rel=\"stylesheet\" href=\"".GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}{$GLOBALS['SET']['filedir']}addins/{$template['dir']}/{$user_data['style']}\" type=\"text/css\">";
     $style=$addins->updateData($template);
     
     $settings=new DataBaseTable('settings');

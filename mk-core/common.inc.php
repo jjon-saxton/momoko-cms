@@ -32,7 +32,7 @@ else
  define("NEWSROOT","/?q=news/");
  define("QUERYSTARTER","&");
 }
-define("TEMPLATEROOT","/mk-content/templates/");
+define("TEMPLATEROOT","/mk-content/addins/");
 if ($GLOBALS['SET']['use_ssl'])
 {
  define("SECURE_PROTOCOL",'https');
