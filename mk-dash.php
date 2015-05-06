@@ -754,6 +754,13 @@ HTML;
         $modulelayout=preg_replace("/<!-- MODULEPLACEHOLDER:".preg_quote($query)." -->/",$modulelist[$opts['zone']],$modulelayout);
       }
     }
+    foreach ($modulelist as $zone=>$div)
+    {
+     if (!in_array("zone=".$zone,$list['arguments']))
+     {
+      $modulelist[0].=$modulelist[$zone];
+     }
+    }
     if (preg_match_all("/<!-- MODULESOURCE -->/",$modulelayout,$list))
     {
      $modulelayout=preg_replace("/<!-- MODULESOURCE -->/",$modulelist[0],$modulelayout);
