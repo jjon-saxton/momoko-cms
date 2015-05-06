@@ -205,9 +205,6 @@ HTML;
   $rows['settings'][]=array('key'=>'support_email','value'=>$admin['email']);
   $rows['settings'][]=array('key'=>'security_logging','value'=>1);
   $rows['settings'][]=array('key'=>'error_logging','value'=>1);
-  $rows['settings'][]=array('key'=>'email_mta','value'=>'phpmail');
-  $rows['settings'][]=array('key'=>'email_server','value'=>"host=localhost");
-  $rows['settings'][]=array('key'=>'email_from','value'=>"name={$admin['name']}&address={$admin['email']}");
   $rows['settings'][]=array('key'=>'salt','value'=>$site['session']);
   $rows['settings'][]=array('key'=>'sessionname','value'=>$site['session']);
   $rows['settings'][]=array('key'=>'baseuri','value'=>$site['baseuri']);
@@ -215,7 +212,7 @@ HTML;
   $rows['settings'][]=array('key'=>'filedir','value'=>$site['filedir']);
   $rows['settings'][]=array('key'=>'tempdir','value'=>$site['tempdir']);
   $rows['settings'][]=array('key'=>'use_ssl','value'=>$site['use_ssl']);
-  $rows['settings'][]=array('key'=>'rewrite','value'=>$site['rewrite']);
+  $rows['settings'][]=array('key'=>'rewrite','value'=>0);
   
   $okay=0;
   $tottbls=0;

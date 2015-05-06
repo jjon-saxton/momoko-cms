@@ -540,11 +540,12 @@ HTML;
        case 'template':
        $page['body'].="<span id=\"{$setting['key']}\">{$setting['value']} <em class=\"message\">change in <a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance\">site appearance</a></em></span>";
        break;
-       case 'security_logging':
-       case 'error_logging':
-       $page['body'].="<input type=number id=\"{$setting['key']}\" name=\"{$setting['key']}\" value=\"{$setting['value']}\">";
-       break;
        //TODO add special cases for e-mail settings
+       case 'email_mta':
+       case 'email_server':
+       case 'email_from':
+       $page['body'].="<span id=\"{$settings['key']}\"><em class=\"message\">Cannot be changed here, see documentation</em></span>";
+       break;
        case 'use_ssl':
        $page['body'].="<select id=\"${setting['key']}\" name=\"{$setting['key']}\">\n";
        $opts=array(array('value'=>'','title'=>"No"),array('value'=>'yes','title'=>"Only in senstive areas"),array('value'=>'strict','title'=>"For entire site"));
@@ -561,14 +562,16 @@ HTML;
        }
        $page['body'].="</select>";
        break;
+       case 'security_logging':
+       case 'error_logging':
        case 'rewrite':
-       if ($setting['key'])
+       if (!$setting['value'])
        {
         $page['body'].="<span id=\"{$setting['key']}\"><input type=radio id=\"{$setting['key']}1\" name=\"{$setting['key']}\" value=\"1\"> <label for=\"{$setting['key']}1\">Yes</label> <input type=radio id=\"{$setting['key']}0\" name=\"{$setting['key']}\" checked=checked value=\"\"> <label for=\"{$setting['key']}0\">No</label></span>";
        }
        else
        {
-       $page['body'].="<span id=\"{$setting['key']}\"><input type=radio id=\"{$setting['key']}1\" name=\"{$setting['key']}\" checked=checked value=\"1\"> <label for=\"{$setting['key']}1\">Yes</label> <input type=radio id=\"{$setting['key']}0\" name=\"{$setting['key']}\" value=\"\"> <label for=\"{$setting['key']}0\">No</label></span>";
+        $page['body'].="<span id=\"{$setting['key']}\"><input type=radio id=\"{$setting['key']}1\" name=\"{$setting['key']}\" checked=checked value=\"1\"> <label for=\"{$setting['key']}1\">Yes</label> <input type=radio id=\"{$setting['key']}0\" name=\"{$setting['key']}\" value=\"\"> <label for=\"{$setting['key']}0\">No</label></span>";
        }
        break;
        default:
