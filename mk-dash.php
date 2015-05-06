@@ -756,7 +756,7 @@ HTML;
     }
     foreach ($modulelist as $zone=>$div)
     {
-     if (!in_array("zone=".$zone,$list['arguments']))
+     if (!in_array("zone=".$zone,$list['arguments'])) //Finds any modules that my have been orphaned by a layout change.
      {
       $modulelist[0].=$modulelist[$zone];
      }
