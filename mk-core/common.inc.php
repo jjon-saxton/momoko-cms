@@ -632,3 +632,34 @@ function compile_head()
  
  return $html;
 }
+
+function fetch_files($dir,$limitto=null)
+{
+ $dir=str_replace(" ","+",$dir);
+ $files=array();
+ switch ($limitto)
+ {
+  case 'styles':
+   $name="/*.css";
+   break;
+  default:
+   $name="/*";
+   break;
+ }
+ foreach (glob($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$dir.$name) as $file)
+ {
+  switch ($limitto)
+  {
+   case 'styles':
+    if (preg_match("/((?:[a-z][a-z]+))(-)((?:[a-z][a-z\\.\\d_]+)\\.(?:[a-z\\d]{3}))(?![\\w\\.])/",$file,$matches) == 0)
+    {
+     $files[]=basename($file);
+    }
+    break;
+   default:
+    break;
+  }
+ }
+ 
+ return $files;
+}

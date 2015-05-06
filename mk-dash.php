@@ -722,13 +722,10 @@ HTML;
      }
     }
     $templatesettings.="</select> <a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=addins\" title=\"Add a template to your addins to add more layouts.\">Add Layout</a></li>\n<li><label for=\"style\">Style:</label> <select id=\"style\" name=\"style\">";
-    foreach (glob($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."addins/".$GLOBALS['SET']['template']."/*.css") as $file)
+    $files=fetch_files("addins/".$GLOBALS['SET']['template'],'styles');
+    foreach ($files as $file)
     {
-     if (preg_match("/((?:[a-z][a-z]+))(-)((?:[a-z][a-z\\.\\d_]+)\\.(?:[a-z\\d]{3}))(?![\\w\\.])/",$file,$matches) == 0)
-     {
-      $name=basename($file);
-      $templatesettings.="<option>{$name}</option>\n";
-     }
+      $templatesettings.="<option>{$file}</option>\n";
     }
     $templatesettings.="</select></li>\n</ul>";
 
@@ -767,8 +764,17 @@ HTML;
 $(function(){
  $(".dialog").hide();
  
- $("select#template").change(function(){
-  $("select#style").disable();
+ $("select#layout").change(function(){
+  $.getJSON("//{$GLOBALS['SET']['baseuri']}/ajax.php?action=fetch_files&dir=addins/"+$(this).val()+"&limit=styles",function(j){
+   $("select#style").fadeOut('fast',function(){
+    var opts='';
+    for (var i=0; i < j.length; i++)
+    {
+     opts+="<option>"+j[i]+"</option>";
+    }
+    $("select#style").html(opts).fadeIn('fast');
+   });
+  });
  });
  
  $("button#SaveMods").click(function(event){
@@ -911,11 +917,11 @@ HTML;
    else
    {
     $addins=new DataBaseTable('addins');
-    $list=$addins->getData("shortname:'{$GLOBALS['SET']['template']}'",array('num','dir'),NULL,1);
+    $list=$addins->getData("dir:'{$GLOBALS['SET']['template']}'",array('num','dir'),NULL,1);
     $cur_template=$list->fetch(PDO::FETCH_ASSOC);
     $cur_template['enabled']='n';
     $kill_template=$addins->updateData($cur_template);
-    $list=$addins->getData("shortname:'{$user_data['template']}'",array('num','dir'),null,1);
+    $list=$addins->getData("dir:'{$user_data['template']}'",array('num','dir'),null,1);
     $template=$list->fetch(PDO::FETCH_ASSOC);
     $template['enabled']='y';
     $template['headtags']="<link rel=\"stylesheet\" href=\"".GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}{$GLOBALS['SET']['filedir']}addins/{$template['dir']}/{$user_data['style']}\" type=\"text/css\">";
