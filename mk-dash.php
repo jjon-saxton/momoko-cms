@@ -580,7 +580,29 @@ HTML;
      $page['body'].="</ul>\n<h3>Save</h3>\n<div class=\"box\" align=\"center\"><button type=submit name=\"send\" value=\"1\">Save Changes</button>\n</div>\n</form>";
      break;
      case 'user':
+     $dates['short']=array('m/d/Y','m-d-Y','m.d.Y','j M Y');
+     $options['short']="<option value=\"\">Use Text Field:</option>";
+     $dates['long']=array('F j, Y','jS F Y','m M Y');
+     $options['long']=$options['short'];
+     foreach ($dates as $type=>$formats)
+     {
+      foreach ($formats as $format)
+      {
+       $options[$type].="<option value=\"{$format}\">".date($format,0)."</option>";
+      }
+     }
      $page['body']=<<<HTML
+<script language="javascript">
+$(function(){
+ $("input#shortdateformat").before('<select id="shortdateformat" class="dateforms">{$options['short']}</select> ');
+ $("input#longdateformat").before('<select id="longdateformat" class="dateforms">{$options['long']}</select> ');
+ $("select.dateforms").change(function(){
+  var id=$(this).attr('id');
+  var format=$(this).val();
+  $("input#"+id).focus().val(format);
+ });
+});
+</script>
 <form method=post>
 <h3>Password</h3>
 <ul id="PassForm" class="noindent nobullet">
