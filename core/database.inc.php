@@ -168,7 +168,7 @@ class DataBaseTable extends DataBaseSchema
    {
     if ($this->indices['primary'] == $field)
     {
-     $q="WHERE `{$field}`='{$value}'";
+     $where_str="WHERE `{$field}`='{$value}'";
      $key=$value;
     }
     else
@@ -182,7 +182,7 @@ class DataBaseTable extends DataBaseSchema
     unset($fieldarray[$field]);
    }
   }
-  $query=$this->prepare($q);
+  $query=$this->prepare($q." ".$where_str);
   try
   {
    $query->execute($update);

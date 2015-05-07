@@ -9,8 +9,7 @@ if (!empty($_POST['send']))
   require USSPATH."/apply.inc.php";
   if ($ok=apply_settings($_POST))
   {
-    //header("Location: //".$GLOBALS['SET']['baseuri'].ADDINROOT.basename($dirroot));
-    var_dump($ok);
+    header("Location: //".$GLOBALS['SET']['baseuri'].ADDINROOT.basename($dirroot));
     exit();
   }
   else
