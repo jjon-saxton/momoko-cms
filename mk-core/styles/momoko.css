@@ -4,8 +4,11 @@
 div#dashOpen {position:fixed;top:0;left:0;opacity:0.8;z-index:1950;}
 div#overlay {z-index:1950}
 div.sidebar {width:30%;height:100%; display:none; position:fixed; left:0; top: 0; background:white;color:black; z-index:1951}
-.sidebar h4{padding-left:2px; color:black}
+.sidebar h4{text-align:center;color:black}
 ul.plug.list {padding-left:5px; list-style:none}
+ul.plug.list li a {display:block;padding:2px;margin:2px;text-decoration:none}
+ul.plug.list li a:link, ul.plug.list li a:visited {border:1px solid #ccc;background:#eee}
+ul.plug.list li a:active, ul.plug.list li a:hover {border:1px solid #eee;background:#bbb}
 
 .preview {border:1px dashed #999; min-height:20px; background-color:#efefff; color:#888}
 .preview h1 {font-size:1.75em; color:#777}
