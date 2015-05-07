@@ -931,7 +931,7 @@ HTML;
     $list=$addins->getData("dir:'{$user_data['template']}'",array('num','dir'),null,1);
     $template=$list->fetch(PDO::FETCH_ASSOC);
     $template['enabled']='y';
-    $template['headtags']="<link rel=\"stylesheet\" href=\"".GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}{$GLOBALS['SET']['filedir']}addins/{$template['dir']}/{$user_data['style']}\" type=\"text/css\">";
+    $template['headtags']="<link rel=\"stylesheet\" href=\"//{$GLOBALS['SET']['baseuri']}{$GLOBALS['SET']['filedir']}addins/{$template['dir']}/{$user_data['style']}\" type=\"text/css\">";
     $style=$addins->updateData($template);
     
     $settings=new DataBaseTable('settings');
