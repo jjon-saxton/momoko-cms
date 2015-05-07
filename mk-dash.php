@@ -214,7 +214,6 @@ HTML;
       $where.=$col.":'".$value."', ";
      }
     }
-    var_dump(http_build_query($_GET));
    }
    $where=rtrim($where,", ");
    
@@ -575,7 +574,7 @@ HTML;
        }
        break;
        default:
-       $page['body'].="<input type=text id=\"{$setting['key']}\" name=\"{$settings['key']}\" value=\"{$setting['value']}\"></li>\n";
+       $page['body'].="<input type=text id=\"{$setting['key']}\" name=\"{$setting['key']}\" value=\"{$setting['value']}\"></li>\n";
        break;
       }
       $page['body'].="</li>\n";
