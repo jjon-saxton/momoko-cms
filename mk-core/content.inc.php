@@ -1100,7 +1100,16 @@ HTML;
 {$addin_tags}
 {$split['head']}
 HTML;
+  if ($GLOBALS['USR']->inGroup('users'))
+  {
+   $dashup="<div id=\"dashOpen\"><button id=\"sidebarOpen\" onclick=\"toggleSidebar()\">My Dashboard</button></div>";
+  }
+  else
+  {
+   $dashup="<div id=\"dashOpen\"><button id=\"sidebarLogin\" onclick=\"window.location='//{$GLOBALS['SET']['baseuri']}/mk-login.php'\">Login</button></div>";
+  }
   $split['body']=<<<HTML
+{$dashup}
 <div id="modal" title="Loading Awesomeness!" style="display:none">
 <p>Becoming 20% more awesome...</p>
 </div>

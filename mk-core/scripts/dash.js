@@ -49,7 +49,19 @@ $(function(){
   $( "#add-addin" )
       .button()
       .click(function(){ showAdd() }); 
-      
+     
+  $("button#sidebarOpen").button({
+   icons: {
+    primary: "ui-icon-gear"
+   },
+   text:false
+  });
+  $("button#sidebarLogin").button({
+   icons: {
+    primary: "ui-icon-person"
+   },
+   text:false
+  });
 });
 
 function toggleSidebar()
