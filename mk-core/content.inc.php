@@ -686,7 +686,7 @@ HTML;
     $formats='["p","Normal"], ["h3","Header 3"], ["h4","Header 4"]';
     if ($_GET['action'] == 'new')
     {
-     $type_links="<div id=\"type_select\"><input type=\"radio\" id=\"page\" name=\"type\" value=\"page\"><label for=\"page\">Page</label> <input type=\"radio\" id=\"post\" checked=checked name=\"type\" value=\"post\"><label for=\"post\">Post</label></div>";
+     $type_links="<div id=\"type_select\"><input type=\"radio\" id=\"t1\" name=\"type\" value=\"page\"><label for=\"t1\">Page</label> <input type=\"radio\" id=\"t2\" checked=checked name=\"type\" value=\"post\"><label for=\"t2\">Post</label></div>";
     }
    }
    $type=ucwords($type);
@@ -709,8 +709,13 @@ $(function(){
  });
  $("div#PageEditor").tabs();
  
- $("#type_select").css("text-align","center").buttonset().change(function(){
-  window.location="?action=new&content="+$("input[name=type]:checked").val();
+ $("#type_select input:radio").change(function(){
+  window.location="?action=new&content="+$(this).val();
+ });
+ $("#type_select").css("text-align","center").buttonset();
+ $("#type_select input:radio").change(function(){
+  console.debug($(this).val());
+  //window.location="?action=new&content="+$(this).val();
  });
  
  $("select#status").change(function(){
@@ -774,6 +779,7 @@ HTML;
 <li>Post Author: {$GLOBALS['USR']->name}</li>
 <li><label for="status">Page Status</lable> <select id="status" name="status">{$status_opts}</select>
 </ul>
+</div>
 HTML;
    }
    $info['inner_body'].=<<<HTML
