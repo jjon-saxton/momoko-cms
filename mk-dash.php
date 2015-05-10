@@ -734,7 +734,7 @@ HTML;
     $modulelist=NULL;
     while ($module=$dbquery->fetch(PDO::FETCH_ASSOC))
     {
-     if (!$module['zone'])
+     if (!$module['zone']) //in case no zone is given, for example a new addin, set the zone to 0
      {
       $module['zone']=0;
      }
@@ -755,7 +755,7 @@ HTML;
     }
     foreach ($modulelist as $zone=>$div)
     {
-     if (!in_array("zone=".$zone,$list['arguments'])) //Finds any modules that my have been orphaned by a layout change.
+     if ($zone != 0 && !in_array("zone=".$zone,$list['arguments'])) //Finds any modules that my have been orphaned by a layout change. Make sure not to include any that are set to zone 0 already!
      {
       $modulelist[0].=$modulelist[$zone];
      }
