@@ -82,7 +82,7 @@
 
 <ol>
 <li>Open a terminal and/or log in. If you wish to download and extract directly from you server login to it via SSH.</li>
-<li>To download the latest stable version of MomoKO you need only type <code>wget ftp://momokocms.org/public_ftp/core/latest_stable/*.zip</code>. The '*' is a wildcard which will make wget grab all zip files in the directory 'public_ftp/core/latest_stable' There is only one archive in this folder at all times and it is the latest stable version of MomoKO so this will only grab the files you need. if you want a different version type <code>wget ftp://saxton-solutions.com/public_ftp/core/momoko-cms-myversion.zip</code> replacing 'myversion' with the version you want. Keep in mind we use an x.x.xa version system. If you don't know what versions are available it's best to get a listing of the 'public_ftp/core/' directory using Linux's built in FTP client or a graphical one.</li>
+<li>To download the latest stable version of MomoKO you need only type <code>wget --user=anonymous@momokocms.org ftp://momokocms.org/core/latest_stable/*.zip</code>. The '*' is a wildcard which will make wget grab all zip files in the directory 'public_ftp/core/latest_stable' There is only one archive in this folder at all times and it is the latest stable version of MomoKO so this will only grab the files you need. if you want a different version type <code>wget --user=anonymous@momokocms.org ftp://ftp.momokocms.org/core/momoko-cms-myversion.zip</code> replacing 'myversion' with the version you want. Keep in mind we use an x.x.xa version system. If you don't know what versions are available it's best to get a listing of the 'public_ftp/core/' directory using Linux's built in FTP client or a graphical one.</li>
 <li>Extract the zip archive. This is a zip file so unzip will be needed to extract it. Type <code>unzip momoko-cms-1.1.2.zip</code> or the file name you acquired from wget, you can also use <code>unzip momoko-cms*.zip</code> if you aren't sure. This will create a folder like 'momoko-cms-latest_stable' or 'momoko-cms-1.1-STABLE'. You may wish to simply rename this to 'momoko' or something similar.</li>
 <li>Proceed to 'Configure MomoKO'</li>
 </ol>
@@ -94,8 +94,8 @@
 <li>Open your favorite FTP client, for this example we'll be using FireFTP, so we will be opening Firefox then clicking FireFTP in the toolbar or developer menu, but you may open just about any client.</li>
 <li>Click the drop down and select 'create an account' to open the account manager. In some clients you need simply choose 'connect'.</li>
 <li>Find the 'host' field and type 'momokocms.org'.</li>
-<li>Leave any 'login' and 'password' fields blank and find the checkbox labeled 'Anonymous' or something similar and make sure it is checked. Click 'Ok' then click 'connect'.</li>
-<li>Weclome! On the right pane (or remote pane) you will see a list of directories, expand public_ftp and click 'core' to open it. Select the zip of the version you want. Note: if you just want the latest stable version enter the 'latest-stable' directory, this houses only one archive, so just select that one.</li>
+<li>Enter <a href="mailto:anonymous@momokocms.org">anonymous@momokocms.org</a> as the username, but leave the password field blank. Click 'Ok' then click 'connect'.</li>
+<li>Weclome! On the right pane (or remote pane) you will see a list of directories click 'core' to open it. Select the zip of the version you want. Note: if you just want the latest stable version enter the 'latest_stable' directory, this houses only one archive, so just select that one.</li>
 <li>Double click the archive you selected, or right click and click download. You may also drag and drop it anywhere in the left (local) pane.</li>
 <li>After the file has downloaded right click it and select open to open it in your computer's default archive manager.</li>
 <li>We won't go into details here as archive managers vary widely, but you need to extract all of the files into a folder, while keeping the directory structure in the archive.</li>
@@ -109,7 +109,7 @@
 <p>If you don't have SSH access to your server and don't want to acquire and FTP client, and/or set it up to connect to our server, you can download archives from our website, momokocms.org. This will house both zip and tar.gz archives for the latest stable version. You will have to use another method to download other versions.</p>
 
 <ol>
-<li>Open your favorite web brownser and navigate to <a href="http://www.momokocms.org">http://www.momokocms.org</a>.</li>
+<li>Open your favorite web browser and navigate to <a href="http://www.momokocms.org">http://www.momokocms.org</a>.</li>
 <li>If you are using Windows click the "Download .zip file" button, if you are using Linux or Mac OSX you may use either button.</li>
 <li>Extract the zip file, be sure to keep the directory structure, but you can change the name of the root directory if you wish.</li>
 <li>Upload to your server</li>
@@ -159,11 +159,11 @@
         </section>
 
         <aside id="sidebar">
-          <a href="https://github.com/jjon-saxton/momoko-cms/zipball/latest_stable" class="button">
+          <a href="https://github.com/jjon-saxton/momoko-cms/zipball/master" class="button">
             <small>Download</small>
             .zip file
           </a>
-          <a href="https://github.com/jjon-saxton/momoko-cms/tarball/latest_stable" class="button">
+          <a href="https://github.com/jjon-saxton/momoko-cms/tarball/master" class="button">
             <small>Download</small>
             .tar.gz file
           </a>
