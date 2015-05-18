@@ -37,7 +37,7 @@ If you have SSH access and prefer not to set up or install git, or you want to u
 1. Open your favorite FTP client, for this example we'll be using FireFTP, so we will be opening Firefox then clicking FireFTP in the toolbar or developer menu, but you may open just about any client.
 2. Click the drop down and select 'create an account' to open the account manager. In some clients you need simply choose 'connect'.
 3. Find the 'host' field and type 'momokocms.org'.
-4. Leave enter anonymous@momokocms.org as the username, but leave the password field blank. Click 'Ok' then click 'connect'.
+4. Enter anonymous@momokocms.org as the username, but leave the password field blank. Click 'Ok' then click 'connect'.
 5. Weclome! On the right pane (or remote pane) you will see a list of directories click 'core' to open it. Select the zip of the version you want. Note: if you just want the latest stable version enter the 'latest_stable' directory, this houses only one archive, so just select that one.
 6. Double click the archive you selected, or right click and click download. You may also drag and drop it anywhere in the left (local) pane.
 7. After the file has downloaded right click it and select open to open it in your computer's default archive manager.
@@ -49,7 +49,7 @@ If you have SSH access and prefer not to set up or install git, or you want to u
 
 If you don't have SSH access to your server and don't want to acquire and FTP client, and/or set it up to connect to our server, you can download archives from our website, momokocms.org. This will house both zip and tar.gz archives for the latest stable version. You will have to use another method to download other versions.
 
-1. Open your favorite web brownser and navigate to http://www.momokocms.org.
+1. Open your favorite web browser and navigate to http://www.momokocms.org.
 2. If you are using Windows click the "Download .zip file" button, if you are using Linux or Mac OSX you may use either button.
 3. Extract the zip file, be sure to keep the directory structure, but you can change the name of the root directory if you wish.
 4. Upload to your server
