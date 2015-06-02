@@ -14,7 +14,7 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
   $this->opt_keys=array('display'=>array('type'=>'select','options'=>array('line','box')));
   parse_str($this->info->settings,$this->settings);
   
-  if ($GLOBALS['SET']['rewrite'])
+  /*if ($GLOBALS['SET']['rewrite'])
   {
    $feeds="feeds.xml";
   }
@@ -22,7 +22,7 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
   {
    $feeds="?content=feeds";
   }
-  $actions[]=array('href'=>GLOBAL_PROTOCOL."//".$GLOBALS['SET']['baseuri']."/".$feeds,'title'=>"RSS Feeds");
+  $actions[]=array('href'=>GLOBAL_PROTOCOL."//".$GLOBALS['SET']['baseuri']."/".$feeds,'title'=>"RSS Feeds"); TODO reactivate this for 2.0*/
   if (!$GLOBALS['USR']->inGroup('nobody'))
   {
    $actions[]=array('href'=>'javascript:void();','onclick'=>"toggleSidebar();",'title'=>'My Dashboard');
