@@ -28,11 +28,11 @@ class MomokoPostsModule extends MomokoModule implements MomokoModuleInterface
    {
     if ($post['date_modified'])
     {
-     $item['timestamp']=time($post['date_modiefied']);
+     $item['timestamp']=strtotime($post['date_modiefied']);
     }
     else
     {
-     $item['timestamp']=time($post['date_created']);
+     $item['timestamp']=strtotime($post['date_created']);
     }
     $item['headline']=$post['title'];
     if ($GLOBALS['SET']['rewrite'])
