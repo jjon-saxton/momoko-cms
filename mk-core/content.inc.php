@@ -1050,20 +1050,29 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
    }
    if($_GET['content'] == "addin" || basename($_SERVER['PHP_SELF']) != "mk-dash.php")
    {
-    $contentlists.=<<<HTML
-<h4>Page/Post</h4>
-<ul id="PostPlugs" class="plug list">
-<li><a href="{$qstr}action=new">New</a></li>
-<li><a href="{$qstr}action=edit">Edit</a></li>
-<li><a href="{$qstr}action=delete">Delete</a></li>
-</ul>
+    if (isset($_GET['content']))
+    {
+     $type=ucwords($_GET['content']);
+    }
+    else
+    {
+     $type="Page";
+    }
+    $curconlinks.=<<<HTML
+<li><a href="{$qstr}action=edit">Edit This {$type}</a></li>
+<li><a href="{$qstr}action=delete">Delete This {$type}</a></li>
 HTML;
+   }
+   else
+   {
+    $curcontlinks=null;
    }
    $contentlists.=<<<HTML
 <h4>Content</h4>
 <ul id="ContentPlugs" class="plug list">
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=pages">Pages</a></li>
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=posts">Posts</a></li>
+<li><a href="//{$GLOBALS['SET']['baseuri']}/?action=new">New</a></li>{$curconlinks}
+<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=pages">All Pages</a></li>
+<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=posts">All Posts</a></li>
 <li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
 </ul>
 HTML;
