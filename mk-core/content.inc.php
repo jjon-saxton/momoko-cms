@@ -777,7 +777,7 @@ HTML;
 <ul class="noindent nobullet">
 <li>Post Date: {$now_h}</li>
 <li>Post Author: {$GLOBALS['USR']->name}</li>
-<li><label for="status">Page Status</lable> <select id="status" name="status">{$status_opts}</select>
+<li><label for="status">Post Status</lable> <select id="status" name="status">{$status_opts}</select>
 </ul>
 </div>
 HTML;
