@@ -3,7 +3,7 @@
 define ("INSTALLER",TRUE);
 
 require dirname(__FILE__).'/interface.inc.php';
-require dirname(__FILE__).'/../core/install.inc.php';
+require dirname(__FILE__).'/../mk-core/install.inc.php';
 
 $version=MOMOKOVERSION;
 

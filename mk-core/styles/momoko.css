@@ -1,0 +1,37 @@
+@import "./base.css";
+@import "./boilerplate.css";
+
+div#dashOpen {position:fixed;top:0;left:0;opacity:0.8;z-index:1950;}
+div#overlay {z-index:1950}
+div.sidebar {width:30%;max-width:400px;height:100%; display:none; position:fixed; left:0; top: 0; background:white;color:black; z-index:1951}
+.sidebar h4{text-align:center;color:black}
+ul.plug.list {padding-left:5px; list-style:none}
+ul.plug.list li a {display:block;padding:2px;margin:2px;text-decoration:none}
+ul.plug.list li a:link, ul.plug.list li a:visited {border:1px solid #ccc;background:#eee}
+ul.plug.list li a:active, ul.plug.list li a:hover {border:1px solid #eee;background:#bbb}
+
+.preview {border:1px dashed #999; min-height:20px; background-color:#efefff; color:#888}
+.preview h1 {font-size:1.75em; color:#777}
+.preview h2 {font-size:1.5em; color:#777}
+.preview h3 {font-size:1.25em; color:#777}
+.preview h4 {font-size:1em; color:#777}
+.preview h5 {font-size:1em; color:#777}
+.preview h6 {font-size:1em; color:#777}
+.no-drag {background-color:#dedeee}
+
+.portlet {width:100%; max-width:150px; margin:0 1em 1em 0; padding:0.3em}
+.portlet-header {cursor:move;padding: 0.2em 0.3em; margin-bottom: 0.5em; position: relative}
+.portlet-toggle {cursor:pointer;position: absolute; top: 50%; right: 0; margin-top: -8px}
+.portlet-content {padding: 0.4em}
+.portlet-content input {max-width:50px}
+.portlet-placeholder {width:100%;max-width:150px;border: 1px dotted black; margin: 0 1em 1em 0; height: 50px}
+
+div.page {border:1px solid #999; border-radius:6px; margin:2px; padding:4px}
+div.selectable {cursor:pointer}
+
+.error {color:red}
+.success {color:green}
+
+#MapList ul { list-style-type: none; margin: 0; padding: 0; min-height: 10px }
+#MapList ul li { margin: 3px; padding: 0.4em; }
+#MapList ul .ui-icon { display: inline-block; }

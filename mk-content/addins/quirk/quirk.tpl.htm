@@ -1,0 +1,74 @@
+<html>
+<head>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<script src="//~{templatedir}/respond.min.js"></script>
+<!-- Template-specific jQuery plugins -->
+<script language="javascript" src="//~{templatedir}/jquery.plugins.js" type="text/javascript"></script>
+<!--Template-specific JQuery Procedures-->
+<script language="javascript" type="text/javascript">
+$(document).ready(function(){
+// Cache selectors outside callback for performance.
+var $window = $(window),
+$stickyEl = $('#navbar');
+var elTop = $stickyEl.offset().top;
+$window.scroll(function() {
+var windowTop = $window.scrollTop();
+$stickyEl.toggleClass('sticky', windowTop > elTop);
+});
+$("button, input[type=button], input[type=submit]").button();
+//Auto add icons to links based on href attribute, exclude header (h) and footer (f) links
+$("a[href^='mailto:']:not(.hf):not(marquee)").addClass("email");
+/*if we want to add icons to file types, here is an example of how to do that
+$("a[href$='.pdf']:not(.hf)").addClass("pdf"); */
+$('a:not(.hf)').filter(function(){
+//Compare the 'a' elements href host name to the location's host
+return this.hostname && this.hostname !== location.hostname;
+}).addClass("external").attr("target","_blank");
+$('#content img:even').css("float","left");
+$('#content img:odd').css("float","right");
+$("ul.topnav ul.subnav").parent().append("<span onclick=void()>↓</span>"); //Only shows drop down trigger when js is enabled (Adds empty span tag after ul.subnav*)
+$("ul.topnav li span").click(function() { //When trigger is clicked...
+//Following events are applied to the subnav itself (moving subnav up and down)
+$(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
+$(this).parent().hover(function() {
+}, function(){
+$(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up
+$("div#SiteShare span").fadeIn();
+});
+//Following events are applied to the trigger (Hover events for the trigger)
+}).hover(function() {
+$(this).addClass("subhover"); //On hover over, add class "subhover"
+}, function(){ //On Hover Out
+$(this).removeClass("subhover"); //On hover out, remove class "subhover"
+});
+});
+</script>
+</head>
+<body>
+<div id="page" class="gridContainer clearfix">
+<div id="PageHead">
+<div id="Logos" class="banner"> 
+<h1><var>sitename</var></h1>
+</div>
+</div>
+<div id="navbar">
+<!-- NAVIGATION:display=menu -->
+</div>
+<div id="News">
+<!-- MODULEZONE:id=1 -->
+</div>
+<div id="Content" class="editor box">
+<var>body</var>
+</div>
+<div id="footer">
+<ul id="info">
+<li>©<a href="mailto:tech-coordinator@saxton-solutions.com">Jon Saxton</a> 2012 all rights reserved.</li>
+<li>This template and stylesheet as well as some artwork are intellectual properties owned by SaxtonSolutions LLC and are protected by copyright or creative commons licences.</li>
+<li>Run by <a href="http://www.momokocms.org">MomoKO v<var>softwareversion</var></a></li>
+</ul>
+</div>
+</div>
+</body>
+</html>

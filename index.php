@@ -1,12 +1,21 @@
 <?php
 if (!file_exists(dirname(__FILE__)."/database.ini")) //database.ini does not exist! go to mk_install.php to create it.
 {
- header("Location: //".$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME'])."/mk_install.php");
+ header("Location: http://".$_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT'].dirname($_SERVER['SCRIPT_NAME'])."/mk-install.php");
  exit();
 }
 
-require dirname(__FILE__)."/core/common.inc.php";
-require dirname(__FILE__)."/core/content.inc.php";
+require dirname(__FILE__)."/mk-core/common.inc.php";
+require dirname(__FILE__)."/mk-core/content.inc.php";
+
+if (is_writable($GLOBALS['SET']['basedir']))
+{
+ trigger_error("Security Notice: MomoKO's base directory is writable!",E_USER_NOTICE);
+}
+if (!is_writable($GLOBALS['SET']['filedir']))
+{
+ trigger_error("MomoKO's content storage directory is not writable!",E_USER_NOTICE);
+}
 
 if(isset($_GET['action']) && !empty($_GET['action']))
 {
@@ -15,21 +24,36 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    $path_parts=(explode("/",$_GET['q']));
    if ($path_parts[0] == 'addin')
    {
-    include dirname(__FILE__)."/core/deliver.php";
+    include dirname(__FILE__)."/mk-core/deliver.php";
     $path_parts=array_splice($path_parts,1);
     do_addin(implode("/",$path_parts),$_GET['action']);
     exit();
    }
   }
-  $path_parts=array_splice($path_parts,1);
-  $path=implode("/",$path_parts);
-  $child=new MomokoPage($path);
+  if (!@$_GET['content'] || !@$_GET['p'])
+  {
+   $path_parts=array_splice($path_parts,1); //TODO this seems to execute whenever ?content=post!?
+   $path=implode("/",$path_parts);
+  }
+  switch ($_GET['content'])
+  {
+   case 'attachment':
+   $child=new MomokoAttachment($path);
+   break;
+   case 'post':
+   //TODO possibly seperate post and page, even though the actions would be the same
+   //break;
+   case 'page':
+   default:
+   $child=new MomokoPage($path);
+   break;
+  }
   switch ($_GET['action'])
   {
    case 'new':
    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
    {
-    $child=new MomokoPage(pathinfo(@$path,PATHINFO_DIRNAME).'/new_page.htm');
+    $child=new MomokoPage("New Page");
     $child->put($_POST);
    }
    else
@@ -41,6 +65,14 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    case 'edit':
    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
    {
+    if ($_GET['p'])
+    {
+     $child->fetchByID($_GET['p']);
+    }
+    elseif ($_GET['link'])
+    {
+     $child->fetchByLink($_GET['link']);
+    }
     $child->put($_POST);
    }
    else
@@ -52,11 +84,15 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    case 'delete':
    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
    {
-    if ($child->drop())
+    if ($_GET['p'])
     {
-     header("Location: //".$GLOBALS['CFG']->domain.$GLOBALS['CFG']->location);
-     exit();
+     $child->fetchByID($_GET['p']);
     }
+    elseif ($_GET['link'])
+    {
+     $child->fetchByLink($_GET['link']);
+    }
+    $child->drop();
    }
    else
    {
@@ -76,18 +112,18 @@ if(isset($_GET['action']) && !empty($_GET['action']))
      }
      else
      {
-      header("Location: http://".$GLOBALS['SET']['baseuri']."?loggedin=1");
+      header("Location: http://".$GLOBALS['SET']['baseuri']."#logged-in");
      }
      exit();
     }
     else
     {
-     $child=new MomokoError('Unauthorized');
+     $child=new MomokoError('401 Unauthorized');
     }
    }
    else
    {
-    header("Location: //".$GLOBALS['SET']['baseuri']."/mk_login.php");
+    header("Location: //".$GLOBALS['SET']['baseuri']."/mk-login.php");
 	exit();
    }
    break;
@@ -111,7 +147,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    if ($GLOBALS['USR']->logout())
    {
     $_SESSION['data']=serialize($GLOBALS['USR']);
-    header("Location: ?loggedin=0");
+    header("Location: http://".$GLOBALS['SET']['baseuri']."#logged-out");
     exit();
    }
    break;
@@ -121,23 +157,40 @@ if(isset($_GET['action']) && !empty($_GET['action']))
 }
 else
 {
- include dirname(__FILE__)."/core/deliver.php";
- @$str=$_GET['q'];
- $path_parts=explode("/",$str);
- switch($path_parts[0])
+ include dirname(__FILE__)."/mk-core/deliver.php";
+ $path_parts=explode("/",@$_GET['q']);
+ 
+ if (!$path_parts[0] && $_GET['content'])
+ {
+  $type=$_GET['content'];
+ }
+ else
+ {
+  $type=$path_parts[0];
+ }
+ 
+ if (isset($_GET['p']))
+ {
+  $id=$_GET['p'];
+ }
+ else
+ {
+  $id=$_GET['id'];
+ }
+ 
+ switch($type)
  {
   case "addin":
-  case "news":
-  case "help":
-  case "file":
+  case "post":
+  case "attachment":
   case "page":
-  $run="do_".$path_parts[0];
+  $run="do_".$type;
   $path_parts=array_splice($path_parts,1);
   break;
   default:
   $run="do_page";
  }
 
- $run(implode("/",$path_parts));
+ $run(implode("/",$path_parts),$id);
 }
 ?>
