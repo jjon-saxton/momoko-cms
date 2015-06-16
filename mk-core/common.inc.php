@@ -32,9 +32,6 @@ else
  define("NEWSROOT","/?q=news/");
  define("QUERYSTARTER","&");
 }
-<<<<<<< HEAD:core/common.inc.php
-define("TEMPLATEROOT","/templates/");
-=======
 define("TEMPLATEROOT","/mk-content/addins/");
 if ($GLOBALS['SET']['use_ssl'])
 {
@@ -53,7 +50,6 @@ else
  define ("GLOBAL_PROTOCOL","http:");
  define ("SECURE_PROTOCOL",GLOBAL_PROTOCOL);
 }
->>>>>>> 2.0-STABLE:mk-core/common.inc.php
 
 
 unset($setting,$pairs);
@@ -63,11 +59,7 @@ define ("TEMPLATEPATH",TEMPLATEROOT.$GLOBALS['SET']['template'].'/'.$GLOBALS['SE
 session_name($GLOBALS['SET']['sessionname']);
 session_start();
 
-<<<<<<< HEAD:core/common.inc.php
-require_once $GLOBALS['SET']['basedir'].'/core/user.inc.php';
-=======
 require_once $GLOBALS['SET']['basedir'].'/mk-core/user.inc.php';
->>>>>>> 2.0-STABLE:mk-core/common.inc.php
 
 if (@$_SESSION['data'])
 {
@@ -84,12 +76,6 @@ if ($GLOBALS['SET']['error_logging'] > 0)
  set_error_handler("momoko_html_errors"); //TODO need to set cli handler if we are running in cli mode
 }
 
-<<<<<<< HEAD:core/common.inc.php
-interface MomokoModuleInterface
-{
-  public function __construct($user,$options);
-  public function getModule($format='html');
-=======
 class MomokoModule
 {
 	public function settingsToHTML(array $values)
@@ -131,7 +117,6 @@ interface MomokoModuleInterface
   public function __construct();
   public function getModule($format='html');
   public function getInfoFromDB();
->>>>>>> 2.0-STABLE:mk-core/common.inc.php
 }
 
 interface MomokoPageObject
@@ -197,57 +182,12 @@ class MomokoVariableHandler
       $mod=new MomokoNavigation(null,$argstr);
       return $mod->getModule('html');
       break;
-<<<<<<< HEAD:core/common.inc.php
-      case 'news':
-      $mod=new MomokoNews(null,$argstr);
-      return $mod->getModule('html');
-      break;
-=======
->>>>>>> 2.0-STABLE:mk-core/common.inc.php
       default: //TODO: add code to look for plugin modules
       return "<!-- Module '{$item}' not found -->";
       break;
     }
   }
 
-<<<<<<< HEAD:core/common.inc.php
-  private function loadAddin($addin,$mod,$argstr)
-  {
-   $tbl=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
-   $data=$tbl->getData('dir','shortname~'.$addin,null,1);
-   $data=$data->first();
-   if ($data->dir)
-   {
-    $xml=simplexml_load_string(file_get_contents($GLOBALS['CFG']->basedir.'/assets/addins/'.$data->dir.'/manifest.xml'));
-   }
-   elseif (file_exists($GLOBALS['CFG']->basedir.'/assets/'.$addin.'/manifest.xml'))
-   {
-    $xml=simplexml_load_string(file_get_contents($GLOBALS['CFG']->basedir.'/assets/'.$addin.'/manifest.xml'));
-   }
-   else
-   {
-    return "<!-- Addin '{$addin}' not found -->";
-   }
-
-   $nav=new MomokoNavigation(null,'display=none');
-   $nav->convertXmlObjToArr($xml,$manifest);
-   foreach ($manifest as $node)
-   {
-    if ($node['@name'] == 'dirroot')
-    {
-     $dirroot=$GLOBALS['CFG']->basedir.$node['@text'];
-    }
-    elseif ($node['@name'] == 'module' && $node['@text'] == strtolower($mod))
-    {
-     $include=$node['@attributes']['file'];
-     $class=$node['@attributes']['class'];
-    }
-   }
-
-   require_once $dirroot.$include;
-   $mod=new $class(@$GLOBALS['USR'],$argstr);
-   return $mod->getModule('html');
-=======
   private function loadModsByZone($q)
   {
    parse_str($q,$info);
@@ -271,7 +211,6 @@ class MomokoVariableHandler
    }
    
    return $text;
->>>>>>> 2.0-STABLE:mk-core/common.inc.php
   }
 
   public function evalIf($exp,$true_block,$false_block=null)
@@ -399,26 +338,6 @@ class MomokoVariableHandler
        $text=preg_replace("/<!-- DATABASE:".preg_quote($query)."\/\/ -->(.*?)<!-- \/\/DATABASE -->/smU",$rows,$text);
       }
      }
-
-<<<<<<< HEAD:core/common.inc.php
-    //Replace module blocks
-    if (preg_match_all("/<!-- MODULE:(?P<item>.*?) -->/",$text,$list))
-    {
-      foreach ($list['item'] as $item)
-      {
-        list($name,$options,)=explode(":",$item);
-        $text=preg_replace("/<!-- MODULE:".preg_quote($item,"/")." -->/",$this->loadMod($name,$options),$text);
-      }
-    }
-
-    //Replace addin module blocks
-    if (preg_match_all("/<!-- ADDIN:(?P<item>.*?) -->/",$text,$list))
-    {
-      foreach ($list['item'] as $item)
-      {
-        list($addin,$name,$options,)=explode(":",$item);
-        $text=preg_replace("/<!-- ADDIN:".preg_quote($item)." -->/",$this->loadAddin($addin,$name,$options),$text);
-=======
     //Replace Navigation comment
     if (preg_match("/<!-- NAVIGATION:(?P<arguments>.*?) -->/",$text,$list))
     {
@@ -431,7 +350,6 @@ class MomokoVariableHandler
       foreach ($list['arguments'] as $query)
       {
         $text=preg_replace("/<!-- MODULEZONE:".preg_quote($query)." -->/",$this->loadModsByZone($query),$text);
->>>>>>> 2.0-STABLE:mk-core/common.inc.php
       }
     }
 
@@ -454,17 +372,6 @@ function momoko_html_errors($num,$str,$file,$line,$context)
 {
   if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($GLOBALS['SET']['error_logging'] > 1))
   {
-<<<<<<< HEAD:core/common.inc.php
-    if (file_exists($GLOBALS['SET']['logdir'].'error.log'))
-    {
-      $log=fopen($GLOBALS['SET']['logdir'].'error.log','a') or die("Error log could not be open for write!");
-      fwrite($log,"[".date("Y-m-d H:i:s")."] PHP Error (".$num."; ".$str.") in ".$line." of ".$file."!\n");
-    }
-    else
-    {
-      die("Error log does not exist at configured location: ".$GLOBALS['CFG']->logdir."!");
-    }
-=======
    $text="PHP Error (".$num."; ".$str.") on line ".$line." of ".$file."!\n";
    try
    {
@@ -514,7 +421,6 @@ function momoko_html_errors($num,$str,$file,$line,$context)
      echo "Error could not be recorded! ".$err->getMessage();
     }
    }
->>>>>>> 2.0-STABLE:mk-core/common.inc.php
   }
   
   if ($num == E_USER_ERROR)
@@ -578,21 +484,13 @@ function momoko_basic_changes($user,$action,$target,$message=null)
 {
   if ($GLOBALS['SET']['security_logging'] > 0)
   {
-<<<<<<< HEAD:core/common.inc.php
-    if (is_writable($GLOBALS['SET']['logdir'].'/changes.log'))
-=======
     if (is_writable($GLOBALS['CFG']->logdir.'/changes.log'))
->>>>>>> 2.0-STABLE:mk-core/common.inc.php
     {
       if (!empty($message))
       {
         $message=": ".$message;
       }
-<<<<<<< HEAD:core/common.inc.php
-      $log=fopen($GLOBALS['SET']['logdir'].'/changes.log','a');
-=======
       $log=fopen($GLOBALS['CFG']->logdir.'/changes.log','a');
->>>>>>> 2.0-STABLE:mk-core/common.inc.php
       fwrite($log,"[".date("Y-m-d H:i:s")."] ".$user->name." (".$user->num.":".$_SERVER['REMOTE_ADDR'].") ".$action." ".$target.$message."\n");
     }
     else
@@ -603,8 +501,6 @@ function momoko_basic_changes($user,$action,$target,$message=null)
 }
 
 #Misc functions
-<<<<<<< HEAD:core/common.inc.php
-=======
 function paginate($total,$offset=0)
 {
  $total_pp=ceil($total/$GLOBALS['USR']->rowspertable);
@@ -617,7 +513,6 @@ function paginate($total,$offset=0)
  return $pages;
 }
 
->>>>>>> 2.0-STABLE:mk-core/common.inc.php
 function rmdirr($dir,$empty_only=false)
 {
   rtrim($dir,"/");
@@ -712,24 +607,6 @@ function parse_page($data)
  return $array;
 }
 
-<<<<<<< HEAD:core/common.inc.php
-function join_dom(DOMDocument $DOMParent, DOMDocument $DOMChild, $tag = null)
-{
- $node = $DOMChild->documentElement;
- $node = $DOMParent->importNode($node, true);
-
- if ($tag !== null)
- {
-  $tag = $DOMParent->getElementsByTagName($tag)->item(0);
-  $tag->appendChild($node);
- }
- else
- {
-  $DOMParent->documentElement->appendChild($node);
- }
-
- return $DOMParent;
-=======
 function get_author($num)
 {
  $auth_table=new DataBaseTable('users');
@@ -784,5 +661,4 @@ function fetch_files($dir,$limitto=null)
  }
  
  return $files;
->>>>>>> 2.0-STABLE:mk-core/common.inc.php
 }
