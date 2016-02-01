@@ -739,7 +739,7 @@ HTML;
       $module['zone']=0;
      }
      parse_str($module['settings'],$module['settings']);
-     include_once $GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."addins/".$module['dir']."/module.php";
+     require_once $GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."addins/".$module['dir']."/module.php";
      $mod_obj="Momoko".ucwords($module['dir'])."Module";
      $mod_obj=new $mod_obj();
      $module['settings']=$mod_obj->settingsToHTML($module['settings']);

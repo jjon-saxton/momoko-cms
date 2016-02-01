@@ -26,7 +26,7 @@ class MomokoNavigation
    switch ($this->options['display'])
    {
     case 'menu':
-    $text="<ul id=\"NavList\" class=\"topnav\">".$this->getListItems($this->map)."\n</ul>";
+    $text="<ul id=\"NavList\" class=\"topnav nav navbar-nav\">".$this->getListItems($this->map)."\n</ul>";
     break;
     case 'list':
     $text="<ul id=\"MapList\" class=\"sitemap\">\n".$this->getListItems($this->map)."\n</ul>";
