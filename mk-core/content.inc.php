@@ -1032,11 +1032,18 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   $split['body']=$match['body'];
   unset($match);
   
-  $umopts=null;
+  if (!$GLOBALS['USR']->inGroup('users'))
+  {
+   $umopts="<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-login.php\">Login</a></li>";
+  }
+  else
+  {
+   $umopts="<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=settings\">Settings</a></li>";
+  }
   $contentlists=null;
   if ($GLOBALS['USR']->inGroup('admin'))
   {
-   $umopts="\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=new\">Register</a></li>";
+   $umopts.="\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=new\">Register</a></li>";
   }
   if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
   {
@@ -1134,7 +1141,7 @@ HTML;
 <h1>{$GLOBALS['SET']['name']}</h1>
 <h4>User</h4>
 <ul id="UserPlugs" class="plug list">
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=settings">Settings</a></li>{$umopts}
+{$umopts}
 </ul>
 {$contentlists}
 <h4>Exit</h4>
