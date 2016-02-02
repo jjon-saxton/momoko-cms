@@ -1035,10 +1035,12 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   if (!$GLOBALS['USR']->inGroup('users'))
   {
    $umopts="<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-login.php\">Login</a></li>";
+   $rockout=null;
   }
   else
   {
    $umopts="<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=settings\">Settings</a></li>";
+   $rockout="\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/?action=logout\">Logout</a></li>\n";
   }
   $contentlists=null;
   if ($GLOBALS['USR']->inGroup('admin'))
@@ -1146,8 +1148,7 @@ HTML;
 {$contentlists}
 <h4>Exit</h4>
 <ul id="ExitPlugs" class="plug list">
-<li><a href="javascript:void();" onclick="toggleSidebar();">Close Dashboard</a></li>
-<li><a href="?action=logout">Logout</a>
+<li><a href="javascript:void();" onclick="toggleSidebar();">Close Dashboard</a></li>{$rockout}
 </ul>
 </div>
 {$split['body']}
