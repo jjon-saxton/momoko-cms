@@ -133,12 +133,6 @@ HTML;
   $admin['longdateformat']=$defaults['ldf'];
   $admin['rowspertable']=$defaults['rpt'];
   
-  $rows['addins'][]=array('dir'=>'passreset','type'=>'page','enabled'=>'y','shortname'=>'Password Resetter','longname'=>"User Password Resetter",'description'=>"A simple addin page that allows users to reset their own passwords.");
-  $rows['addins'][]=array('dir'=>'posts','type'=>'module','zone'=>1,'order'=>1,'enabled'=>'y','shortname'=>'Mini Post List','longname'=>'Mini Post List','settings'=>"sort=recent&length=255&num=5",'description'=>"A sidebar module that loads a small list of posts.");
-  $rows['addins'][]=array('dir'=>'metalinks','type'=>'module','zone'=>1,'order'=>2,'enabled'=>'y','shortname'=>'Meta Link Box','longname'=>'Meta Link Box','settings'=>"display=box",'description'=>"Provides links such as RSS feeds and login. When logged in this is how users will access their dashboard.");
-  $rows['addins'][]=array('dir'=>'mediabox','type'=>'module','enabled'=>'y','shortname'=>'Media Box','longname'=>'Media Box','settings'=>'type=image&link1=','description'=>'A module to display a video, image or other media object in a module zone.');
-  $rows['addins'][]=array('dir'=>'quirk','type'=>'template','enabled'=>'y','shortname'=>'Quirk','longname'=>"Quirk Layout",'description'=>"A two column layout with head and foot bar.",'headtags'=>"<link rel=\"stylesheet\" href=\"{$site['baseuri']}/mk-content/templates/quirk/quirk.css\" type=\"text/css\">");
-  
   $rows['content'][]=array('title'=>"Hello World!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'page','order'=>1, 'parent'=>0,'author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');
   $rows['content'][]=array('title'=>"Welcome!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'post','parent'=>0,'author'=>1,'text'=>$firstpost,'mime_type'=>'text/html');
   foreach (glob($site['basedir']."/mk-content/error/*.htm") as $file)
@@ -154,7 +148,7 @@ HTML;
    }
    unset($match);
    $page['date_created']=date("Y-m-d H:i:s");
-   $page['status']="claoked";
+   $page['status']="cloaked";
    $page['type']="error page";
    $page['parent']=0;
    $page['author']=1;
@@ -180,7 +174,7 @@ HTML;
    }
    unset($match);
    $page['date_created']=date("Y-m-d H:i:s");
-   $page['status']="claoked";
+   $page['status']="cloaked";
    $page['type']="form";
    $page['parent']=0;
    $page['author']=1;
@@ -237,6 +231,12 @@ HTML;
     }
     $tottbls++;
   }
+
+  $tottbls++;
+  if (scan_addins($settings))
+  {
+   $okay++;
+  }
   
   if ($okay == $tottbls)
   {
@@ -279,7 +279,42 @@ function db_upgrade($version,array $settings,$backup=null)
  return true;
 }
 
-function scan_addins()
+function scan_addins($settings=null)
 {
- //TODO scan core addins, see if they are in the database (in case of upgrade) and add them if they are not
+ if (empty($settings && is_array($GLOBALS['settings']))
+ {
+  $settings=$GLOBALS['settings'];
+ }
+ $path=$settings['baseuri'].$settings['filedir'];
+ foreach (scanndir($path) as $item)
+ {
+  if (is_dir($path.'/'.$item)
+  {
+   $info=parse_ini_file($path.'/'.$item.'/MANIFEST');
+   $addins=new DataBaseTable('addins');
+   $query=$addins->getData("shortname:'{$info['shortname']}'");
+   if ($query->rowCount < 1)
+   {
+    $rows[]=$addins->putData($info);
+   }
+   else
+   {
+    $row=$query->fetch(PDO::FETCH_ASSOC);
+    foreach ($row as $key=>$value)
+    {
+     if ($value != $info[$key])
+     {
+      $update[$key]=$value;
+     }
+    }
+    if (!empty($update))
+    {
+     $update['num']=$row['num'];
+     $rows[]=$addins->updateData($update);
+    }
+   }
+  }
+ }
+
+ return $rows;
 }
