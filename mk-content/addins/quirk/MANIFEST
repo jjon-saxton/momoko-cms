@@ -1,0 +1,14 @@
+[info]
+shortname = "Quirk"
+longname = "Quirk Layout"
+type = "template"
+description = "A two column layout with head and foot bar."
+
+[authorization]
+whitelist = "ALL"
+blacklist = "root"
+
+[attribution]
+author = "Jon Saxton"
+email = "cem@tower21studios.com"
+version = "0.1a"
