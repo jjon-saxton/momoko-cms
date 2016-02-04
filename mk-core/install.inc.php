@@ -137,7 +137,7 @@ HTML;
   $rows['addins'][]=array('dir'=>'posts','type'=>'module','zone'=>1,'order'=>1,'enabled'=>'y','shortname'=>'Mini Post List','longname'=>'Mini Post List','settings'=>"sort=recent&length=255&num=5",'description'=>"A sidebar module that loads a small list of posts.");
   $rows['addins'][]=array('dir'=>'metalinks','type'=>'module','zone'=>1,'order'=>2,'enabled'=>'y','shortname'=>'Meta Link Box','longname'=>'Meta Link Box','settings'=>"display=box",'description'=>"Provides links such as RSS feeds and login. When logged in this is how users will access their dashboard.");
   $rows['addins'][]=array('dir'=>'mediabox','type'=>'module','enabled'=>'y','shortname'=>'Media Box','longname'=>'Media Box','settings'=>'type=image&link1=','description'=>'A module to display a video, image or other media object in a module zone.');
-  $rows['addins'][]=array('dir'=>'quirk','type'=>'template','enabled'=>'y','shortname'=>'Quirk','longname'=>"Quirk Layout",'discription'=>"A two column layout with head and foot bar.",'headtags'=>"<link rel=\"stylesheet\" href=\"{$site['baseuri']}/mk-content/templates/quirk/quirk.css\" type=\"text/css\">");
+  $rows['addins'][]=array('dir'=>'quirk','type'=>'template','enabled'=>'y','shortname'=>'Quirk','longname'=>"Quirk Layout",'description'=>"A two column layout with head and foot bar.",'headtags'=>"<link rel=\"stylesheet\" href=\"{$site['baseuri']}/mk-content/templates/quirk/quirk.css\" type=\"text/css\">");
   
   $rows['content'][]=array('title'=>"Hello World!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'page','order'=>1, 'parent'=>0,'author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');
   $rows['content'][]=array('title'=>"Welcome!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'post','parent'=>0,'author'=>1,'text'=>$firstpost,'mime_type'=>'text/html');
@@ -277,4 +277,9 @@ function db_upgrade($version,array $settings,$backup=null)
   $row=$table['settings']->putData($newrow) or die(trigger_error("Could not add setting '{$key}'"));
  }
  return true;
+}
+
+function scan_addins()
+{
+ //TODO scan core addins, see if they are in the database (in case of upgrade) and add them if they are not
 }

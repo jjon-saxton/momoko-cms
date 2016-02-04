@@ -1,7 +1,0 @@
-<manifest addin="Meta Link Box">
-<dirroot>/addins/metalinks/</dirroot>
-<authority>
-	<whitelist>ALL</whitelist>
-</authority>
-<type>Module</type>
-</manifest>

@@ -1,7 +1,0 @@
-<manifest addin="Mini Post List">
-<dirroot>/addins/posts/</dirroot>
-<authority>
-	<whitelist>ALL</whitelist>
-</authority>
-<type>Module</type>
-</manifest>
