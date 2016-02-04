@@ -1,0 +1,14 @@
+[info]
+shortname = "Meta Link Box"
+longname = "Meta Link Box"
+type = "module"
+description = "Provides links such as RSS feeds and login. When logged in this is how users will access their dashboard."
+
+[authorization]
+whitelist = "ALL"
+blacklist = "root"
+
+[attribution]
+author = "Jon Saxton"
+email = "cem@tower21studios.com"
+version = "0.1a"
