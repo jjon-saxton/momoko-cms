@@ -43,16 +43,6 @@ If you have SSH access and prefer not to set up or install git, or you want to u
 9. Use FTP or whatever protocol you choose to upload MomoKO to your server.
 10. Proceed to 'Configure MomoKO'.
 
-#### 1.3 Using momokocms.org
-
-If you don't have SSH access to your server and don't want to acquire and FTP client, and/or set it up to connect to our server, you can download archives from our website, momokocms.org. This will house both zip and tar.gz archives for the latest stable version. You will have to use another method to download other versions.
-
-1. Open your favorite web browser and navigate to http://www.momokocms.org.
-2. If you are using Windows click the "Download .zip file" button, if you are using Linux or Mac OSX you may use either button.
-3. Extract the zip file, be sure to keep the directory structure, but you can change the name of the root directory if you wish.
-4. Upload to your server
-5. Proceed to 'Configure MomoKO'
-
 ### 2. Configure MomoKO
 
 Once she is on your server you need to set her up to connect to a database, create required tables on, change your site settings, and create an administrator for your site. Once this is done, you will be able to login, create pages, and additional users. Fortunately this task is made simple by the inclusion of a finalization script. Two versions of this script are available for flexibility. If you completed the previous step via SSH, you can run the finalization right there using the CLI version. If you did not use SSH, or simply wish to finish the installation in a web-browser you can use the web version.

@@ -67,7 +67,7 @@ $(function(){
 			primary:'ui-icon-document'
 		}
 	}).click(function(){
-		$("#ItemEditDialog").load("//{$GLOBALS['SET']['baseuri']}/ajax.php?include=navhelper&action=build&dialog=page").dialog({
+		$("#ItemEditDialog").load("//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ajax.php?include=navhelper&action=build&dialog=page").dialog({
 			title:"New Page",
 			buttons:{
 				"Save":function(){
@@ -88,7 +88,7 @@ $(function(){
 			primary:'ui-icon-folder-open'
 		}
 	}).click(function(){
-		$("#ItemEditDialog").load("//{$GLOBALS['SET']['baseuri']}/ajax.php?include=navhelper&action=build&dialog=folder").dialog({
+		$("#ItemEditDialog").load("//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ajax.php?include=navhelper&action=build&dialog=folder").dialog({
 			title:"New Folder",
 			buttons:{
 				"Save":function(){
@@ -136,7 +136,7 @@ $( "#MapList ul" )
 		}
 		else{
 			var type=$("#selected_item").attr('type');
-			$("#ItemEditDialog").load("//{$GLOBALS['SET']['baseuri']}/ajax.php?include=navhelper&action=build&dialog="+type,function(){
+			$("#ItemEditDialog").load("//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/ajax.php?include=navhelper&action=build&dialog="+type,function(){
 					var title=$("#selected_item a").html();
 					var uri=$("#selected_item a").attr('href');
 					$("input#uri").val(uri);
@@ -210,12 +210,12 @@ HTML;
 <style>
 	label { display:block; }
 </style>
-<link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/scripts/elfinder/css/elfinder.min.css" type="text/css" media="screen">
-<script language="javascript" type="text/javascript" src="//{$GLOBALS['SET']['baseuri']}/scripts/elfinder/js/elfinder.min.js"></script>
+<link rel="stylesheet" href="//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/css/elfinder.min.css" type="text/css" media="screen">
+<script language="javascript" type="text/javascript" src="//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/js/elfinder.min.js"></script>
 <script language="javascript" type="text/javascript">
 $(function() {
     var opt = {      // Must change variable name
-    url : "//{$GLOBALS['SET']['baseuri']}/scripts/elfinder/php/connector.php",
+    url : "//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/php/connector.php",
     lang : 'en',
     defaultView : 'list',
     getFileCallback : function(url) {
@@ -260,12 +260,12 @@ HTML;
 <style>
 	label { display:block; }
 </style>
-<link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/scripts/elfinder/css/elfinder.min.css" type="text/css" media="screen">
-<script language="javascript" type="text/javascript" src="//{$GLOBALS['SET']['baseuri']}/scripts/elfinder/js/elfinder.min.js"></script>
+<link rel="stylesheet" href="//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/css/elfinder.min.css" type="text/css" media="screen">
+<script language="javascript" type="text/javascript" src="//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/js/elfinder.min.js"></script>
 <script language="javascript" type="text/javascript">
 $(function() {
     var opt = {      // Must change variable name
-    url : "//{$GLOBALS['SET']['baseuri']}/scripts/elfinder/php/connector.php",
+    url : "//{$GLOBALS['CFG']->domain}{$GLOBALS['CFG']->location}/assets/scripts/elfinder/php/connector.php",
     lang : 'en',
     defaultView : 'list',
     getFileCallback : function(url) {
@@ -307,14 +307,13 @@ HTML;
  }
  break;
  case 'post':
- include $GLOBALS['SET']['basedir'].'/core/class.htmlParser.php';
+ include $GLOBALS['CFG']->basedir.'/assets/core/class.htmlParser.php';
  $parser=new htmlParser($_POST['raw_dom']);
  $html=$parser->toArray();
  $nav=new MomokoNavigation($GLOBALS['USR'],'display=none');
  $nav->HTMLArraytoMap($html);
  if ($nav->writeMap())
  {
-  $return['map']=$nav->map;
   $return['processed']='suceeded';
  }
  else
@@ -325,7 +324,7 @@ HTML;
  echo json_encode($return);
  break;
  case 'set_map':
- include $GLOBALS['SET']['basedir'].'/php/class.htmlParser.php';
+ include $GLOBALS['CFG']->basedir.'/assets/php/class.htmlParser.php';
  //set map stuff here
  header("Content-type: text/plain");
  $nav=new MomokoNavigation(null,null);

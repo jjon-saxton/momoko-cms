@@ -212,11 +212,7 @@ class DataBaseTable extends DataBaseSchema
    {
     if ($this->indices['primary'] == $field)
     {
-<<<<<<< HEAD:core/database.inc.php
-     $where_str="WHERE `{$field}`='{$value}'";
-=======
      $where="WHERE `{$field}`='{$value}'";
->>>>>>> 2.0-STABLE:mk-core/database.inc.php
      $key=$value;
     }
     else
@@ -230,27 +226,17 @@ class DataBaseTable extends DataBaseSchema
     unset($fieldarray[$field]);
    }
   }
-<<<<<<< HEAD:core/database.inc.php
-  $query=$this->prepare($q." ".$where_str);
-  try
-=======
   $q=rtrim($q,", ").' '.$where;
   $query=$this->prepare($q);
 
   $this->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
   if ($query->execute($update))
->>>>>>> 2.0-STABLE:mk-core/database.inc.php
   {
-   $query->execute($update);
    return $key;
   }
-  catch (Exception $err)
+  else
   {
-<<<<<<< HEAD:core/database.inc.php
-   trigger_error("SQL Error: ".$err->getMessage(),E_USER_WARNING);
-=======
    throw new Exception("Could not update data!");
->>>>>>> 2.0-STABLE:mk-core/database.inc.php
    return false;
   }
  }

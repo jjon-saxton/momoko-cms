@@ -1,0 +1,14 @@
+[info]
+shortname = "Mini Post List"
+longname = "Mini Post List"
+type = "module"
+description = "A sidebar module that loads a small list of posts."
+
+[authorization]
+whitelist = "ALL"
+blacklist = "root"
+
+[attribution]
+author = "Jon Saxton"
+email = "cem@tower21studios.com"
+version = "0.1a"

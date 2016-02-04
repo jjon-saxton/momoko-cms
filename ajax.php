@@ -1,10 +1,4 @@
 <?php
-<<<<<<< HEAD
-require_once dirname(__FILE__).'/core/common.inc.php';
-require_once dirname(__FILE__).'/core/content.inc.php';
-
-include dirname(__FILE__).'/core/'.$_GET['include'].'.inc.php';
-=======
 /* Quick get, put, and update action to be performed by AJAX */
 
 header("Content-type: text/json");
@@ -33,6 +27,5 @@ switch ($_GET['action'])
         echo json_encode($query->fetchALL(PDO::FETCH_ASSOC));
         break;
 }
->>>>>>> 2.0-STABLE
 
 ?>

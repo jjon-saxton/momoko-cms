@@ -1,0 +1,14 @@
+[info]
+shortname = "Password Resetter"
+longname = "User Password Resetter"
+type = "page"
+description = "A simple addin page that allows users to reset their own passwords."
+
+[authorization]
+whitelist = "ALL"
+blacklist = "root"
+
+[attribution]
+author = "Jon Saxton"
+email = "cem@tower21studios.com"
+version = "0.1a"

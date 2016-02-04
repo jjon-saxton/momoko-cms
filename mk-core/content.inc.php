@@ -26,7 +26,7 @@ class MomokoNavigation
    switch ($this->options['display'])
    {
     case 'menu':
-    $text="<ul id=\"NavList\" class=\"topnav\">".$this->getListItems($this->map)."\n</ul>";
+    $text="<ul id=\"NavList\" class=\"topnav nav navbar-nav\">".$this->getListItems($this->map)."\n</ul>";
     break;
     case 'list':
     $text="<ul id=\"MapList\" class=\"sitemap\">\n".$this->getListItems($this->map)."\n</ul>";
@@ -88,8 +88,8 @@ class MomokoNavigation
    }
    if (is_array($item['children']))
    {
-    $text.="<li id=\"{$item['id']}\" class=\"category\"><a href=\"{$href}\">{$item['title']}</a>\n";
-    $text.="<ul id=\"{$item['id']}\" class=\"subnav\">\n".$this->getListItems($item['children'])."\n</ul>\n</li>\n";
+    $text.="<li id=\"{$item['id']}\" class=\"category dropdown\"><a href=\"{$href}\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">{$item['title']}</a>\n";
+    $text.="<ul id=\"{$item['id']}\" class=\"subnav dropdown-menu\" role=\"menu\">\n".$this->getListItems($item['children'])."\n</ul>\n</li>\n";
    }
    else
    {
@@ -1032,11 +1032,20 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   $split['body']=$match['body'];
   unset($match);
   
-  $umopts=null;
+  if (!$GLOBALS['USR']->inGroup('users'))
+  {
+   $umopts="<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-login.php\">Login</a></li>";
+   $rockout=null;
+  }
+  else
+  {
+   $umopts="<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=settings\">Settings</a></li>";
+   $rockout="\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/?action=logout\">Logout</a></li>\n";
+  }
   $contentlists=null;
   if ($GLOBALS['USR']->inGroup('admin'))
   {
-   $umopts="\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=new\">Register</a></li>";
+   $umopts.="\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=new\">Register</a></li>";
   }
   if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
   {
@@ -1134,13 +1143,12 @@ HTML;
 <h1>{$GLOBALS['SET']['name']}</h1>
 <h4>User</h4>
 <ul id="UserPlugs" class="plug list">
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=settings">Settings</a></li>{$umopts}
+{$umopts}
 </ul>
 {$contentlists}
 <h4>Exit</h4>
 <ul id="ExitPlugs" class="plug list">
-<li><a href="javascript:void();" onclick="toggleSidebar();">Close Dashboard</a></li>
-<li><a href="?action=logout">Logout</a>
+<li><a href="javascript:void();" onclick="toggleSidebar();">Close Dashboard</a></li>{$rockout}
 </ul>
 </div>
 {$split['body']}

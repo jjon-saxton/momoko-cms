@@ -1,0 +1,14 @@
+[info]
+shortname = "Media Box"
+longname = "Media Box"
+type = "module"
+description = "A module to display a video, image or other media object in a module zone."
+
+[authorization]
+whitelist = "ALL"
+blacklist = "root"
+
+[attribution]
+author = "Jon Saxton"
+email = "cem@tower21studios.com"
+version = "0.1a"
