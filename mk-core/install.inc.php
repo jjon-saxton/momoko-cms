@@ -276,19 +276,20 @@ function db_upgrade($version,array $settings,$backup=null)
   $newrow['value']=$value;
   $row=$table['settings']->putData($newrow) or die(trigger_error("Could not add setting '{$key}'"));
  }
+ $new_addins=scan_addins($settings);
  return true;
 }
 
 function scan_addins($settings=null)
 {
- if (empty($settings && is_array($GLOBALS['settings']))
+ if (empty($settings) && is_array($GLOBALS['SET']))
  {
-  $settings=$GLOBALS['settings'];
+  $settings=$GLOBALS['SET'];
  }
  $path=$settings['baseuri'].$settings['filedir'];
  foreach (scanndir($path) as $item)
  {
-  if (is_dir($path.'/'.$item)
+  if (is_dir($path.'/'.$item))
   {
    $info=parse_ini_file($path.'/'.$item.'/MANIFEST');
    $addins=new DataBaseTable('addins');

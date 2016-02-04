@@ -17,6 +17,12 @@ if (!is_writable($GLOBALS['SET']['filedir']))
  trigger_error("MomoKO's content storage directory is not writable!",E_USER_NOTICE);
 }
 
+if ($GLOBALS['SET']['version'] < preg_replace("/[^0-9,.]/","",MOMOKOVERSION)) // It is possible the database does not match the script version
+{
+ header("Location: http://".$GLOBALS['SET']['baseuri']."/mk-update.php");
+ exit();
+}
+
 if(isset($_GET['action']) && !empty($_GET['action']))
 {
  if (isset ($_GET['q']) && !empty($_GET['q']))
