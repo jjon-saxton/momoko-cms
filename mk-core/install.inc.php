@@ -267,11 +267,11 @@ function db_upgrade($level,$version,array $settings,$backup=null)
   $settings_def[0]="`key` VARCHAR(30) NOT NULL PRIMARY KEY";
   $settings_def[1]="`value` VARCHAR(255) NOT NULL";
   $db->addTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT) or die(trigger_error("Unable to add new settings table please try again!",E_USER_ERROR));
-  $table['settings']=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
  }
  
  if ($version < 2.0) //settings to add for versions less than 2.0, in the future this section will have other lower version as well
  {
+  $table['settings']=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
   $settings['email_mta']='phpmail';
   $settings['email_server']='host=localhost';
   $settings['email_from']='name='.$settings['from']['name']."&address=".$settings['from']['address'];
@@ -288,7 +288,7 @@ function db_upgrade($level,$version,array $settings,$backup=null)
  $new_addins=scan_addins($settings);
  if (is_array($new_addins))
  {
-  echo ("Updating addin numbers...");
+  echo ("Updating or adding addin number(s)...");
   foreach ($new_addins as $num)
   {
    echo ($num." ");
@@ -299,6 +299,12 @@ function db_upgrade($level,$version,array $settings,$backup=null)
  {
   echo ("No updates needed or updates failed!");
  }
+ 
+ $update['key']='version';
+ $update['value']=2.1;
+ $table=new DataBaseTable('settings');
+ $row=$table->updateData($update);
+ 
  return true;
 }
 
@@ -308,15 +314,15 @@ function scan_addins($settings=null)
  {
   $settings=$GLOBALS['SET'];
  }
- $path=$settings['baseuri'].$settings['filedir'];
- foreach (scanndir($path) as $item)
+ $path=$settings['basedir'].$settings['filedir'].'addins';
+ foreach (scandir($path) as $item)
  {
   if (is_dir($path.'/'.$item))
   {
    $info=parse_ini_file($path.'/'.$item.'/MANIFEST');
    $addins=new DataBaseTable('addins');
    $query=$addins->getData("shortname:'{$info['shortname']}'");
-   if ($query->rowCount < 1)
+   if ($query->rowCount() < 1)
    {
     $rows[]=$addins->putData($info);
    }
