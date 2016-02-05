@@ -201,10 +201,13 @@ class MomokoVariableHandler
    {
     while ($module=$query->fetch(PDO::FETCH_ASSOC))
     {
-     require_once $GLOBALS['SET']['basedir']."/".$GLOBALS['SET']['filedir']."addins/{$module['dir']}/".$module['type'].".php";
-     $class="Momoko".ucwords($module['dir'])."Module";
-     $mod=new $class();
-     $text.=$mod->getModule('html');
+     if ($module['type'] == 'module') //Sanity check!
+     {
+      require_once $GLOBALS['SET']['basedir']."/".$GLOBALS['SET']['filedir']."addins/{$module['dir']}/".$module['type'].".php";
+      $class="Momoko".ucwords($module['dir'])."Module";
+      $mod=new $class();
+      $text.=$mod->getModule('html');
+     }
     }
    }
    else
