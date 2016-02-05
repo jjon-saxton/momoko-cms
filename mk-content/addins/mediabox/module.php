@@ -30,7 +30,7 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
  public function getModule($format='html')
  {
   $src[0]=$this->settings['link1'];
-  $src[1]=$this->settings['link2'];u
+  $src[1]=$this->settings['link2'];
   if (!empty($src))
   {
    switch ($this->settings['type'])
@@ -41,13 +41,13 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
     $media="<{$tag} controls>\n";
     foreach ($src as $i)
     {
-     $media.="<source src=\"{$i}\">\n"
+     $media.="<source src=\"{$i}\">\n";
     }
     $media.="</{$tag}>";
     break;
     case 'object':
     $media="<object data=\"{$src[0]}\">";
-    break
+    break;
     case 'image':
     default:
     $media="<img src=\"{$src[0]}\">";
@@ -64,4 +64,11 @@ HTML;
    return "<!-- No media set -->";
   }
  }
+		
+	public function getInfoFromDB()
+	{
+	 $table=new DataBaseTable("addins");
+	 $query=$table->getData("dir:'".basename(dirname(__FILE__))."'",null,null,1);
+	 return $query->fetch(PDO::FETCH_OBJ);
+	}
 }
