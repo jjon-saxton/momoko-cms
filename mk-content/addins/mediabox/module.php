@@ -11,7 +11,7 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
  {
   $this->info=$this->getInfoFromDB();
   $this->usr=$GLOBALS['USR'];
-  $this->opt_keys=array('type'=>array('type'=>'select','options'=>array('image','video','audio','object')),'link'=>array('type'=>'link'));
+  $this->opt_keys=array('type'=>array('type'=>'select','options'=>array('image','video','audio','object')),'link1'=>array('type'=>'link'),'link2'=>array('type'=>'link'));
   parse_str($this->info->settings,$this->settings); 
  }
 
@@ -38,7 +38,7 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
     case 'audio':
     case 'video':
     $tag=$this->settings['type'];
-    $media="<{$tag} controls>\n";
+    $media="<{$tag} width=100% controls>\n";
     foreach ($src as $i)
     {
      $media.="<source src=\"{$i}\">\n";
@@ -46,11 +46,11 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
     $media.="</{$tag}>";
     break;
     case 'object':
-    $media="<object data=\"{$src[0]}\">";
+    $media="<object width=100% data=\"{$src[0]}\">";
     break;
     case 'image':
     default:
-    $media="<img src=\"{$src[0]}\">";
+    $media="<img width=100% src=\"{$src[0]}\">";
    }
 
    return <<<HTML
