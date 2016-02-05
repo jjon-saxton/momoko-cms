@@ -317,7 +317,7 @@ function scan_addins($settings=null)
  $path=$settings['basedir'].$settings['filedir'].'addins';
  foreach (scandir($path) as $item)
  {
-  if (is_dir($path.'/'.$item))
+  if ($item != '.' && $item != '..' && is_dir($path.'/'.$item))
   {
    $info=parse_ini_file($path.'/'.$item.'/MANIFEST');
    $addins=new DataBaseTable('addins');
