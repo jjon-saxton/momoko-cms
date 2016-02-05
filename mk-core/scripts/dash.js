@@ -3,6 +3,26 @@ $(function(){
   event.preventDefault();
   history.back();
  });
+ $("button#linkbrowse").click(function(event){
+    event.preventDefault();
+	$("div#modal").load("?section=content&action=gethref&ajax=1",function(){
+	 $("#vtabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
+	 }).on('mouseenter',"div.selectable",function(){
+		 $(this).addClass("ui-state-hover");
+		 }).on('mouseleave',"div.selectable",function(){
+			$(this).removeClass("ui-state-hover");
+		 }).on('click',"div.selectable",function(){
+		var location=$(this).find("a#location").attr('href');
+		 $("input#mediabox-link").val(location);
+		 $("div#modal").dialog('close');
+	 });
+	$("div#modal").dialog({
+		 height: 500,
+		 width: 800,
+		 modal: true,
+		title: "Browse Site"
+	});
+ });
  $(".dashboard").each(function(){
   $(this).addClass("ui-widget");
   $(this).addClass("ui-widget-content");

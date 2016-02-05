@@ -91,7 +91,8 @@ class MomokoModule
 	   $item.="<input id=\"{$this->info->dir}-{$key}\" type={$value['type']} size=10 name=\"{$this->info->num}[{$key}]\" value=\"{$values[$key]}\"></li>\n";
 	   break;
 	   case 'link':
-	   $item.="<input id=\"{$this->info->dir}-{$key}\" type=\"text\" size=5 name=\"{$this->info->num}[{$key}]\" value=\"{$values[$key]}\"><button>Browse...</button></li>\n";
+	   $item.="<input id=\"{$this->info->dir}-{$key}\" type=\"text\" size=5 name=\"{$this->info->num}[{$key}]\" value=\"{$values[$key]}\"><button id=\"linkbrowse\">Browse...</button></li>\n";
+       break;
 	   case 'select':
 	   $item.="<select id=\"{$this->info->dir}-{$key}\" name=\"{$this->info->num}[{$key}]\">\n";
 	   foreach ($value['options'] as $option)
