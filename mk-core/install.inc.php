@@ -249,34 +249,56 @@ HTML;
   }
 }
 
-function db_upgrade($version,array $settings,$backup=null)
+function db_upgrade($level,$version,array $settings,$backup=null)
 {
- $db=new DataBaseStructure(DAL_DB_DEFAULT);
- if ($backup == 'y')
+ if ($level == 'major') //add new tables for a major upgrade, in the future we may have to detect if a table exists first before adding or altering it
  {
-  $db->createBackup($GLOBALS['CFG']->datadir."/momoko-db-".time().".sql") or die(trigger_error("Could not create backup!", E_USER_WARNING));
+  $db=new DataBaseStructure(DAL_DB_DEFAULT);
+  if ($backup == 'y')
+  {
+   $db->createBackup($GLOBALS['CFG']->datadir."/momoko-db-".time().".sql") or die(trigger_error("Could not create backup!", E_USER_WARNING));
+  }
+  $tables['addins']=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
+  echo("Altering addin table columns...\n");
+  $tables['addins']->putField("enabled","char",1,"NOT NULL") or die(trigger_error("could not add 'enabled' column, you may need to manually add this column, see our release notes for more details!",E_USER_WARNING));
+  echo("Dropping old/unused tables...\n");
+  $db->dropTable(DAL_TABLE_PRE.'merchants',DAL_DB_DEFAULT) or die(trigger_error("Unable to drop old table '".DAL_TABLE_PRE."merchants'!",E_USER_ERROR));
+  echo("Adding the new settings table...\n");
+  $settings_def[0]="`key` VARCHAR(30) NOT NULL PRIMARY KEY";
+  $settings_def[1]="`value` VARCHAR(255) NOT NULL";
+  $db->addTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT) or die(trigger_error("Unable to add new settings table please try again!",E_USER_ERROR));
+  $table['settings']=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
  }
- $tables['addins']=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
- echo("Altering addin table columns...\n");
- $tables['addins']->putField("enabled","char",1,"NOT NULL") or die(trigger_error("could not add 'enabled' column, you may need to manually add this column, see our release notes for more details!",E_USER_WARNING));
- echo("Dropping old/unused tables...\n");
- $db->dropTable(DAL_TABLE_PRE.'merchants',DAL_DB_DEFAULT) or die(trigger_error("Unable to drop old table '".DAL_TABLE_PRE."merchants'!",E_USER_ERROR));
- echo("Adding the new settings table...\n");
- $settings_def[0]="`key` VARCHAR(30) NOT NULL PRIMARY KEY";
- $settings_def[1]="`value` VARCHAR(255) NOT NULL";
- $db->addTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT) or die(trigger_error("Unable to add new settings table please try again!",E_USER_ERROR));
- $table['settings']=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
- $settings['email_mta']='phpmail';
- $settings['email_server']='host=localhost';
- $settings['email_from']='name='.$settings['from']['name']."&address=".$settings['from']['address'];
- unset($settings['from']);
- foreach ($settings as $key=>$value)
+ 
+ if ($version < 2.0) //settings to add for versions less than 2.0, in the future this section will have other lower version as well
  {
-  $newrow['key']=$key;
-  $newrow['value']=$value;
-  $row=$table['settings']->putData($newrow) or die(trigger_error("Could not add setting '{$key}'"));
+  $settings['email_mta']='phpmail';
+  $settings['email_server']='host=localhost';
+  $settings['email_from']='name='.$settings['from']['name']."&address=".$settings['from']['address'];
+  unset($settings['from']);
+  foreach ($settings as $key=>$value)
+  {
+   $newrow['key']=$key;
+   $newrow['value']=$value;
+   $row=$table['settings']->putData($newrow) or die(trigger_error("Could not add setting '{$key}'"));
+  }
  }
+ 
+ echo("Scanning for new or updated addins...\n"); //This is to be completed for all upgrades in case we add new core addins
  $new_addins=scan_addins($settings);
+ if (is_array($new_addins))
+ {
+  echo ("Updating addin numbers...");
+  foreach ($new_addins as $num)
+  {
+   echo ($num." ");
+  }
+  echo ("\n");
+ }
+ else
+ {
+  echo ("No updates needed or updates failed!");
+ }
  return true;
 }
 
