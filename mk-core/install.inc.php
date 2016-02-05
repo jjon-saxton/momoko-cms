@@ -317,13 +317,14 @@ function scan_addins($settings=null)
  $path=$settings['basedir'].$settings['filedir'].'addins';
  foreach (scandir($path) as $item)
  {
-  if ($item != '.' && $item != '..' && is_dir($path.'/'.$item))
+  if (!empty($item) && $item != '.' && $item != '..' && is_dir($path.'/'.$item))
   {
    $info=parse_ini_file($path.'/'.$item.'/MANIFEST');
    $addins=new DataBaseTable('addins');
    $query=$addins->getData("shortname:'{$info['shortname']}'");
    if ($query->rowCount() < 1)
    {
+    $info['dir']=$item;
     $rows[]=$addins->putData($info);
    }
    else
