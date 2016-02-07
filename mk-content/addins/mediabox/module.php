@@ -3,15 +3,13 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
 {
  public $info;
  public $opt_keys=array();
- private $usr;
  private $actions=array();
  private $settings=array();
 
  public function __construct()
  {
   $this->info=$this->getInfoFromDB();
-  $this->usr=$GLOBALS['USR'];
-  $this->opt_keys=array('type'=>array('type'=>'select','options'=>array('image','video','audio','object')),'link1'=>array('type'=>'link'),'link2'=>array('type'=>'link'));
+  $this->opt_keys=array('type'=>array('type'=>'select','options'=>array('image','video','audio','object')),'width'=>array('type'=>'number'),'height'=>array('type'=>'number'),'link1'=>array('type'=>'link'),'link2'=>array('type'=>'link'));
   parse_str($this->info->settings,$this->settings); 
  }
 
@@ -31,6 +29,23 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
  {
   $src[0]=$this->settings['link1'];
   $src[1]=$this->settings['link2'];
+  if ($this->settings['width'])
+  {
+   $obj['width']=" width=\"".$this->settings['width']."\"";
+  }
+  else
+  {
+   $obj['width']=" width=\"100%\">";
+  }
+  if ($this->settings['height'])
+  {
+   $obj['height']=" height=\"".$this->settings['height']."\"";
+  }
+  else
+  {
+   $obj['height']=null;
+  }
+  
   if (!empty($src))
   {
    switch ($this->settings['type'])
@@ -38,7 +53,7 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
     case 'audio':
     case 'video':
     $tag=$this->settings['type'];
-    $media="<{$tag} width=100% controls>\n";
+    $media="<{$tag}{$obj['width']}{$obj['height']} controls>\n";
     foreach ($src as $i)
     {
      $media.="<source src=\"{$i}\">\n";
@@ -46,11 +61,11 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
     $media.="</{$tag}>";
     break;
     case 'object':
-    $media="<object width=100% data=\"{$src[0]}\">";
+    $media="<object{$obj['width']}{$obj['height']} data=\"{$src[0]}\">";
     break;
     case 'image':
     default:
-    $media="<img width=100% src=\"{$src[0]}\">";
+    $media="<img{$obj['width']}{$obj['height']} src=\"{$src[0]}\">";
    }
 
    return <<<HTML
