@@ -61,7 +61,7 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
     $media.="</{$tag}>";
     break;
     case 'object':
-    $media="<object{$obj['width']}{$obj['height']} data=\"{$src[0]}\">";
+    $media="<object{$obj['width']}{$obj['height']} data=\"{$src[0]}\">Your browser does not support this content!</object>";
     break;
     case 'image':
     default:
@@ -69,7 +69,7 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
    }
 
    return <<<HTML
-<div id="MediaBox" class="box" style="max-width:100%">
+<div id="MediaBox" class="box">
 {$media}
 </div>
 HTML;
