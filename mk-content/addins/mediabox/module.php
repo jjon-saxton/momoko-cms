@@ -31,15 +31,15 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
   $src[1]=$this->settings['link2'];
   if ($this->settings['width'])
   {
-   $obj['width']=" width=\"".$this->settings['width']."\"";
+   $obj['width']=" width=\"".$this->settings['width']."px\"";
   }
   else
   {
-   $obj['width']=" width=\"100%\">";
+   $obj['width']=" width=\"100%\"";
   }
   if ($this->settings['height'])
   {
-   $obj['height']=" height=\"".$this->settings['height']."\"";
+   $obj['height']=" height=\"".$this->settings['height']."px\"";
   }
   else
   {

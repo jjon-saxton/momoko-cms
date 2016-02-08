@@ -942,6 +942,56 @@ HTML;
     exit();
    }
    break;
+   case 'fetch':
+   $finfo['src']=$_GET['uri'];
+   $finfo['name']=basename($finfo['src']);
+   $finfo['author']=$GLOBALS['USR']->num;
+   $finfo['date_created']=date("Y-m-d H:i:s");
+   $finfo['temp']=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].time();
+   if (copy($finfo['src'],$finfo['temp']))
+   {
+    $finfo['perm']=$GLOBALS['SET']['filedir'].$finfo['name'];
+    if (class_exists('finfo'))
+    {
+       $upload_info=new finfo(FILEINFO_MIME_TYPE);
+       $finfo['mime_type']=$upload_info->file($temp_file);
+    }
+    else
+    {
+       trigger_error("Could not reliably determine mime type of an uploaded file! finfo class does not exist, so mime type set by browser. Recommend updating PHP or installing the fileinfo PECL extension to avoid mime type spoofing.",E_USER_NOTICE);
+       $finfo['mime_type']=$finfo['type'];
+    }
+
+    $finfo['type']='attachment'; //we do not accept page or post uploads this way yet!
+    $finfo['title']=$finfo['name']; //currently we only accept attachment uploads this way so a file name is an attachment title
+    if ($new_ko=$this->table->putData($finfo))
+    {
+     if (rename($finfo['temp'],$GLOBALS['SET']['basedir'].$finfo['perm']))
+     {
+      $finfo['link']="http://".$GLOBALS['SET']['baseuri'].$finfo['perm'];
+     }
+     if ($_GET['ajax'] == 1)
+     {
+      echo ("<div class=\"page selectable box\"><a id=\"location\" href=\"{$finfo['link']}\" style=\"display:none\">[insert]</a><strong>{$finfo['title']}</strong></div>");
+     }
+    }
+    else
+    {
+     unlink($finfo['temp']);
+     if ($_GET['ajax'] == 1)
+     {
+      echo ("<div class=\"page error box\">Attachment could not be added to database!</div>");
+     }
+    }
+   }
+   else
+   {
+    if ($_GET['ajax'] == 1)
+    {
+     echo ("<div class=\"page error box\">'{$finfo['src']}' could not be moved to temporary location ('{$finfo['temp']}')!</div>");
+    }
+   }
+   break;
    case 'upload':
    switch ($_GET['section'])
    {
@@ -1260,7 +1310,7 @@ HTML;
 <div id="External">
 <h4 class="module">Upload</h4>
 <form enctype="multipart/form-data" action="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=upload&ajax=1" method="post" target="droptarget">
-<div id="ExtURI"><label for="uri">A file from the web: </label><input type=url id="uri" name="uri" placeholder="http://"></div>
+<div id="ExtURI"><label for="uri">A file from the web: </label><input type=url id="uri" name="uri" placeholder="http://" onkeypress="iFetch(event,this)"></div>
 <div id="ExtFile"><label for="file">A file on your computer: </label><input type=file id="file" name="file" onchange="iUpload(this)"></div>
 </form>
 <div id="FileInfo"><iframe id="FileTarget" name="droptarget" style="display:none" src="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=upload&ajax=1"></iframe></div>

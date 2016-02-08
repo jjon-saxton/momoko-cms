@@ -6,7 +6,6 @@ $(function(){
  $("button.linkbrowse").click(function(event){
     event.preventDefault();
     var caller=event.currentTarget.id;
-    alert(caller);
 	$("div#modal").load("?section=content&action=gethref&ajax=1",function(){
 	 $("#vtabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
 	 }).on('mouseenter',"div.selectable",function(){
@@ -14,15 +13,19 @@ $(function(){
 		 }).on('mouseleave',"div.selectable",function(){
 			$(this).removeClass("ui-state-hover");
 		 }).on('click',"div.selectable",function(){
-		var location=$(this).find("a#location").attr('href');
-		 $("input#mediabox-"+caller).val(location);
-		 $("div#modal").dialog('close');
-	 });
+		   var location=$(this).find("a#location").attr('href');
+		   $("input#mediabox-"+caller).val(location);
+		   $("div#modal").dialog('close');
+	    });
 	$("div#modal").dialog({
 		 height: 500,
 		 width: 800,
 		 modal: true,
-		title: "Browse Site"
+		 title: "Browse Site",
+         close: function(){
+            $(this).empty(); //empty the dialog box so it may be filled by ajax again later.
+            $(this).find('*').addBack().off(); //destroy all even handlers so they may be re-used with new data later.
+         }
 	});
  });
  $(".dashboard").each(function(){
@@ -109,6 +112,18 @@ function openAJAXModal(url,title)
    }
   }
  });
+}
+
+function iFetch(e,field){
+    if (e.keyCode == 13){
+        var filename=field.value;
+        $.get("?section=content&action=fetch&uri="+ filename +"&ajax=1",function(data){
+            $("div#FileInfo").append(data);
+        });
+    }
+    else{
+        //alert(e.keyCode);
+    }
 }
 
 function iUpload(field,pkg){
@@ -204,3 +219,5 @@ function doRemove(id) {
  	  }
 	},'json');
 }
+     $("div.selectable").unbind('click');
+     $("div.selectable").unbind('click');
