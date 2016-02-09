@@ -943,8 +943,8 @@ HTML;
    }
    break;
    case 'fetch':
-   $finfo['src']=$_GET['uri'];
-   $finfo['name']=basename($finfo['src']);
+   $finfo['src']=file_url($_GET['uri']);
+   $finfo['name']=rawurldecode(basename($finfo['src']));
    $finfo['author']=$GLOBALS['USR']->num;
    $finfo['date_created']=date("Y-m-d H:i:s");
    $finfo['temp']=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].time();
@@ -986,9 +986,20 @@ HTML;
    }
    else
    {
+    $err=error_get_last();
+    $msg="Remote file could not be copied to this server";
+    $err['origin']=$finfo['src'];
+    $err['dest']=$finfo['temp'];
     if ($_GET['ajax'] == 1)
     {
-     echo ("<div class=\"page error box\">'{$finfo['src']}' could not be moved to temporary location ('{$finfo['temp']}')!</div>");
+     echo <<<HTML
+<div class="page error box"><strong>$msg</strong>
+<ul class="nobullet noindent">
+<li>Origin: {$err['origin']}</li>
+<li>Destination: {$err['dest']}</li>
+</ul>
+</div>
+HTML;
     }
    }
    break;

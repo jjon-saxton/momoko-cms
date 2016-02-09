@@ -374,6 +374,13 @@ class SimpleXMLExtended extends SimpleXMLElement
  }   
 } 
 
+function file_url($url){
+  $parts = parse_url($url);
+  $path_parts = array_map('rawurldecode', explode('/', $parts['path']));
+
+  return $parts['scheme'].'://'.$parts['host'].implode('/', array_map('rawurlencode', $path_parts));
+}
+
 #Error handlers
 function momoko_html_errors($num,$str,$file,$line,$context)
 {
