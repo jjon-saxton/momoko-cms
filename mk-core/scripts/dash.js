@@ -21,7 +21,7 @@ $(function(){
 		 height: 500,
 		 width: 800,
 		 modal: true,
-		 title: "Browse Site",
+		 title: "Link Chooser",
          close: function(){
             $(this).empty(); //empty the dialog box so it may be filled by ajax again later.
             $(this).find('*').addBack().off(); //destroy all even handlers so they may be re-used with new data later.
