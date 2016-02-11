@@ -1276,11 +1276,13 @@ HTML;
    $list=$this->table->getData(null,null,'order');
    while ($content=$list->fetch(PDO::FETCH_OBJ))
    {
+    $hsep="&";
     if (!$content->link)
     {
      if ($GLOBALS['SET']['rewrite'])
      {
       $href=GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}/{$content->type}/".urlencode($content->title).".htm";
+      $hsep="?";
      }
      elseif ($content->type == 'page')
      {
@@ -1289,6 +1291,10 @@ HTML;
      else
      {
       $href=GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}/?content={$content->type}&p={$content->num}";
+     }
+     if (@$_GET['origin'] == "new")
+     {
+      $href.=$hsep."ajax=1";
      }
     }
     else

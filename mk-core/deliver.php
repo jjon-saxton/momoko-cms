@@ -68,8 +68,8 @@ if (!@$child)
  }
 }
 
-$tpl=new MomokoTemplate(pathinfo($path,PATHINFO_DIRNAME));
-print $tpl->toHTML($child);
+ $tpl=new MomokoTemplate(pathinfo($path,PATHINFO_DIRNAME));
+ print $tpl->toHTML($child);
 }
 
 function do_post($path,$id=null)

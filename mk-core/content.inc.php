@@ -1207,6 +1207,12 @@ HTML;
 
  public function toHTML($child=null)
  {
+ if (@$_GET['ajax']) //skips rendering the template if ajax is set
+ {
+   return $child->inner_body;
+ }
+ else
+ {
   $html=$this->info['full'];
   $vars['siteroot']=$GLOBALS['SET']['baseuri'];
   $vars['sitename']=$GLOBALS['SET']['name'];
@@ -1237,6 +1243,7 @@ HTML;
   $html=$ch->replace($html);
 
   return $html;
+ }
  }
 }
 
