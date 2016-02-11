@@ -1273,6 +1273,7 @@ HTML;
    }
    break;
    case 'gethref':
+   $blank=null;
    $list=$this->table->getData(null,null,'order');
    while ($content=$list->fetch(PDO::FETCH_OBJ))
    {
@@ -1315,6 +1316,12 @@ HTML;
      break;
     }
    }
+
+   if (@$_GET['origin'] == "new")
+   {
+    $blank="<div id=\"0\" class=\"page selectable box\"><a id=\"location\" href=\"//{$GLOBALS['SET']['baseuri']}{$GLOBALS['SET']['filedir']}/forms/new.htm\" style=\"display:none\">[insert]</a><strong>Blank Page or Post</strong></div>";
+   }
+
    if (ini_get('allow_url_fopen'))
    {
     $exturi_perams=" title=\"Hint: Press enter or return when finished\"";
@@ -1333,6 +1340,7 @@ HTML;
 <li><a href="#Attachments">Attachment</a></li>
 </ul>
 <div id="External">
+{$blank}
 <h4 class="module">Upload</h4>
 <form enctype="multipart/form-data" action="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=upload&ajax=1" method="post" target="droptarget">
 <div id="ExtURI"><label for="uri">A file from the web: </label><input{$exturi_perams} type=url id="uri" name="uri" placeholder="http://" onkeypress="iFetch(event,this)"></div>
