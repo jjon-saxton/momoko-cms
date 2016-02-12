@@ -1141,7 +1141,6 @@ HTML;
   else
   {
    $editor=null;
-   $editor=null;
   }
   $addin_tags=compile_head();
   $split['head']=<<<HTML

@@ -10,14 +10,16 @@ ul.plug.list li a {display:block;padding:2px;margin:2px;text-decoration:none}
 ul.plug.list li a:link, ul.plug.list li a:visited {border:1px solid #ccc;background:#eee}
 ul.plug.list li a:active, ul.plug.list li a:hover {border:1px solid #eee;background:#bbb}
 
-.preview {border:1px dashed #999; min-height:20px; background-color:#efefff; color:#888}
+.screenshot {background:white no-repeat 100%}
+
+.preview {border:1px dashed #999; min-height:20px; background-color:rgba(239,239,255,0.3); color:#888}
 .preview h1 {font-size:1.75em; color:#777}
 .preview h2 {font-size:1.5em; color:#777}
 .preview h3 {font-size:1.25em; color:#777}
 .preview h4 {font-size:1em; color:#777}
 .preview h5 {font-size:1em; color:#777}
 .preview h6 {font-size:1em; color:#777}
-.no-drag {background-color:#dedeee}
+.no-drag {background-color:rgba(239,239,255,0.7)}
 
 .portlet {width:100%; max-width:150px; margin:0 1em 1em 0; padding:0.3em}
 .portlet-header {cursor:move;padding: 0.2em 0.3em; margin-bottom: 0.5em; position: relative}

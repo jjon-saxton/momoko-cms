@@ -728,7 +728,7 @@ HTML;
     }
     $templatesettings.="</select></li>\n</ul>";
 
-    $modulelayout=file_get_contents($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."addins/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm");
+    $modulelayout="<div class=\"screenshot\" style=\"background-image:url('//".$GLOBALS['SET']['baseuri'].$GLOBALS['SET']['filedir']."addins/".$GLOBALS['SET']['template']."/screenshot.png')\">".file_get_contents($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."addins/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm")."</div>";
     $addins=new DataBaseTable('addins');
     $dbquery=$addins->getData("type:'module'",array('num','dir','shortname','zone','settings'),'order');
     $modulelist=NULL;
