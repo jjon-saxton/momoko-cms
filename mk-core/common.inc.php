@@ -64,11 +64,14 @@ require_once $GLOBALS['SET']['basedir'].'/mk-core/user.inc.php';
 if (@$_SESSION['data'])
 {
  $GLOBALS['USR']=unserialize($_SESSION['data']);
+ $_SESSION['cookie']=true;
 }
 else
 {
  $GLOBALS['USR']=new MomokoSession();
  $_SESSION['data']=serialize($GLOBALS['USR']);
+ $_SESSION['cookie']=false;
+ header("Location: ./");
 }
  
 if ($GLOBALS['SET']['error_logging'] > 0)

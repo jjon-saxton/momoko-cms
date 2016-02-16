@@ -1162,6 +1162,9 @@ HTML;
   {
    $dashup="<div id=\"dashOpen\"><button id=\"sidebarLogin\" onclick=\"window.location='//{$GLOBALS['SET']['baseuri']}/mk-login.php'\">Login</button></div>";
   }
+
+ if ($_SESSION['cookie'])
+ {
   $split['body']=<<<HTML
 {$dashup}
 <div id="modal" title="Loading Awesomeness!" style="display:none">
@@ -1183,6 +1186,7 @@ HTML;
 </div>
 {$split['body']}
 HTML;
+ }
   
   $split['full']=<<<HTML
 <!doctype html>
