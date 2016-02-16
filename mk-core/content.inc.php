@@ -1163,7 +1163,7 @@ HTML;
    $dashup="<div id=\"dashOpen\"><button id=\"sidebarLogin\" onclick=\"window.location='//{$GLOBALS['SET']['baseuri']}/mk-login.php'\">Login</button></div>";
   }
 
- if ($_SESSION['cookie'])
+ if ($_SESSION['modern'])
  {
   $split['body']=<<<HTML
 {$dashup}
