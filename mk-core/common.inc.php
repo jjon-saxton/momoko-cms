@@ -53,8 +53,6 @@ else
 
 
 unset($setting,$pairs);
-define("MOMOKOVERSION",trim(file_get_contents($GLOBALS['SET']['basedir'].'/version.nfo.txt'),"\n"));
-define ("TEMPLATEPATH",TEMPLATEROOT.$GLOBALS['SET']['template'].'/'.$GLOBALS['SET']['template'].'.tpl.htm');
 
 session_name($GLOBALS['SET']['sessionname']);
 session_start();
@@ -75,6 +73,16 @@ $_SESSION['modern']=false;
 if (!empty($_COOKIE['ss']))
 {
  $_SESSION['modern']=$_COOKIE['ss'];
+}
+
+define("MOMOKOVERSION",trim(file_get_contents($GLOBALS['SET']['basedir'].'/version.nfo.txt'),"\n"));
+if ($_SESSION['modern'] == 'full') //For browsers supporting cookies, javascript, and css
+{
+ define ("TEMPLATEPATH",TEMPLATEROOT.$GLOBALS['SET']['template'].'/'.$GLOBALS['SET']['template'].'.tpl.htm');
+}
+else //legacy browser fallback
+{
+ define ("TEMPLATEPATH",TEMPLATEROOT."1997/1997.tpl.htm");
 }
  
 if ($GLOBALS['SET']['error_logging'] > 0)

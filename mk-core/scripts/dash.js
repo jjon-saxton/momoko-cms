@@ -1,12 +1,12 @@
 $(function(){
  if (!readCookie('ss')){ //Detects javascript and cookie support need for dashboard
     createCookie('ss','partial',0);
-    window.reload();
+    window.location.reload();
  }
  else if (readCookie('ss') == 'partial'){
     if ($(".sidebar").css('display')){
         createCookie('ss','full',0);
-        window.reload();
+        window.location.reload();
     }
  }
 

@@ -1,0 +1,14 @@
+[info]
+shortname = "1997"
+longname = "1997 Legacy Layout"
+type = "template"
+description = "An older theme that does not relay on CSS, Javascript, or any such modern wizardry."
+
+[authorization]
+whitelist = "ALL"
+blacklist = "root"
+
+[attribution]
+author = "Jon Saxton"
+email = "cem@tower21studios.com"
+version = "0.1a"

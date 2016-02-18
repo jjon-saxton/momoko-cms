@@ -33,7 +33,7 @@ class MomokoNavigation
     break;
     case'simple':
     default:
-    $text=$this->getListItems($this->map);
+    $text=$this->getTopMap($this->map,'line');
    }
   }
   
@@ -95,6 +95,50 @@ class MomokoNavigation
    {
     $text.="<li id=\"{$item['id']}\"><a href=\"{$href}\">{$item['title']}</a></li>\n";
    }
+  }
+
+  return $text;
+ }
+
+ public function getTopMap($map,$display='line')
+ {
+  if ($display == "list")
+  {
+   $text="<ol type=\"I\" id=\"NavList\">\n";
+  }
+  else
+  {
+   $text="<div id=\"NavLine\">\n";
+  }
+
+  foreach ($map as $item)
+  {
+   if ($GLOBALS['SET']['rewrite'] == true)
+   {
+    $href="//".$GLOALS['SET']['baseuri']."/".$item['href'];
+   }
+   else
+   {
+    $href="//".$GLOBALS['SET']['baseuri']."/?p=".$item['id'];
+   }
+
+   if ($display == "list")
+   {
+    $text.="<li id=\"{$item['id']}\" class=\"nav-item\"><a href=\"{$href}\">{$item['title']}</a></li>\n";
+   }
+   else
+   {
+    $text.="| <a href=\"{$href}\">{$item['title']}</a> |";
+   }
+  }
+
+  if ($display == "list")
+  {
+   $text.="</ol>";
+  }
+  else
+  {
+   $text.="</div>";
   }
 
   return $text;
@@ -1059,8 +1103,9 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   preg_match("/<head>(?P<head>.*?)<\/head>/smU",$raw,$match);
   $split['head']=$match['head'];
   unset($match);
-  preg_match("/<body>(?P<body>.*?)<\/body>/smU",$raw,$match);
+  preg_match("/<body(?P<body_props>.*)>(?P<body>.*?)<\/body>/smU",$raw,$match);
   $split['body']=$match['body'];
+  $body_tag="<body".$match['body_props'].">";
   unset($match);
   
   if (!$GLOBALS['USR']->inGroup('users'))
@@ -1199,7 +1244,7 @@ HTML;
 <head>
 {$split['head']}
 </head>
-<body>
+{$body_tag}
 {$split['body']}
 </body>
 </html>
