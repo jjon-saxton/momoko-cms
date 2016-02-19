@@ -31,9 +31,12 @@ class MomokoNavigation
     case 'list':
     $text="<ul id=\"MapList\" class=\"sitemap\">\n".$this->getListItems($this->map)."\n</ul>";
     break;
+    case 'flat':
+    $text=$this->getTopMap($this->map,$this->options['style']);
+    break;
     case'simple':
     default:
-    $text=$this->getTopMap($this->map,'line');
+    $text=$this->getListItems($this->map);
    }
   }
   
