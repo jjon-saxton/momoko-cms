@@ -1300,7 +1300,7 @@ HTML;
     }
     else
     {
-     $href=GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}/".$content->link;
+     $href=$content->link;
     }
     $temp="<div id=\"{$content->num}\" class=\"page selectable box\"><a id=\"location\" href=\"{$href}\" style=\"display:none\">[insert]</a><strong>{$content->title}</strong></div>";
     switch($content->type)
