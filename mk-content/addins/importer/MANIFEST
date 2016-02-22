@@ -1,7 +1,7 @@
 [info]
 shortname = "Importer"
 longname = "Content Importer"
-type = "interface"
+type = "switchboard"
 description = "A special interface that will allow users to import old MomoKO content and/or content from other blogs into MomoKO 2.x"
 
 [authorization]

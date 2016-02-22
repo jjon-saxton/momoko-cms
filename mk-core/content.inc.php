@@ -1167,13 +1167,26 @@ HTML;
   }
   if ($GLOBALS['USR']->inGroup('admin'))
   {
+   $sb_tbl=new DataBaseTable('addins');
+   $sb_q=$sb_tbl->getData("type:'switchboard'",array('dir','shortname'));
+   $switchboards=null;
+   if ($sb_q->rowCount() > 0)
+   {
+    while ($sb_row=$sb_q->fetch())
+    {
+        $switchboards.="<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash?section=switchboard&plug={$sb_row['dir']}\">{$sb_row['shortname']}</a></li>\n";
+    }
+   }
    $contentlists.=<<<HTML
 <h4>Site</h4>
 <ul id="SitePlugs" class="plug list">
 <li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs">Logs</a></li>
 <li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=settings">Settings</a></li>
 <li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance">Appearance</a></li>
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=addins">Addins</a></li>
+</ul>
+<h4>Addins</h4>
+<ul id="SwitchPlugs" class="plug list">
+{$switchboards}<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=addins">All Addins</a></li>
 </ul>
 HTML;
   }
