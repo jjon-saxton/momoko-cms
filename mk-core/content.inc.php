@@ -1174,7 +1174,7 @@ HTML;
    {
     while ($sb_row=$sb_q->fetch())
     {
-        $switchboards.="<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash?section=switchboard&plug={$sb_row['dir']}\">{$sb_row['shortname']}</a></li>\n";
+        $switchboards.="<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=switchboard&plug={$sb_row['dir']}\">{$sb_row['shortname']}</a></li>\n";
     }
    }
    $contentlists.=<<<HTML

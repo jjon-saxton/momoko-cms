@@ -1454,19 +1454,21 @@ else
   {
    if (!empty($_GET['plug']))
    {
-    require_once $GLOBALS['SET']['baseuri']."/mk-content/addins/{$_GET['plug']}/plug.inc.php";
+    require_once $GLOBALS['SET']['basedir']."/mk-content/addins/{$_GET['plug']}/plug.inc.php";
     $child=new MomokoSwitchboard();
-    $child->getByAction($_GET['action'],$_POST);
    }
    else
    {
     trigger_error("No Plug selected for the switchboard!",E_USER_ERROR);
    }
   }
-  elseif ($_GET['action'] != NULL)
+  else
   {
    $child=new MomokoDashboard($_GET['section']);
-   $child->get($_GET['action'],$_POST);
+   if (!empty($_GET['action']))
+   {
+       $child->getByAction($_GET['action'],$_POST);
+   }
   }
  }
  else
