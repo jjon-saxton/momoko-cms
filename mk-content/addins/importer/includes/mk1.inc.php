@@ -35,7 +35,7 @@ function import_data($archive)
  $z=new ZipArchive;
  if ($z->open($archive))
  {
-    mkdir($extracto,0777,true);)
+    mkdir($extracto,0777,true);
     if ($z->extractTo($extracto))
     {
         //TODO read files and add them to the database, starting with pages.
