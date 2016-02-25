@@ -32,10 +32,10 @@ function import_data($archive)
 {
  var_dump($archive);
  $extracto=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].'import-'.time();
- mkdir($extracto,0777,true);
  $z=new ZipArchive;
  if ($z->open($archive))
  {
+    mkdir($extracto,0777,true);)
     if ($z->extractTo($extracto))
     {
         //TODO read files and add them to the database, starting with pages.
