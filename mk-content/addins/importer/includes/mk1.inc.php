@@ -23,7 +23,7 @@ function ready_data(array $file)
     }
     else
     {
-        //TODO Throw excetion, zip file not opened!
+        //TODO Throw exception, zip file could not be opened!
     }
  }
 }
@@ -31,5 +31,16 @@ function ready_data(array $file)
 function import_data($archive)
 {
  var_dump($archive);
- //TODO import the data into the database.
+ $extracto=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].'import-'.time();
+ mkdir($extracto,0777,true);
+ $z=new ZipArchive;
+ if ($z->open($archive))
+ {
+    if ($z->extractTo($extracto))
+    {
+        //TODO read files and add them to the database, starting with pages.
+        rmdirr($extracto); //remove the temp folder when finished.
+        return true;
+    }
+ }
 }
