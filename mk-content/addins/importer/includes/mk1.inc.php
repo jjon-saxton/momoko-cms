@@ -11,7 +11,7 @@ function ready_data(array $file)
     $z=new ZipArchive;
     if ($z->open($temp) === TRUE)
     {
-        if ($z->locateName('map.xml') > 0 && $z->locateName('news.xml') > 0)
+        if ($z->locateName('pages/map.xml') > 0 && $z->locateName('pages/news.xml') > 0)
         {
             return $temp;
         }
@@ -38,9 +38,39 @@ function import_data($archive)
     mkdir($extracto,0777,true);
     if ($z->extractTo($extracto))
     {
-        //TODO read files and add them to the database, starting with pages.
-        rmdirr($extracto); //remove the temp folder when finished.
-        return true;
+        if (!empty($_POST['pages']))
+        {
+            $pages=add_pages_r($extracto);
+        }
+        if (!empty($_POST['files']))
+        {
+            $files=add_files_r($extracto."/pages/",$extracto."/pages/map.xml");
+        }
+        if (!empty($_POST['posts']))
+        {
+            $posts=add_posts($extracto."/pages/news.xml");
+        }
+
+        if (is_array($pages) || is_array($files))
+        {
+            rmdirr($extracto."/files/"); //remove the temp folder when finished.
+            return true;
+        }
     }
  }
+}
+
+function add_page_r($folder,$xml)
+{
+    //TODO add pages recursively use XML to get order and hiarchy
+}
+
+function add_files_r($folder)
+{
+    //TODO add files recursively
+}
+
+function add_posts($xml)
+{
+    //TODO add posts from XML file
 }
