@@ -67,7 +67,29 @@ function add_page_r($folder,$xml)
 
 function add_files_r($folder)
 {
-    //TODO add files recursively
+    $content=new DataBaseTable('content');
+    foreach (scandir($folder) as $item)
+    {
+        if (is_dir($folder.$item) && ($item != "." || $item != ".."))
+        {
+            $items[]=add_files_r($folder.$item);
+        }
+        else
+        {
+            $file['title']=$item;
+            $file['type']="file";
+            $file['status']="public"
+            $file['author']=1;
+            //TODO find mime type for $file['mime_type']
+            //TODO decide if we should set $file['parent']
+            $file['link']=$GLOBALS['SET']['baseuri'].$GLOBALS['SET']['filedir'].$item;
+
+            if ($items[]=$content->putData($files))
+            {
+                move($folder.$item,$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$item);
+            }
+        }
+    }
 }
 
 function add_posts($xml)
