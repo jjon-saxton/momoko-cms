@@ -45,11 +45,11 @@ function import_data($archive)
         unlink($archive);
         if (!empty($_POST['pages']))
         {
-            $pages=add_pages_r($extracto);
+            $pages=add_pages_r($extracto,$extracto."/pages/map.xml");
         }
         if (!empty($_POST['files']))
         {
-            $files=add_files_r($extracto."/pages/",$extracto."/pages/map.xml");
+            $files=add_files_r($extracto."/pages/");
         }
         if (!empty($_POST['posts']))
         {
@@ -62,10 +62,10 @@ function import_data($archive)
  }
 }
 
-function add_pages_r($folder,$xml)
+function add_pages_r($folder,$map)
 {
     //TODO add pages recursively use XML to get order and hiarchy
-    $map=xmltoarray($xml);
+    $map=xmltoarray($map);
     var_dump($map);
     return $map;
 }
