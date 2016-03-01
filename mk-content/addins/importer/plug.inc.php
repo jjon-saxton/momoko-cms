@@ -27,6 +27,11 @@ class MomokoSwitchboard implements MomokoObject
 
  public function get()
  {
+  if (!empty($_POST['type']))
+  {
+    require_once $GLOBALS['SET']['basedir']."/mk-content/addins/".$_GET['plug']."/includes/".$_POST['type'].".inc.php";
+  }
+
   $info['title']="Switchboard: ".ucwords($_GET['plug']);
   switch ($_GET['action'])
   {
@@ -43,16 +48,20 @@ HTML;
    }
    break;
    case 'upload':
-   require_once $GLOBALS['SET']['basedir']."/mk-content/addins/".$_GET['plug']."/includes/".$_POST['type'].".inc.php";
    if ($a=ready_data($_FILES['data']))
    {
-    $_SESSION['importer']['data']=$a;
+    $_SESSION['importer']['data']=$a['name'];
+    unset($a['name']);
+    $checks="<input type=\"hidden\" name=\"type\" value=\"{$_POST['type']}\">\n";
+    foreach ($a as $name=>$val)
+    {
+        $checks.="<input type=\"checkbox\" id=\"{$name}\" name=\"{$name}\" value=\"{$val}\"><label for=\"{$name}\"> ".ucwords($name)."</label>\n";
+    }
     $info['inner_body']=<<<HTML
 <h2>Choose What to Import</h2>
 <p>We have gone through the data you uploaded and found that we can import the following. Please check the box next to <strong>all</strong> the data you wish to import.
 <form action="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=switchboard&plug=importer&action=import" method="post">
-<!-- TODO create checkboxes -->
-<div align=center><button type="submit" name="status" value="importing">Import Selected Data</button></div> 
+{$checks}<div align=center><button type="submit" name="status" value="importing">Import Selected Data</button></div> 
 </form>
 HTML;
    }

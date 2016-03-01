@@ -611,11 +611,11 @@ function build_sorter($key)
 
 function xmltoarray($file)
 {
- $xml=simplexml_load_string(file_get_contents($file));
- $nav=new MomokoNavigation(null,'display=none');
- $nav->convertXmlObjToArr($xml,$array);
+ require_once $GLOBALS['SET']['basedir']."/mk-core/mk-xml.class.php";
 
- return $array;
+ $xml=new MomokoXMLHandler();
+ $xml->read($file);
+ return $xml->getArray();
 }
 
 function parse_page($data)

@@ -6,38 +6,43 @@ function ready_data(array $file)
  $temp=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'];
  if (is_writeable($temp))
  {
-    $temp.="import-".time().".zip";
-    move_uploaded_file($file['tempname'],$temp);
+    $temp.=time()."import.zip";
+    move_uploaded_file($file['tmp_name'],$temp) or die($temp." not moved!");
     $z=new ZipArchive;
     if ($z->open($temp) === TRUE)
     {
-        if ($z->locateName('pages/map.xml') > 0 && $z->locateName('pages/news.xml') > 0)
+        $importable['name']=$temp;
+        if ($z->locateName('pages/map.xml'))
         {
-            return $temp;
+            $importable['pages']=true;
         }
-        else
+        //TODO find a way to actually check if their are files in this archive
+        $importable['files']=true;
+        if ($z->locateName('pages/news.xml'))
         {
-            unlink($temp); //clean-up
-            //TODO throw exception, arhive not correct
+            $importable['posts']=true;
         }
+
+        return $importable;
     }
     else
     {
         //TODO Throw exception, zip file could not be opened!
+        echo ($temp." Not opened!");
     }
  }
 }
 
 function import_data($archive)
 {
- var_dump($archive);
- $extracto=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].'import-'.time();
+ $extracto=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].time().'import';
  $z=new ZipArchive;
  if ($z->open($archive))
  {
     mkdir($extracto,0777,true);
     if ($z->extractTo($extracto))
     {
+        unlink($archive);
         if (!empty($_POST['pages']))
         {
             $pages=add_pages_r($extracto);
@@ -51,18 +56,18 @@ function import_data($archive)
             $posts=add_posts($extracto."/pages/news.xml");
         }
 
-        if (is_array($pages) || is_array($files))
-        {
-            rmdirr($extracto."/files/"); //remove the temp folder when finished.
-            return true;
-        }
+        rmdirr($extracto); //remove the temp folder when finished.
+        return true;
     }
  }
 }
 
-function add_page_r($folder,$xml)
+function add_pages_r($folder,$xml)
 {
     //TODO add pages recursively use XML to get order and hiarchy
+    $map=xmltoarray($xml);
+    var_dump($map);
+    return $map;
 }
 
 function add_files_r($folder)
