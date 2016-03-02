@@ -45,11 +45,12 @@ function import_data($archive)
         unlink($archive);
         if (!empty($_POST['pages']))
         {
-            $pages=add_pages_r($extracto,$extracto."/pages/map.xml");
+            $map=xmltoarray($extracto."/pages/map.xml");
+            $pages=add_pages_r($extracto."/pages/",$map);
         }
         if (!empty($_POST['files']))
         {
-            $files=add_files_r($extracto."/pages/");
+            $files=add_files_r($extracto);
         }
         if (!empty($_POST['posts']))
         {
@@ -62,11 +63,10 @@ function import_data($archive)
  }
 }
 
-function add_pages_r($folder,$map)
+function add_pages_r($folder,$xml_obj)
 {
     $order=1;
     $content=new DataBaseTable('content');
-    $map=xmltoarray($map);
 
     $p_query=$content->getData("name: '".basename($folder)."'",array('num'));
     if ($p_query->rowCount() > 0)
@@ -78,31 +78,52 @@ function add_pages_r($folder,$map)
     {
         $p=0; //Assume root
     }
-    foreach ($map as $tag)
+    foreach ($xml_obj as $tag)
     {
-        if (!empty($tag['@children']) && is_array($tag['children']))
+        if (empty($tag['@name'] == 'site') && is_array($tag['@children']))
         {
-            $child=$folder.basename($tag['@attribute']['href']);
-            $items[]=add_pages_r($child,$tag['children']);
+            if (!empty($tag['@attributes']['dir']))
+            {
+                $child=$folder.basename($tag['@attributes']['dir']);
+            }
+            else
+            {
+                $path=dirname($tag['@attributes']['file']);
+                $child=rtrim(basename($path),"/");
+                $child=$folder.$child;
+            }
+            $items[]=add_pages_r($child,$tag['@children']);
         }
         else
         {
-            $pageloc=$folder.basename($tag['@attribute']['href']);
-            $html=file_get_contents($pageloc);
-            $page=parse_page($html);
-            $page['order']=$order;
-            $page['type']="page";
-            $page['date_created']=date("Y-m-d H:i:s");
-            $page['status']="public";
-            $page['author']=$GLOBALS['USR']->num;
-            $page['mime_type']="text/html";
-            $page['parent']=$p;
-            $page['text']=$page['inner_body'];
+            if (empty($tag['@attributes']['file']))
+            {
+                $pageloc=$folder."/".basename($tag['@attributes']['uri']);
+            }
+            else
+            {
+                $pageloc=$folder."/".basename($tag['@attributes']['file']);
+            }
+            if ($html=file_get_contents($pageloc))
+            {
+                $page=parse_page($html);
+                $page['order']=$order;
+                $page['type']="page";
+                $page['date_created']=date("Y-m-d H:i:s");
+                $page['status']="public";
+                $page['author']=$GLOBALS['USR']->num;
+                $page['mime_type']="text/html";
+                $page['parent']=$p;
+                $page['text']=$page['inner_body'];
 
-            $order++;
+                $order++;
 
-            $items=$content->putData($page);
-            unlink($pageloc);
+                $items=$content->putData($page);
+            }
+            else
+            {
+                trigger_error($pageloc."not imported! The file could not be located in the archive!", E_USER_NOTICE);
+            }
         }
     }
     return $items;
@@ -154,11 +175,11 @@ function add_files_r($folder)
     return $items;
 }
 
-function add_posts($xml)
+function add_posts($file)
 {
     $order=1;
     $content=new DataBaseTable('content');
-    $posts=xmltoarray($xml);
+    $posts=xmltoarray($file);
 
     //TODO add posts to database
     foreach ($posts as $item)
