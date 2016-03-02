@@ -80,10 +80,10 @@ function add_pages_r($folder,$map)
     }
     foreach ($map as $tag)
     {
-        if (!empty($tag['@children']) && is_array($tag['children'])])
+        if (!empty($tag['@children']) && is_array($tag['children']))
         {
-            $child=$folder.basename($tag['@attribute']['href'])
-            $items[]=add_pages_r($child,$tag['children'])
+            $child=$folder.basename($tag['@attribute']['href']);
+            $items[]=add_pages_r($child,$tag['children']);
         }
         else
         {
@@ -158,9 +158,31 @@ function add_posts($xml)
 {
     $order=1;
     $content=new DataBaseTable('content');
-    $map=xmltoarray($xml);
+    $posts=xmltoarray($xml);
 
     //TODO add posts to database
-    var_dump($map);
-    return $map //TODO should return array of items added.
+    foreach ($posts as $item)
+    {
+        foreach ($item['@children'] as $values) //changes array form
+        {
+            $temp[$values['@name']]=$values['@text'];
+        }
+        $article[]=$temp;
+
+        $post['title']=$article['headline'];
+        $post['order']=$order;
+        $post['type']="post";
+        $post['date_created']=date("Y-m-d H:i:s",strtotime($article['update']));
+        $post['status']="public";
+        $post['author']=$GLOBALS['USR']->num;
+        $post['mime_type']="text/html";
+        $post['parent']=0; //Posts don't have a hiarchy so all posts are under root
+        $post['text']=$article['article'];
+
+        $order++;
+
+        $items[]=$content->putData($post);
+    }
+
+    return $items;
 }
