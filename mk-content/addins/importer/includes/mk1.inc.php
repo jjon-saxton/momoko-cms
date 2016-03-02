@@ -71,7 +71,7 @@ function add_pages_r($folder,$map)
     $p_query=$content->getData("name: '".basename($folder)."'",array('num'));
     if ($p_query->rowCount() > 0)
     {
-        $parent=$p_query->fetch(PDO::FETCH_ARRAY);
+        $parent=$p_query->fetch(PDO::FETCH_ASSOC);
         $p=$parent['num'];
     }
     else
@@ -167,17 +167,16 @@ function add_posts($xml)
         {
             $temp[$values['@name']]=$values['@text'];
         }
-        $article[]=$temp;
 
-        $post['title']=$article['headline'];
+        $post['title']=$temp['headline'];
         $post['order']=$order;
         $post['type']="post";
-        $post['date_created']=date("Y-m-d H:i:s",strtotime($article['update']));
+        $post['date_created']=date("Y-m-d H:i:s",strtotime($temp['update']));
         $post['status']="public";
         $post['author']=$GLOBALS['USR']->num;
         $post['mime_type']="text/html";
         $post['parent']=0; //Posts don't have a hiarchy so all posts are under root
-        $post['text']=$article['article'];
+        $post['text']=$temp['article'];
 
         $order++;
 
