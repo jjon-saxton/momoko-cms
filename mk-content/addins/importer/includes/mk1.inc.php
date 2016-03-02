@@ -64,10 +64,46 @@ function import_data($archive)
 
 function add_pages_r($folder,$map)
 {
-    //TODO add pages recursively use XML to get order and hiarchy
+    $order=1;
+    $content=new DataBaseTable('content');
     $map=xmltoarray($map);
-    var_dump($map);
-    return $map;
+
+    $p_query=$content->getData("name: '".basename($folder)."'",array('num'));
+    if ($p_query->rowCount() > 0)
+    {
+        $parent=$p_query->fetch(PDO::FETCH_ARRAY);
+        $p=$parent['num'];
+    }
+    else
+    {
+        $p=0; //Assume root
+    }
+    foreach ($map as $tag)
+    {
+        if (!empty($tag['@children']) && is_array($tag['children'])])
+        {
+            $child=$folder.basename($tag['@attribute']['href'])
+            $items[]=add_pages_r($child,$tag['children'])
+        }
+        else
+        {
+            $pageloc=$folder.basename($tag['@attribute']['href']);
+            $html=file_get_contents($pageloc);
+            $page=parse_page($html);
+            $page['order']=$order;
+            $page['type']="page";
+            $page['date_created']=date("Y-m-d H:i:s");
+            $page['status']="public";
+            $page['author']=$GLOBALS['USR']->num;
+            $page['mime_type']="text/html";
+            $page['parent']=$p;
+            $page['text']=$page['inner_body'];
+
+            $items=$content->putData($page);
+            unlink($pageloc);
+        }
+    }
+    return $items;
 }
 
 function add_files_r($folder)
