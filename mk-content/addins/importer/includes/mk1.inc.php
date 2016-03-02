@@ -99,6 +99,8 @@ function add_pages_r($folder,$map)
             $page['parent']=$p;
             $page['text']=$page['inner_body'];
 
+            $order++;
+
             $items=$content->putData($page);
             unlink($pageloc);
         }
@@ -154,5 +156,11 @@ function add_files_r($folder)
 
 function add_posts($xml)
 {
-    //TODO add posts from XML file
+    $order=1;
+    $content=new DataBaseTable('content');
+    $map=xmltoarray($xml);
+
+    //TODO add posts to database
+    var_dump($map);
+    return $map //TODO should return array of items added.
 }
