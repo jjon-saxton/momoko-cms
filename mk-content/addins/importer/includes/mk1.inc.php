@@ -63,36 +63,32 @@ function import_data($archive)
  }
 }
 
-function add_pages_r($folder,$xml_obj)
+function add_pages_r($folder,$xml_obj,$p=0)
 {
     $order=1;
     $content=new DataBaseTable('content');
+    //var_dump($p);
 
-    $p_query=$content->getData("name: '".basename($folder)."'",array('num'));
-    if ($p_query->rowCount() > 0)
-    {
-        $parent=$p_query->fetch(PDO::FETCH_ASSOC);
-        $p=$parent['num'];
-    }
-    else
-    {
-        $p=0; //Assume root
-    }
     foreach ($xml_obj as $tag)
     {
-        if (empty($tag['@name'] == 'site') && is_array($tag['@children']))
+        if ($tag['@name'] == 'site' && !empty($tag['@children']) && is_array($tag['@children']))
         {
+
             if (!empty($tag['@attributes']['dir']))
             {
+                //TODO add a blank page with this folder's title to use as a parent page
+                $me=0 //TODO set to the returned id from the section above
                 $child=$folder.basename($tag['@attributes']['dir']);
             }
             else
             {
+                //TODO add site/parent page to database
+                $me=0 //TODO set to the returned id from the action above
                 $path=dirname($tag['@attributes']['file']);
                 $child=rtrim(basename($path),"/");
                 $child=$folder.$child;
             }
-            $items[]=add_pages_r($child,$tag['@children']);
+            $items[]=add_pages_r($child,$tag['@children'],$me);
         }
         else
         {
@@ -113,12 +109,14 @@ function add_pages_r($folder,$xml_obj)
                 $page['status']="public";
                 $page['author']=$GLOBALS['USR']->num;
                 $page['mime_type']="text/html";
-                $page['parent']=$p;
+                $page['parent']=$p['num'];
                 $page['text']=$page['inner_body'];
 
+                unset($p);
                 $order++;
 
-                $items=$content->putData($page);
+                //var_dump($page);
+                //$items=$content->putData($page);
             }
             else
             {
