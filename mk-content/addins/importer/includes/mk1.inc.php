@@ -76,19 +76,53 @@ function add_pages_r($folder,$xml_obj,$p=0)
 
             if (!empty($tag['@attributes']['dir']))
             {
-                //TODO add a blank page with this folder's title to use as a parent page
-                $me=0 //TODO set to the returned id from the section above
+                $page['title']=$tag['@text'];
+                $page['order']=$order;
+                $page['type']="page";
+                $page['date_created']=date("Y-m-d H:i:s");
+                $page['status']="public";
+                $page['author']=$GLOBALS['USR']->num;
+                $page['mime_type']="text/html";
+                $page['parent']=$p;
+                $me=$content->putData($page);
+                unset($page);
+
                 $child=$folder.basename($tag['@attributes']['dir']);
             }
             else
             {
-                //TODO add site/parent page to database
-                $me=0 //TODO set to the returned id from the action above
+                $page['title']=$tag['@text'];
+                $page['order']=$order;
+                $page['type']="page";
+                $page['date_created']=date("Y-m-d H:i:s");
+                $page['status']="public";
+                $page['author']=$GLOBALS['USR']->num;
+                $page['mime_type']="text/html";
+                $page['parent']=$p;
+
+                if (empty($tag['@attributes']['file']))
+                {
+                    $pageloc=$folder."/".basename($tag['@attributes']['uri']);
+                }
+                else
+                {
+                    $pageloc=$folder."/".basename($tag['@attributes']['file']);
+                }
+
+                if ($html=file_get_contents($pageloc))
+                {
+                    $info=parse_page($html);
+                    $page['title']=$info['title'];
+                    $page['text']=$info['inner_body'];
+                }
+                $me=$content->putData($page);
+                unset($page);
+
                 $path=dirname($tag['@attributes']['file']);
                 $child=rtrim(basename($path),"/");
                 $child=$folder.$child;
             }
-            $items[]=add_pages_r($child,$tag['@children'],$me);
+            $items=add_pages_r($child,$tag['@children'],$me);
         }
         else
         {
@@ -112,11 +146,9 @@ function add_pages_r($folder,$xml_obj,$p=0)
                 $page['parent']=$p['num'];
                 $page['text']=$page['inner_body'];
 
-                unset($p);
-                $order++;
-
-                //var_dump($page);
-                //$items=$content->putData($page);
+                ++$order;
+                $items=$content->putData($page);
+                unset($page);
             }
             else
             {
