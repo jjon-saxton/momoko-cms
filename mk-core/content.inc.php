@@ -334,6 +334,61 @@ XML;
  }
 }
 
+class MomokoFeed implements MomokoObject
+{
+ private $table;
+ private $options=array();
+ private $info=array();
+
+ public function __construct($path, array $additional_vars=null)
+ {
+  $this->table=new DataBaseTable('content');
+  $this->options['where_str']="status: 'public'";
+ }
+
+ public function __get($key)
+ {
+  if (array_key_exists($key,$info))
+  {
+    return $info[$key];
+  }
+  else
+  {
+    return $options[$key];
+  }
+ }
+
+ public function __set($key,$val)
+ {
+  return $options[$key]=$val;
+ }
+
+ public function put($data)
+ {
+  trigger_error("User attempted to put data using MomokoFeed class, method not supported!",E_USER_NOTICE);
+  $page=new MomokoError("405 Method Not Allowed");
+  return $page->full_html;
+ }
+
+ public function get()
+ {
+  $query=$this->table($this->options['where_str']);
+
+  switch ($this->options['type'])
+  {
+   case 'atom':
+   //TODO build atom XML
+   head("content-type:application/atom+xml");
+   break
+   case 'rss':
+   case 'feed':
+   default:
+   //TODO build basic RSS XML
+   head("content-type:application/rss+xml");
+  }
+ }
+}
+
 class MomokoAttachment implements MomokoObject
 {
  private $table;
