@@ -36,7 +36,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
     exit();
    }
   }
-  if (!@$_GET['content'] || !@$_GET['p'])
+  if ((empty($_GET['content']) || empty($_GET['p'])) && is_array($path_parts))
   {
    $path_parts=array_splice($path_parts,1); //TODO this seems to execute whenever ?content=post!?
    $path=implode("/",$path_parts);
