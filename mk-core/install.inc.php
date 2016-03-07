@@ -194,7 +194,7 @@ HTML;
   $rows['users'][]=array('name'=>'guest','password'=>'guest','email'=>$admin['email'],'groups'=>"nobody",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'rowspertable'=>$defaults['rpt']);
   $rows['users'][]=$admin;
   
-  $rows['settings'][]=array('key'=>'version','value'=>'2');
+  $rows['settings'][]=array('key'=>'version','value'=>'2.1');
   $rows['settings'][]=array('key'=>'name','value'=>$site['name']);
   $rows['settings'][]=array('key'=>'template','value'=>'quirk');
   $rows['settings'][]=array('key'=>'support_email','value'=>$admin['email']);
@@ -233,7 +233,7 @@ HTML;
   }
 
   $tottbls++;
-  if (scan_addins($settings))
+  if (scan_addins($site))
   {
    $okay++;
   }
