@@ -348,19 +348,19 @@ class MomokoFeed implements MomokoObject
 
  public function __get($key)
  {
-  if (array_key_exists($key,$info))
+  if (array_key_exists($key,$this->info))
   {
-    return $info[$key];
+    return $this->info[$key];
   }
   else
   {
-    return $options[$key];
+    return $this->options[$key];
   }
  }
 
  public function __set($key,$val)
  {
-  return $options[$key]=$val;
+  return $this->options[$key]=$val;
  }
 
  public function put($data)
@@ -1267,6 +1267,9 @@ HTML;
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 {$editor}<script src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/dash.js" type="text/javascript"></script>
 <link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/mk-core/styles/momoko.css" type="text/css">
+
+<link rel="alternate" type="application/rss+xml" title="Post Feed: RSS" href="//{$GLOBALS['SET']['baseuri']}/?content=rss">
+<link rel="alternate" type="application/atom+xml" title="Post Feed: ATOM" href="//{$GLOBALS['SET']['baseuri']}/?content=atom">
 {$addin_tags}
 {$split['head']}
 HTML;
