@@ -372,19 +372,19 @@ class MomokoFeed implements MomokoObject
 
  public function get()
  {
-  $query=$this->table($this->options['where_str']);
+  $query=$this->table->getData($this->options['where_str']);
 
   switch ($this->options['type'])
   {
    case 'atom':
    //TODO build atom XML
-   head("content-type:application/atom+xml");
-   break
+   header("content-type:application/atom+xml");
+   break;
    case 'rss':
    case 'feed':
    default:
    //TODO build basic RSS XML
-   head("content-type:application/rss+xml");
+   header("content-type:application/rss+xml");
   }
  }
 }

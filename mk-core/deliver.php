@@ -5,6 +5,15 @@ function do_attachment($path,$id=null)
  header("Location: {$_GET['link']}");
 }
 
+function do_feed($path,$type=null)
+{
+   $child=new MomokoFeed($path);
+   $child->type=$type;
+   $child->get();
+
+   print $child->full_html;
+}
+
 function do_page($path,$id=null)
 {
 if (@$path && (pathinfo($path,PATHINFO_EXTENSION) == 'htm' || pathinfo($path,PATHINFO_EXTENSION) == 'html'))

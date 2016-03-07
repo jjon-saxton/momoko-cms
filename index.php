@@ -46,14 +46,6 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    case 'attachment':
    $child=new MomokoAttachment($path);
    break;
-   case 'feed':
-   case 'rss':
-   case 'atom':
-   /*TODO Create a means whereby MomoKO may retrieve various RSS feeds of posts
-   $child=new MomokoFeed($path);
-   $child->type=$_GET['content'];
-   $child->get(); */
-   break;
    case 'post':
    //TODO possibly seperate post and page, even though the actions would be the same
    //break;
@@ -201,6 +193,13 @@ else
  
  switch($type)
  {
+  case "feed":
+  case "rss":
+  case "atom":
+  $run="do_feed";
+  $path="/";
+  $id=$type;
+  break;
   case "addin":
   case "post":
   case "attachment":
