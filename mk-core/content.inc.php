@@ -448,10 +448,15 @@ class MomokoFeed implements MomokoObject
 
  private function generateSummary($text,$len=125)
  {
-  $page=parse_page($text);
-  $text=$page['inner_body'];
-  $text=strip_tags($text,"<strong><b><em><i>");
-  //TODO shorten to $len
+  $page=parse_page($text); //Seperates full post into parts if needed
+  $text=$page['inner_body']; //Resets text to just the important part of the post
+  $text=strip_tags($text,"<strong><b><em><i>"); //Gets rid of HTML tags
+  if (strlen($text) > $len)
+  {
+   $matches = array();
+   preg_match("/^(.{1,".$len."})[\s]/i", $text, $matches); //Shortens the summary intelligently
+   $text=$matches[0].'...';
+  }
 
   return $text;
  }
