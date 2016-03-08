@@ -372,7 +372,10 @@ class MomokoFeed implements MomokoObject
 
  public function get()
  {
-  $query=$this->table->getData($this->options['where_str']);
+  $name=htmlspecialchars($GLOBALS['SET']['name'],ENT_XML1,'UTF-8');
+  $uri=htmlspecialchars($GLOBALS['SET']['baseuri']."/",ENT_XML1,'UTF-8');
+  $query=$this->table->getData("type:'post'");
+  $dom=new DOMDocument('1.0','UTF-8');
 
   switch ($this->options['type'])
   {
@@ -383,9 +386,56 @@ class MomokoFeed implements MomokoObject
    case 'rss':
    case 'feed':
    default:
-   //TODO build basic RSS XML
    header("content-type:application/rss+xml");
+   $rss=$dom->appendChild(new DOMElement('rss'));
+   $rss_version=$rss->setAttribute('version','2.0');
+   $channel=$rss->appendChild(new DOMElement('channel'));
+   $feed_name=$channel->appendChild(new DOMElement('title',$name." | Post Feed | RSS"));
+   $feed_link=$channel->appendChild(new DOMElement('link','//'.$uri));
+   $feed_des=$channel->appendChild(new DOMElement('description',$name."'s RSS Feed for posts"));
+   while ($post=$query->fetch(PDO::FETCH_ASSOC))
+   {
+    $link="//".$uri."/?content=post&amp;p=".$post['num'];
+    $item=$channel->appendChild(new DOMElement('item'));
+    $title=$item->appendChild(new DOMElement('title',$post['title']));
+    $link=$item->appendChild(new DOMElement('link',$link));
+    $pubdate=$item->appendChild(new DOMElement('pubDate',gmdate('Y-m-d\TH:i:s\Z',strtotime($post['date_created']))));
+    if (empty($post['date_modified']))
+    {
+     $guid=$item->appendChild(new DOMElement('guid',$this->generateUUID(null,$post['date_created'])));
+    }
+    else
+    {
+     $guid=$item->appendChild(new DOMElement('guid',$this->generateUUID(null,$post['date_modified'])));
+    }
+    $des=$item->appendChild(new DOMElement('description',$this->generateSummary($post['text'])));
+   }
   }
+
+  $full_xml=$dom->saveXML();
+  $this->full_html=$full_xml;
+  return $full_xml;
+ }
+
+ private function generateSummary($text,$len=125)
+ {
+  $page=parse_page($text);
+  $text=$page['inner_body'];
+  $text=strip_tags($text,"<strong><b><em><i>");
+  //TODO shorten to $len
+
+  return $text;
+ }
+
+ private function generateUUID($prefix=null,$chars)
+ {
+  $chars=md5($chars);
+  $uuid=substr($chars,0,8) . '-';
+  $uuid.=substr($chars,8,4) . '-';
+  $uuid.=substr($chars,12,4) . '-';
+  $uuid.=substr($chars,16,4) . '-';
+  $uuid.=substr($chars,20,12);
+  return $prefix.$uuid;
  }
 }
 
