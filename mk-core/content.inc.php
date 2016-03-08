@@ -373,29 +373,58 @@ class MomokoFeed implements MomokoObject
  public function get()
  {
   $name=htmlspecialchars($GLOBALS['SET']['name'],ENT_XML1,'UTF-8');
-  $uri=htmlspecialchars($GLOBALS['SET']['baseuri']."/",ENT_XML1,'UTF-8');
+  $uri=htmlspecialchars("//".$GLOBALS['SET']['baseuri']."/",ENT_XML1,'UTF-8');
   $query=$this->table->getData("type:'post'");
   $dom=new DOMDocument('1.0','UTF-8');
 
   switch ($this->options['type'])
   {
    case 'atom':
-   //TODO build atom XML
+   case 'feed':
    header("content-type:application/atom+xml");
+   $atom=$dom->appendChild(new DOMElement('feed',null,'http://www.w3.org/2005/Atom'));
+   $atom_name=$atom->appendChild(new DOMElement('title',$name." | Post Feed | ATOM","http://www.w3.org/2005/Atom"));
+   $atom_des=$atom->appendChild(new DOMElement('subtitle',$name."'s ATOM feed for posts"));
+   $self=$atom->appendChild(new DOMElement('link'));
+   $self_href=$self->setAttribute('href',$uri."?content=atom");
+   $self_rel=$self->setAttribute('rel','self');
+   $site=$atom->appendChild(new DOMElement('link'));
+   $site_href=$site->setAttribute('href',$uri);
+   while ($post=$query->fetch(PDO::FETCH_ASSOC))
+   {
+    $entry=$atom->appendChild(new DOMElement('entry',null,'http://www.w3.org/2005/Atom'));
+    $title=$entry->appendChild(new DOMElement('title',htmlspecialchars($post['title'],ENT_XML1,"UTF-8")));
+    $link=$entry->appendChild(new DOMElement('link'));
+    $link_href=$link->setAttribute('href',$uri."?content=post&p=".$post['num']);
+    $alt=$entry->appendChild(new DOMElement('link'));
+    $alt_rel=$alt->setAttribute('rel','alternate');
+    $alt_href=$alt->setAttribute('href',"http:".$uri."?content=post&p=".$post['num']);
+    $alt_type=$alt->setAttribute('type',"text/html");
+    if (empty($post['date_modified']))
+    {
+     $uuid=$entry->appendChild(new DOMElement('id',$this->generateUUID("urn:uuid:",$post['date_created'])));
+     $date=$entry->appendChild(new DOMElement('updated',gmdate('Y-m-d\TH:i:s\Z',strtotime($post['date_created']))));
+    }
+    else
+    {
+     $uuid=$entry->appendChild(new DOMElement('id',$this->generateUUID("urn:uuid:",$post['date_modified'])));
+     $date=$entry->appendChild(new DOMElement('updated',gmdate('Y-m-d\TH:i:s\Z',strtotime($post['date_modified']))));
+    }
+    $summary=$entry->appendChild(new DOMElement('summary',$this->generateSummary($post['text'])));
+   }
    break;
    case 'rss':
-   case 'feed':
    default:
    header("content-type:application/rss+xml");
    $rss=$dom->appendChild(new DOMElement('rss'));
    $rss_version=$rss->setAttribute('version','2.0');
    $channel=$rss->appendChild(new DOMElement('channel'));
    $feed_name=$channel->appendChild(new DOMElement('title',$name." | Post Feed | RSS"));
-   $feed_link=$channel->appendChild(new DOMElement('link','//'.$uri));
+   $feed_link=$channel->appendChild(new DOMElement('link',$uri));
    $feed_des=$channel->appendChild(new DOMElement('description',$name."'s RSS Feed for posts"));
    while ($post=$query->fetch(PDO::FETCH_ASSOC))
    {
-    $link="//".$uri."/?content=post&amp;p=".$post['num'];
+    $link=$uri."/?content=post&amp;p=".$post['num'];
     $item=$channel->appendChild(new DOMElement('item'));
     $title=$item->appendChild(new DOMElement('title',$post['title']));
     $link=$item->appendChild(new DOMElement('link',$link));
