@@ -139,15 +139,18 @@ if(isset($_GET['action']) && !empty($_GET['action']))
     $usr=new MomokoUser($_POST['name']);
     if ($usr->put($_POST))
     {
-     header("Location: //".$GLOBALS['SET']['baseuri']."/mk_login.php");
+     header("Location: //".$GLOBALS['SET']['baseuri']."/mk-login.php");
      exit();
     }
    }
    else
    {
-    header("Location: //".$GLOBALS['SET']['baseuri']."/mk_login.php?action=new");
+    header("Location: //".$GLOBALS['SET']['baseuri']."/mk-login.php?action=new");
     exit();
    }
+   case 'passreset':
+   header("Location: //".$GLOBALS['SET']['baseuri']."/mk-login.php?action=reset");
+   break;
    break;
    case 'logout':
    if ($GLOBALS['USR']->logout())
