@@ -10,10 +10,22 @@ if (!empty($_GET['action']))
 	    $formname="Register";
         break;
         case 'reset':
+        $usr=new MomokoUser;
         if (!empty($_POST['pass2'])) //presence of $_POST['pass2'] means user has supplied a new password
         {
-            //TODO retrieve user id from ~{sid}.txt using $_POST['sid'], set new password, and remove ~{sid}.txt
-            $formname="Password Reset Confirmation";
+            $info=$usr->getBySID($_POST['sid']);
+            if ($_POST['pass1'] == $_POST['pass2'])
+            {
+                $data['password']=crypt($_POST['pass2'],$GLOBALS['SET']['salt']);
+                if ($usr->updateByID($info->num,$data))
+                {
+                    $formname="Password Reset Confirmation";
+                }
+                else
+                {
+                    trigger_error("Could not update user's password!'",E_USER_ERROR);
+                }
+            }
         }
         elseif (!empty($_GET['sid'])) //presence of $_GET['sid'] means user clicked the link in their e-mail
         {
@@ -22,8 +34,21 @@ if (!empty($_GET['action']))
         }
         elseif (!empty($_POST['email'])) //presence of $_POST['email'] means user has submitted an e-mail to locate their user and send a reset lnk to
         {
-            //TODO find the requester's user, create a ~{sid} and a ~{sid}.txt (~{sid}.txt should just contain the user id returned from the aforementioned query) and send them an e-mail with a reset link.
-            $formname="Password Reset Instructions";
+            if ($info=$usr->getByEmail($_POST['email']))
+            {
+                $data[0]=$info->num;
+                $data[1]=$info->name;
+                $data[2]=$info->email;
+                if ($file=$usr->putSID(md5(time())))
+                {
+                    //TODO send full reset instructions to $info->email
+                    $formname="Password Reset Instructions";
+                }
+            }
+            else
+            {
+                $formname="User Not Found";
+            }
         }
         else
         {

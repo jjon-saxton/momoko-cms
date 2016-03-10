@@ -217,12 +217,19 @@ class MomokoUser
   public function getByEmail($email)
   {
     $data=$this->db->getData("email:'{$email}'",null,null,1);
-    while ($row=$data->fetch(PDO::FETCH_OBJ))
+    if ($data->numRows > 0)
     {
-        if ($row->name != 'root' && $row->name != 'guest') //prevents info from guest or root from being returned
+        while ($row=$data->fetch(PDO::FETCH_OBJ))
         {
-            return $row;
+            if ($row->name != 'root' && $row->name != 'guest') //prevents info from guest or root from being returned
+            {
+                return $row;
+            }
         }
+    }
+    else
+    {
+        return false;
     }
   }
 
@@ -274,6 +281,7 @@ class MomokoUser
      $txt=rtrim($txt,",");
 
      file_put_contents($dir.$name,$text) or trigger_error("Cannot write user info to session ID text file",E_USER_ERROR);
+     momoko_changes($GLOBALS['USR'],"requests",$this);
      return $dir.$name;
     }
     else
