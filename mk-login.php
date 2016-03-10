@@ -39,10 +39,15 @@ if (!empty($_GET['action']))
                 $data[0]=$info->num;
                 $data[1]=$info->name;
                 $data[2]=$info->email;
-                if ($file=$usr->putSID(md5(time())))
+                if ($sid=$usr->putSID($data,crypt(time(),$GLOBALS['SET']['salt'])))
                 {
-                    //TODO send full reset instructions to $info->email
+                    $link="http://".$GLOBALS['SET']['baseuri']."/mk-login.php?action=reset&sid=".$sid;
+                    var_dump($link);//TODO send full reset instructions to $info->email
                     $formname="Password Reset Instructions";
+                }
+                else
+                {
+                    $formname="User Not Found";
                 }
             }
             else

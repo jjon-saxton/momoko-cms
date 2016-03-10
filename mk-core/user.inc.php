@@ -216,15 +216,15 @@ class MomokoUser
 
   public function getByEmail($email)
   {
-    $data=$this->db->getData("email:'{$email}'",null,null,1);
-    if ($data->numRows > 0)
+    $query=$this->db->getData("email:'{$email}'");
+    if ($query->rowCount() != 0)
     {
-        while ($row=$data->fetch(PDO::FETCH_OBJ))
+        while ($row=$query->fetch(PDO::FETCH_OBJ))
         {
-            if ($row->name != 'root' && $row->name != 'guest') //prevents info from guest or root from being returned
-            {
-                return $row;
-            }
+           if ($row->name != "root" && $row->name != "guest")
+           {
+            return $row;
+           }
         }
     }
     else
@@ -237,7 +237,7 @@ class MomokoUser
   {
    $res=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].$sid.".txt";
    list($num,$name,$email)=explode(",",file_get_contents($res));
-   unlink($res) //the sid storing text file is not required any longer, best to clean it up
+   unlink($res); //the sid storing text file is not required any longer, best to clean it up
 
    return $this->getByID($num);
   }
@@ -280,9 +280,8 @@ class MomokoUser
      }
      $txt=rtrim($txt,",");
 
-     file_put_contents($dir.$name,$text) or trigger_error("Cannot write user info to session ID text file",E_USER_ERROR);
-     momoko_changes($GLOBALS['USR'],"requests",$this);
-     return $dir.$name;
+     file_put_contents($dir.$name,$txt) or trigger_error("Cannot write user info to session ID text file",E_USER_ERROR);
+     return $sid;
     }
     else
     {
