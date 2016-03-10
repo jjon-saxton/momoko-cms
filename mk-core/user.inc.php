@@ -213,6 +213,27 @@ class MomokoUser
     $data=$this->db->getData("num:'= ".$num."'",null,null,1);
     return $data->fetch(PDO::FETCH_OBJ);
   }
+
+  public function getByEmail($email)
+  {
+    $data=$this->db->getData("email:'{$email}'",null,null,1);
+    while ($row=$data->fetch(PDO::FETCH_OBJ))
+    {
+        if ($row->name != 'root' && $row->name != 'guest') //prevents info from guest or root from being returned
+        {
+            return $row;
+        }
+    }
+  }
+
+  public function getBySID($sid) //gets user information based on a session ID created during password resets
+  {
+   $res=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].$sid.".txt";
+   list($num,$name,$email)=explode(",",file_get_contents($res));
+   unlink($res) //the sid storing text file is not required any longer, best to clean it up
+
+   return $this->getByID($num);
+  }
   
   public function put($data=null)
   {
@@ -231,10 +252,34 @@ class MomokoUser
       else
       {
         $data['added']=date('Y-m-d H:i:s');
-	$data['password']=crypt($data['password'],$GLOBALS['SET']['salt']);
-	momoko_changes($GLOBALS['USR'],'added',$this);
+	    $data['password']=crypt($data['password'],$GLOBALS['SET']['salt']);
+	    momoko_changes($GLOBALS['USR'],'added',$this);
         return $this->db->putData($data);
       }
+    }
+  }
+
+  public function putSID($data,$sid)
+  {
+    $dir=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'];
+    $name=$sid.".txt";
+
+    if (is_writable($dir))
+    {
+     $txt=null;
+     foreach ($data as $info)
+     {
+       $txt.=$info.",";
+     }
+     $txt=rtrim($txt,",");
+
+     file_put_contents($dir.$name,$text) or trigger_error("Cannot write user info to session ID text file",E_USER_ERROR);
+     return $dir.$name;
+    }
+    else
+    {
+     trigger_error($dir." not writable! Cannot write required session ID text file!",E_USER_ERROR);
+     return false;
     }
   }
   
