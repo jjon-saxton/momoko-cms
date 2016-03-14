@@ -10,8 +10,8 @@ if (!empty($_GET['action']))
 	    $formname="Register";
         break;
         case 'reset':
-        require_once dirname(__FILE__)."/mk-core/phpmailer/class.phpmailer.php";
-        /** Get Mailer Read! **/
+        /** Get Mailer Ready! **/
+        require_once dirname(__FILE__)."/mk-core/phpmailer/PHPMailerAutoload.php";
         $mail=new PHPMailer();
         $email['type']=$GLOBALS['SET']['email_mta'];
         parse_str($GLOBALS['SET']['email_server'],$email['server']);
@@ -43,6 +43,7 @@ if (!empty($_GET['action']))
             break;
             case 'phpmail':
             default:
+            $mail->isMail();
             if (empty($email['server']['host']))
             {
                 $email['server']['host']="localhost";
