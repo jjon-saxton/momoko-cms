@@ -10,6 +10,51 @@ if (!empty($_GET['action']))
 	    $formname="Register";
         break;
         case 'reset':
+        require_once dirname(__FILE__)."/mk-core/phpmailer/class.phpmailer.php";
+        /** Get Mailer Read! **/
+        $mail=new PHPMailer();
+        $email['type']=$GLOBALS['SET']['email_mta'];
+        parse_str($GLOBALS['SET']['email_server'],$email['server']);
+        parse_str($GLOBALS['SET']['email_from'],$email['from']);
+        switch ($email['type'])
+        {
+            case 'smtp':
+            $mail->isSMTP();
+            $mail->SMTPAuth=$email['server']['auth'];
+            if ($email['server']['auth'] == TRUE)
+            {
+                $mail->SMTPSecure=$email['server']['security'];
+            }
+            $mail->Host=$email['server']['host'];
+            if (!empty($email['server']['port']))
+            {
+                $mail->Port=$email['server']['port'];
+            }
+            $mail->Username=$email['server']['user'];
+            $mail->Password=$email['server']['password'];
+            break;
+            case 'sendmail':
+            if ($email['server']['host'] != 'localhost')
+            {
+                trigger_error("Sendmail will send e-mail from the local server. If you need mail sent from a remote SMTP server, please choose SMTP as your MTA",E_USER_WARNING);
+                $email['server']['host']="localhost";
+            }
+            $mail->isSendmail();
+            break;
+            case 'phpmail':
+            default:
+            if ($email['server']['host'] != 'localhost')
+            {
+                trigger_error("You have opted to use PHP's default Mail Transport Auhtority, but have set a remote server as your mail server. The default MTA does not support remote servers, so the local one will be used instead. If you need to set a remote mail server, please use the SMTP MTA!",E_USER_WARNING);
+                $email['server']['host']="localhost";
+            }
+        }
+        //Set message headers, the message will be set during the approperiate stages
+        $mail->From=$email['from']['address'];
+        $mail->FromName=$email['from']['name'];
+        $mail->IsHTML(true);
+        /** E-Mail Ready **/
+
         $usr=new MomokoUser;
         if (!empty($_POST['pass2'])) //presence of $_POST['pass2'] means user has supplied a new password
         {
@@ -19,6 +64,7 @@ if (!empty($_GET['action']))
                 $data['password']=crypt($_POST['pass2'],$GLOBALS['SET']['salt']);
                 if ($usr->updateByID($info->num,$data))
                 {
+                    //TODO send another e-mail informing user of password change in case some one worked around previous security measures
                     $formname="Password Reset Confirmation";
                 }
                 else
@@ -42,8 +88,41 @@ if (!empty($_GET['action']))
                 if ($sid=$usr->putSID($data,crypt(time(),$GLOBALS['SET']['salt'])))
                 {
                     $link="http://".$GLOBALS['SET']['baseuri']."/mk-login.php?action=reset&sid=".$sid;
-                    var_dump($link);//TODO send full reset instructions to $info->email
-                    $formname="Password Reset Instructions";
+                    $mail->AddAddress($info->email);
+                    $mail->Subject=$GLOBALS['SET']['name'].": Your Password Reset Instructions";
+                    $mail->Body=<<<HTML
+Hello {$info->name},
+Per your request we are sending you instructions on how to reset your password. If you did <strong>not</strong> make this request, you may ignore this e-mail. Your password has not been reset yet!
+
+If you <em>did</em> make this request then you may start the reset process by clicking this <a href="{$link}">reset</a> link. If the link does not work you may copy and paste the following URL "{$link}".
+
+Once you have done so you will be presented with a form. Using this form, pick a new password and then type it a second time. Upon submitting this form, by clicking the button at the end, your new password should be set. If this is the case you will be presented with a confirmation page and recieve a confirmation e-mail.
+
+Please remember, keep your password safe. It is important that you remember it so you do not have to see this e-mail again, but do keep it secure. <strong>NEVER</strong> give out your password to anyone, including this site's administration. <strong>ALWAYS</strong> use this process to reset a password in case your forget!
+
+Thank you!
+HTML;
+                    $mail->AltBody=<<<TXT
+Hello {$info->name},
+Per your request we are sending you instructions on how to reset your password. If you did **not** make this request, you may ignore this e-mail. Your password has not been reset yet!
+
+If you *did* make this request then you may start the reset process by copying and pasting the following URL into your browser's address bar "{$link}".
+
+Once you have done so you will be presented with a form. Using this form, pick a new password and then type it a second time. Upon submitting this form, by clicking the button at the end, your new password should be set. If this is the case you will be presented with a confirmation page and recieve a confirmation e-mail.
+
+Please remember, keep your password safe. It is important that you remember it so you do not have to see this e-mail again, but do keep it secure. **NEVER** give out your password to anyone, including this site's administration. **ALWAYS** use this process to reset a password in case your forget!
+
+Thank you!
+TXT;
+                    if ($mail->Send())
+                    {
+                        $formname="Password Reset Instructions";
+                    }
+                    else
+                    {
+                        trigger_error("Password reset instructions for {$info->name} could not be sent to {$info->email}!",E_USER_WARNING);
+                        $formname="500 Internal Server Error";
+                    }
                 }
                 else
                 {
