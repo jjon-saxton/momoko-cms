@@ -43,7 +43,11 @@ if (!empty($_GET['action']))
             break;
             case 'phpmail':
             default:
-            if ($email['server']['host'] != 'localhost')
+            if (empty($email['server']['host']))
+            {
+                $email['server']['host']="localhost";
+            }
+            elseif ($email['server']['host'] != 'localhost')
             {
                 trigger_error("You have opted to use PHP's default Mail Transport Auhtority, but have set a remote server as your mail server. The default MTA does not support remote servers, so the local one will be used instead. If you need to set a remote mail server, please use the SMTP MTA!",E_USER_WARNING);
                 $email['server']['host']="localhost";
@@ -61,10 +65,34 @@ if (!empty($_GET['action']))
             $info=$usr->getBySID($_POST['sid']);
             if ($_POST['pass1'] == $_POST['pass2'])
             {
+                $mail->AddAddress($info->email);
+                $mail->Subject=$GLOBALS['SET']['name'].": Your Password has been reset!";
+                $mail->Body=<<<HTML
+Hello {$info->name},
+
+This is a friendly e-mail confirming that you have reset your password. We are sorry for any incovience this may have caused you and hope you will never have to see this message again. To assist with that please keep your password in a secure place, and remember not to share it with anyone!
+
+If you believe you are recieving this e-mail in error, for example, you did not request your password to be reset, please contact the site administration immediately at {$GLOBALS['SET']['support_email']} so they can investigate the matter further. They may instruct you to reset your password again. For your reference, we have included the reset link at the end of this e-mail.
+
+In case you need to reset again, the link is: {$GLOBALS['SET']['baseuri']}/mk-login.php?action=reset
+
+Sorry for any inconvience!
+HTML;
+                $mail->AltBody=<<<TXT
+Hello {$info->name},
+
+This is a friendly e-mail confirming that you have reset your password. We are sorry for any incovience this may have caused you and hope you will never have to see this message again. To assist with that please keep your password in a secure place, and remember not to share it with anyone!
+
+If you believe you are recieving this e-mail in error, for example, you did not request your password to be reset, please contact the site administration immediately at {$GLOBALS['SET']['support_email']} so they can investigate the matter further. They may instruct you to reset your password again. For your reference, we have included the reset link at the end of this e-mail.
+
+In case you need to reset again, the link is: {$GLOBALS['SET']['baseuri']}/mk-login.php?action=reset
+
+Sorry for any inconvience!
+TXT;
                 $data['password']=crypt($_POST['pass2'],$GLOBALS['SET']['salt']);
                 if ($usr->updateByID($info->num,$data))
                 {
-                    //TODO send another e-mail informing user of password change in case some one worked around previous security measures
+                    $mail->Send();
                     $formname="Password Reset Confirmation";
                 }
                 else
@@ -126,7 +154,7 @@ TXT;
                 }
                 else
                 {
-                    $formname="User Not Found";
+                    $formname="500 Internal Server Error";
                 }
             }
             else
