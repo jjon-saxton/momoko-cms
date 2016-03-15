@@ -373,6 +373,23 @@ HTML;
     {
      $query=$this->table->getData("name:'guest'",NULL,NULL,1);
      $default=$query->fetch(PDO::FETCH_ASSOC);
+     $group_opts=null;
+     $group_num=1;
+     foreach ($GLOBALS['SET']['sys_groups'] as $name)
+     {
+        if ($name != 'cli' && $name != 'nobody')
+        {
+            if ($name != 'users')
+            {
+                $group_opts.="<option>{$name}</option>\n";
+            }
+            else
+            {
+                $group_opts.="<option selected=\"selected\">{$name}</option>\n";
+            }
+            $group_num++;
+        }
+     }
      $page['body']=<<<HTML
 <form method=post>
 <h3>Basic Information</h3>
@@ -387,7 +404,10 @@ HTML;
 </ul>
 <h3>Setting</h3>
 <ul id="UserSettings" class="noindent nobullet">
-<li><label for="groups">Groups: </label><input type=text id="groups" name="groups" value="users"></li>
+<li><label for="groups">Groups: </label></li>
+<li><select onchange="$('input#group_store').val(($(this).val()))"size="{$group_num}" multiple id="groups">
+{$group_opts}</select>
+<input type="hidden" id="group_store" name="groups" value="users"></li>
 <li><label for="sdf">Short Date Format: </label><input type=text id="sdf" name="shortdateform" value="{$default['shortdateformat']}"></li>
 <li><label for="ldf">Long Date Format: </label><input type=text id="ldf" name="longdateform" value="{$default['longdateformat']}"></li>
 <li><label for="rpt">Rows Per Table: </label><input type=number id="rpt" name="rowspertable" value="{$default['rowspertable']}"></li>
