@@ -149,7 +149,7 @@ TXT;
                     }
                     else
                     {
-                        trigger_error("Password reset instructions for {$info->name} could not be sent to {$info->email}!",E_USER_WARNING);
+                        trigger_error("Password reset instructions for {$info->name} could not be sent to {$info->email}! ".$mail->ErrorInfo,E_USER_WARNING);
                         $formname="500 Internal Server Error";
                     }
                 }

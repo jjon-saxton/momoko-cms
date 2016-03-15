@@ -12,6 +12,7 @@ if (empty($GLOBALS['SET']['baseuri']))
 {
  $GLOBALS['SET']['baseuri']=$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']);
 }
+$GLOBALS['SET']['sys_groups']=array('nobody','users','suspended','editor','cli','admin');
 
 #Set Constants
 if ($GLOBALS['SET']['rewrite'])

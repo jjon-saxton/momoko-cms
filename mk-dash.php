@@ -430,13 +430,33 @@ HTML;
     {
      $query=$this->table->getData("num:'".$_GET['id']."'",null,null,1);
      $user=$query->fetch(PDO::FETCH_ASSOC);
+     $group_arry=explode(",",$user['groups']);
+     $group_opts=null;
+     $group_num=1;
+     foreach ($GLOBALS['SET']['sys_groups'] as $name)
+     {
+        if ($name != 'cli' && $name != 'nobody')
+        {
+            if (array_search($name,$group_arry) === FALSE)
+            {
+                $group_opts.="<option>{$name}</option>\n";
+            }
+            else
+            {
+                $group_opts.="<option selected=\"selected\">{$name}</option>\n";
+            }
+            $group_num++;
+        }
+     }
      $page['body']=<<<HTML
 <form id="UserForm" action="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=edit&id={$user['num']}" method=post>
 <input type=hidden name="num" value="{$user['num']}">
 <ul id="FormList" class="nobullet noindent">
 <li><label for="name">Name:</label> <input type=text id="name" name="name" value="{$user['name']}"</li>
 <li><label for="email">E-mail:</label> <input type=email id="email" name="email" value="{$user['email']}"</li>
-<li><label for="groups">Groups:</label> <textarea id="groups" name="groups">{$user['groups']}</textarea></li>
+<li><label for="groups">Groups:</label> <select onchange="$('input#group_store').val(($(this).val()))"size="{$group_num}" multiple id="groups">
+{$group_opts}</select>
+<input type="hidden" name="groups" id="group_store" value="{$user['groups']}"></li>
 </ul>
 </form>
 HTML;
