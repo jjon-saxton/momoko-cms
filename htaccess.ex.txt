@@ -1,4 +1,4 @@
-ErrorDocument 404 /404.html# Example .htaccess file for MomoKO's 'pretty urls' and error documents make modification below
+# Example .htaccess file for MomoKO's 'pretty urls' and error documents make modification below
 # and save the file as '.htaccess'
 
 # Modify the RewriteBase if you are using MomoKO in a subdirectory or in a
