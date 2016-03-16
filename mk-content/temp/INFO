@@ -1,0 +1,7 @@
+This folder is the default location for temporary files. MomoKO uses temporary files to provide session-by-session information and examine files before they are accepted.
+
+Also archives may be temporarily stored here both in file form and extracted before they are moved to a perminent home. This is done often to ensure the archive is of an expected nature or to maniupulate some content before moving it to a better place.
+
+You can configure a different location within you MomoKO installation to serve as temporary storage, but this version does not support other folders.
+
+You may remove this INFO file at any time and it may be a good idea to check this location every now-and-then to ensure it is clean. When MomoKO no longer needs information stored here, she should remove it, but processes could be interrupted and MomoKO may leave small traces behind.

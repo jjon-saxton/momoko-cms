@@ -365,13 +365,46 @@ function scan_addins($settings=null)
  return $rows;
 }
 
-function scan_core_content($settings == null)
+function scan_core_content($settings=null)
 {
+    $content=new DataBaseTable('content');
     if ($settings == NULL && is_array($GLOBALS['SET']))
     {
         $settings=$GLOBALS['SET'];
     }
-    //TODO, like with the above scan_addins function, scan both the ~{filedir}/forms and ~{filedir}/error folders and update the content table with them.
+    $types=array(array('folder'=>'forms','name'=>'form'),array('folder'=>'errors','name'=>'error page')); //saves code and allows future updates to add types and even store types elsewhere
+    foreach ($types as $type)
+    {
+        $path=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."/".$type['folder'];
+        foreach (scandir($path) as $item)
+        {
+            if (!is_dir($path."/".$item)) //folder should not carry sub-folders
+            {
+                //TODO determine mime type to ensure proper form/page
+                $html=file_get_contents($path."/".$item);
+                $page=parse_page($html);
+                $page['type']=$type['name'];
+                $page['text']=$page['inner_body']; unset($page['inner_body']);
+                $query=$content->getData("title='{$page['title']}'");
+                if ($query->rowCount() < 1)
+                {
+                    $page['date_created']=date("",time());
+                    $page['status']="cloaked";
+                    $page['parent']=0;
+                    $page['author']=1;
+                    $page['mime_type']="text/html";
+                    $rows[]=$content->putData($page);
+                }
+                else
+                {
+                    $old=$query->fetch(PDO::FETCH_ASSOC);
+                    $page['num']=$old['num'];
+                    $page['date_modified']=date("",time());
+                    $rows[]=$content->updateDate($page);
+                }
+            }
+        }
+    }
 
-    return false; //TODO should return an array of row numbers for new or updated content
+    return $rows;
 }
