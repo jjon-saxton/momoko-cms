@@ -283,6 +283,22 @@ function db_upgrade($level,$version,array $settings,$backup=null)
    $row=$table['settings']->putData($newrow) or die(trigger_error("Could not add setting '{$key}'"));
   }
  }
+
+ echo("Scanning for new core forms and error pages...\n"); //To be completed for all upgrades; update core forms and error pages in database!
+ $new_content=scan_core_content($settings);
+ if (is_array($new_content))
+ {
+    echo ("Upating content number(s)...");
+    foreach ($new_content as $num)
+    {
+        echo ($num." ");
+    }
+    echo ("\n");
+ }
+ else
+ {
+    echo ("No content needs to be updated, or update failed! Hint; check error messages and logs\n");
+ }
  
  echo("Scanning for new or updated addins...\n"); //This is to be completed for all upgrades in case we add new core addins
  $new_addins=scan_addins($settings);
@@ -297,7 +313,7 @@ function db_upgrade($level,$version,array $settings,$backup=null)
  }
  else
  {
-  echo ("No updates needed or updates failed!");
+  echo ("No updates needed or updates failed!\n");
  }
  
  $update['key']='version';
@@ -347,4 +363,15 @@ function scan_addins($settings=null)
  }
 
  return $rows;
+}
+
+function scan_core_content($settings == null)
+{
+    if ($settings == NULL && is_array($GLOBALS['SET']))
+    {
+        $settings=$GLOBALS['SET'];
+    }
+    //TODO, like with the above scan_addins function, scan both the ~{filedir}/forms and ~{filedir}/error folders and update the content table with them.
+
+    return false; //TODO should return an array of row numbers for new or updated content
 }
