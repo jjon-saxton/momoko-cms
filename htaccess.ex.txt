@@ -1,12 +1,32 @@
+ErrorDocument 404 /404.html# Example .htaccess file for MomoKO's 'pretty urls' and error documents make modification below
+# and save the file as '.htaccess'
+
 # Modify the RewriteBase if you are using MomoKO in a subdirectory or in a
 # VirtualDocumentRoot and the rewrite rules are not working properly.
-# For example if your site is at http://example.com/drupal uncomment and
+# For example if your site is at http://example.com/momoko uncomment and
 # modify the following line:  # RewriteBase /momoko
 #  # If your site is running in a VirtualDocumentRoot at http://example.com/,
 # uncomment the following line:
 # RewriteBase /
-# Rewrite URLs of the form ‘x’ to the form ‘index.php?q=x’.
+# Rewrite URLs of the form 'x' to the form 'index.php?q=x'.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !=/favicon.ico
 RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
+
+# If you would like to use MomoKO to serve apache error documents include the
+# following lines, otherwise remove them
+
+ErrorDocument 201 /mk-error.php?name=201 Created
+ErrorDocument 204 /mk-error.php?name=204 No Content
+ErrorDocument 301 /mk-error.php?name=301 Moved Permanently
+ErrorDocument 401 /mk-error.php?name=401 Unauthorized
+ErrorDocument 403 /mk-error.php?name=403 Forbidden
+ErrorDocument 404 /mk-error.php?name=404 Not Found
+ErrorDocument 405 /mk-error.php?name=405 Method Not Allowed
+ErrorDocument 408 /mk-error.php?name=408 Request Timeout
+ErrorDocument 410 /mk-error.php?name=410 Gone
+ErrorDocument 418 /mk-error.php?name=418 I'm a teapot
+ErrorDocument 420 /mk-error.php?name=420 Enhance Your Calm
+ErrorDocument 500 /mk-error.php?name=500 Internal Server Error
+ErrorDocument 501 /mk-error.php?name=501 Not Implemented
