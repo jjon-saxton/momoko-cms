@@ -1,0 +1,14 @@
+[info]
+shortname = "Fluidity"
+longname = "Fluidity"
+type = "template"
+description = "A bootstrap enabled, clean layout."
+
+[authorization]
+whitelist = "ALL"
+blacklist = "root"
+
+[attribution]
+author = "Jon Saxton"
+email = "cem@tower21studios.com"
+version = "0.1a"
