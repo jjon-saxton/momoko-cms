@@ -1,5 +1,51 @@
 @import "fluidity-bootstrap.css";
 
-body {padding-top: 70px}
-a:link, a:visited {color:#889}
-a:active, a:hover {color:#337ab7}
+body {background: #000; padding-top: 70px; color: #fff}
+h1,h2,h3,h4,h5,h6 {color: #C89F2F}
+hr {border-color: #C89F2F}
+a:link, a:visited {color:#C89F2F}
+a:active, a:hover {color:#BAC3C8}
+
+.navbar.navbar-default {
+	background: #111;
+	border-color:#000;
+	color: #ccc;
+	font-family:Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.nav.navbar-nav li a {
+	color: #ccc;
+}
+.nav.navbar-nav li a:hover, .nav.navbar-nav .active a {
+	background: #444;
+	color:#fff;
+}
+.nav.navbar-nav li.active a:hover{
+	background: #c89f2f;
+	color:#634600;
+}
+.nav.navbar-nav li.open a{
+	background:#444;
+	color:#fff;
+}
+.nav.navbar-nav li.open a:hover{
+	background: #c89f2f;
+	color:#634600;
+}
+.nav.navbar-nav li.open ul{
+	background:#444;
+}
+.nav.navbar-nav li.open ul a{
+	background:#444;
+	color:#fff;
+}
+.container-fluid .navbar-header .navbar-brand {
+	background: #C89F2F;
+	color:#634600
+}
+
+.ui-widet-overlay {background: #634600}
+div.sidebar {background: #C89F2F; color: #634600}
+div.sidebar h1, div.sidebar h2, div.sidebar h3, div.sidebar h4 {color:#fff}
+
+ul.plug.list li a:link, ul.plug.list li a:visited {border:transparent;background:#634600}
+ul.plug.list li a:active, ul.plug.list li a:hover {border:transparent;background:#BAC3C8; color: #111}
