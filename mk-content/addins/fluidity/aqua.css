@@ -1,4 +1,5 @@
 @import "fluidity-bootstrap.css";
+@import "jquery-ui-aqua/jquery-ui.theme.min.css";
 
 body {padding-top: 70px}
 a:link, a:visited {color:#889}
