@@ -44,9 +44,9 @@ a:active, a:hover {color:#6eac2c}
 	color:#2b6010
 }
 
-.ui-widet-overlay {background: #e9e9e9}
-div.sidebar {background: #e9e9e9; color: #222}
-div.sidebar h1, div.sidebar h2, div.sidebar h3, div.sidebar h4 {color:#333}
+.ui-widet-overlay {background: #2191c0}
+div.sidebar {background: #2191c0; color: #bbb}
+div.sidebar h1, div.sidebar h2, div.sidebar h3, div.sidebar h4 {color:#ccc}
 
-ul.plug.list li a:link, ul.plug.list li a:visited {border:transparent;background:#003eff; color: #fff}
-ul.plug.list li a:active, ul.plug.list li a:hover {border:transparent;background:#007eff; color: #ddd}
+ul.plug.list li a:link, ul.plug.list li a:visited {border:transparent;background:#0078ae; color: #fff}
+ul.plug.list li a:active, ul.plug.list li a:hover {border:transparent;background:#6eac2c; color: #ddd}
