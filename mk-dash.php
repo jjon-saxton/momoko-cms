@@ -765,7 +765,8 @@ HTML;
     $files=fetch_files("addins/".$GLOBALS['SET']['template'],'styles');
     foreach ($files as $file)
     {
-      $templatesettings.="<option>{$file}</option>\n";
+      $name=ucwords(pathinfo($file,PATHINFO_FILENAME));
+      $templatesettings.="<option value=\"{$file}\">{$name}</option>\n";
     }
     $templatesettings.="</select></li>\n</ul>";
 
