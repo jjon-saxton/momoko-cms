@@ -761,7 +761,7 @@ HTML;
       $templatesettings.="<option value=\"{$template['dir']}\">{$template['shortname']}</option>\n";
      }
     }
-    $templatesettings.="</select> <a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=addins\" title=\"Add a template to your addins to add more layouts.\">Add Layout</a></li>\n<li><label for=\"style\">Style:</label> <select id=\"style\" name=\"style\">";
+    $templatesettings.="</select> <a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=addins\" title=\"Template addins are listed here, add or remove them to change your selection.\">Manage Addins</a></li>\n<li><label for=\"style\">Style:</label> <select id=\"style\" name=\"style\">";
     $files=fetch_files("addins/".$GLOBALS['SET']['template'],'styles');
     foreach ($files as $file)
     {
