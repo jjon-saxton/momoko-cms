@@ -1,5 +1,52 @@
 @import "fluidity-bootstrap.css";
+@import "jquery-ui-royal/jquery-ui.theme.min.css";
 
-body {padding-top: 70px}
-a:link, a:visited {color:#889}
-a:active, a:hover {color:#337ab7}
+body {background: #ecfdfe; padding-top: 70px}
+h1,h2,h3,h4,h5,h6 {color: #0078ae}
+hr {border-color: #6eac2c}
+a:link, a:visited {color:#0078ae}
+a:active, a:hover {color:#6eac2c}
+
+.navbar.navbar-default {
+	background: #0078ae;
+	border-color:#0078ae;
+	color: #ddd;
+	font-family:Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.nav.navbar-nav li a {
+	color: #ddd;
+}
+.nav.navbar-nav li a:hover, .nav.navbar-nav .active a {
+	background: #6eac2c;
+	color:#ddd;
+}
+.nav.navbar-nav li.active a:hover{
+	background: #6eac2c;
+	color:#634600;
+}
+.nav.navbar-nav li.open a{
+	background:#2191c0;
+	color:#fff;
+}
+.nav.navbar-nav li.open a:hover{
+	background: #6eac2c;
+	color:#634600;
+}
+.nav.navbar-nav li.open ul{
+	background:#2191c0;
+}
+.nav.navbar-nav li.open ul a{
+	background:#2191c0;
+	color:#fff;
+}
+.container-fluid .navbar-header .navbar-brand {
+	background: #6eac2c;
+	color:#2b6010
+}
+
+.ui-widet-overlay {background: #e9e9e9}
+div.sidebar {background: #e9e9e9; color: #222}
+div.sidebar h1, div.sidebar h2, div.sidebar h3, div.sidebar h4 {color:#333}
+
+ul.plug.list li a:link, ul.plug.list li a:visited {border:transparent;background:#003eff; color: #fff}
+ul.plug.list li a:active, ul.plug.list li a:hover {border:transparent;background:#007eff; color: #ddd}
