@@ -161,15 +161,9 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    }
    break;
   }
-  if (!empty($child->inner_body))
-  {
-    $tpl=new MomokoTemplate(pathinfo("/",PATHINFO_DIRNAME));
-    print $tpl->toHTML($child);
-  }
-  else
-  {
-    print $child->full_html;
-  }
+
+  $tpl=new MomokoTemplate(pathinfo("/",PATHINFO_DIRNAME));
+  print $tpl->toHTML($child);
 }
 else
 {
