@@ -649,10 +649,10 @@ $(function(){
 <form method=post>
 <h3>Password</h3>
 <ul id="PassForm" class="noindent nobullet">
-<li><input type=checkbox id="pc" name="pass_change" value=1> <label for="pc">Do you wish to change your password?</label></li>
-<li><label for="cpass">Current Password: </label><input type=password id="cpass" name="oldpassword"></li>
-<li><label for="npass1">New Password: </label><input type=password id="npass1" name="newpassword1"></li>
-<li><label for="npass2">Confirm New Password: </label><input type=password id="npass2" name="newpassword2"></li>
+<li><input type=checkbox id="pc" onclick="toggleInputState($(this),'[type=password]')" name="pass_change" value=1> <label for="pc">Do you wish to change your password?</label></li>
+<li><label for="cpass">Current Password: </label><input type=password id="cpass" disabled="disabled" name="oldpassword"></li>
+<li><label for="npass1">New Password: </label><input type=password id="npass1" disabled="disabled" name="newpassword1"></li>
+<li><label for="npass2">Confirm New Password: </label><input type=password id="npass2" disabled="disabled" name="newpassword2"></li>
 </ul>
 <h3>Settings</h3>
 <ul id="UserForm" class="noindent nobullet">

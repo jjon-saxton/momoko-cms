@@ -112,6 +112,18 @@ function toggleSidebar()
  $("div.sidebar").toggle('slide');
 }
 
+function toggleInputState(p,q)
+{
+    if (p.is(':checked'))
+    {
+        $("input"+q).removeAttr("disabled");
+    }
+    else
+    {
+        $("input"+q).attr('disabled','disabled');
+    }
+}
+
 function openAJAXModal(url,title)
 {
  $("div#modal").load(url).dialog({
