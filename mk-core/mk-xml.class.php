@@ -28,6 +28,12 @@ class MomokoXMLHandler
     $this->convertXmlObjToArr($xml,$this->arr);
  }
 
+ public function strToXML($str)
+ {
+    $xml=simplexml_load_string($str);
+    $this->convertXmlObjToArr($xml,$this->arr);
+ }
+
  public function getArray()
  {
     return $this->arr;
@@ -35,7 +41,10 @@ class MomokoXMLHandler
 	
  public function convertXmlObjToArr($obj, &$arr)
  {
-  $children = $obj->children();
+  if ($obj !== FALSE)
+  {
+   $children = $obj->children();
+  }
   foreach ($children as $elementName => $node)
   {
    $nextIdx = count($arr);

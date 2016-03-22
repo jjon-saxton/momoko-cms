@@ -763,10 +763,27 @@ HTML;
     }
     $templatesettings.="</select> <a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=addins\" title=\"Template addins are listed here, add or remove them to change your selection.\">Manage Addins</a></li>\n<li><label for=\"style\">Style:</label> <select id=\"style\" name=\"style\">";
     $files=fetch_files("addins/".$GLOBALS['SET']['template'],'styles');
+    $style=$templates->getData("dir:'".$GLOBALS['SET']['template']."'",array('num','headtags'));
+    $style=$style->fetch(PDO::FETCH_ASSOC);
+    $doc=new DOMDocument(); //Create a DOM document to parse headtags
+    $doc->loadHTML($style['headtags']); //Load headtags into DOM for parsing
+    $tags=$doc->getElementsByTagName('link'); //select all link tags to find styles
+    $styles=array();
+    foreach ($tags as $tag)
+    {
+        $styles[]=basename($tag->getAttribute('href')); //Read just the filename into an array to locate later
+    }
     foreach ($files as $file)
     {
       $name=ucwords(pathinfo($file,PATHINFO_FILENAME));
-      $templatesettings.="<option value=\"{$file}\">{$name}</option>\n";
+      if (in_array($file,$styles))
+      {
+        $templatesettings.="<option selected=selected value=\"{$file}\">{$name}</option>\n";
+      }
+      else
+      {
+        $templatesettings.="<option value=\"{$file}\">{$name}</option>\n";
+      }
     }
     $templatesettings.="</select></li>\n</ul>";
 
