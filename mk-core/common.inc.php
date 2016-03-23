@@ -12,6 +12,19 @@ if (empty($GLOBALS['SET']['baseuri']))
 {
  $GLOBALS['SET']['baseuri']=$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']);
 }
+if ($GLOBALS['SET']['use_ssl'] == "strict") //ADD protocol
+{
+ $GLOBALS['SET']['siteroot']="https://".$GLOBALS['SET']['baseuri'];
+}
+else
+{
+ if ($GLOBALS['SET']['use_ssl'] != "no")
+ {
+  $GLOBAL['SET']['sec_protocol']="https:"
+ }
+ $GLOBALS['SET']['siteroot']="//".$GLOBALS['SET']['baseuri'];
+}
+
 $GLOBALS['SET']['sys_groups']=array('nobody','users','suspended','editor','cli','admin');
 
 #Set Constants
