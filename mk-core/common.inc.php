@@ -8,19 +8,25 @@ foreach ($settings as $pairs)
 {
  $GLOBALS['SET'][$pairs['key']]=$pairs['value'];
 }
+
 if (empty($GLOBALS['SET']['baseuri']))
 {
  $GLOBALS['SET']['baseuri']=$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']);
 }
 if ($GLOBALS['SET']['use_ssl'] == "strict") //ADD protocol
 {
+ $GLOBALS['SET']['sec_protocl']="https://";
  $GLOBALS['SET']['siteroot']="https://".$GLOBALS['SET']['baseuri'];
 }
 else
 {
- if ($GLOBALS['SET']['use_ssl'] != "no")
+ if ($GLOBALS['SET']['use_ssl'] == "yes")
  {
-  $GLOBAL['SET']['sec_protocol']="https:"
+  $GLOBALS['SET']['sec_protocol']="https://";
+ }
+ else
+ {
+  $GLOBALS['SET']['sec_protocol']="http://";
  }
  $GLOBALS['SET']['siteroot']="//".$GLOBALS['SET']['baseuri'];
 }

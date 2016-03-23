@@ -77,7 +77,7 @@ class MomokoDashboard implements MomokoObject
    if (count($pages) > 1)
    {
     $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols,NULL,$GLOBALS['USR']->rowspertable,@$_GET['offset']);
-    $page_div="<div id=\"pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list={$list}&offset={$prev}\">Previous</a></td><td align=center>";
+    $page_div="<div id=\"pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list={$list}&offset={$prev}\">Previous</a></td><td align=center>";
     foreach ($pages as $page)
     {
      if ($page['offset'] == @$_GET['offset'])
@@ -86,10 +86,10 @@ class MomokoDashboard implements MomokoObject
      }
      else
      {
-      $page_div.="<a href=\"{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list={$list}&offest={$page['offset']}\">{$page['number']}</a>";
+      $page_div.="<a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list={$list}&offest={$page['offset']}\">{$page['number']}</a>";
      }
     }
-    $page_div.="</td><td align=right><a href=\"{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list={$list}&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
+    $page_div.="</td><td align=right><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list={$list}&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
    }
    else
    {
@@ -135,7 +135,7 @@ class MomokoDashboard implements MomokoObject
      
      $text.=<<<HTML
 <div id="{$content['num']}" class="page box {$content['status']}"><h4 style="display:inline-block;clear:left" class="module">{$content['title']}</h4>
-<div class="actions "style="float:right"><a href="//{$GLOBALS['SET']['baseuri']}/{$content['link']}" id="location" style="display:none">Open</a> <span id="view" class="ui-icon ui-icon-folder-open" style="display:inline-block" title="Open/Download"></span> <span id="edit" class="ui-icon ui-icon-pencil" style="display:inline-block" title="Edit"></span> <span id="delete" class="ui-icon ui-icon-trash" style="display:inline-block" title="Delete"></span></div>
+<div class="actions "style="float:right"><a href="{$GLOBALS['SET']['siteroot']}/{$content['link']}" id="location" style="display:none">Open</a> <span id="view" class="ui-icon ui-icon-folder-open" style="display:inline-block" title="Open/Download"></span> <span id="edit" class="ui-icon ui-icon-pencil" style="display:inline-block" title="Edit"></span> <span id="delete" class="ui-icon ui-icon-trash" style="display:inline-block" title="Delete"></span></div>
 <div class="properties">{$content['date_created']}, {$content['date_modified']}, {$content['author']}, {$content['mime_type']}</div>
 <div class="summary">{$content['text']}</div>
 </div>
@@ -241,10 +241,10 @@ HTML;
    }
    if (count($pages) > 1)
    {
-    $page_div="<div id=\"Pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?{$query_str}&offset={$prev}\">Previous</a></td><td align=center>";
+    $page_div="<div id=\"Pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?{$query_str}&offset={$prev}\">Previous</a></td><td align=center>";
     if (count($pages) >= 10)
     {
-     $page_div.="<select id=\"PageList\" onchange=\"window.location='//{$GLOBALS['SET']['baseuri']}/mk-dash.php?{$query_str}&offset='+$(this).val()\" name=\"page_dropdown\">\n";
+     $page_div.="<select id=\"PageList\" onchange=\"window.location='{$GLOBALS['SET']['siteroot']}/mk-dash.php?{$query_str}&offset='+$(this).val()\" name=\"page_dropdown\">\n";
      foreach ($pages as $page)
      {
       if ($page['offset'] == @$_GET['offset'])
@@ -268,11 +268,11 @@ HTML;
       }
       else
       {
-       $page_div.="<a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?{$query_str}&offset={$page['offset']}\">{$page['number']}</a> ";
+       $page_div.="<a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?{$query_str}&offset={$page['offset']}\">{$page['number']}</a> ";
       }
      }
     }
-    $page_div.="</td><td align=right><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?{$query_str}&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
+    $page_div.="</td><td align=right><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?{$query_str}&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
    }
    else
    {
@@ -432,7 +432,7 @@ HTML;
       $page['body']=<<<HTML
 <div id="NewUserAdded" class="message box">
 <h3 class="message title">New User Added</h3>
-<p>A new user was added to MomoKO. You may <a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=new">return</a> to add another user, or continue on to other actions</p>
+<p>A new user was added to MomoKO. You may <a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=user&action=new">return</a> to add another user, or continue on to other actions</p>
 </div>
 HTML;
      }
@@ -469,7 +469,7 @@ HTML;
         }
      }
      $page['body']=<<<HTML
-<form id="UserForm" action="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=edit&id={$user['num']}" method=post>
+<form id="UserForm" action="{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=edit&id={$user['num']}" method=post>
 <input type=hidden name="num" value="{$user['num']}">
 <ul id="FormList" class="nobullet noindent">
 <li><label for="name">Name:</label> <input type=text id="name" name="name" value="{$user['name']}"</li>
@@ -485,7 +485,7 @@ HTML;
     {
      if ($this->table->updateData($user_data))
      {
-      header("Location: //{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list");
+      header("Location: {$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list");
      }
      else
      {
@@ -578,7 +578,7 @@ HTML;
        $page['body'].="<span id=\"{$setting['key']}\">{$setting['value']} <em class=\"message\">changed only by update script!</em></span>";
        break;
        case 'template':
-       $page['body'].="<span id=\"{$setting['key']}\">{$setting['value']} <em class=\"message\">change in <a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance\">site appearance</a></em></span>";
+       $page['body'].="<span id=\"{$setting['key']}\">{$setting['value']} <em class=\"message\">change in <a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance\">site appearance</a></em></span>";
        break;
        //TODO add special cases for e-mail settings
        case 'email_mta':
@@ -726,7 +726,7 @@ HTML;
      $page['body']=<<<HTML
 <div id="SettingsChanged" class="message box">
 <h3 class="message title">{$section} Settings Changed</h3>
-<p>{$section} settings have been changed succesfully! Please feel free to <a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section={$_GET['section']}&action=settings">Return</a> to the previous page, or select another page or action.</p>
+<p>{$section} settings have been changed succesfully! Please feel free to <a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section={$_GET['section']}&action=settings">Return</a> to the previous page, or select another page or action.</p>
 </div>
 HTML;
     }
@@ -761,7 +761,7 @@ HTML;
       $templatesettings.="<option value=\"{$template['dir']}\">{$template['shortname']}</option>\n";
      }
     }
-    $templatesettings.="</select> <a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=addins\" title=\"Template addins are listed here, add or remove them to change your selection.\">Manage Addins</a></li>\n<li><label for=\"style\">Style:</label> <select id=\"style\" name=\"style\">";
+    $templatesettings.="</select> <a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&list=addins\" title=\"Template addins are listed here, add or remove them to change your selection.\">Manage Addins</a></li>\n<li><label for=\"style\">Style:</label> <select id=\"style\" name=\"style\">";
     $files=fetch_files("addins/".$GLOBALS['SET']['template'],'styles');
     $style=$templates->getData("dir:'".$GLOBALS['SET']['template']."'",array('num','headtags'));
     $style=$style->fetch(PDO::FETCH_ASSOC);
@@ -787,7 +787,7 @@ HTML;
     }
     $templatesettings.="</select></li>\n</ul>";
 
-    $modulelayout="<div class=\"screenshot\" style=\"background-image:url('//".$GLOBALS['SET']['baseuri'].$GLOBALS['SET']['filedir']."addins/".$GLOBALS['SET']['template']."/screenshot.png')\">".file_get_contents($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."addins/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm")."</div>";
+    $modulelayout="<div class=\"screenshot\" style=\"background-image:url('".$GLOBALS['SET']['siteroot'].$GLOBALS['SET']['filedir']."addins/".$GLOBALS['SET']['template']."/screenshot.png')\">".file_get_contents($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."addins/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm")."</div>";
     $addins=new DataBaseTable('addins');
     $dbquery=$addins->getData("type:'module'",array('num','dir','shortname','zone','settings'),'order');
     $modulelist=NULL;
@@ -830,7 +830,7 @@ $(function(){
  $(".dialog").hide();
  
  $("select#layout").change(function(){
-  $.getJSON("//{$GLOBALS['SET']['baseuri']}/ajax.php?action=fetch_files&dir=addins/"+$(this).val()+"&limit=styles",function(j){
+  $.getJSON("{$GLOBALS['SET']['siteroot']}/ajax.php?action=fetch_files&dir=addins/"+$(this).val()+"&limit=styles",function(j){
    $("select#style").fadeOut('fast',function(){
     var opts='';
     for (var i=0; i < j.length; i++)
@@ -950,7 +950,7 @@ HTML;
    {
     $new_map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
     $new_map->reOrderbyHTML($user_data['raw_dom']);
-    header("Location:http://{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance");
+    header("Location:http:{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance");
     exit();
    }
    elseif ($user_data['section'] == 'modules')
@@ -976,7 +976,7 @@ HTML;
       $data['order']++;
      }
     }
-    header("Location: http://{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance");
+    header("Location: {$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance");
     exit();
    }
    else
@@ -989,7 +989,7 @@ HTML;
     $list=$addins->getData("dir:'{$user_data['template']}'",array('num','dir'),null,1);
     $template=$list->fetch(PDO::FETCH_ASSOC);
     $template['enabled']='y';
-    $template['headtags']="<link rel=\"stylesheet\" href=\"//{$GLOBALS['SET']['baseuri']}{$GLOBALS['SET']['filedir']}addins/{$template['dir']}/{$user_data['style']}\" type=\"text/css\">";
+    $template['headtags']="<link rel=\"stylesheet\" href=\"{$GLOBALS['SET']['siteroot']}{$GLOBALS['SET']['filedir']}addins/{$template['dir']}/{$user_data['style']}\" type=\"text/css\">";
     $style=$addins->updateData($template);
     
     $settings=new DataBaseTable('settings');
@@ -997,7 +997,7 @@ HTML;
     $data['value']=$user_data['template'];
     $template=$settings->updateData($data);
     
-    header("Location: http://{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance");
+    header("Location: {$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance");
     exit();
    }
    break;
@@ -1027,7 +1027,7 @@ HTML;
     {
      if (rename($finfo['temp'],$GLOBALS['SET']['basedir'].$finfo['perm']))
      {
-      $finfo['link']="http://".$GLOBALS['SET']['baseuri'].$finfo['perm'];
+      $finfo['link']=$GLOBALS['SET']['siteroot'].$finfo['perm'];
      }
      if ($_GET['ajax'] == 1)
      {
@@ -1217,7 +1217,7 @@ HTML;
          }
          else
          {
-          $finfo['link']=GLOBAL_PROTOCOL."//".$GLOBALS['SET']['baseuri']."?p=".$new_ko;
+          $finfo['link']=$GLOBALS['SET']['sec_protocol'].$GLOBALS['SET']['baseuri']."?p=".$new_ko;
          }
         }
         else
@@ -1230,7 +1230,7 @@ HTML;
        {
         $finfo['type']='attachment';
         $finfo['title']=$finfo['name'];
-        $finfo['link']=GLOBAL_PROTOCOL."//".$GLOBALS['SET']['baseuri'].$GLOBALS['SET']['filedir'].$finfo['name'];
+        $finfo['link']=$GLOBALS['SET']['sec_protocol'].$GLOBALS['SET']['baseuri'].$GLOBALS['SET']['filedir'].$finfo['name'];
         if(rename($finfo['temp'],$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$finfo['name']))
         {
          try
@@ -1341,16 +1341,16 @@ HTML;
     {
      if ($GLOBALS['SET']['rewrite'])
      {
-      $href=GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}/{$content->type}/".urlencode($content->title).".htm";
+      $href=$GLOBALS['SET']['siteroot']."/{$content->type}/".urlencode($content->title).".htm";
       $hsep="?";
      }
      elseif ($content->type == 'page')
      {
-      $href=GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}/?p={$content->num}";
+      $href=$GLOBALS['SET']['siteroot']."/?p={$content->num}";
      }
      else
      {
-      $href=GLOBAL_PROTOCOL."//{$GLOBALS['SET']['baseuri']}/?content={$content->type}&p={$content->num}";
+      $href=$GLOBALS['SET']['sitroot']."/?content={$content->type}&p={$content->num}";
      }
      if (@$_GET['origin'] == "new")
      {
@@ -1378,7 +1378,7 @@ HTML;
 
    if (@$_GET['origin'] == "new")
    {
-    $blank="<div id=\"0\" class=\"page selectable box\"><a id=\"location\" href=\"//{$GLOBALS['SET']['baseuri']}{$GLOBALS['SET']['filedir']}/forms/new.htm\" style=\"display:none\">[insert]</a><strong>Blank Page or Post</strong></div>";
+    $blank="<div id=\"0\" class=\"page selectable box\"><a id=\"location\" href=\"{$GLOBALS['SET']['siteroot']}{$GLOBALS['SET']['filedir']}/forms/new.htm\" style=\"display:none\">[insert]</a><strong>Blank Page or Post</strong></div>";
    }
 
    if (ini_get('allow_url_fopen'))
@@ -1401,11 +1401,11 @@ HTML;
 <div id="External">
 {$blank}
 <h4 class="module">Upload</h4>
-<form enctype="multipart/form-data" action="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=upload&ajax=1" method="post" target="droptarget">
+<form enctype="multipart/form-data" action="{$GLOBAL['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=upload&ajax=1" method="post" target="droptarget">
 <div id="ExtURI"><label for="uri">A file from the web: </label><input{$exturi_perams} type=url id="uri" name="uri" placeholder="http://" onkeypress="iFetch(event,this)"></div>
 <div id="ExtFile"><label for="file">A file on your computer: </label><input type=file id="file" name="file" onchange="iUpload(this)"></div>
 </form>
-<div id="FileInfo"><iframe id="FileTarget" name="droptarget" style="display:none" src="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=upload&ajax=1"></iframe></div>
+<div id="FileInfo"><iframe id="FileTarget" name="droptarget" style="display:none" src="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&action=upload&ajax=1"></iframe></div>
 </div>
 <div id="Pages">
 <h4 class="module">Select a Page</h4>
@@ -1445,7 +1445,7 @@ HTML;
     {
      $prev=0;
     }
-    $page_div="<div id=\"UserPages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list&offset={$prev}\">Previous</a></td><td align=center>";
+    $page_div="<div id=\"UserPages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=user&action=list&offset={$prev}\">Previous</a></td><td align=center>";
     $pages=paginate($row_c,@$_GET['offset']);
     foreach ($pages as $page)
     {
@@ -1455,7 +1455,7 @@ HTML;
      }
      else
      {
-      $page_div.="<a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list&offset={$page['offset']}\">{$page['number']}</a> ";
+      $page_div.="<a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=user&action=list&offset={$page['offset']}\">{$page['number']}</a> ";
      }
     }
     $next=@$_GET['offset']+$GLOBALS['USR']->rowspertable;
@@ -1463,7 +1463,7 @@ HTML;
     {
      $next=0;
     }
-    $page_div.="</td><td align=right><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
+    $page_div.="</td><td align=right><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=user&action=list&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
    }
    else
    {
@@ -1474,7 +1474,7 @@ HTML;
    {
     if ($user['num'] > 2)
     {
-     $row.="<tr id=\"".$user['num']."\" style=\"cursor:pointer\" onclick=\"openAJAXModal('http://{$GLOBALS['SET']['baseuri']}/mk-dash.php?ajax=1&section=user&action=edit&id={$user['num']}','Edit User #{$user['num']}')\">\n";
+     $row.="<tr id=\"".$user['num']."\" style=\"cursor:pointer\" onclick=\"openAJAXModal('{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?ajax=1&section=user&action=edit&id={$user['num']}','Edit User #{$user['num']}')\">\n";
      foreach ($user as $col=>$value)
      {
       if ($col != num)
@@ -1502,7 +1502,7 @@ HTML;
 
 if (@$_GET['action'] == 'login' || @$_GET['action'] == 'logout' || @$_GET['action'] == 'register')
 {
- header("Location: //".$GLOBALS['SET']['baseuri']."?action=".$_GET['action']);
+ header("Location: ".$GLOBAL['SET']['sec_protocol'].$GLOBALS['SET']['baseuri']."?action=".$_GET['action']);
 }
 else
 {

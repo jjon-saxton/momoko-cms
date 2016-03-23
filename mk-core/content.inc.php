@@ -83,11 +83,11 @@ class MomokoNavigation
   {
    if ($GLOBALS['SET']['rewrite'] == true)
    {
-    $href="//".$GLOALS['SET']['baseuri']."/".$item['href'];
+    $href=$GLOALS['SET']['siteroot']."/".$item['href'];
    }
    else
    {
-    $href="//".$GLOBALS['SET']['baseuri']."/?p=".$item['id'];
+    $href=$GLOBALS['SET']['siteroot']."/?p=".$item['id'];
    }
    if (is_array($item['children']))
    {
@@ -1090,7 +1090,7 @@ HTML;
     $vars=array();
    }
    
-   $vars['siteroot']=$GLOBALS['SET']['baseuri'];
+   $vars['siteroot']=$GLOBALS['SET']['siteroot'];
    
    return $vars;
  }
@@ -1252,18 +1252,18 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   
   if (!$GLOBALS['USR']->inGroup('users'))
   {
-   $umopts="<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-login.php\">Login</a></li>";
+   $umopts="<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-login.php\">Login</a></li>";
    $rockout=null;
   }
   else
   {
-   $umopts="<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=settings\">Settings</a></li>";
-   $rockout="\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/?action=logout\">Logout</a></li>\n";
+   $umopts="<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=settings\">Settings</a></li>";
+   $rockout="\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/?action=logout\">Logout</a></li>\n";
   }
   $contentlists=null;
   if ($GLOBALS['USR']->inGroup('admin'))
   {
-   $umopts.="\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=new\">Register</a></li>";
+   $umopts.="\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=new\">Register</a></li>";
   }
   if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
   {
@@ -1297,10 +1297,10 @@ HTML;
    $contentlists.=<<<HTML
 <h4>Content</h4>
 <ul id="ContentPlugs" class="plug list">
-<li><a href="//{$GLOBALS['SET']['baseuri']}/?action=new">New</a></li>{$curconlinks}
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=pages">All Pages</a></li>
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=posts">All Posts</a></li>
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
+<li><a href="{$GLOBALS['SET']['siteroot']}/?action=new">New</a></li>{$curconlinks}
+<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list=pages">All Pages</a></li>
+<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list=posts">All Posts</a></li>
+<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
 </ul>
 HTML;
   }
@@ -1313,19 +1313,19 @@ HTML;
    {
     while ($sb_row=$sb_q->fetch())
     {
-        $switchboards.="<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=switchboard&plug={$sb_row['dir']}\">{$sb_row['shortname']}</a></li>\n";
+        $switchboards.="<li><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=switchboard&plug={$sb_row['dir']}\">{$sb_row['shortname']}</a></li>\n";
     }
    }
    $contentlists.=<<<HTML
 <h4>Site</h4>
 <ul id="SitePlugs" class="plug list">
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs">Logs</a></li>
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=settings">Settings</a></li>
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance">Appearance</a></li>
+<li><a href="{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs">Logs</a></li>
+<li><a href="{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=settings">Settings</a></li>
+<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance">Appearance</a></li>
 </ul>
 <h4>Addins</h4>
 <ul id="SwitchPlugs" class="plug list">
-{$switchboards}<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=addins">All Addins</a></li>
+{$switchboards}<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&list=addins">All Addins</a></li>
 </ul>
 HTML;
   }
@@ -1352,8 +1352,8 @@ HTML;
 {$editor}<script src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/dash.js" type="text/javascript"></script>
 <link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/mk-core/styles/momoko.css" type="text/css">
 
-<link rel="alternate" type="application/rss+xml" title="Post Feed: RSS" href="//{$GLOBALS['SET']['baseuri']}/?content=rss">
-<link rel="alternate" type="application/atom+xml" title="Post Feed: ATOM" href="//{$GLOBALS['SET']['baseuri']}/?content=atom">
+<link rel="alternate" type="application/rss+xml" title="Post Feed: RSS" href="{$GLOBALS['SET']['siteroot']}/?content=rss">
+<link rel="alternate" type="application/atom+xml" title="Post Feed: ATOM" href="{$GLOBALS['SET']['siteroot']}/?content=atom">
 {$addin_tags}
 {$split['head']}
 HTML;
@@ -1420,7 +1420,7 @@ HTML;
  else
  {
   $html=$this->info['full'];
-  $vars['siteroot']=$GLOBALS['SET']['baseuri'];
+  $vars['siteroot']=$GLOBALS['SET']['siteroot'];
   $vars['sitename']=$GLOBALS['SET']['name'];
   $vars['pagetitle']="Untitled";
   $vars['templatedir']=$vars['siteroot'].dirname($this->template);
@@ -1529,7 +1529,7 @@ class MomokoAddinForm implements MomokoObject
 	$vars['addin_list'].="<td class=\"ui-widget-content\"><a class=\"ui-icon ui-icon-trash\" style=\"display:inline-block\" onclick=\"showRemove('".$row['num']."',event)\" title=\"Delete\" href=\"javascript:void()\"></a></td>\n</tr>\n";
       }
     }
-    $vars['site_location']=$GLOBALS['SET']['baseuri'];
+    $vars['site_location']=$GLOBALS['SET']['siteroot'];
       
     $vh=new MomokoVariableHandler($vars);
     $info['inner_body']=$vh->replace($info['inner_body']);
