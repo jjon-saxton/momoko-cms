@@ -83,7 +83,7 @@ class MomokoNavigation
   {
    if ($GLOBALS['SET']['rewrite'] == true)
    {
-    $href=$GLOALS['SET']['siteroot']."/".$item['href'];
+    $href=$GLOBALS['SET']['siteroot']."/".$item['href'];
    }
    else
    {
