@@ -400,7 +400,7 @@ function scan_core_content($settings=null)
                     $old=$query->fetch(PDO::FETCH_ASSOC);
                     $page['num']=$old['num'];
                     $page['date_modified']=date("Y-m-d H:i:s");
-                    $rows[]=$content->updateDate($page);
+                    $rows[]=$content->updateData($page);
                 }
             }
         }
