@@ -385,9 +385,9 @@ function scan_core_content($settings=null)
                 $page=parse_page($html);
                 $page['type']=$type['name'];
                 $page['text']=$page['inner_body']; unset($page['inner_body']);
-                $query=$content->getData("title='{$page['title']}'");
-                $old=$query->fetch(PDO::FETCH_ASSOC);
-                if ($page['title'] == $old['title'])
+                $query=$content->getData("title:'{$page['title']}'");
+                $old=$query->fetch(PDO::FETCH_ASSOC); //try to find item in database
+                if ($page['title'] == $old['title']) //checks if the item was found
                 {
                     $page['num']=$old['num'];
                     $page['date_modified']=date("Y-m-d H:i:s");
