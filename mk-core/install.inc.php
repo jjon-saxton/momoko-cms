@@ -386,7 +386,13 @@ function scan_core_content($settings=null)
                 $page['type']=$type['name'];
                 $page['text']=$page['inner_body']; unset($page['inner_body']);
                 $query=$content->getData("title='{$page['title']}'");
-                if ($query->rowCount() < 1)
+                if ($old=$query->fetch(PDO::FETCH_ASSOC) && $page['time'] == $old['title'])
+                {
+                    $page['num']=$old['num'];
+                    $page['date_modified']=date("Y-m-d H:i:s");
+                    $rows[]=$content->updateData($page);
+                }
+                else
                 {
                     $page['date_created']=date("Y-m-d H:i:s");
                     $page['status']="cloaked";
@@ -394,13 +400,6 @@ function scan_core_content($settings=null)
                     $page['author']=1;
                     $page['mime_type']="text/html";
                     $rows[]=$content->putData($page);
-                }
-                else
-                {
-                    $old=$query->fetch(PDO::FETCH_ASSOC);
-                    $page['num']=$old['num'];
-                    $page['date_modified']=date("Y-m-d H:i:s");
-                    $rows[]=$content->updateData($page);
                 }
             }
         }
