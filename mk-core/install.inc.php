@@ -387,7 +387,7 @@ function scan_core_content($settings=null)
                 $page['text']=$page['inner_body']; unset($page['inner_body']);
                 $query=$content->getData("title='{$page['title']}'");
                 $old=$query->fetch(PDO::FETCH_ASSOC);
-                if ($page['num'] && $page['title'] == $old['title'])
+                if (!empty($page['num']))
                 {
                     $page['num']=$old['num'];
                     $page['date_modified']=date("Y-m-d H:i:s");
