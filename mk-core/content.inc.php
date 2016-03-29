@@ -526,13 +526,13 @@ class MomokoAttachment implements MomokoObject
  
  public function fetchByID($num)
  {
-  $query=$this->table->getData("num:'{$num}'",null,null,1);
+  $query=$this->table->getData("num:'= {$num}'",null,null,1);
   $this->info=$query->fetch(PDO::FETCH_ASSOC);
  }
  
  public function fetchByLink($uri)
  {
-  $query=$this->table->getData("link:'{$uri}'",null,null,1);
+  $query=$this->table->getData("link:`{$uri}`",null,null,1);
   $this->info=$query->fetch(PDO::FETCH_ASSOC);
  }
  
