@@ -710,6 +710,21 @@ HTML;
      break;
      case 'user':
      default:
+     if ($user_data['pass_change'])
+     {
+       $q=$this->table->getData("num:'= {$user_data['num']}'");
+       $cur_info=$q->fetch(PDO::FETCH_ASSOC);
+       if (($user_data['newpassword1'] == $user_data['newpassword2']) && (crypt($user_data['oldpassword'],$cur_info['password']) == $cur_info['password']))
+       {
+         $user_data['password']=crypt($user_data['newpassword2'],$GLOBALS['SET']['salt']);
+         $pass_changed['worked']=true;
+       }
+       else
+       {
+         $pass_changed['worked']=false;
+         $pass_changed['message']="You either supplied an incorrect current password or your the new passwords you supplied did not match, please go back and try again.";
+       }
+     }
      try
      {
       $update=$this->table->updateData($user_data);
@@ -727,8 +742,18 @@ HTML;
 <div id="SettingsChanged" class="message box">
 <h3 class="message title">{$section} Settings Changed</h3>
 <p>{$section} settings have been changed succesfully! Please feel free to <a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section={$_GET['section']}&action=settings">Return</a> to the previous page, or select another page or action.</p>
-</div>
 HTML;
+
+     if ($user_data['pass_change'] && $pass_changed['worked'])
+     {
+      $page['body'].="<p>Additionally we have updated your password as requested!</p>\n";
+     }
+     elseif ($user_data['pass_change'] && !$pass_changed['worked'])
+     {
+      $page['body'].="<p>Unfortunately we were not able to change your password as you requested.</p>\n<p>{$pass_changed['message']}</p>\n";
+     }
+
+     $page['body'].="</div>";
     }
     else
     {
