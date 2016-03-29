@@ -99,7 +99,18 @@ class DataBaseTable extends DataBaseSchema
 
   $sql="SELECT {$collist} FROM ".$this->table;
 
-  if (preg_match_all("/(?P<key>(?:[a-z][a-z0-9_]*))(:)'(?P<values>.*?)'/is",$q,$filters) > 0)
+  if (preg_match_all("/(?P<key>(?:[a-z][a-z0-9_]*))(:)`(?P<values>.*?)`/is",$q,$filters) > 0) //new query string dilimeters for more flexability with values
+  {
+   $where=array();
+   $i=0;
+   foreach ($filters['key'] as $key)
+   {
+    $where[$key]=explode("|",$filters['values'][$i]);
+    ++$i;
+   }
+   $q=trim(preg_replace("/(?P<key>(?:[a-z][a-z0-9_]*))(:)`(?P<values>.*?)`/is","",$q)." ");
+  } 
+  elseif (preg_match_all("/(?P<key>(?:[a-z][a-z0-9_]*))(:)'(?P<values>.*?)'/is",$q,$filters) > 0) //Old style for compatability, will be deprecated.
   {
    $where=array();
    $i=0;
@@ -148,7 +159,7 @@ class DataBaseTable extends DataBaseSchema
       }
       else
       {
-       $where_group.="`".$col."` LIKE '".$item."'";
+       $where_group.="`".$col."` LIKE \"{$item}\"";
       }
      }
      $wheres[]="(".$where_group.")";
