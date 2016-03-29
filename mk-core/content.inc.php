@@ -723,15 +723,15 @@ class MomokoPage implements MomokoObject
   
   if ($title == NULL)
   {
-   $where="status:'public'";
+   $where="status:`public`";
   }
   else
   {
-   $where="title:'{$title}'";
+   $where="title:`{$title}`";
   }
   if ($parent != NULL)
   {
-   $pq=$table->getData("title:'{$parent}'",array('num'),null,1);
+   $pq=$table->getData("title:`{$parent}`",array('num'),null,1);
    $pinfo=$pg->fetch(PDO::FETCH_ASSOC);
    $where.=",parent:'{$pinfo['num']}'";
   }
@@ -864,7 +864,7 @@ HTML;
     $formats='["p","Normal"], ["h2","Header 2"], ["h3","Header 3"], ["h4","Header 4"], ["pre","Preformatted"]';
     if ($_GET['action'] == 'new')
     {
-     $type_links="<div id=\"type_select\"><input type=\"radio\" id=\"page\" checked=checked name=\"type\" value=\"page\"><label for=\"page\">Page</label> <input type=\"radio\" id=\"post\" name=\"type\" value=\"post\"><label for=\"post\">Post</label></div>";
+     $type_links="<div id=\"type_select\"><input type=\"radio\" id=\"t1\" checked=checked name=\"type\" value=\"page\"><label for=\"t1\">Page</label> <input type=\"radio\" id=\"t2\" name=\"type\" value=\"post\"><label for=\"t2\">Post</label></div>";
     }
    }
    else
@@ -926,13 +926,9 @@ $(function(){
  });
  $("div#PageEditor").tabs();
  
+ $("#type_select").css("text-align","center");
  $("#type_select input:radio").change(function(){
-  window.location="?action=new&content="+$(this).val();
- });
- $("#type_select").css("text-align","center").buttonset();
- $("#type_select input:radio").change(function(){
-  console.debug($(this).val());
-  //window.location="?action=new&content="+$(this).val();
+  window.location="?action=new&content="+$("#type_select input:radio:checked").val();
  });
  
  $("select#status").change(function(){

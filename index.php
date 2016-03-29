@@ -59,7 +59,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    case 'new':
    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
    {
-    $child=new MomokoPage("New Page");
+    $child=new MomokoPage("New...");
     $child->put($_POST);
    }
    else
