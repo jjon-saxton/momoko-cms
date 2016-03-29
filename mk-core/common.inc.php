@@ -474,10 +474,32 @@ function momoko_html_errors($num,$str,$file,$line,$context)
   if ($num == E_USER_ERROR)
   {
     $info['error_type']=$num;
-    $child=new MomokoError('Server_Error',$str,$info);
+    if (class_exists('MomokoError'))
+    {
+     $child=new MomokoError('Server_Error',$str,$info);
 
-    $tpl=new MomokoTemplate(pathinfo(@$path,PATHINFO_DIRNAME));
-    print $tpl->toHTML($child);
+     $tpl=new MomokoTemplate(pathinfo(@$path,PATHINFO_DIRNAME));
+     print $tpl->toHTML($child);
+    }
+    else
+    {
+     http_response_code(500);
+     print <<<HTML
+<!doctype html>
+<html>
+<head>
+<title>500 Internal Server Error</title>
+</head>
+<body>
+<div class="message error box">
+<h2>Internal Server Error</h2>
+<p>The server encountered the following error. Additionally the class MomokoError was not found so this page could not be properly displayed.</p>
+<p class="error message">{$str}</p>
+</div>
+</body>
+</html>
+HTML;
+    }
     die();
   }
 }
