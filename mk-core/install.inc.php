@@ -207,6 +207,9 @@ HTML;
   $rows['settings'][]=array('key'=>'filedir','value'=>$site['filedir']);
   $rows['settings'][]=array('key'=>'tempdir','value'=>$site['tempdir']);
   $rows['settings'][]=array('key'=>'use_ssl','value'=>$site['use_ssl']);
+  $rows['settings'][]=array('key'=>'email_mta','value'=>'phpmail');
+  $rows['settings'][]=array('key'=>'email_server','value'=>"host=localhost");
+  $rows['settings'][]=array('key'=>'email_from','value'=>"name={$admin['name']}&address={$admin['email']}");
   $rows['settings'][]=array('key'=>'rewrite','value'=>0);
   
   $okay=0;

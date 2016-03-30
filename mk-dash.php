@@ -569,6 +569,9 @@ HTML;
        case 'rewrite':
        $title="human readable URLs";
        break;
+       case 'email_mta':
+       $title="email transport authority";
+       break;
       }
       $title=ucwords($title);
       $page['body'].="<li><label for=\"{$setting['key']}\">{$title}: </label>";
@@ -582,9 +585,40 @@ HTML;
        break;
        //TODO add special cases for e-mail settings
        case 'email_mta':
+       $mtas=array(array('name'=>"PHP mail()",'value'=>"phpmail"),array('name'=>'*Nix sendmail()','value'=>"sendmail",'tip'=>"Only works on Unix-like systems"),array('name'=>"SMTP",'value'=>"smtp",'tip'=>"For either local SMTP or remote SMTP (including gMail) servers.")); //TODO find a way of building this array by actually detecting supported mtas
+       $page['body'].="<select id=\"email_mta\" name=\"email_mta\">\n";
+       foreach ($mtas as $auth)
+       {
+         if ($auth['value'] == $setting['value'])
+         {
+           $cur=" selected=selected";
+         }
+         else
+         {
+           $cur=null;
+         }
+         $page['body'].="<option{$cur} value=\"{$auth['value']}\">{$auth['name']}</option>\n";
+       }
+       $page['body'].="</select>";
+       break;
        case 'email_server':
        case 'email_from':
-       $page['body'].="<span id=\"{$settings['key']}\"><em class=\"message\">Cannot be changed here, see documentation</em></span>";
+       parse_str($setting['value'],$email_raw);
+       $page['body'].="<ul class=\"nobullet\">\n";
+       foreach ($email_raw as $key=>$val)
+       {
+         $name=ucwords($key);
+         switch ($key)
+         {
+           case 'password':
+           $type="password";
+           break;
+           default:
+           $type="text";
+         }
+         $page['body'].="<li><label for=\"{$setting['key']}_{$key}\">{$name}:</label> <input disabled=disabled id=\"{$setting['key']}_{$key}\" name=\"{$key}\" type=\"{$type}\" value=\"{$val}\"></li>\n";
+       }
+       $page['body'].="</ul>\n<input type=\"hidden\" name=\"{$setting['key']}\" value=\"{$setting['value']}\">";
        break;
        case 'use_ssl':
        $page['body'].="<select id=\"${setting['key']}\" name=\"{$setting['key']}\">\n";
