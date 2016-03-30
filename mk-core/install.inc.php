@@ -269,7 +269,7 @@ function db_upgrade($level,$version,array $settings,$backup=null)
   $db->addTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT) or die(trigger_error("Unable to add new settings table please try again!",E_USER_ERROR));
  }
  
- if ($version < 2.0) //settings to add for versions less than 2.0, in the future this section will have other lower version as well
+ if ($version <= 2.0) //settings to add for versions less than 2.1, in the future this section will have other versions as well
  {
   $table['settings']=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
   $settings['email_mta']='phpmail';
