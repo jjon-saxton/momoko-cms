@@ -586,7 +586,7 @@ HTML;
        //TODO add special cases for e-mail settings
        case 'email_mta':
        $mtas=array(array('name'=>"PHP mail()",'value'=>"phpmail"),array('name'=>'*Nix sendmail()','value'=>"sendmail",'tip'=>"Only works on Unix-like systems"),array('name'=>"SMTP",'value'=>"smtp",'tip'=>"For either local SMTP or remote SMTP (including gMail) servers.")); //TODO find a way of building this array by actually detecting supported mtas
-       $page['body'].="<select id=\"email_mta\" name=\"email_mta\">\n";
+       $page['body'].="<select id=\"email_mta\" onchange=\"changeServerInputs()\" name=\"email_mta\">\n";
        foreach ($mtas as $auth)
        {
          if ($auth['value'] == $setting['value'])
@@ -604,7 +604,7 @@ HTML;
        case 'email_server':
        case 'email_from':
        parse_str($setting['value'],$email_raw);
-       $page['body'].="<ul class=\"nobullet\">\n";
+       $page['body'].="<ul id=\"{$setting['key']}\" class=\"nobullet\">\n";
        foreach ($email_raw as $key=>$val)
        {
          $name=ucwords($key);
@@ -616,7 +616,7 @@ HTML;
            default:
            $type="text";
          }
-         $page['body'].="<li><label for=\"{$setting['key']}_{$key}\">{$name}:</label> <input disabled=disabled id=\"{$setting['key']}_{$key}\" name=\"{$key}\" type=\"{$type}\" value=\"{$val}\"></li>\n";
+         $page['body'].="<li><label for=\"{$setting['key']}_{$key}\">{$name}:</label> <input onkeyup=\"serializeInputs('{$setting['key']}')\" id=\"{$setting['key']}_{$key}\" name=\"{$key}\" type=\"{$type}\" value=\"{$val}\"></li>\n";
        }
        $page['body'].="</ul>\n<input type=\"hidden\" name=\"{$setting['key']}\" value=\"{$setting['value']}\">";
        break;

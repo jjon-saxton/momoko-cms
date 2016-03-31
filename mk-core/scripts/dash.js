@@ -112,6 +112,29 @@ function toggleSidebar()
  $("div.sidebar").toggle('slide');
 }
 
+function serializeInputs(key)
+{
+ var serial=$("#"+key+" input, #"+key+" select, #"+key+" textarea").serialize();
+
+ $("input[name="+key+"]").val(serial);
+}
+
+function changeServerInputs() 
+{
+ switch ($("select#email_mta").val())
+ {
+  case "smtp":
+  $("ul#email_server").html("<li><label for=\"email_server_host\">Host:</label> <input onkeyup=\"serializeInputs('email_server')\" id=\"email_server_host\" name=\"host\" type=\"text\" value=\"localhost\"></li>\n<li><label for=\"email_server_port\">Port:</label> <input onkeyup=\"serializeInputs('email_server')\" id=\"email_server_port\" name=\"host\" type=\"text\" placeholder=\"49\"></li>\n<li><label for=\"email_server_auth\">Use Authentication</label> <input onchange=\"serializeInputs('email_server')\" id=\"email_server_auth\" name=\"auth\" type=\"checkbox\" value=\"1\"></li>\n<li><label for=\"email_server_security\">Security:</label> <select onchange=\"serializeInputs('email_server')\" id=\"email_server_security\" name=\"security\">\n<option value=\"0\">None</option>\n<option value=\"tls\">TLS</option>\n<option value=\"ssl\">SSL</option>\n</select></li>\n<li><label for=\"email_server_user\">User:</label> <input onkeyup=\"serializeInputs('email_server')\" id=\"email_server_user\" name=\"user\" type=\"text\"></li>\n<li><label for=\"email_server_password\">Password:</label> <input onkeyup=\"serializeInputs('email_server')\" id=\"email_server_password\" name=\"password\" type=\"password\"></li>");
+  break;
+  case "phpmail":
+  case "sendmail":
+  default:
+  $("ul#email_server").html("<li><label for=\"email_server_host\">Host:</label> <input onkeyup=\"serializeInputs('email_server')\" id=\"email_server_host\" name=\"host\" type=\"text\" value=\"localhost\"></li>");
+ }
+
+ serializeInputs('email_server');
+}
+
 function toggleInputState(p,q)
 {
     if (p.is(':checked'))
