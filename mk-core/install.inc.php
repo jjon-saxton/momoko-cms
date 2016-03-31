@@ -209,7 +209,7 @@ HTML;
   $rows['settings'][]=array('key'=>'use_ssl','value'=>$site['use_ssl']);
   $rows['settings'][]=array('key'=>'email_mta','value'=>'phpmail');
   $rows['settings'][]=array('key'=>'email_server','value'=>"host=localhost");
-  $rows['settings'][]=array('key'=>'email_from','value'=>"name={$admin['name']}&address={$admin['email']}");
+  $rows['settings'][]=array('key'=>'email_from','value'=>"contact={$admin['name']}&address={$admin['email']}");
   $rows['settings'][]=array('key'=>'rewrite','value'=>0);
   
   $okay=0;
@@ -277,7 +277,7 @@ function db_upgrade($level,$version,array $settings,$backup=null)
   $table['settings']=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
   $settings['email_mta']='phpmail';
   $settings['email_server']='host=localhost';
-  $settings['email_from']='name='.$settings['from']['name']."&address=".$settings['from']['address'];
+  $settings['email_from']='contact='.$settings['from']['name']."&address=".$settings['from']['address'];
   unset($settings['from']);
   foreach ($settings as $key=>$value)
   {

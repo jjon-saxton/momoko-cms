@@ -550,7 +550,6 @@ HTML;
      case 'site':
      $page['body']=<<<HTML
 <form method=post>
-<h3>All Settings</h3>
 <ul id="SettingsForm" class="noindent nobullet">
 HTML;
      $query=$this->table->getData();

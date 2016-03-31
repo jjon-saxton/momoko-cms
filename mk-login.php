@@ -56,7 +56,7 @@ if (!empty($_GET['action']))
         }
         //Set message headers, the message will be set during the approperiate stages
         $mail->From=$email['from']['address'];
-        $mail->FromName=$email['from']['name'];
+        $mail->FromName=$email['from']['contact'];
         $mail->IsHTML(true);
         /** E-Mail Ready **/
 
