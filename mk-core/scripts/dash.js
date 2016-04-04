@@ -248,21 +248,23 @@ function doAdd(){
 	  longname: longname,
 	  description: description
 	}, function(data){
-	    if (data.status == 200){
-	     alert(data.longname+" Added!"); //TODO add or change effected row!
+	    if (data.code == 200){
+	     $("table#addins").append("<tr id=\"new"+data.num+"\">\n<td>"+data.shortname+"</td><td>"+data.longname+"</td><td>&nbsp;</td>\n</tr>");
 	    }else{
-	     alert("Error! "+data.message);
+         console.debug(data);
+	     $("table#addins").append("<tr class=\"error\" colspan=\"4\" id=\"newError\">\n<td>"+data.msg+"</td>>\n</tr>");
 	    }
 	},'json');	
 }
 
 function doRemove(id) {
 	$.post("?ajax=1&section=addin&action=delete&num="+id, { confirm:"Yes"}, function(data){
- 	  if (data.status == 200){
-	    $("tr#"+data.num).remove();
- 	  }else{
-	    alert("Error!" +data.message);
- 	  }
+ 	   if (data.code == 200){
+	    $("tr#"+id).remove();
+ 	   }else{
+        console.debug(data);
+	    $("tr#"+id).html("<td class=\"error\" colspan=\"4\">Error! "+data.msg+"</td>");
+ 	   }
 	},'json');
 }
 

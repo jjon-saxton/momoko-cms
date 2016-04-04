@@ -356,7 +356,7 @@ HTML;
      
      if ($status['code'] == 501)
      {
-      trigger_error($status['message'],E_USER_ERROR);
+      trigger_error($status['msg'],E_USER_WARNING);
      }
      
      $page['body']=json_encode($status);
@@ -500,7 +500,7 @@ HTML;
    {
     case 'addin':
     $page['title']="Remove Addin";
-    if ($user_data['confirm'] == "Yes")
+    if ($_REQUEST['confirm'] == "Yes")
     {
      $q=$this->table->getData("num:'= {$_GET['num']}'");
      $select=$q->fetch(PDO::FETCH_ASSOC);
@@ -514,18 +514,18 @@ HTML;
       else
       {
        $status['code']=501;
-       $status['message']="Removed addin from database, but its folder could not be removed, please delete it manually!";
+       $status['msg']="Removed addin from database, but its folder could not be removed, please delete it manually!";
       }
      }
      else
      {
       $status['code']=501;
-      $status['message']="Could not delete addin from database!";
+      $status['msg']="Could not delete addin from database!";
      }
      
      if ($status['code'] == 501)
      {
-      trigger_error($status['message'],E_USER_ERROR);
+      trigger_error($status['msg'],E_USER_WARNING);
      }
      
      $page['body']=json_encode($status);
