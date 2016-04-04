@@ -916,7 +916,7 @@ $(function(){
  $("ul.map ul").addClass("nobullet");
  
  $("#MapList .subnav").parent()
-		.prepend("<span class='droparrow ui-icon ui-icon-carat-1-se'></span>");
+		.prepend("<span class='droparrow ui-icon ui-icon-carat-1-e'></span>");
 	$("#MapList span.droparrow").click(function(event){
 		event.stopPropagation();
 		$(this).parent().find("ul.subnav").toggle("slow");
