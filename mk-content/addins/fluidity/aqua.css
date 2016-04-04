@@ -33,11 +33,11 @@ a:active, a:hover {color:#003eff}
 	color:#634600;
 }
 .nav.navbar-nav li.open ul{
-	background:#003eff;
+	background:#e9e9e9;
 }
 .nav.navbar-nav li.open ul a{
-	background:#003eff;
-	color:#fff;
+	background:transparent;
+	color:#333;
 }
 .container-fluid .navbar-header .navbar-brand {
 	background: #007eff;
