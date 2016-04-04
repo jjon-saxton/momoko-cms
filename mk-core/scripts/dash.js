@@ -249,10 +249,10 @@ function doAdd(){
 	  description: description
 	}, function(data){
 	    if (data.code == 200){
-	     $("table#addins").append("<tr id=\"new"+data.num+"\">\n<td>"+data.shortname+"</td><td>"+data.longname+"</td><td>&nbsp;</td>\n</tr>");
+	     $("table#addins").append("<tr id=\""+data.num+"\">\n<td>"+data.info.shortname+"</td><td>"+data.info.longname+"</td><td>"+data.info.type+"</td><td class=\"ui-widget-content\"><a class=\"ui-icon ui-icon-trash\" style=\"display:inline-block\" onclick=\"showRemove('"+data.num+"',event)\" title=\"Delete\" href=\"javascript:void()\"></a></td>\n</tr>");
 	    }else{
          console.debug(data);
-	     $("table#addins").append("<tr class=\"error\" colspan=\"4\" id=\"newError\">\n<td>"+data.msg+"</td>>\n</tr>");
+	     $("table#addins").append("<tr class=\"error\" id=\"newError\">\n<td colspan=\"4\">"+data.msg+"</td>>\n</tr>");
 	    }
 	},'json');	
 }

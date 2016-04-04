@@ -333,25 +333,27 @@ HTML;
        if ($zip->extractTo($destination))
        {
         unlink($GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].$user_data['archive']);
-        $status=$add;
+        $status['num']=$add;
+        $query=$this->table->getData("num:`= {$add}`",array('shortname','longname','type'));
+        $status['info']=$query->fetch(PDO::FETCH_ASSOC);
         $status['code']=200;
        }
        else
        {
         $status['code']=501;
-        $status['message']="Could not extract archive, please try to extract it manually to {$destination}!";
+        $status['msg']="Could not extract archive, please try to extract it manually to {$destination}!";
        }
       }
       else
       {
        $status['code']=501;
-       $status['message']="There was a problem adding the addin to {$destination}! Please ensure it was added to the database and that MomoKO has permission to create folders  in the addin directory.";
+       $status['msg']="There was a problem adding the addin to {$destination}! Please ensure it was added to the database and that MomoKO has permission to create folders  in the addin directory.";
       }
      }
      else
      {
       $status['code']=501;
-      $status['message']="Could not open {$user_data['archive']}! please ensure it has not been deleted and that MomoKO has permissions to read it.";
+      $status['msg']="Could not open {$user_data['archive']}! please ensure it has not been deleted and that MomoKO has permissions to read it.";
      }
      
      if ($status['code'] == 501)
