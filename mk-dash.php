@@ -408,8 +408,8 @@ HTML;
 <li><select onchange="$('input#group_store').val(($(this).val()))"size="{$group_num}" multiple id="groups">
 {$group_opts}</select>
 <input type="hidden" id="group_store" name="groups" value="users"></li>
-<li><label for="sdf">Short Date Format: </label><input type=text id="sdf" name="shortdateform" value="{$default['shortdateformat']}"></li>
-<li><label for="ldf">Long Date Format: </label><input type=text id="ldf" name="longdateform" value="{$default['longdateformat']}"></li>
+<li><label for="sdf">Short Date Format: </label><input type=text id="sdf" name="shortdateformat" value="{$default['shortdateformat']}"></li>
+<li><label for="ldf">Long Date Format: </label><input type=text id="ldf" name="longdateformat" value="{$default['longdateformat']}"></li>
 <li><label for="rpt">Rows Per Table: </label><input type=number id="rpt" name="rowspertable" value="{$default['rowspertable']}"></li>
 </ul>
 <h3>Next</h3>
