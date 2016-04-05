@@ -733,9 +733,20 @@ class MomokoPage implements MomokoObject
   {
    $pq=$table->getData("title:`{$parent}`",array('num'),null,1);
    $pinfo=$pg->fetch(PDO::FETCH_ASSOC);
-   $where.=",parent:'{$pinfo['num']}'";
+   if ($pinfo['num'] > 0) //Ensures that there was actually a parent
+   {
+    $where.=" parent:`= {$pinfo['num']}`";
+   }
+   else
+   {
+    $where.=" parent:`= 0`";
+   }
   }
-  $query=$table->getData($where,null,null,1);
+  else
+  {
+   $where.=" parent:`= 0`";
+  }
+  $query=$table->getData($where,null,"order",1);
   $this->table=$table;
   $this->info=$query->fetch();
 

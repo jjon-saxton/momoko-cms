@@ -40,33 +40,6 @@ elseif (@$path && pathinfo(@$path,PATHINFO_EXTENSION) == 'txt')
 	}
 	exit();
 }
-elseif (@$path && pathinfo(@$path,PATHINFO_EXTENSION) == 'xml')
-{
- switch(pathinfo($path,PATHINFO_FILENAME))
-	{
-		case 'feed':
-		case 'rss':
-		$format='rss';
-		header("Content-type: application/rss+xml");
-		$mod=new MomokoNews(null,'type=recent');
-		echo ($mod->getModule('rss'));
-		break;
-		case  'atom':
-		$format='atom';
-		header("Content-type: application/atom-xml");
-		$nav=new MomokoNews(null,'type=recent');
-		echo ($nav->getModule($format));
-	 break;
-		default:
-		echo(file_get_contents($GLOBALS['CFG']->basedir.$path));
-	}
-	exit();
-}
-/*elseif (@$path)
-{
- $nav=new MomokoNavigation(null,'display=none');
- $path=$nav->getIndex($path);
-}*/
 
 if (!@$child)
 {
