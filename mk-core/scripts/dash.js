@@ -53,17 +53,13 @@ $(function(){
   $(this).addClass("ui-widget-content");
  
   });
- $(".row-select tr").hover(
-     function()
-     {
+ $(".row-select tr").on("mouseenter", function(){
       $(this).children("td").addClass("ui-state-hover");
-     },
-     function()
-     {
+     });
+ $(".row-select tr").on("mouseleave",function(){
       $(this).children("td").removeClass("ui-state-hover");
-     }
-    );
- $(".row-select tr").click(function(){
+    });
+ $(".row-select tr").on('click',function(){
    
    $(this).children("td").toggleClass("ui-state-highlight");
   });
@@ -249,7 +245,16 @@ function doAdd(){
 	  description: description
 	}, function(data){
 	    if (data.code == 200){
-	     $("table#addins").append("<tr id=\""+data.num+"\">\n<td>"+data.info.shortname+"</td><td>"+data.info.longname+"</td><td>"+data.info.type+"</td><td class=\"ui-widget-content\"><a class=\"ui-icon ui-icon-trash\" style=\"display:inline-block\" onclick=\"showRemove('"+data.num+"',event)\" title=\"Delete\" href=\"javascript:void()\"></a></td>\n</tr>");
+	     $("table#addins").append("<tr id=\""+data.num+"\">\n<td class=\"ui-widget-content\">"+data.info.shortname+"</td><td class=\"ui-widget-content\">"+data.info.longname+"</td><td class=\"ui-widget-content\">"+data.info.type+"</td><td class=\"ui-widget-content\"><a class=\"ui-icon ui-icon-trash\" style=\"display:inline-block\" onclick=\"showRemove('"+data.num+"',event)\" title=\"Delete\" href=\"javascript:void()\"></a></td>\n</tr>");
+            $(".row-select tr").on("mouseenter", function(){
+                $(this).children("td").addClass("ui-state-hover");
+            });
+            $(".row-select tr").on("mouseleave",function(){
+                $(this).children("td").removeClass("ui-state-hover");
+            });
+            $(".row-select tr").on('click',function(){
+                $(this).children("td").toggleClass("ui-state-highlight");
+            });
 	    }else{
          console.debug(data);
 	     $("table#addins").append("<tr class=\"error\" id=\"newError\">\n<td colspan=\"4\">"+data.msg+"</td>>\n</tr>");
