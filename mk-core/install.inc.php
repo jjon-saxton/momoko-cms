@@ -274,12 +274,11 @@ function db_upgrade($level,$version,array $settings,$backup=null)
  
  if ($version <= 2.0) //settings to add for versions less than 2.1, in the future this section will have other versions as well
  {
-  $table['settings']=new DataBaseTable(DAL_TABLE_PRE.'settings',DAL_DB_DEFAULT);
-  $settings['email_mta']='phpmail';
-  $settings['email_server']='host=localhost';
-  $settings['email_from']='contact='.$settings['from']['name']."&address=".$settings['from']['address'];
-  unset($settings['from']);
-  foreach ($settings as $key=>$value)
+  $table['settings']=new DataBaseTable('settings');
+  $ns['email_mta']='phpmail';
+  $ns['email_server']='host=localhost';
+  $ns['email_from']='contact='.$settings['from']['name']."&address=".$settings['from']['address'];
+  foreach ($ns as $key=>$value)
   {
    $newrow['key']=$key;
    $newrow['value']=$value;
