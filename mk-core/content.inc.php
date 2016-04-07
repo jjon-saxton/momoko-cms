@@ -723,7 +723,7 @@ class MomokoPage implements MomokoObject
   
   if ($title == NULL)
   {
-   $where="status:`public`";
+   $where="status:`public` type:`page`";
   }
   else
   {
