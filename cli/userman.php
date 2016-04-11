@@ -27,12 +27,18 @@ exit();
 
 function get_user($q)
 {
-  $table=new DataBaseTable(DAL_TABLE_PRE."users",DAL_DB_DEFAULT);
+ if (class_exists("DataBaseTable"))
+ {
+  $table=new DataBaseTable("users");
+  $count=$table->getData($q,array('num'));
+  $c=$count->fetchAll(PDO::FETCH_ASSOC);
+  $rows=count($c);
+  unset($c);
   $query=$table->getData($q,array('num','name','email','groups'));
-  if ($query->numrows > 1)
+  if ($rows > 1)
   {
     fwrite (STDOUT,"The following users match your query\n");
-    while ($user=$query->next())
+    while ($user=$query->fetch(PDO::FETCH_OBJ))
     {
       fwrite (STDOUT,"Num: ".$user->num.", Name: ".$user->name.", E-mail: ".$user->email."\n");
     }
@@ -48,9 +54,9 @@ function get_user($q)
     }
     get_user($nq);
   }
-  elseif ($query->numrows == 1)
+  elseif ($rows == 1)
   {
-    $user=$query->first();
+    $user=$query->fetch(PDO::FETCH_OBJ);
     fwrite (STDOUT,"Num: ".$user->num."\nName: ".$user->name."\nE-Mail: ".$user->email."\nGroups: ".$user->groups."\n");
     fwrite (STDOUT,"What would you like to do next? [E]dit, or [D]elete the user? E[x]it? ");
     $next=strtolower(trim(fgets(STDIN),"\n\r"));
@@ -86,7 +92,6 @@ function get_user($q)
       }
       else
       {
-	var_dump($data);
 	fwrite(STDOUT,"User not updated! An error occuried!\n");
 	exit(2);
       }
@@ -111,4 +116,9 @@ function get_user($q)
       return true;
     }
   }
+ }
+ else
+ {
+  fwrite(STDOUT,"User manager cannot detect a database connection, please ensure that MomoKO is fully installed by running install.php");
+ }
 }
