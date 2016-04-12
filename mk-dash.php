@@ -539,6 +539,28 @@ HTML;
     }
     break;
     case 'user':
+    if ($user_data['confirm'] == 'y')
+    {
+     if ($this->table->deleteData($user_data))
+     {
+      header("Location: {$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list");
+     }
+     else
+     {
+      $page['body']="<p>Could not remove user '{$user_data['name']}'</p>";
+     }
+    }
+    else
+    {
+     $page['body']=<<<HTML
+<h2>Remove User?</h2>
+<form id="UserForm" action="{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=delete&id={$_GET['id']}" method=post>
+<input type=hidden name="num" value="{$_GET['id']}">
+<p>Do you really want to remove this user? Keep in mind that this will prevent the user from accessing this site in the future and that this action cannot be undone without the user re-registering!</p>
+<p><input type="checkbox" id="cbc" name="confirm" value="y"><label for="cbc">I have read and understand the above warning.</label></p>
+</form>
+HTML;
+    }
     default:
     break;
    }
