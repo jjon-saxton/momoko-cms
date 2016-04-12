@@ -1494,7 +1494,7 @@ HTML;
      $page['body'].="<th id=\"{$column}\">".ucwords($column)."</th>";
     }
    }
-   $page['body'].="</tr>";
+   $page['body'].="<th>&nbsp;</th></tr>";
    $query=$this->table->getData(null,$columns);
    $row_c=$query->rowCount();
    if ($row_c > $GLOBALS['USR']->rowspertable)
@@ -1534,7 +1534,7 @@ HTML;
    {
     if ($user['num'] > 2)
     {
-     $row.="<tr id=\"".$user['num']."\" style=\"cursor:pointer\" onclick=\"openAJAXModal('{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?ajax=1&section=user&action=edit&id={$user['num']}','Edit User #{$user['num']}')\">\n";
+     $row.="<tr id=\"".$user['num']."\">\n";
      foreach ($user as $col=>$value)
      {
       if ($col != num)
@@ -1542,7 +1542,7 @@ HTML;
        $row.="<td>".$value."</td>";
       }
      }
-     $row.="</tr>\n";
+     $row.="<td><span id=\"edit\" class=\"ui-icon ui-icon-pencil\" style=\"display:inline-block;cursor:pointer\"onclick=\"openAJAXModal('{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?ajax=1&section=user&action=edit&id={$user['num']}','Edit User #{$user['num']}')\" title=\"Edit User #{$user['num']}\"></span><span id=\"remove\" class=\"ui-icon ui-icon-trash\" style=\"display:inline-block\"onclick=\"openAJAXModal('{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?ajax=1&section=user&action=delete&id={$user['num']}','Remove User #{$user['num']}')\" title=\"Remove User #{$user['num']}\"></span></td></tr>\n";
      $c++;
     }
    }
