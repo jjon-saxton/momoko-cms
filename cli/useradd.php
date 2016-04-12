@@ -1,6 +1,7 @@
 #! /usr/bin/php
 <?php
 require dirname(__FILE__).'/interface.inc.php';
+require "mk-core/user.inc.php";
 $usr=new MomokoUser('guest');
 $guest=$usr->get();
 unset($usr);
@@ -20,7 +21,7 @@ else
  $data['name']=trim(fgets(STDIN),"\n\r");
 }
 fwrite(STDOUT,"New Password: ");
-$data['password']=crypt(trim(fgets(STDIN),"\n\r"),$GLOBALS['CFG']->salt);
+$data['password']=crypt(trim(fgets(STDIN),"\n\r"),"CR");
 fwrite(STDOUT,"E-Mail: ");
 $data['email']=trim(fgets(STDIN),"\n\r");
 $data['groups']='users';

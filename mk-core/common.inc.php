@@ -15,7 +15,7 @@ if (empty($GLOBALS['SET']['baseuri']))
 }
 if ($GLOBALS['SET']['use_ssl'] == "strict") //ADD protocol
 {
- $GLOBALS['SET']['sec_protocl']="https://";
+ $GLOBALS['SET']['sec_protocol']="https://";
  $GLOBALS['SET']['siteroot']="https://".$GLOBALS['SET']['baseuri'];
 }
 else

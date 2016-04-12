@@ -252,15 +252,26 @@ class MomokoUser
     {
       $ud=$this->db->getData("name:'".$data['name']."'",array('num'),null,1);
       $check=$ud->fetch(PDO::FETCH_OBJ);
-      if($check->num !== FALSE)
+      if(isset($check->num) && $check->num !== FALSE)
       {
         return $this->updateByID($check->num,$data);
       }
       else
       {
+        if (isset($GLOBALS['SET']) && $GLOBALS['SET']['salt'])
+        {
+         $salt=$GLOBALS['SET']['salt'];
+        }
+        else
+        {
+         $salt="CR";
+        }
         $data['added']=date('Y-m-d H:i:s');
-	    $data['password']=crypt($data['password'],$GLOBALS['SET']['salt']);
-	    momoko_changes($GLOBALS['USR'],'added',$this);
+	    $data['password']=crypt($data['password'],$salt);
+        if (function_exists("momoko_changes"))
+        {
+	     momoko_changes($GLOBALS['USR'],'added',$this);
+        }
         return $this->db->putData($data);
       }
     }
