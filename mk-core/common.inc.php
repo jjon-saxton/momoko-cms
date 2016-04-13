@@ -1,40 +1,34 @@
 <?php
 #Load settings from database
 require_once dirname(__FILE__).'/database.inc.php';
-$settings=new DataBaseTable('settings');
-$settings=$settings->getData();
-$settings=$settings->fetchAll();
-foreach ($settings as $pairs)
+$config=new MomokoSiteConfig();
+if (empty($config->baseuri)) //Set some defaults
 {
- $GLOBALS['SET'][$pairs['key']]=$pairs['value'];
+ $config->baseuri=$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']);
 }
-
-if (empty($GLOBALS['SET']['baseuri']))
+if ($config->use_ssl == "strict") //ADD protocol
 {
- $GLOBALS['SET']['baseuri']=$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']);
-}
-if ($GLOBALS['SET']['use_ssl'] == "strict") //ADD protocol
-{
- $GLOBALS['SET']['sec_protocol']="https://";
- $GLOBALS['SET']['siteroot']="https://".$GLOBALS['SET']['baseuri'];
+ $config->sec_protocol="https://";
+ $config->siteroot="https://".$config->baseuri;
 }
 else
 {
- if ($GLOBALS['SET']['use_ssl'] == "yes")
+ if ($config->use_ssl == "yes")
  {
-  $GLOBALS['SET']['sec_protocol']="https://";
+  $config->sec_protocol="https://";
  }
  else
  {
-  $GLOBALS['SET']['sec_protocol']="http://";
+  $config->sec_protocol="http://";
  }
- $GLOBALS['SET']['siteroot']="//".$GLOBALS['SET']['baseuri'];
+ $config->siteroot="//".$config->baseuri;
 }
+$config->sys_groups=array('nobody','users','suspended','editor','cli','admin');
 
-$GLOBALS['SET']['sys_groups']=array('nobody','users','suspended','editor','cli','admin');
+$GLOBALS['SET']=$config->getSettings(); //TODO remove this, it is only here to serve legacy functions!
 
-#Set Constants
-if ($GLOBALS['SET']['rewrite'])
+//Set Constants
+if ($config->rewrite)
 {
  define("ADMINROOT","/mk_dash/");
  define("PAGEROOT","/page/");
@@ -53,31 +47,11 @@ else
  define("QUERYSTARTER","&");
 }
 define("TEMPLATEROOT","/mk-content/addins/");
-if ($GLOBALS['SET']['use_ssl'])
-{
- define("SECURE_PROTOCOL",'https');
- if ($GLOBALS['SET']['use_ssl'] == "strict")
- {
-  define ("GLOBAL_PROTOCOL",'https:');
- }
- else
- {
-  define ("GLOBAL_PROTOCOL","http:");
- }
-}
-else
-{
- define ("GLOBAL_PROTOCOL","http:");
- define ("SECURE_PROTOCOL",GLOBAL_PROTOCOL);
-}
 
-
-unset($setting,$pairs);
-
-session_name($GLOBALS['SET']['sessionname']);
+session_name($config->sessionname);
 session_start();
 
-require_once $GLOBALS['SET']['basedir'].'/mk-core/user.inc.php';
+require_once $config->basedir.'/mk-core/user.inc.php';
 
 if (@$_SESSION['data'])
 {
@@ -95,19 +69,110 @@ if (!empty($_COOKIE['ss']))
  $_SESSION['modern']=$_COOKIE['ss'];
 }
 
-define("MOMOKOVERSION",trim(file_get_contents($GLOBALS['SET']['basedir'].'/version.nfo.txt'),"\n"));
+define("MOMOKOVERSION",trim(file_get_contents($config->basedir.'/version.nfo.txt'),"\n"));
 if ($_SESSION['modern'] == 'full') //For browsers supporting cookies, javascript, and css
 {
- define ("TEMPLATEPATH",TEMPLATEROOT.$GLOBALS['SET']['template'].'/'.$GLOBALS['SET']['template'].'.tpl.htm');
+ define ("TEMPLATEPATH",TEMPLATEROOT.$config->template.'/'.$config->template.'.tpl.htm');
 }
 else //legacy browser fallback
 {
  define ("TEMPLATEPATH",TEMPLATEROOT."1997/1997.tpl.htm");
 }
  
-if ($GLOBALS['SET']['error_logging'] > 0)
+if ($config->error_logging > 0)
 {
  set_error_handler("momoko_html_errors"); //TODO need to set cli handler if we are running in cli mode
+}
+
+class MomokoSiteConfig
+{
+ private $temp=array();
+ private $table;
+
+ public function __construct()
+ {
+   $this->table=new DataBaseTable('settings');
+
+   return $this->table;
+ }
+
+ public function __get($key)
+ {
+  $query=$this->table->getData("key:`{$key}`",array('value'),null,1);
+  $set=$query->fetch(PDO::FETCH_ASSOC);
+
+  if (array_key_exists($key,$this->temp))
+  {
+   return $this->temp[$key];
+  }
+  elseif (!empty($set['value']))
+  {
+   return $set['value'];
+  }
+  else
+  {
+   return false;
+  }
+ }
+
+ public function __set($key,$value)
+ {
+  return $this->temp[$key]=$value;
+ }
+
+ public function getSettings($as='array')
+ {
+  $query=$this->table->getData();
+  $settings=array();
+  while ($set=$query->fetch(PDO::FETCH_ASSOC))
+  {
+   $settings[$set['key']]=$set['value'];
+  }
+  $settings=array_merge($settings,$this->temp);
+
+  switch ($as)
+  {
+   case 'ini':
+   $ini=null;
+   foreach ($settings as $key=>$value)
+   {
+    $ini.=$key." = ".$value."\n";
+   }
+   return $ini;
+   break;
+   case 'string':
+   return http_build_query($settings);
+   break;
+   case 'json':
+   return json_encode($settings);
+   break;
+   case 'array':
+   default:
+   return $settings;
+  }
+ }
+
+ public function saveTemp()
+ {
+  $status=array();
+  foreach ($this->temp as $key=>$value)
+  {
+   $data[$key]=$value;
+   $query=$this->table->getData("key:`{$key}`",array('value'),null,1);
+   $set=$query->fetch(PDO::FETCH_ASSOC);
+   if (!empty($set['value']))
+   {
+    $status[$key]=$this->table->updateData($data);
+   }
+   else
+   {
+    $status[$key]=$this->table->putData($data);
+   }
+  }
+
+  $this->temp=array(); //empty temp array
+  return $status;
+ }
 }
 
 class MomokoModule

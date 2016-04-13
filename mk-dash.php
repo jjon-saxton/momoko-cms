@@ -547,7 +547,7 @@ HTML;
      }
      else
      {
-      $page['body']="<p>Could not remove user '{$user_data['name']}'</p>";
+      $page['body']="<h2>Remove User</h2>\n<p class=\"error\">Could not remove user '{$user_data['name']}'</p>";
      }
     }
     else
