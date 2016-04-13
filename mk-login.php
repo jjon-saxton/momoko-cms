@@ -13,9 +13,10 @@ if (!empty($_GET['action']))
         /** Get Mailer Ready! **/
         require_once dirname(__FILE__)."/mk-core/phpmailer/PHPMailerAutoload.php";
         $mail=new PHPMailer();
-        $email['type']=$GLOBALS['SET']['email_mta'];
-        parse_str($GLOBALS['SET']['email_server'],$email['server']);
-        parse_str($GLOBALS['SET']['email_from'],$email['from']);
+        $email['type']=$config->email_mta;
+        $email['from']['name']=$config->owner;
+        $email['from']['address']=$config->support_email;
+        parse_str($config->email_server,$email['server']);
         switch ($email['type'])
         {
             case 'smtp':
@@ -56,7 +57,7 @@ if (!empty($_GET['action']))
         }
         //Set message headers, the message will be set during the approperiate stages
         $mail->From=$email['from']['address'];
-        $mail->FromName=$email['from']['contact'];
+        $mail->FromName=$email['from']['name'];
         $mail->IsHTML(true);
         /** E-Mail Ready **/
 

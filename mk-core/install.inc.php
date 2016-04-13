@@ -252,8 +252,9 @@ HTML;
   }
 }
 
-function db_upgrade($level,$version,array $settings,$backup=null)
+function db_upgrade($level,$version,$backup=null)
 {
+ $config=new MomokoSiteConfig();
  if ($level == 'major') //add new tables for a major upgrade, in the future we may have to detect if a table exists first before adding or altering it
  {
   $db=new DataBaseStructure(DAL_DB_DEFAULT);
@@ -274,49 +275,58 @@ function db_upgrade($level,$version,array $settings,$backup=null)
  
  if ($version <= 2.0) //settings to add for versions less than 2.1, in the future this section will have other versions as well
  {
-  $table['settings']=new DataBaseTable('settings');
-  $ns['email_mta']='phpmail';
-  $ns['email_server']='host=localhost';
-  $ns['email_from']='contact='.$settings['from']['name']."&address=".$settings['from']['address'];
-  foreach ($ns as $key=>$value)
+  $config->email_mta='phpmail';
+  $config->email_server='host=localhost';
+  $usrs=new DataBaseTable('users');
+  $find_owner=$usrs->getData("email:`{$settings->support_email}`",array('name'),null,1);
+  if ($owner=$find_owner->fetch(PDO::FETCH_ASSOC) && !empty($owner['name']]))
   {
-   $newrow['key']=$key;
-   $newrow['value']=$value;
-   $row=$table['settings']->putData($newrow) or die(trigger_error("Could not add setting '{$key}'"));
+   $owner=$owner['name'];
   }
+  else
+  {
+   $find_owner=$usrs->getData("num:`= 3`",array('name'),null,1);
+   $owner=$find_owner->fetch(PDO::FETCH_ASSOC);
+   $owner=$owner['name'];
+  }
+  $config->owner=$owner;
+  $config->saveTemp();
  }
 
- echo("Scanning for new core forms and error pages...\n"); //To be completed for all upgrades; update core forms and error pages in database!
+ $cm="Scanning for new core forms and error pages...\n"; //To be completed for all upgrades; update core forms and error pages in database!
  $new_content=scan_core_content($settings);
  if (is_array($new_content))
  {
-    echo ("Upating content number(s)...");
+    $cm.="Upating content number(s)...";
     foreach ($new_content as $num)
     {
-        echo ($num." ");
+        $cm.=$num." ";
     }
-    echo ("\n");
+    $cm.="\n";
  }
  else
  {
-    echo ("No content needs to be updated, or update failed! Hint; check error messages and logs\n");
+    trigger_error("No content needs to be updated, or update failed! Hint; check error messages and logs\n",E_USER_NOTICE);
  }
  
- echo("Scanning for new or updated addins...\n"); //This is to be completed for all upgrades in case we add new core addins
+ $am="Scanning for new or updated addins...\n"; //This is to be completed for all upgrades in case we add new core addins
  $new_addins=scan_addins($settings);
  if (is_array($new_addins))
  {
-  echo ("Updating or adding addin number(s)...");
+  $am.="Updating or adding addin number(s)...";
   foreach ($new_addins as $num)
   {
-   echo ($num." ");
+   $am.=$num." ";
   }
-  echo ("\n");
+  $am.="\n";
  }
  else
  {
-  echo ("No updates needed or updates failed!\n");
+  trigger_error("No updates needed or updates failed!\n",E_USER_NOTICE);
  }
+
+ momoko_basic_changes($GLOBALS['USR'],"updated","Site Content",$cm);
+ momoko_basic_changes($GLOBALS['USR'],"updated","Core Addins",$am);
  
  $update['key']='version';
  $update['value']=2.1;

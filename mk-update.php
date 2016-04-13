@@ -18,7 +18,7 @@ HTML;
 }
 elseif ($db_major == $major)
 {
- $update=db_upgrade('minor',$GLOBALS['SET']['version'],$GLOBALS['SET']);
+ $update=db_upgrade('minor',$GLOBALS['SET']['version']);
  $body=<<<HTML
 <div class="message box"><h3 class="message title">Update Finished</h3>
 <p>The update has completed. Please check the above messages for errors.</p>
@@ -28,7 +28,7 @@ HTML;
 }
 else
 {
- $update=db_upgrade('major',$GLOBALS['SET']['version'],$GLOBALS['SET']);
+ $update=db_upgrade('major',$GLOBALS['SET']['version']);
  $body=<<<HTML
 <div class="message box"><h3 class="message title">Update Finished</h3>
 <p>Your database has now been updated to the next major version. PLease check the above message for errors.</p>
