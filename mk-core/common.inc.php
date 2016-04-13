@@ -157,12 +157,19 @@ class MomokoSiteConfig
   $status=array();
   foreach ($this->temp as $key=>$value)
   {
-   $data[$key]=$value;
-   $query=$this->table->getData("key:`{$key}`",array('value'),null,1);
-   $set=$query->fetch(PDO::FETCH_ASSOC);
-   if (!empty($set['value']))
+   $data['key']=$key;
+   $data['value']=$value;
+   if ($query=$this->table->getData("key:`{$key}`",null,null,1))
    {
-    $status[$key]=$this->table->updateData($data);
+    $set=$query->fetch(PDO::FETCH_ASSOC);
+    if (!empty($set['key']))
+    {
+     $status[$key]=$this->table->updateData($data) or die(trigger_error("Setting {$key} could not be updated!",E_USER_ERROR));
+    }
+    else
+    {
+     $status[$key]=$this->table->putData($data) or die(trigger_error("Setting {$key} could not be updated!",E_USER_ERROR));
+    }
    }
    else
    {

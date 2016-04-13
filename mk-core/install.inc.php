@@ -279,7 +279,7 @@ function db_upgrade($level,$version,$backup=null)
   $config->email_server='host=localhost';
   $usrs=new DataBaseTable('users');
   $find_owner=$usrs->getData("email:`{$settings->support_email}`",array('name'),null,1);
-  if ($owner=$find_owner->fetch(PDO::FETCH_ASSOC) && !empty($owner['name']]))
+  if ($owner=$find_owner->fetch(PDO::FETCH_ASSOC) && !empty($owner['name']))
   {
    $owner=$owner['name'];
   }
@@ -290,11 +290,10 @@ function db_upgrade($level,$version,$backup=null)
    $owner=$owner['name'];
   }
   $config->owner=$owner;
-  $config->saveTemp();
  }
 
  $cm="Scanning for new core forms and error pages...\n"; //To be completed for all upgrades; update core forms and error pages in database!
- $new_content=scan_core_content($settings);
+ $new_content=scan_core_content($config);
  if (is_array($new_content))
  {
     $cm.="Upating content number(s)...";
@@ -310,7 +309,7 @@ function db_upgrade($level,$version,$backup=null)
  }
  
  $am="Scanning for new or updated addins...\n"; //This is to be completed for all upgrades in case we add new core addins
- $new_addins=scan_addins($settings);
+ $new_addins=scan_addins($config);
  if (is_array($new_addins))
  {
   $am.="Updating or adding addin number(s)...";
@@ -328,10 +327,8 @@ function db_upgrade($level,$version,$backup=null)
  momoko_basic_changes($GLOBALS['USR'],"updated","Site Content",$cm);
  momoko_basic_changes($GLOBALS['USR'],"updated","Core Addins",$am);
  
- $update['key']='version';
- $update['value']=2.1;
- $table=new DataBaseTable('settings');
- $row=$table->updateData($update);
+ $config->version="2.1";
+ $config->saveTemp();
  
  return true;
 }
@@ -340,9 +337,9 @@ function scan_addins($settings=null)
 {
  if (empty($settings) && is_array($GLOBALS['SET']))
  {
-  $settings=$GLOBALS['SET'];
+  $settings=new MomokoSiteConfig();
  }
- $path=$settings['basedir'].$settings['filedir'].'addins';
+ $path=$settings->basedir.$settings->filedir.'addins';
  foreach (scandir($path) as $item)
  {
   if (!empty($item) && $item != '.' && $item != '..' && is_dir($path.'/'.$item))
@@ -382,12 +379,12 @@ function scan_core_content($settings=null)
     $content=new DataBaseTable('content');
     if ($settings == NULL && is_array($GLOBALS['SET']))
     {
-        $settings=$GLOBALS['SET'];
+        $settings=new MomokoSiteConfig();
     }
     $types=array(array('folder'=>'forms','name'=>'form'),array('folder'=>'errors','name'=>'error page')); //saves code and allows future updates to add types and even store types elsewhere
     foreach ($types as $type)
     {
-        $path=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."/".$type['folder'];
+        $path=$settings->basedir.$settings->filedir."/".$type['folder'];
         foreach (scandir($path) as $item)
         {
             if (!is_dir($path."/".$item)) //folder should not carry sub-folders
