@@ -292,11 +292,10 @@ function db_upgrade($level,$version,$backup=null)
   $config->owner=$owner;
  }
 
- $cm="Scanning for new core forms and error pages...\n"; //To be completed for all upgrades; update core forms and error pages in database!
  $new_content=scan_core_content($config);
  if (is_array($new_content))
  {
-    $cm.="Upating content number(s)...";
+    $cm="Upating content number(s)...";
     foreach ($new_content as $num)
     {
         $cm.=$num." ";
@@ -307,12 +306,11 @@ function db_upgrade($level,$version,$backup=null)
  {
     trigger_error("No content needs to be updated, or update failed! Hint; check error messages and logs\n",E_USER_NOTICE);
  }
- 
- $am="Scanning for new or updated addins...\n"; //This is to be completed for all upgrades in case we add new core addins
+
  $new_addins=scan_addins($config);
  if (is_array($new_addins))
  {
-  $am.="Updating or adding addin number(s)...";
+  $am="Updating or adding addin number(s)...";
   foreach ($new_addins as $num)
   {
    $am.=$num." ";
