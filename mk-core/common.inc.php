@@ -630,12 +630,12 @@ function momoko_basic_changes($user,$action,$target,$message=null)
    {
     $message=": ".$message;
    }
-   $log=new DataBaseTable('log')
+   $log=new DataBaseTable('log');
    $change['date']=date("Y-m-d H:i:s");
    $change['type']="modification";
    $change['action']=$action;
    $change['message']=$user->name."({$user->num}:{$_SERVER['REMOTE_ADDR']}) altered".$target.$message;
-   if($row=$log->putData($data))
+   if($row=$log->putData($change))
    {
     return $row;
    }
