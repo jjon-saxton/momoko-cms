@@ -626,19 +626,24 @@ function momoko_basic_changes($user,$action,$target,$message=null)
 {
   if ($GLOBALS['SET']['security_logging'] > 0)
   {
-    if (is_writable($GLOBALS['CFG']->logdir.'/changes.log'))
-    {
-      if (!empty($message))
-      {
-        $message=": ".$message;
-      }
-      $log=fopen($GLOBALS['CFG']->logdir.'/changes.log','a');
-      fwrite($log,"[".date("Y-m-d H:i:s")."] ".$user->name." (".$user->num.":".$_SERVER['REMOTE_ADDR'].") ".$action." ".$target.$message."\n");
-    }
-    else
-    {
-      trigger_error("changes.log is not writable!",E_USER_WARNING);
-    }
+   if (!empty($message))
+   {
+    $message=": ".$message;
+   }
+   $log=new DataBaseTable('log')
+   $change['date']=date("Y-m-d H:i:s");
+   $change['type']="modification";
+   $change['action']=$action;
+   $change['message']=$user->name."({$user->num}:{$_SERVER['REMOTE_ADDR']}) altered".$target.$message;
+   if($row=$log->putData($data))
+   {
+    return $row;
+   }
+   else
+   {
+    trigger_error("Could not write message ({$message}) to database!",E_USER_WARNING);
+    return false;
+   }
   }
 }
 
