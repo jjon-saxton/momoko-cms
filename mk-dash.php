@@ -284,7 +284,13 @@ HTML;
     $text.="<tr>\n";
     foreach ($log as $col=>$value)
     {
-     if ($col != 'num')
+     if ($col == 'time')
+     {
+      $unixt=strtotime($value);
+      $time=date($GLOBALS['USR']->shortdateformat." H:i:s",$unixt);
+      $text.="<td id=\"{$col}\">{$time}</td>";
+     }
+     elseif ($col != 'num')
      {
       $text.="<td id=\"{$col}\">{$value}</td>";
      }
