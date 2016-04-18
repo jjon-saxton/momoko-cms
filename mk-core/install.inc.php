@@ -96,14 +96,12 @@ function fill_tables(array $site, array $admin,array $defaults=null)
 
   if (empty($site['basedir']))
   {
-   $site['basedir']=dirname(__FILE__);
-   $site['basedir']=str_replace("core","",$site['basedir']);
-   $site['basedir']=rtrim($site['basedir'],"/");
+   $site['basedir']=getcwd();
   }
 
   if (empty($site['filedir']))
   {
-   $site['filedir']="/mk-content/";
+   $site['filedir']="mk-content/";
   }
 
   if (empty($site['tempdir']))
@@ -243,7 +241,7 @@ HTML;
 
   $tottbls++;
 
-  require $site['basedir']."/mk-core/common.inc.php";
+  require_once $site['basedir']."/mk-core/common.inc.php";
   $config=new MomokoSiteConfig();
   if (scan_addins($config))
   {

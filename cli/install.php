@@ -25,9 +25,9 @@ if (strtolower(trim(fgets(STDIN),"\n\r")) == 'y')
     $pdo_drivers=PDO::getAvailableDrivers();
     $pdo_drivers=implode(", ",$pdo_drivers);
     trim ($pdo_drivers);
-    fwrite(STDOUT,"What type of database server am I connecting to? ({$pdo_drivers})\n");
+    fwrite(STDOUT,"What type of database server am I connecting to? (select one of the following: {$pdo_drivers})\n");
     $dserver['driver']=trim(fgets(STDIN),"\n\r");
-    fwrite(STDOUT,"Where is this database server? (hostname, or file location)\n");
+    fwrite(STDOUT,"Where is this database server? (for MySQL and similar servers provide the hostname, for SQLite provide the .sql file location)\n");
     $dserver['host']=trim(fgets(STDIN),"\n\r");
     fwrite(STDOUT,"What port number, if applicable, will I use to open a database connection?\n");
     $dserver['port']=trim(fgets(STDIN),"\n\r");
@@ -38,7 +38,7 @@ if (strtolower(trim(fgets(STDIN),"\n\r")) == 'y')
     $dschema['user']=trim(fgets(STDIN),"\n\r");
     fwrite(STDOUT,"What is the password, if needed, for the user above?\n");
     $dschema['password']=trim(fgets(STDIN),"\n\r");
-    fwrite(STDOUT,"To help me defirentiate myself from other MomoKOs and other data I can add a prefix to my table. What prefix would like me to use? (mk_)\n");
+    fwrite(STDOUT,"To help me defirentiate myself from other MomoKOs and other data I can add a prefix to my table. What prefix would like me to use? (i.e. mk_)\n");
     $dschema['tableprefix']=trim(fgets(STDIN),"\n\r");
 
     $ini=<<<TXT
@@ -54,16 +54,14 @@ password = "${dschema['password']}"
 tableprefix = "${dschema['tableprefix']}"
 TXT;
 
-    file_put_contents('../database.ini',$ini);
+    file_put_contents('./database.ini',$ini);
     
     fwrite(STDOUT,"This script is now creating the required database tables. Please stand by...\n");
-    if (create_tables('../database.ini'))
+    if (create_tables('./database.ini'))
     {
      fwrite(STDOUT,"The required tables are in place. The script will now fill the tables with default data.\n");
 
-     $basedir=dirname(__FILE__);
-     $basedir=str_replace("cli","",$basedir);
-     $basedir=rtrim($basedir,"/");
+     $basedir=getcwd();
 
      fwrite(STDOUT,"Please provide a name for your site: ");
      $setting['name']=trim(fgets(STDIN),"\n\r");
@@ -73,15 +71,11 @@ TXT;
      fwrite(STDOUT,"Please provide the document root for your site [AUTODETECT]: ");
      $setting['baseuri']=trim(fgets(STDIN),"\n\r");
      fwrite(STDOUT,"Please remind me what folder I'm installed in [$basedir]: ");
-     $setting['basedir']=trim(fgets(STDIN),"\n\r");
-     fwrite(STDOUT,"Where should I store pages? [$basedir/pages/]: ");
      $setting['pagedir']=trim(fgets(STDIN),"\n\r");
-     fwrite(STDOUT,"Where should I store temporary files? [$basedir/temp/]: ");
-     $setting['tempdir']=trim(fgets(STDIN),"\n\r");
-     fwrite(STDOUT,"Where should I store log files? [$basedir/logs/]: ");
-     $setting['logdir']=trim(fgets(STDIN),"\n\r");
-     fwrite(STDOUT,"Where should I store all other files? [$basedir/files/]: ");
+     fwrite(STDOUT,"Where should I store all other files? [$basedir/mk-content/]: ");
      $setting['filedir']=trim(fgets(STDIN),"\n\r");
+     fwrite(STDOUT,"Where should I store temporary files? [~{filedir}/temp/]: ");
+     $setting['tempdir']=trim(fgets(STDIN),"\n\r");
 
      fwrite(STDOUT,"Please provide a user name for your CMS administrator: ");
      $admin['name']=trim(fgets(STDIN),"\n\r");
@@ -95,6 +89,8 @@ TXT;
      $defaults['sdf']=trim(fgets(STDIN),"\n\r");
      fwrite(STDOUT,"Long date format [I F j, Y]: ");
      $defaults['ldf']=trim(fgets(STDIN),"\n\r");
+     fwrite(STDOUT,"Time format [H:i:s]");
+     $defaults['tf']=trim(fgets(STDIN),"\n\r");
      fwrite(STDOUT,"Number of rows in a table on any given page [20]: ");
      $defaults['rpt']=trim(fgets(STDIN),"\n\r");
      
