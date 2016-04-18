@@ -44,7 +44,8 @@ function create_tables($config)
   $def['users'][4]="`groups` TEXT";
   $def['users'][5]="`shortdateformat` TEXT";
   $def['users'][6]="`longdateformat` TEXT";
-  $def['users'][7]="`rowspertable` TEXT";
+  $def['users'][7]="`timeformat` TEXT";
+  $def['users'][8]="`rowspertable` TEXT";
   
   $okay=0;
   $tottables=0;
@@ -78,6 +79,10 @@ function fill_tables(array $site, array $admin,array $defaults=null)
   if (empty($defaults['ldf']))
   {
     $defaults['ldf']="I F j, Y";
+  }
+  if (empty($defaults['tf']))
+  {
+    $defaults['tf']="H:i:s";
   }
   if (empty($defaults['rpt']))
   {
@@ -128,9 +133,10 @@ HTML;
 HTML;
   
   $admin['password']=crypt($admin['password'],$site['session']);
-  $admin['groups']="admin,users";
+  $admin['groups']="users.admin";
   $admin['shortdateformat']=$defaults['sdf'];
   $admin['longdateformat']=$defaults['ldf'];
+  $admin['timeformat']=$defaults['tf'];
   $admin['rowspertable']=$defaults['rpt'];
   
   $rows['content'][]=array('title'=>"Hello World!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'page','order'=>1, 'parent'=>0,'author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');
@@ -190,14 +196,15 @@ HTML;
   
   $rows['log'][]=array('time'=>date("Y-m-d H:i:s"),'type'=>"notice",'action'=>'created','message'=>$site['name']." goes online!");
   
-  $rows['users'][]=array('name'=>'root','password'=>'root','email'=>$admin['email'],'groups'=>"admin,cli",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'rowspertable'=>$defaults['rpt']);
-  $rows['users'][]=array('name'=>'guest','password'=>'guest','email'=>$admin['email'],'groups'=>"nobody",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'rowspertable'=>$defaults['rpt']);
+  $rows['users'][]=array('name'=>'root','password'=>'root','email'=>$admin['email'],'groups'=>"admin,cli",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'timeformat'=>$defaults['tf'],'rowspertable'=>$defaults['rpt']);
+  $rows['users'][]=array('name'=>'guest','password'=>'guest','email'=>$admin['email'],'groups'=>"nobody",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'timeformat'=>$defaults['tf'],'rowspertable'=>$defaults['rpt']);
   $rows['users'][]=$admin;
   
   $rows['settings'][]=array('key'=>'version','value'=>'2.1');
   $rows['settings'][]=array('key'=>'name','value'=>$site['name']);
   $rows['settings'][]=array('key'=>'template','value'=>'quirk');
   $rows['settings'][]=array('key'=>'support_email','value'=>$admin['email']);
+  $rows['settings'][]=array('key'=>'owner','value'=>$admin['name']);
   $rows['settings'][]=array('key'=>'security_logging','value'=>1);
   $rows['settings'][]=array('key'=>'error_logging','value'=>1);
   $rows['settings'][]=array('key'=>'salt','value'=>$site['session']);
@@ -209,7 +216,6 @@ HTML;
   $rows['settings'][]=array('key'=>'use_ssl','value'=>$site['use_ssl']);
   $rows['settings'][]=array('key'=>'email_mta','value'=>'phpmail');
   $rows['settings'][]=array('key'=>'email_server','value'=>"host=localhost");
-  $rows['settings'][]=array('key'=>'email_from','value'=>"contact={$admin['name']}&address={$admin['email']}");
   $rows['settings'][]=array('key'=>'rewrite','value'=>0);
   
   $okay=0;
@@ -236,7 +242,10 @@ HTML;
   }
 
   $tottbls++;
-  if (scan_addins($site))
+
+  require $site['basedir']."/mk-core/common.inc.php";
+  $config=new MomokoSiteConfig();
+  if (scan_addins($config))
   {
    $okay++;
   }
@@ -278,6 +287,15 @@ function db_upgrade($level,$version,$backup=null)
   $config->email_mta='phpmail';
   $config->email_server='host=localhost';
   $usrs=new DataBaseTable('users');
+  $newfields=array("`timeformat` TEXT"); //Adds user timeformat setting
+  $usrs->updateFields($newfields);
+  $def['tf']="H:i:s";
+  $find_users=$usrs->getData(null,array('num','name'));
+  while ($usr=$find_users->fetch(PDO::FETCH_ASSOC)) //sets user timeformat for each user
+  {
+   $usr['timeformat']=$def['tf'];
+   $usrs->updateData($usr);
+  }
   $find_owner=$usrs->getData("email:`{$settings->support_email}`",array('name'),null,1);
   if ($owner=$find_owner->fetch(PDO::FETCH_ASSOC) && !empty($owner['name']))
   {
@@ -333,7 +351,7 @@ function db_upgrade($level,$version,$backup=null)
 
 function scan_addins($settings=null)
 {
- if (empty($settings) && is_array($GLOBALS['SET']))
+ if (empty($settings))
  {
   $settings=new MomokoSiteConfig();
  }

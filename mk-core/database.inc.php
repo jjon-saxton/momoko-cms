@@ -84,6 +84,31 @@ class DataBaseTable extends DataBaseSchema
   return $describe->fetchAll(PDO::FETCH_OBJ);
  }
 
+ public function updateFields(array $cols,$inline=false)
+ {
+  if ($inline == true)
+  {
+   $state=$this->getFields();
+   var_dump($state);
+   //TODO check $cols to ensure it is a full list columns with new columns added in
+   //TODO alter the table to put columns in the right order instead of just appending them at the end.
+  }
+  else
+  {
+   $cols_stmt=implode(', ',$cols);
+   $cols_stmt=rtrim($cols_stmt,', ');
+   if ($this->query("ALTER TABLE `".$this->table."` ADD (".$cols_stmt.")"))
+   {
+    return true;
+   }
+   else
+   {
+    throw new Exception("Could not alter '{$this->table}'");
+    return false;
+   }
+  }
+ }
+
  public function getData($q=null,array $cols=null,$sort=null,$limit=0,$offset=0, array $keycols=null)
  {
   $fieldlist=$this->fieldlist;
