@@ -39,6 +39,14 @@ class DataBaseSchema extends PDO
   }
  }
 
+ public function showTables()
+ {
+  if ($query=$this->query("SHOW TABLES"))
+  {
+   return $query->fetchALL(PDO::FETCH_ASSOC);
+  }
+ }
+
  public function dropTable($table)
  {
   if ($this->query("DROP TABLE `".$this->ini['schema']['tableprefix'].$table."`"))

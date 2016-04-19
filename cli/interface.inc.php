@@ -3,7 +3,6 @@ define("INCLI",TRUE);
 define("UNAUTHORIZED",4);
 define("BADREQUEST",3);
 
-//$cwd=dirname(__FILE__);
 chdir('../');
 if (@INSTALLER)
 {
@@ -19,5 +18,4 @@ else
    set_error_handler("momoko_cli_errors");
  }
 }
-//chdir($cwd);
 

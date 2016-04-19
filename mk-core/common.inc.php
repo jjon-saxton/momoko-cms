@@ -2,7 +2,7 @@
 #Load settings from database
 require_once dirname(__FILE__).'/database.inc.php';
 $config=new MomokoSiteConfig();
-if (empty($config->baseuri)) //Set some defaults
+if (empty($config->baseuri) && (defined("INCLI") && !INCLI)) //Set some defaults
 {
  $config->baseuri=$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']);
 }
@@ -69,7 +69,10 @@ if (!empty($_COOKIE['ss']))
  $_SESSION['modern']=$_COOKIE['ss'];
 }
 
-define("MOMOKOVERSION",trim(file_get_contents($config->basedir.'/version.nfo.txt'),"\n"));
+if (!defined("MOMOKOVERSION"))
+{
+ define("MOMOKOVERSION",trim(file_get_contents($config->basedir.'/version.nfo.txt'),"\n"));
+}
 if ($_SESSION['modern'] == 'full') //For browsers supporting cookies, javascript, and css
 {
  define ("TEMPLATEPATH",TEMPLATEROOT.$config->template.'/'.$config->template.'.tpl.htm');
