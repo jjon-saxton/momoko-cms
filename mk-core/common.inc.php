@@ -2,7 +2,7 @@
 #Load settings from database
 require_once dirname(__FILE__).'/database.inc.php';
 $config=new MomokoSiteConfig();
-if (empty($config->baseuri) && (defined("INCLI") && !INCLI)) //Set some defaults
+if (empty($config->baseuri) && (!defined("INCLI") || INCLI)) //Set some defaults
 {
  $config->baseuri=$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']);
 }
