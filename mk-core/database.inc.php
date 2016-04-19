@@ -107,6 +107,18 @@ class DataBaseTable extends DataBaseSchema
    $cols_stmt=rtrim($cols_stmt,', ');
    if ($this->query("ALTER TABLE `".$this->table."` ADD (".$cols_stmt.")"))
    {
+     $fieldlist=$this->getFields();
+     foreach ($fieldlist as $field)
+     {
+      $this->fieldlist[]=$field->Field;
+      switch ($field->Key)
+      {
+       case 'PRI':
+       $this->indices['primary']=$field->Field;
+       break;
+     }
+    }
+    unset($fieldlist);
     return true;
    }
    else
@@ -274,7 +286,14 @@ class DataBaseTable extends DataBaseSchema
   $query=$this->prepare($q);
 
   $this->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-  if ($query->execute($update))
+  
+
+  if (empty($update))
+  {
+   throw new Exception("Empty data set! Please ensure you pass an array of new value!");
+   return false;
+  }
+  elseif ($query->execute($update))
   {
    return $key;
   }

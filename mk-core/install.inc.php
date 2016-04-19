@@ -264,7 +264,7 @@ function db_upgrade($level,$version,$backup=null)
  $config=new MomokoSiteConfig();
  if ($level == 'major') //add new tables for a major upgrade, in the future we may have to detect if a table exists first before adding or altering it
  {
-  $db=new DataBaseStructure(DAL_DB_DEFAULT);
+  $db=new DataBaseSchema();
   if ($backup == 'y')
   {
    $db->createBackup($config->basedir."/momoko-db-".time().".sql") or die(trigger_error("Could not create backup!", E_USER_WARNING));
@@ -292,7 +292,7 @@ function db_upgrade($level,$version,$backup=null)
   while ($usr=$find_users->fetch(PDO::FETCH_ASSOC)) //sets user timeformat for each user
   {
    $usr['timeformat']=$def['tf'];
-   $added_setting=$usrs->updateData($usr) or die (throw new Exception("Could not add timeformat setting value '{$usr['timeformat']}' for user #{$usr['num']}"));
+   $added_setting=$usrs->updateData($usr) or die (trigger_error("Could not add timeformat setting value '{$usr['timeformat']}' for user #{$usr['num']}",E_USER_ERROR));
   }
   $find_owner=$usrs->getData("email:`{$settings->support_email}`",array('name'),null,1);
   if ($owner=$find_owner->fetch(PDO::FETCH_ASSOC) && !empty($owner['name']))
