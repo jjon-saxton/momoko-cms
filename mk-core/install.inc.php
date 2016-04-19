@@ -106,7 +106,7 @@ function fill_tables(array $site, array $admin,array $defaults=null)
 
   if (empty($site['tempdir']))
   {
-   $site['tempdir']=$site['filedir']."/temp/";
+   $site['tempdir']=$site['filedir']."temp/";
   }
 
   if (empty($site['use_ssl']))

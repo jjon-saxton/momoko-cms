@@ -20,7 +20,7 @@ if (!empty($settings)) //Sanitation check! make sure we have a dbtable set for '
   if ($settings->value > 0)
   {
     fwrite(STDOUT,$settings->value." Detected! Checking for required database updates...\n");
-    if ($settings->value >= 1.2) //No update is needed for 1.2 or greater yet
+    if ($settings->value >= 2.1) //Database is at or greater than script version
     {
       fwrite(STDOUT,"Database update not required.\n");
       $update="O";
