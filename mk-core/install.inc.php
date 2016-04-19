@@ -91,7 +91,7 @@ function fill_tables(array $site, array $admin,array $defaults=null)
 
   if (empty($site['session']))
   {
-   $site['session']='MK';
+   $site['session']='MK2';
   }
 
   if (empty($site['basedir']))
@@ -267,7 +267,7 @@ function db_upgrade($level,$version,$backup=null)
   $db=new DataBaseStructure(DAL_DB_DEFAULT);
   if ($backup == 'y')
   {
-   $db->createBackup($GLOBALS['CFG']->datadir."/momoko-db-".time().".sql") or die(trigger_error("Could not create backup!", E_USER_WARNING));
+   $db->createBackup($config->basedir."/momoko-db-".time().".sql") or die(trigger_error("Could not create backup!", E_USER_WARNING));
   }
   $tables['addins']=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
   echo("Altering addin table columns...\n");
@@ -288,11 +288,11 @@ function db_upgrade($level,$version,$backup=null)
   $newfields=array("`timeformat` TEXT"); //Adds user timeformat setting
   $usrs->updateFields($newfields);
   $def['tf']="H:i:s";
-  $find_users=$usrs->getData(null,array('num','name'));
+  $find_users=$usrs->getData(null,array('num'));
   while ($usr=$find_users->fetch(PDO::FETCH_ASSOC)) //sets user timeformat for each user
   {
    $usr['timeformat']=$def['tf'];
-   $usrs->updateData($usr);
+   $added_setting=$usrs->updateData($usr) or die (throw new Exception("Could not add timeformat setting value '{$usr['timeformat']}' for user #{$usr['num']}"));
   }
   $find_owner=$usrs->getData("email:`{$settings->support_email}`",array('name'),null,1);
   if ($owner=$find_owner->fetch(PDO::FETCH_ASSOC) && !empty($owner['name']))
