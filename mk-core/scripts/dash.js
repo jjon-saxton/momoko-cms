@@ -39,30 +39,6 @@ $(function(){
          }
 	});
  });
- $(".dashboard").each(function(){
-  $(this).addClass("ui-widget");
-  $(this).addClass("ui-widget-content");
- });
- $(".dashboard th").each(function(){
- 
-  $(this).addClass("ui-state-default");
- 
-  });
- $(".dashboard td").each(function(){
- 
-  $(this).addClass("ui-widget-content");
- 
-  });
- $(".row-select tr").on("mouseenter", function(){
-      $(this).children("td").addClass("ui-state-hover");
-     });
- $(".row-select tr").on("mouseleave",function(){
-      $(this).children("td").removeClass("ui-state-hover");
-    });
- $(".row-select tr").on('click',function(){
-   
-   $(this).children("td").toggleClass("ui-state-highlight");
-  });
   
   $(".page div.actions").find("span").click(function(){
    var location=$(this).parent().find("a#location").attr('href');
