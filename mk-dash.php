@@ -287,7 +287,7 @@ HTML;
      if ($col == 'time')
      {
       $unixt=strtotime($value);
-      $time=date($GLOBALS['USR']->shortdateformat." H:i:s",$unixt);
+      $time=date($GLOBALS['USR']->shortdateformat." ".$GLOBALS['USR']->timeformat,$unixt);
       $text.="<td id=\"{$col}\">{$time}</td>";
      }
      elseif ($col != 'num')
@@ -686,11 +686,13 @@ HTML;
      $page['body'].="</ul>\n<h3>Save</h3>\n<div class=\"box\" align=\"center\"><button type=submit name=\"send\" value=\"1\">Save Changes</button>\n</div>\n</form>";
      break;
      case 'user':
-     $dates['short']=array('m/d/Y','m-d-Y','m.d.Y','j M Y');
+     $dtfs['short']=array('m/d/Y','m-d-Y','m.d.Y','j M Y');
      $options['short']="<option value=\"\">Use Text Field:</option>";
-     $dates['long']=array('F j, Y','jS F Y','m M Y');
+     $dtfs['long']=array('F j, Y','jS F Y','m M Y');
      $options['long']=$options['short'];
-     foreach ($dates as $type=>$formats)
+     $dtfs['time']=array('H:i:s','h:i:s a','G:i','g:i a');
+     $options['time']=$options['short'];
+     foreach ($dtfs as $type=>$formats)
      {
       foreach ($formats as $format)
       {
@@ -700,9 +702,10 @@ HTML;
      $page['body']=<<<HTML
 <script language="javascript">
 $(function(){
- $("input#shortdateformat").before('<select id="shortdateformat" class="dateforms">{$options['short']}</select> ');
- $("input#longdateformat").before('<select id="longdateformat" class="dateforms">{$options['long']}</select> ');
- $("select.dateforms").change(function(){
+ $("input#shortdateformat").before('<select id="shortdateformat" class="formats">{$options['short']}</select> ');
+ $("input#longdateformat").before('<select id="longdateformat" class="formats">{$options['long']}</select> ');
+ $("input#timeformat").before('<select id="timeformat" class="formats">{$options['time']}</select> ');
+ $("select.formats").change(function(){
   var id=$(this).attr('id');
   var format=$(this).val();
   $("input#"+id).focus().val(format);
@@ -721,7 +724,7 @@ $(function(){
 <ul id="UserForm" class="noindent nobullet">
 <input type=hidden name="num" value="{$GLOBALS['USR']->num}">
 HTML;
-     $columns=array('name','email','shortdateformat','longdateformat','rowspertable');
+     $columns=array('name','email','shortdateformat','longdateformat','timeformat','rowspertable');
      $query=$this->table->getData("num:'".$GLOBALS['USR']->num."'",$columns,null,1);
      $user=$query->fetch(PDO::FETCH_ASSOC);
      foreach ($columns as $form_field)
