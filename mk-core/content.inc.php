@@ -88,7 +88,7 @@ class MomokoNavigation
    }
    if (is_array($item['children']))
    {
-    $text.="<li id=\"{$item['id']}\" class=\"category dropdown\"><a href=\"{$href}\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">{$item['title']} <b class=\"caret\"></b> </a>\n";
+    $text.="<li id=\"{$item['id']}\" class=\"category dropdown\"><a href=\"{$href}\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">{$item['title']}<div style=\"display:inline-block;height:100%\"> <b class=\"caret\"></b> </div></a>\n";
     $text.="<ul id=\"{$item['id']}\" class=\"subnav dropdown-menu\" role=\"menu\">\n".$this->getListItems($item['children'])."\n</ul>\n</li>\n";
    }
    else

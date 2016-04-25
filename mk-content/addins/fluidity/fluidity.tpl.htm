@@ -12,7 +12,14 @@
     <![endif]-->
 <!--Template-specific JQuery Procedures-->
 <script language="javascript" type="text/javascript">
-$(document).ready(function(){
+ $(document).ready(function(){ //work-around to mimic Quirk Nav-bar behavior
+  $('a.dropdown-toggle').click(function(e) {
+    if (e.target == this){ //when clicking the link itself, go to the link, if we click another element, say the arrow, then do the default action (dropdown the menu)
+     var location = $(this).attr('href');
+     window.location.href = location;
+     return false;
+    }
+ });
  $("button, input[type=button], input[type=submit], input[type=reset]").addClass("btn");
  $("button, input[type=button]").addClass('btn-default');
  $("button[type=submit], input[type=submit]").addClass('btn-primary');;
