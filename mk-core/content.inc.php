@@ -31,6 +31,9 @@ class MomokoNavigation
     case 'list':
     $text="<ul id=\"MapList\" class=\"sitemap\">\n".$this->getListItems($this->map)."\n</ul>";
     break;
+    case 'flat':
+    $text=$this->getTopMap($this->map,$this->options['style']);
+    break;
     case'simple':
     default:
     $text=$this->getListItems($this->map);
@@ -80,11 +83,11 @@ class MomokoNavigation
   {
    if ($GLOBALS['SET']['rewrite'] == true)
    {
-    $href="//".$GLOALS['SET']['baseuri']."/".$item['href'];
+    $href=$GLOBALS['SET']['siteroot']."/".$item['href'];
    }
    else
    {
-    $href="//".$GLOBALS['SET']['baseuri']."/?p=".$item['id'];
+    $href=$GLOBALS['SET']['siteroot']."/?p=".$item['id'];
    }
    if (is_array($item['children']))
    {
@@ -95,6 +98,50 @@ class MomokoNavigation
    {
     $text.="<li id=\"{$item['id']}\"><a href=\"{$href}\">{$item['title']}</a></li>\n";
    }
+  }
+
+  return $text;
+ }
+
+ public function getTopMap($map,$display='line')
+ {
+  if ($display == "list")
+  {
+   $text="<ol type=\"I\" id=\"NavList\">\n";
+  }
+  else
+  {
+   $text="<div id=\"NavLine\">\n";
+  }
+
+  foreach ($map as $item)
+  {
+   if ($GLOBALS['SET']['rewrite'] == true)
+   {
+    $href="//".$GLOALS['SET']['baseuri']."/".$item['href'];
+   }
+   else
+   {
+    $href="//".$GLOBALS['SET']['baseuri']."/?p=".$item['id'];
+   }
+
+   if ($display == "list")
+   {
+    $text.="<li id=\"{$item['id']}\" class=\"nav-item\"><a href=\"{$href}\">{$item['title']}</a></li>\n";
+   }
+   else
+   {
+    $text.="| <a href=\"{$href}\">{$item['title']}</a> |";
+   }
+  }
+
+  if ($display == "list")
+  {
+   $text.="</ol>";
+  }
+  else
+  {
+   $text.="</div>";
   }
 
   return $text;
@@ -287,6 +334,145 @@ XML;
  }
 }
 
+class MomokoFeed implements MomokoObject
+{
+ private $table;
+ private $options=array();
+ private $info=array();
+
+ public function __construct($path, array $additional_vars=null)
+ {
+  $this->table=new DataBaseTable('content');
+  $this->options['where_str']="status: 'public'";
+ }
+
+ public function __get($key)
+ {
+  if (array_key_exists($key,$this->info))
+  {
+    return $this->info[$key];
+  }
+  else
+  {
+    return $this->options[$key];
+  }
+ }
+
+ public function __set($key,$val)
+ {
+  return $this->options[$key]=$val;
+ }
+
+ public function put($data)
+ {
+  trigger_error("User attempted to put data using MomokoFeed class, method not supported!",E_USER_NOTICE);
+  $page=new MomokoError("405 Method Not Allowed");
+  return $page->full_html;
+ }
+
+ public function get()
+ {
+  $name=htmlspecialchars($GLOBALS['SET']['name'],ENT_XML1,'UTF-8');
+  $uri=htmlspecialchars("//".$GLOBALS['SET']['baseuri']."/",ENT_XML1,'UTF-8');
+  $query=$this->table->getData("type:'post'");
+  $dom=new DOMDocument('1.0','UTF-8');
+
+  switch ($this->options['type'])
+  {
+   case 'atom':
+   case 'feed':
+   header("content-type:application/atom+xml");
+   $atom=$dom->appendChild(new DOMElement('feed',null,'http://www.w3.org/2005/Atom'));
+   $atom_name=$atom->appendChild(new DOMElement('title',$name." | Post Feed | ATOM","http://www.w3.org/2005/Atom"));
+   $atom_des=$atom->appendChild(new DOMElement('subtitle',$name."'s ATOM feed for posts"));
+   $self=$atom->appendChild(new DOMElement('link'));
+   $self_href=$self->setAttribute('href',$uri."?content=atom");
+   $self_rel=$self->setAttribute('rel','self');
+   $site=$atom->appendChild(new DOMElement('link'));
+   $site_href=$site->setAttribute('href',$uri);
+   while ($post=$query->fetch(PDO::FETCH_ASSOC))
+   {
+    $entry=$atom->appendChild(new DOMElement('entry',null,'http://www.w3.org/2005/Atom'));
+    $title=$entry->appendChild(new DOMElement('title',htmlspecialchars($post['title'],ENT_XML1,"UTF-8")));
+    $link=$entry->appendChild(new DOMElement('link'));
+    $link_href=$link->setAttribute('href',$uri."?content=post&p=".$post['num']);
+    $alt=$entry->appendChild(new DOMElement('link'));
+    $alt_rel=$alt->setAttribute('rel','alternate');
+    $alt_href=$alt->setAttribute('href',"http:".$uri."?content=post&p=".$post['num']);
+    $alt_type=$alt->setAttribute('type',"text/html");
+    if (empty($post['date_modified']))
+    {
+     $uuid=$entry->appendChild(new DOMElement('id',$this->generateUUID("urn:uuid:",$post['date_created'])));
+     $date=$entry->appendChild(new DOMElement('updated',gmdate('Y-m-d\TH:i:s\Z',strtotime($post['date_created']))));
+    }
+    else
+    {
+     $uuid=$entry->appendChild(new DOMElement('id',$this->generateUUID("urn:uuid:",$post['date_modified'])));
+     $date=$entry->appendChild(new DOMElement('updated',gmdate('Y-m-d\TH:i:s\Z',strtotime($post['date_modified']))));
+    }
+    $summary=$entry->appendChild(new DOMElement('summary',$this->generateSummary($post['text'])));
+   }
+   break;
+   case 'rss':
+   default:
+   header("content-type:application/rss+xml");
+   $rss=$dom->appendChild(new DOMElement('rss'));
+   $rss_version=$rss->setAttribute('version','2.0');
+   $channel=$rss->appendChild(new DOMElement('channel'));
+   $feed_name=$channel->appendChild(new DOMElement('title',$name." | Post Feed | RSS"));
+   $feed_link=$channel->appendChild(new DOMElement('link',$uri));
+   $feed_des=$channel->appendChild(new DOMElement('description',$name."'s RSS Feed for posts"));
+   while ($post=$query->fetch(PDO::FETCH_ASSOC))
+   {
+    $link=$uri."/?content=post&amp;p=".$post['num'];
+    $item=$channel->appendChild(new DOMElement('item'));
+    $title=$item->appendChild(new DOMElement('title',$post['title']));
+    $link=$item->appendChild(new DOMElement('link',$link));
+    $pubdate=$item->appendChild(new DOMElement('pubDate',gmdate('Y-m-d\TH:i:s\Z',strtotime($post['date_created']))));
+    if (empty($post['date_modified']))
+    {
+     $guid=$item->appendChild(new DOMElement('guid',$this->generateUUID(null,$post['date_created'])));
+    }
+    else
+    {
+     $guid=$item->appendChild(new DOMElement('guid',$this->generateUUID(null,$post['date_modified'])));
+    }
+    $des=$item->appendChild(new DOMElement('description',$this->generateSummary($post['text'])));
+   }
+  }
+
+  $full_xml=$dom->saveXML();
+  $this->full_html=$full_xml;
+  return $full_xml;
+ }
+
+ private function generateSummary($text,$len=125)
+ {
+  $page=parse_page($text); //Seperates full post into parts if needed
+  $text=$page['inner_body']; //Resets text to just the important part of the post
+  $text=strip_tags($text,"<strong><b><em><i>"); //Gets rid of HTML tags
+  if (strlen($text) > $len)
+  {
+   $matches = array();
+   preg_match("/^(.{1,".$len."})[\s]/i", $text, $matches); //Shortens the summary intelligently
+   $text=$matches[0].'...';
+  }
+
+  return $text;
+ }
+
+ private function generateUUID($prefix=null,$chars)
+ {
+  $chars=md5($chars);
+  $uuid=substr($chars,0,8) . '-';
+  $uuid.=substr($chars,8,4) . '-';
+  $uuid.=substr($chars,12,4) . '-';
+  $uuid.=substr($chars,16,4) . '-';
+  $uuid.=substr($chars,20,12);
+  return $prefix.$uuid;
+ }
+}
+
 class MomokoAttachment implements MomokoObject
 {
  private $table;
@@ -340,13 +526,13 @@ class MomokoAttachment implements MomokoObject
  
  public function fetchByID($num)
  {
-  $query=$this->table->getData("num:'{$num}'",null,null,1);
+  $query=$this->table->getData("num:'= {$num}'",null,null,1);
   $this->info=$query->fetch(PDO::FETCH_ASSOC);
  }
  
  public function fetchByLink($uri)
  {
-  $query=$this->table->getData("link:'{$uri}'",null,null,1);
+  $query=$this->table->getData("link:`{$uri}`",null,null,1);
   $this->info=$query->fetch(PDO::FETCH_ASSOC);
  }
  
@@ -537,19 +723,30 @@ class MomokoPage implements MomokoObject
   
   if ($title == NULL)
   {
-   $where="status:'public'";
+   $where="status:`public` type:`page`";
   }
   else
   {
-   $where="title:'{$title}'";
+   $where="title:`{$title}`";
   }
   if ($parent != NULL)
   {
-   $pq=$table->getData("title:'{$parent}'",array('num'),null,1);
+   $pq=$table->getData("title:`{$parent}`",array('num'),null,1);
    $pinfo=$pg->fetch(PDO::FETCH_ASSOC);
-   $where.=",parent:'{$pinfo['num']}'";
+   if ($pinfo['num'] > 0) //Ensures that there was actually a parent
+   {
+    $where.=" parent:`= {$pinfo['num']}`";
+   }
+   else
+   {
+    $where.=" parent:`= 0`";
+   }
   }
-  $query=$table->getData($where,null,null,1);
+  else
+  {
+   $where.=" parent:`= 0`";
+  }
+  $query=$table->getData($where,null,"order",1);
   $this->table=$table;
   $this->info=$query->fetch();
 
@@ -678,7 +875,7 @@ HTML;
     $formats='["p","Normal"], ["h2","Header 2"], ["h3","Header 3"], ["h4","Header 4"], ["pre","Preformatted"]';
     if ($_GET['action'] == 'new')
     {
-     $type_links="<div id=\"type_select\"><input type=\"radio\" id=\"page\" checked=checked name=\"type\" value=\"page\"><label for=\"page\">Page</label> <input type=\"radio\" id=\"post\" name=\"type\" value=\"post\"><label for=\"post\">Post</label></div>";
+     $type_links="<div id=\"type_select\"><input type=\"radio\" id=\"t1\" checked=checked name=\"type\" value=\"page\"><label for=\"t1\">Page</label> <input type=\"radio\" id=\"t2\" name=\"type\" value=\"post\"><label for=\"t2\">Post</label></div>";
     }
    }
    else
@@ -690,11 +887,42 @@ HTML;
     }
    }
    $type=ucwords($type);
+   $chooser=null;
+   if ($_GET['action'] == "new")
+   {
+    $chooser=<<<TXT
+	$("div#modal").load("//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=gethref&ajax=1&origin=new",function(){
+	 $("#vtabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
+	 }).on('mouseenter',"div.selectable",function(){
+		 $(this).addClass("ui-state-hover");
+		 }).on('mouseleave',"div.selectable",function(){
+			$(this).removeClass("ui-state-hover");
+		 }).on('click',"div.selectable",function(){
+		   var location=$(this).find("a#location").attr('href');
+           $.get(location,function(html){
+		    $("#pagebody").html(html);
+            $("div.jqte_editor").html(html);
+           })
+		   $("div#modal").dialog('close');
+	    });
+	$("div#modal").dialog({
+		 height: 500,
+		 width: 800,
+		 modal: true,
+		 title: "New From...",
+         close: function(){
+            $(this).empty(); //empty the dialog box so it may be filled by ajax again later.
+            $(this).find('*').addBack().off(); //destroy all even handlers so they may be re-used with new data later.
+         }
+	});
+TXT;
+   }
    
    $info['title']="Edit {$type}: ".$this->title;
    $info['inner_body']=<<<HTML
 <script language="javascript">
 $(function(){
+ {$chooser}
  if ($("select#status").val() == "private"){
   $("input#private").removeAttr('disabled');
  }
@@ -709,13 +937,9 @@ $(function(){
  });
  $("div#PageEditor").tabs();
  
+ $("#type_select").css("text-align","center");
  $("#type_select input:radio").change(function(){
-  window.location="?action=new&content="+$(this).val();
- });
- $("#type_select").css("text-align","center").buttonset();
- $("#type_select input:radio").change(function(){
-  console.debug($(this).val());
-  //window.location="?action=new&content="+$(this).val();
+  window.location="?action=new&content="+$("#type_select input:radio:checked").val();
  });
  
  $("select#status").change(function(){
@@ -777,7 +1001,7 @@ HTML;
 <ul class="noindent nobullet">
 <li>Post Date: {$now_h}</li>
 <li>Post Author: {$GLOBALS['USR']->name}</li>
-<li><label for="status">Post Status</lable> <select id="status" name="status">{$status_opts}</select>
+<li><label for="status">Post Status:</label> <select id="status" name="status">{$status_opts}</select>
 </ul>
 </div>
 HTML;
@@ -873,7 +1097,7 @@ HTML;
     $vars=array();
    }
    
-   $vars['siteroot']=$GLOBALS['SET']['baseuri'];
+   $vars['siteroot']=$GLOBALS['SET']['siteroot'];
    
    return $vars;
  }
@@ -1028,24 +1252,25 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   preg_match("/<head>(?P<head>.*?)<\/head>/smU",$raw,$match);
   $split['head']=$match['head'];
   unset($match);
-  preg_match("/<body>(?P<body>.*?)<\/body>/smU",$raw,$match);
+  preg_match("/<body(?P<body_props>.*)>(?P<body>.*?)<\/body>/smU",$raw,$match);
   $split['body']=$match['body'];
+  $body_tag="<body".$match['body_props'].">";
   unset($match);
   
   if (!$GLOBALS['USR']->inGroup('users'))
   {
-   $umopts="<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-login.php\">Login</a></li>";
+   $umopts="<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-login.php\">Login</a></li>";
    $rockout=null;
   }
   else
   {
-   $umopts="<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=settings\">Settings</a></li>";
-   $rockout="\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/?action=logout\">Logout</a></li>\n";
+   $umopts="<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=settings\">Settings</a></li>";
+   $rockout="\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/?action=logout\">Logout</a></li>\n";
   }
   $contentlists=null;
   if ($GLOBALS['USR']->inGroup('admin'))
   {
-   $umopts.="\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=new\">Register</a></li>";
+   $umopts.="\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=new\">Register</a></li>";
   }
   if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
   {
@@ -1079,22 +1304,35 @@ HTML;
    $contentlists.=<<<HTML
 <h4>Content</h4>
 <ul id="ContentPlugs" class="plug list">
-<li><a href="//{$GLOBALS['SET']['baseuri']}/?action=new">New</a></li>{$curconlinks}
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=pages">All Pages</a></li>
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=posts">All Posts</a></li>
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
+<li><a href="{$GLOBALS['SET']['siteroot']}/?action=new">New</a></li>{$curconlinks}
+<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list=pages">All Pages</a></li>
+<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list=posts">All Posts</a></li>
+<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
 </ul>
 HTML;
   }
   if ($GLOBALS['USR']->inGroup('admin'))
   {
+   $sb_tbl=new DataBaseTable('addins');
+   $sb_q=$sb_tbl->getData("type:'switchboard'",array('dir','shortname'));
+   $switchboards=null;
+   if ($sb_q->rowCount() > 0)
+   {
+    while ($sb_row=$sb_q->fetch())
+    {
+        $switchboards.="<li><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=switchboard&plug={$sb_row['dir']}\">{$sb_row['shortname']}</a></li>\n";
+    }
+   }
    $contentlists.=<<<HTML
 <h4>Site</h4>
 <ul id="SitePlugs" class="plug list">
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs">Logs</a></li>
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=settings">Settings</a></li>
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=appearance">Appearance</a></li>
-<li><a href="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=addins">Addins</a></li>
+<li><a href="{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs">Logs</a></li>
+<li><a href="{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=settings">Settings</a></li>
+<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance">Appearance</a></li>
+</ul>
+<h4>Addins</h4>
+<ul id="SwitchPlugs" class="plug list">
+{$switchboards}<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&list=addins">All Addins</a></li>
 </ul>
 HTML;
   }
@@ -1110,17 +1348,19 @@ HTML;
   else
   {
    $editor=null;
-   $editor=null;
   }
   $addin_tags=compile_head();
   $split['head']=<<<HTML
 <title>~{sitename} - ~{pagetitle}</title>
 <!-- Meta Tags? -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css" />
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 {$editor}<script src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/dash.js" type="text/javascript"></script>
 <link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/mk-core/styles/momoko.css" type="text/css">
+
+<link rel="alternate" type="application/rss+xml" title="Post Feed: RSS" href="{$GLOBALS['SET']['siteroot']}/?content=rss">
+<link rel="alternate" type="application/atom+xml" title="Post Feed: ATOM" href="{$GLOBALS['SET']['siteroot']}/?content=atom">
 {$addin_tags}
 {$split['head']}
 HTML;
@@ -1132,6 +1372,9 @@ HTML;
   {
    $dashup="<div id=\"dashOpen\"><button id=\"sidebarLogin\" onclick=\"window.location='//{$GLOBALS['SET']['baseuri']}/mk-login.php'\">Login</button></div>";
   }
+
+ if ($_SESSION['modern'])
+ {
   $split['body']=<<<HTML
 {$dashup}
 <div id="modal" title="Loading Awesomeness!" style="display:none">
@@ -1153,6 +1396,7 @@ HTML;
 </div>
 {$split['body']}
 HTML;
+ }
   
   $split['full']=<<<HTML
 <!doctype html>
@@ -1165,7 +1409,7 @@ HTML;
 <head>
 {$split['head']}
 </head>
-<body>
+{$body_tag}
 {$split['body']}
 </body>
 </html>
@@ -1176,8 +1420,14 @@ HTML;
 
  public function toHTML($child=null)
  {
+ if (@$_GET['ajax']) //skips rendering the template if ajax is set
+ {
+   return $child->inner_body;
+ }
+ else
+ {
   $html=$this->info['full'];
-  $vars['siteroot']=$GLOBALS['SET']['baseuri'];
+  $vars['siteroot']=$GLOBALS['SET']['siteroot'];
   $vars['sitename']=$GLOBALS['SET']['name'];
   $vars['pagetitle']="Untitled";
   $vars['templatedir']=$vars['siteroot'].dirname($this->template);
@@ -1206,6 +1456,7 @@ HTML;
   $html=$ch->replace($html);
 
   return $html;
+ }
  }
 }
 
@@ -1285,7 +1536,7 @@ class MomokoAddinForm implements MomokoObject
 	$vars['addin_list'].="<td class=\"ui-widget-content\"><a class=\"ui-icon ui-icon-trash\" style=\"display:inline-block\" onclick=\"showRemove('".$row['num']."',event)\" title=\"Delete\" href=\"javascript:void()\"></a></td>\n</tr>\n";
       }
     }
-    $vars['site_location']=$GLOBALS['SET']['baseuri'];
+    $vars['site_location']=$GLOBALS['SET']['siteroot'];
       
     $vh=new MomokoVariableHandler($vars);
     $info['inner_body']=$vh->replace($info['inner_body']);
