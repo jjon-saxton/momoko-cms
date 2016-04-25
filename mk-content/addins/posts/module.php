@@ -2,7 +2,7 @@
 
 class MomokoPostsModule extends MomokoModule implements MomokoModuleInterface
 {
-	public $news_list;
+ public $news_list;
  public $info=array();
  public $opt_keys=array();
  private $table;
@@ -14,21 +14,21 @@ class MomokoPostsModule extends MomokoModule implements MomokoModuleInterface
   $this->info=$this->getInfoFromDB();
   parse_str($this->info->settings,$this->settings);
   $this->table=new DataBaseTable('content');
-  $query=$this->table->getData("type:'post'");
+  $query=$this->table->getData("type:'post'",null,'date_created');
   $this->news_list=$query->fetchAll(PDO::FETCH_ASSOC);
  }
 	
-	public function getModule ($format='html')
-	{
-		$data=array();
-		
-		if (is_array($this->news_list))
+ public function getModule ($format='html')
+ {
+  $data=array();
+	
+  if (is_array($this->news_list))
   {
    foreach ($this->news_list as $post)
    {
     if ($post['date_modified'])
     {
-     $item['timestamp']=strtotime($post['date_modiefied']);
+     $item['timestamp']=strtotime($post['date_modified']);
     }
     else
     {
