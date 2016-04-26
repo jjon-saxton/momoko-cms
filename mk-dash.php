@@ -1277,11 +1277,11 @@ HTML;
       }
       $finfo['author']=$GLOBALS['USR']->num;
       $finfo['date_created']=date("Y-m-d H:i:s");
-      $finfo['temp']=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].crypt(time());
+      $finfo['temp']=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir']."temp-attach-".time();
     
       if (is_writable($GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir']))
       {
-       move_uploaded_file($_FILES['file']['tmp_name'],$finfo['temp']);
+       move_uploaded_file($_FILES['file']['tmp_name'],$finfo['temp']) or die(trigger_error("Cannot move file to '{$finfo['temp']}'!"));
        if ($finfo['mime_type'] == "text/html")
        {
         $finfo['type']='page';
@@ -1308,7 +1308,7 @@ HTML;
          }
          else
          {
-          $finfo['link']=$GLOBALS['SET']['sec_protocol'].$GLOBALS['SET']['baseuri']."?p=".$new_ko;
+          $finfo['link']=$GLOBALS['SET']['siteroot']."?p=".$new_ko;
          }
         }
         else
