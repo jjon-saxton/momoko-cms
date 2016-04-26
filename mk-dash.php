@@ -1492,7 +1492,7 @@ HTML;
 <div id="External">
 {$blank}
 <h4 class="module">Upload</h4>
-<form enctype="multipart/form-data" action="{$GLOBAL['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=upload&ajax=1" method="post" target="droptarget">
+<form enctype="multipart/form-data" action="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&action=upload&ajax=1" method="post" target="droptarget">
 <div id="ExtURI"><label for="uri">A file from the web: </label><input{$exturi_perams} type=url id="uri" name="uri" placeholder="http://" onkeypress="iFetch(event,this)"></div>
 <div id="ExtFile"><label for="file">A file on your computer: </label><input type=file id="file" name="file" onchange="iUpload(this)"></div>
 </form>
