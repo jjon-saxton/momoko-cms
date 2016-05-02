@@ -1309,6 +1309,7 @@ HTML;
          else
          {
           $finfo['link']=$GLOBALS['SET']['siteroot']."?p=".$new_ko;
+          $finfo['edit']=$finfo['link']."&action=edit";
          }
         }
         else
@@ -1322,6 +1323,7 @@ HTML;
         $finfo['type']='attachment';
         $finfo['title']=$finfo['name'];
         $finfo['link']=$GLOBALS['SET']['sec_protocol'].$GLOBALS['SET']['baseuri'].$GLOBALS['SET']['filedir'].$finfo['name'];
+        $finfo['edit']="#";
         if(rename($finfo['temp'],$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$finfo['name']))
         {
          try
@@ -1380,7 +1382,7 @@ HTML;
      {
       $script_body=<<<TXT
 $('span#msg',pDoc).html("Uploaded!").addClass("success");
-$('div#FileInfo',pDoc).append("<div class=\"page selectable box\"><a id=\"location\" href=\"{$finfo['link']}\" style=\"display:none\">[insert]</a><strong>{$finfo['title']}</strong></div>");
+$('div#FileInfo',pDoc).append("<div onclick=\"window.location='{$finfo['edit']}'\" class=\"page selectable box\"><a id=\"location\" href=\"{$finfo['link']}\" style=\"display:none\">[insert]</a><strong>{$finfo['title']}</strong></div>");
 window.setTimeout(function(){
  $("span#msg",pDoc).remove();
  $('input#file',pDoc).removeAttr('disabled');
