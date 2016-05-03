@@ -829,7 +829,7 @@ class MomokoPage implements MomokoObject
      }
     }
    }
-   $statuses=array('public'=>"Public",'cloaked'=>"Hidden From Navigation",'private'=>"Private",'locked'=>"In Production");
+   $statuses=array('public'=>"Public",'cloaked'=>"Hidden From Navigation",'private'=>"Private",'locked'=>"Draft");
    $status_opts=null;
    foreach($statuses as $value=>$name)
    {
