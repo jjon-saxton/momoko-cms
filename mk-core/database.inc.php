@@ -372,4 +372,18 @@ class DataBaseTable extends DataBaseSchema
    throw new Exception("Could not add data");
   }
  }
+
+ public function emptyData()
+ {
+  try
+  {
+   $this->query("TRUNCATE `".$this->table."`");
+  }
+  catch (Exception $err)
+  {
+   trigger_error("SQL Server Error: ".$err->getMessage(),E_USER_ERROR);
+  }
+
+  return true;
+ }
 }
