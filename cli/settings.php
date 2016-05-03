@@ -66,6 +66,7 @@ function load_ini($from)
 
  if ($delete == 'y' || $delete == 'yes')
  {
+  fwrite(STDOUT,"Deleting '{$from}'\n");
   unlink($from);
  }
  else
