@@ -139,7 +139,7 @@ class MomokoSiteConfig
    $ini=null;
    foreach ($settings as $key=>$value)
    {
-    $ini.=$key." = ".$value."\n";
+    $ini.=$key." = \"".$value."\"\n";
    }
    return $ini;
    break;
