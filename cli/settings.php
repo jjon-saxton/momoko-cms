@@ -76,3 +76,5 @@ function load_ini($from)
 
  return true;
 }
+
+?>
