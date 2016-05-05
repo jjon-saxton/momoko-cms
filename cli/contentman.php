@@ -21,22 +21,7 @@ foreach ($argv as $key=>$value) //create basic arg pairs
  }
 }
 
-if (array_key_exists('upload',$args))
-{
- if (pathinfo($args['upload'],PATHINFO_EXTENSION) == "md")
- {
-  make_page($tbl,$args['upload'],'markdown');
- }
- elseif (pathinfo($args['upload'],PATHINFO_EXTENSION) == "html" || pathinfo($args['upload'],PATHINFO_EXTENSION) == "htm")
- {
-  make_page($tbl,$args['upload'],'html');
- }
- else
- {
-  make_attachment($tbl,$args['upload']);
- }
-}
-elseif (array_key_exists('action',$args))
+if (array_key_exists('action',$args))
 {
  if (array_key_exists('id',$args))
  {
@@ -49,6 +34,10 @@ elseif (array_key_exists('action',$args))
 
  switch ($args['action'])
  {
+  case 'add':
+  case 'new':
+  add_content($tbl,$args['file']);
+  break;
   case 'view':
   show_content($tbl,$item);
   break;
@@ -83,9 +72,7 @@ TXT;
   show_content($tbl);
   break;
   case 2:
-  fwrite(STDOUT,"Please provide the absolute path to the file you wish to add: ");
-  $upload=trim(fgets(STDIN),"\n\r");
-  var_dump($upload); //TODO as we did above, choose wish make function to use and how to use it.
+  add_content($tbl);
   break;
   case 3:
   edit_content($tbl);
@@ -135,7 +122,7 @@ function show_content($content,$id=null)
  {
   if ($key == 'text')
   {
-   fwrite(STDOUT,$val);
+   fwrite(STDOUT,$val."\n");
   }
   else
   {
@@ -178,11 +165,112 @@ function del_content($content,$id=null)
  }
  exit();
 }
-function make_page($content,$file=null,$type='html')
+function add_content($content,$file=null)
 {
- //TODO process html and/or markdown page and add it to database
-}
-function make_attachment($content,$file=null)
-{
- //TODO add attachment to database with default data
+ if (empty($file))
+ {
+  fwrite(STDOUT,"Absolute path to file you wish to add: ");
+  $file=trim(fgets(STDIN),"\n\r");
+ }
+ $ext=pathinfo($file,PATHINFO_EXTENSION);
+
+ fwrite(STDOUT,"Gathering information from '{$file}'...\n");
+ switch ($ext)
+ {
+  case "txt":
+  $ko['mime_type']="text/plain";
+  fwrite(STDOUT,"Is this plain text file markdown formatted? ");
+  $markdown=strtolower(trim(fgets(STDIN),"\n\r"));
+  if ($markdown == "yes" || $markdown == "y")
+  {
+   fwrite(STDOUT,"Do wish to add this file as a page instead of an attachment? ");
+   $page=strtolower(trim(fgets(STDIN),"\n\r"));
+   if ($page == "yes" || $page == "y")
+   {
+    include ("./mk-core/markdown.inc.php");
+    $ko['mime_type']="text/html";
+    $ko['type']="page";
+    $ko['link']=null;
+    $ko['text']=Markdown(file_get_contents($file));
+    $ko['title']=locate_title($ko['text']);
+   }
+   else
+   {
+    $ko['title']=basename($file);
+    $ko['type']="attachment";
+    $ko['link']=""; //TODO set link to the new location of the file.
+   }
+  }
+  break;
+  case "md":
+  $ko['mime_type']="text/markdown";
+  fwrite(STDOUT,"Do you wish to add this markdown file as a page instead of an attachment? ");
+  $page=strtolower(trim(fgets(STDIN),"\n\r"));
+  if ($page == "yes" || $page == 'y')
+  {
+   include ("./mk-core/markdown.inc.php");
+   $ko['mime_type']="text/html";
+   $ko['type']="page";
+   $ko['link']=null;
+   $ko['text']=Markdown(file_get_contents($file));
+   $ko['title']=locate_title($ko['text']);
+  }
+  else
+  {
+   $ko['title']=basename($file);
+   $ko['type']="attachment";
+   $ko['link']=""; //TODO set link like above
+  }
+  break;
+  case "htm":
+  case "html":
+  $ko['mime_type']="text/html";
+  $ko['type']="page";
+  $ko['link']=null;
+  $info=parse_page(file_get_contents($file));
+  $ko['title']=$info['title'];
+  $ko['text']=$info['inner_body'];
+  break;
+  default:
+  $ko['title']=basename($file);
+  $ko['mime_type']=""; //TODO grab mime type from file
+  $ko['type']="attachment";
+  $ko['link']=""; //TODO grab link
+ }
+
+ fwrite(STDOUT,"Do you wish to keep this file? ");
+ $keepsrc=strtolower(trim(fgets(STDIN),"\n\r"));
+ if ($keepsrc == "yes" || $keepsrc == "y")
+ {
+  if ($ko['type'] == "attachment")
+  {
+   copy($file,$ko['link']);
+  }
+ }
+ else
+ {
+  if ($ko['type'] == "attachment")
+  {
+   rename($file,$ko['link']);
+  }
+  else
+  {
+   unlink($file);
+  }
+ }
+
+ fwrite(STDOUT,"Now adding '{$ko['title']}' to database as a(n) {$ko['type']}...");
+ $ko['author']=1;
+ $ko['date_created']=date("Y-m-d H:i");
+ $ko['status']="cloaked";
+ $ko['parent']=0;
+ if ($nid=$content->putData($ko))
+ {
+  fwrite(STDOUT," succeeded! item #{$nid} added to database.\n");
+ }
+ else
+ {
+  fwrite(STDOUT," failed!\n");
+ }
+ exit();
 }

@@ -757,6 +757,20 @@ function parse_page($data)
  return $array;
 }
 
+function locate_title($txt,$tag='h1') //Locates a title for a page without a head section, useful for pages from markdown sources
+{
+ $title="Untitled";
+ if (preg_match("/<{$tag}>(?P<title>.*?)<\/{$tag}>/smU",$txt,$match) > 0) //Find page title in $data
+ {
+  if (@$match['title']) //accept titles other than Blank and [Blank]
+  {
+   $title=$match['title'];
+  }
+ }
+
+ return $title;
+}
+
 function get_author($num)
 {
  $auth_table=new DataBaseTable('users');
