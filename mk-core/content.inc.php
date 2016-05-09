@@ -604,16 +604,23 @@ $(function(){
  });
 });
 </script>
-<form method=post>
+<form class="form-inline" role="form" method=post>
 {$hiddenvals}
 <h2>Edit Attachment: <input type=text name="title" placeholder="Filename" id="title" value="{$this->title}"></h2>
 <div id="PageEditor">
 <div id="PageProps">
-<ul class="noindent nobullet">
-<li><label for="parent">Parent Page:</label> <select id="parent" name="parent">{$parent_opts}</select></li>
-<li><label for="status">Attachment Status:</label> <select id="status" name="status">{$status_opts}</select></li>
-<li><label for="private">Groups that have access:</label> <input type=text id="private" name="has_access" disabled=disabled value="editor,members"></li>
-</ul>
+<div class="form-group">
+ <label for="parent">Parent Page:</label>
+ <select class="form-control" id="parent" name="parent">{$parent_opts}</select>
+</div>
+<div class="form-group">
+ <label for="status">Attachment Status:</label>
+ <select id="status" name="status">{$status_opts}</select>
+</div>
+<div class="form-group">
+ <label for="private">Groups that have access:</label>
+ <input type=text id="private" name="has_access" disabled=disabled value="editor,members">
+</div>
 </div>
 <div id="PageSave" align=center>
 <button type=submit name="save" value="1">Save</button>
@@ -696,7 +703,7 @@ HTML;
 <h3 class="message confirmation title">Do you wish to delete this attachment?</h3>
 <p>You are about to delete an attachment. Content in MomoKO cannot be retrieved once it is deleted. If you would like to simply make the attachment private without removing it, there are several options for you in the attachment's edit page under 'status'.</p>
 <p class="confirmation question">Are you sure you want to delete '{$this->info['title']}'?</p>
-<div class="confirmation buttons"><button class="answer" type=submit name="drop" id="true" value="1">Yes</button> <button class="answer" id="false">No</button></div>
+<div class="confirmation buttons"><button class="answer" class="btn btn-success" type=submit name="drop" id="true" value="1">Yes</button> <button class="btn btn-danger" class="answer" id="false">No</button></div>
 </div>
 </form>
 HTML;
@@ -935,7 +942,6 @@ $(function(){
   fsize:false,
   placeholder: "Page body..."
  });
- $("div#PageEditor").tabs();
  
  $("#type_select").css("text-align","center");
  $("#type_select input:radio").change(function(){
@@ -952,17 +958,18 @@ $(function(){
  });
 });
 </script>
-<form method=post>
+<form role="form" method=post>
 {$hiddenvals}
 <h2>Edit {$type}: <input type=text name="title" placeholder="{$type} Title" id="title" value="{$this->title}"></h2>
 {$type_links}
 <div id="PageEditor">
-<ul id="tabs">
-<li><a href="#PageBody">Body</a></li>
-<li><a href="#PageProps">Properties</a></li>
+<ul class="nav nav-tabs">
+<li class="active"><a data-toggle="tab" href="#PageBody">Body</a></li>
+<li><a data-toggle="tab" href="#PageProps">Properties</a></li>
 </ul>
-<div id="PageBody">
-<textarea id="pagebody" name="text">
+<div class="tab-content">
+<div id="PageBody" class="tab-pane fade in active">
+<textarea class="form-control" id="pagebody" name="text">
 {$this->inner_body}
 </textarea>
 </div>
@@ -970,12 +977,19 @@ HTML;
   if ($type == 'Page')
   {
    $info['inner_body'].=<<<HTML
-<div id="PageProps">
-<ul class="noindent nobullet">
-<li><label for="parent">Parent Page:</label> <select id="parent" name="parent">{$parent_opts}</select></li>
-<li><label for="status">Page Status:</label> <select id="status" name="status">{$status_opts}</select></li>
-<li><label for="private">Groups that have access:</label> <input type=text id="private" name="has_access" disabled=disabled value="editor,members"></li>
-</ul>
+<div id="PageProps" class="tab-pane fade">
+<div class="form-group">
+ <label for="parent">Parent Page:</label>
+ <select class="form-control" id="parent" name="parent">{$parent_opts}</select>
+</div>
+<div class="form-group">
+ <label for="status">Page Status:</label>
+ <select class="form-control" id="status" name="status">{$status_opts}</select>
+</div>
+<div class="form-group">
+ <label for="private">Groups that have access:</label>
+ <input class="form-control" type="text" id="private" name="has_access" disabled=disabled value="editor,members">
+</div>
 </div>
 HTML;
    }
@@ -996,7 +1010,7 @@ HTML;
      }
     }
     $info['inner_body'].=<<<HTML
-<div id="PageProps">
+<div id="PageProps" class="tab-pane fade">
 <input type=hidden name="parent" value="0">
 <ul class="noindent nobullet">
 <li>Post Date: {$now_h}</li>
@@ -1007,8 +1021,9 @@ HTML;
 HTML;
    }
    $info['inner_body'].=<<<HTML
+</div>
 <div id="PageSave" align=center>
-<button type=submit name="save" value="1">Save</button>
+<button type=submit name="save" class="btn btn-primary" value="1">Save</button>
 </div>
 </div>
 </form>
@@ -1080,7 +1095,7 @@ HTML;
 <h3 class="message confirmation title">Do you wish to delete this page?</h3>
 <p>You are about to delete a page or post. Content in MomoKO cannot be retrieved once it is deleted. If you would like to hide a page from navigation without removing it, there are several options for you in the page's properties tab under 'status'.</p>
 <p class="confirmation question">Are you sure you want to delete '{$this->info['title']}'?</p>
-<div class="confirmation buttons"><button class="answer" type=submit name="drop" id="true" value="1">Yes</button> <button class="answer" id="false">No</button></div>
+<div class="confirmation buttons"><button class="answer btn btn-success" type=submit name="drop" id="true" value="1">Yes</button> <button class="answer btn btn-danger" id="false">No</button></div>
 </div>
 </form>
 HTML;
@@ -1354,8 +1369,7 @@ HTML;
 <title>~{sitename} - ~{pagetitle}</title>
 <!-- Meta Tags? -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css" />
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/bootstrap.js"></script>
 {$editor}<script src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/dash.js" type="text/javascript"></script>
 <link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/mk-core/styles/momoko.css" type="text/css">
 
@@ -1377,12 +1391,22 @@ HTML;
  {
   $split['body']=<<<HTML
 {$dashup}
-<div id="modal" title="Loading Awesomeness!" style="display:none">
-<p>Becoming 20% more awesome...</p>
+<div id="modal" class="modal fade" role="dialog">
+ <div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+     <button type="button" class="close" data-dismiss="modal">&times;</button>
+     <h4 class="modal-title">Preparing awesome stuff...</h4>
+    </div>
+    <div class="modal-body">
+     <p>Becoming 20% more awesome...</p>
+    </div>
+  </div>
+ </div>
 </div>
-<div id="overlay" class="ui-widget-overlay" style="display:none" onclick="toggleSidebar();">&nbsp;</div>
+<div id="overlay" class="overlay" style="display:none" onclick="toggleSidebar();">&nbsp;</div>
 <div id="dashboard" class="sidebar">
-<button style="float:right" id="sidebarClose" onclick="toggleSidebar()">Close Dashboard</button>
+<button id="sidebarClose" class="close" onclick="toggleSidebar()">&times;</button>
 <h1>{$GLOBALS['SET']['name']}</h1>
 <h4>User</h4>
 <ul id="UserPlugs" class="plug list">

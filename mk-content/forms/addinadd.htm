@@ -3,16 +3,29 @@
 <title>Add Addin</title>
 </head>
 <body>
-<form enctype="multipart/form-data" action="?ajax=1&section=addin&action=upload" method="post" target="droptarget">
-<ul class="nobullet noindent">
-<li id="file"><label for="file">Browse for file (file must be a zipped archive):</label> <input name="addin" type="file" id="file" onchange="iUpload(this,true)"></li>
-<li id="addin-hidden" style="display:none"><input type=hidden id="addin-temp" value=""><input type=hidden id="addin-type" value=""><input type=hidden id="addin-dir" value="">Dir:</li>
-<li><label for="addin-shortname">Short Name:</label> <input type="text" id="addin-shortname" disabled=disabled value=""><input type=hidden name="dir" value=""></li>
-<li><label for="addin-longname">Long Name:</label> <input type="text" id="addin-longname" disabled=disabled value=""></li>
-<li><label for="addin-description">Description:</label><br>
-<textarea id="addin-description" name="description" disabled=disabled>
-</textarea></li>
-</ul>
+<form class="form-inline" role="form" enctype="multipart/form-data" action="?ajax=1&section=addin&action=upload" method="post" target="droptarget">
+<div id="file" class="form-group">
+ <label for="file">Browse for file (file must be a zipped archive):</label>
+ <input class="form-control" name="addin" type="file" id="file" onchange="iUpload(this,true)">
+</div>
+<div id="addin-hidden" style="display:none">
+ <input type=hidden id="addin-temp" value="">
+ <input type=hidden id="addin-type" value="">
+ <input type=hidden id="addin-dir" value="">Dir:</div>
+<div class="form-group">
+ <label for="addin-shortname">Short Name:</label>
+ <input class="form-control"" type="text" id="addin-shortname" disabled=disabled value="">
+ <input type=hidden name="dir" value="">
+</div>
+<div class="form-group">
+ <label for="addin-longname">Long Name:</label>
+ <input class="form-control"" type="text" id="addin-longname" disabled=disabled value="">
+</div>
+<div class="form-group">
+ <label for="addin-description">Description:</label><br>
+ <textarea class="form-control"" class="form-control" id="addin-description" name="description" disabled=disabled>
+ </textarea>
+</div>
 </form>
 <iframe name="droptarget" style="display:none"></iframe>
 </body>

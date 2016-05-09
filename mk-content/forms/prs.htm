@@ -5,13 +5,17 @@
 <body>
 <h2>Set New Password</h2>
 <p>MomoKO is ready to revieve your new password.</p>
-<form action="./mk-login.php?action=reset" method="post">
+<form role="form" action="./mk-login.php?action=reset" method="post">
 <input type="hidden" name="sid" value="~{sid}">
-<ul class="nobullet noindent">
-<li><label for="1">New Password:</label> <input type="password" id="1" name="pass1"></li>
-<li><label for="2">Confirm Password:</label> <input type="password" id="2" name="pass2"></li>
-<li><button type="submit">Reset Password</button></li>
-</ul>
+<div class="from-group">
+ <label for="1">New Password:</label>
+ <input class="form-control" type="password" id="1" name="pass1"></li>
+</div>
+<div class="from-group">
+ <label for="2">Confirm Password:</label>
+ <input class="form-control" type="password" id="2" name="pass2">
+</div>
+<button class="btn btn-danger" type="submit">Reset Password</button>
 </form>
 </body>
 </html>
