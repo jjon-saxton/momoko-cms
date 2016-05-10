@@ -653,25 +653,15 @@
 						linkRecord(jQTE.find("["+setdatalink+"]"));
 					});
 					
-					linkbrowse.click(function()
+					linkbrowse.attr("data-toggle",'modal').attr("data-target",'#modal').click(function()
 					{
-					 $("div#modal").load(vars.dashuri+"?section=content&action=gethref&ajax=1",function(){
-					  $("#vtabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
-					 }).on('mouseenter',"div.selectable",function(){
-					   $(this).addClass("ui-state-hover");
-					  }).on('mouseleave',"div.selectable",function(){
-					   $(this).removeClass("ui-state-hover");
+					 $("#modal .modal-title").html("Content Browser...");
+					 $("#modal .modal-body").load(vars.dashuri+"?section=content&action=gethref&ajax=1",function(){
+                      $("div.page").attr("data-dismiss",'modal');
 					  }).on('click',"div.selectable",function(){
 					   var location=$(this).find("a#location").attr('href');
 					   $(linkinput).val(location);
-					   $("div#modal").dialog('close');
 					  });
-					 $("div#modal").dialog({
-					  height: 500,
-					  width: 800,
-					  modal: true,
-					  title: "Browse Site"
-					 });
 					});
 				}
 				else

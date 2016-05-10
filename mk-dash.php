@@ -1484,14 +1484,14 @@ HTML;
    }
    $page['title']="Link Chooser";
    $page['body']=<<<HTML
-<div id="vtabs">
-<ul>
-<li><a href="#External">External Source</a></li>
-<li><a href="#Pages">Page</a></li>
-<li><a href="#Posts">Post</a></li>
-<li><a href="#Attachments">Attachment</a></li>
+<ul class="nav nav-pills">
+<li class="active"><a data-toggle="pill" href="#External">External Source</a></li>
+<li><a data-toggle="pill" href="#Pages">Page</a></li>
+<li><a data-toggle="pill" href="#Posts">Post</a></li>
+<li><a data-toggle="pill" href="#Attachments">Attachment</a></li>
 </ul>
-<div id="External">
+<div class="tab-content">
+<div id="External" class="tab-pane fade in active">
 {$blank}
 <h4 class="module">Upload</h4>
 <form enctype="multipart/form-data" action="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&action=upload&ajax=1" method="post" target="droptarget">
@@ -1500,17 +1500,18 @@ HTML;
 </form>
 <div id="FileInfo"><iframe id="FileTarget" name="droptarget" style="display:none" src="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&action=upload&ajax=1"></iframe></div>
 </div>
-<div id="Pages">
+<div id="Pages" class="tab-pane fade">
 <h4 class="module">Select a Page</h4>
 {$pages}
 </div>
-<div id="Posts">
+<div id="Posts" class="tab-pane fade">
 <h4 class="module">Select a Post</h4>
 {$posts}
 </div>
-<div id="Attachments">
+<div id="Attachments" class="tab-pane fade">
 <h4 class="module">Select an Attachment</h4>
 {$attachments}
+ </div>
  </div>
 </div>
 HTML;

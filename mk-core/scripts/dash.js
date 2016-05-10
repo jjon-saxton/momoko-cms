@@ -14,31 +14,19 @@ $(function(){
   event.preventDefault();
   history.back();
  });
- $("button.linkbrowse").click(function(event){
+ $("button.linkbrowse").attr("data-toggle",'modal').attr("data-target",'#modal').click(function(event){
     event.preventDefault();
     var caller=event.currentTarget.id;
-	$("div#modal").load("?section=content&action=gethref&ajax=1",function(){
-	 $("#vtabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
-	 }).on('mouseenter',"div.selectable",function(){
-		 $(this).addClass("ui-state-hover");
-		 }).on('mouseleave',"div.selectable",function(){
-			$(this).removeClass("ui-state-hover");
-		 }).on('click',"div.selectable",function(){
-		   var location=$(this).find("a#location").attr('href');
-		   $("input#mediabox-"+caller).val(location);
-		   $("div#modal").dialog('close');
-	    });
-	$("div#modal").dialog({
-		 height: 500,
-		 width: 800,
-		 modal: true,
-		 title: "Link Chooser",
-         close: function(){
-            $(this).empty(); //empty the dialog box so it may be filled by ajax again later.
-            $(this).find('*').addBack().off(); //destroy all even handlers so they may be re-used with new data later.
-         }
-	});
- });
+
+    $("#modal .modal-title").html("Link Browser...");
+    $("#modal .modal-body").load("?section=content&action=gethref&ajax=1",function(){
+     $(this).on('click',"div.selectable",function(){
+      var location=$(this).find("a#location").attr('href');
+      $("input#mediabox-"+caller).val(location);
+     });
+     $("div.page").attr("data-dismiss",'modal');
+    });
+  });
   
   $(".page div.actions").find("span").click(function(){
    var location=$(this).parent().find("a#location").attr('href');
