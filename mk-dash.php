@@ -702,9 +702,9 @@ HTML;
      $page['body']=<<<HTML
 <script language="javascript">
 $(function(){
- $("input#shortdateformat").before('<select id="shortdateformat" class="formats">{$options['short']}</select> ');
- $("input#longdateformat").before('<select id="longdateformat" class="formats">{$options['long']}</select> ');
- $("input#timeformat").before('<select id="timeformat" class="formats">{$options['time']}</select> ');
+ $("input#shortdateformat").before('<select class="form-control" id="shortdateformat" class="formats">{$options['short']}</select> ');
+ $("input#longdateformat").before('<select class="form-control" id="longdateformat" class="formats">{$options['long']}</select> ');
+ $("input#timeformat").before('<select class="form-control" id="timeformat" class="formats">{$options['time']}</select> ');
  $("select.formats").change(function(){
   var id=$(this).attr('id');
   var format=$(this).val();
@@ -712,16 +712,25 @@ $(function(){
  });
 });
 </script>
-<form method=post>
+<form role="form" method=post>
 <h3>Password</h3>
-<ul id="PassForm" class="noindent nobullet">
-<li><input type=checkbox id="pc" onclick="toggleInputState($(this),'[type=password]')" name="pass_change" value=1> <label for="pc">Do you wish to change your password?</label></li>
-<li><label for="cpass">Current Password: </label><input type=password id="cpass" disabled="disabled" name="oldpassword"></li>
-<li><label for="npass1">New Password: </label><input type=password id="npass1" disabled="disabled" name="newpassword1"></li>
-<li><label for="npass2">Confirm New Password: </label><input type=password id="npass2" disabled="disabled" name="newpassword2"></li>
-</ul>
+<div id="PassForm" class="form-group">
+ <label for="pc">Do you wish to change your password?</label>
+ <input type=checkbox id="pc" onclick="toggleInputState($(this),'[type=password]')" name="pass_change" value=1>
+</div>
+<div class="form-group">
+ <label for="cpass">Current Password:</label>
+ <input class="form-control" type=password id="cpass" disabled="disabled" name="oldpassword">
+</div>
+<div class="form-group">
+ <label for="npass1">New Password:</label>
+ <input class="form-control" type=password id="npass1" disabled="disabled" name="newpassword1">
+</div>
+<div class="form-group">
+ <label for="npass2">Confirm New Password:</label>
+ <input class="form-control" type=password id="npass2" disabled="disabled" name="newpassword2">
+</div>
 <h3>Settings</h3>
-<ul id="UserForm" class="noindent nobullet">
 <input type=hidden name="num" value="{$GLOBALS['USR']->num}">
 HTML;
      $columns=array('name','email','shortdateformat','longdateformat','timeformat','rowspertable');
@@ -749,9 +758,9 @@ HTML;
        $title=ucwords($form_field);
        break;
       }
-      $page['body'].="<li><label for=\"{$form_field}\">{$title}: </label><input type=\"{$type}\" id=\"{$form_field}\" name=\"{$form_field}\" value=\"{$user[$form_field]}\"></li>\n";
+      $page['body'].="<div class=\"form-group\"><label for=\"{$form_field}\">{$title}: </label><input class=\"form-control\" type=\"{$type}\" id=\"{$form_field}\" name=\"{$form_field}\" value=\"{$user[$form_field]}\"></div>\n";
      }
-     $page['body'].="</ul>\n<h3>Save</h3><div class=\"box\" align=center><button type=submit name=\"send\" value=\"1\">Save Changes</button></div>\n</form>";
+     $page['body'].="<h3>Save</h3><div class=\"box\" align=center><button class=\"btn btn-primary\" type=submit name=\"send\" value=\"1\">Save Changes</button></div>\n</form>";
      break;
     }
    }
