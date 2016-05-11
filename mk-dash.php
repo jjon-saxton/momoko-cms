@@ -702,9 +702,9 @@ HTML;
      $page['body']=<<<HTML
 <script language="javascript">
 $(function(){
- $("input#shortdateformat").before('<select class="form-control" id="shortdateformat" class="formats">{$options['short']}</select> ');
- $("input#longdateformat").before('<select class="form-control" id="longdateformat" class="formats">{$options['long']}</select> ');
- $("input#timeformat").before('<select class="form-control" id="timeformat" class="formats">{$options['time']}</select> ');
+ $("input#shortdateformat").before('<select class="formats form-control" id="shortdateformat">{$options['short']}</select> ');
+ $("input#longdateformat").before('<select class="formats form-control" id="longdateformat">{$options['long']}</select> ');
+ $("input#timeformat").before('<select class="formats form-control" id="timeformat">{$options['time']}</select> ');
  $("select.formats").change(function(){
   var id=$(this).attr('id');
   var format=$(this).val();
