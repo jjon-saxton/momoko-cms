@@ -399,29 +399,46 @@ HTML;
         }
      }
      $page['body']=<<<HTML
-<form method=post>
+<form role="form" method=post>
 <h3>Basic Information</h3>
-<ul id="NewUserForm" class="noindent nobullet">
-<li><label for="name">Name: </label><input type=text id="name" name="name"></li>
-<li><label for="email">E-Mail: </label><input type=email id="email" name="email"></li>
-</ul>
+<div class="form-group">
+ <label for="name">Name:</label>
+ <input class="form-control" type=text id="name" name="name">
+</div>
+<div class="form-group">
+ <label for="email">E-Mail:</label>
+ <input class="form-control" type=email id="email" name="email">
+</div>
 <h3>Password</h3>
-<ul id="PasswordForm" class="noindent nobullet">
-<li><label for="pass1">Password: </label><input type=password id="pass1" name="password"></li>
-<li><label for="pass2">Confirm Password: </lable><input type=password id="pass2" name="password2"></li>
-</ul>
+<div class="form-group">
+ <label for="pass1">Password:</label>
+ <input class="form-control" type=password id="pass1" name="password">
+</div>
+<div class="form-group">
+ <label for="pass2">Confirm Password:</label>
+ <input class="form-control" type=password id="pass2" name="password2">
+</div>
 <h3>Setting</h3>
-<ul id="UserSettings" class="noindent nobullet">
-<li><label for="groups">Groups: </label></li>
-<li><select onchange="$('input#group_store').val(($(this).val()))"size="{$group_num}" multiple id="groups">
+<div class="form-group">
+ <label for="groups">Groups:</label>
+ <select class="form-control" onchange="$('input#group_store').val(($(this).val()))" size="{$group_num}" multiple id="groups">
 {$group_opts}</select>
-<input type="hidden" id="group_store" name="groups" value="users"></li>
-<li><label for="sdf">Short Date Format: </label><input type=text id="sdf" name="shortdateformat" value="{$default['shortdateformat']}"></li>
-<li><label for="ldf">Long Date Format: </label><input type=text id="ldf" name="longdateformat" value="{$default['longdateformat']}"></li>
-<li><label for="rpt">Rows Per Table: </label><input type=number id="rpt" name="rowspertable" value="{$default['rowspertable']}"></li>
-</ul>
+ <input type="hidden" id="group_store" name="groups" value="users">
+</div>
+<div class="form-group">
+ <label for="sdf">Short Date Format:</label>
+ <input class="form-control" type=text id="sdf" name="shortdateformat" value="{$default['shortdateformat']}">
+</div>
+<div class="form-group">
+ <label for="ldf">Long Date Format:</label>
+ <input class="form-control" type=text id="ldf" name="longdateformat" value="{$default['longdateformat']}">
+</div>
+<div class="form-group">
+ <label for="rpt">Rows Per Table:</label>
+ <input class="form-control" type=number id="rpt" name="rowspertable" value="{$default['rowspertable']}">
+</div>
 <h3>Next</h3>
-<div class="box" align=center><button type=submit name="send" value="1">Register User</div>
+<div class="box" align=center><button class="btn btn-primary" type=submit name="send" value="1">Register User</div>
 </form>
 HTML;
     }
@@ -477,15 +494,27 @@ HTML;
         }
      }
      $page['body']=<<<HTML
-<form id="UserForm" action="{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=edit&id={$user['num']}" method=post>
+<form role="form" id="UserForm" action="{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=edit&id={$user['num']}" method=post>
 <input type=hidden name="num" value="{$user['num']}">
 <ul id="FormList" class="nobullet noindent">
-<li><label for="name">Name:</label> <input type=text id="name" name="name" value="{$user['name']}"</li>
-<li><label for="email">E-mail:</label> <input type=email id="email" name="email" value="{$user['email']}"</li>
-<li><label for="groups">Groups:</label> <select onchange="$('input#group_store').val(($(this).val()))"size="{$group_num}" multiple id="groups">
+<div class="form-group">
+ <label for="name">Name:</label>
+ <input class="form-control" type=text id="name" name="name" value="{$user['name']}">
+</div>
+<div class="form-group">
+ <label for="email">E-mail:</label>
+ <input class="form-control" type=email id="email" name="email" value="{$user['email']}">
+</div>
+<div class="form-group">
+ <label for="groups">Groups:</label>
+ <select class="form-control" onchange="$('input#group_store').val(($(this).val()))"size="{$group_num}" multiple id="groups">
 {$group_opts}</select>
-<input type="hidden" name="groups" id="group_store" value="{$user['groups']}"></li>
-</ul>
+ <input type="hidden" name="groups" id="group_store" value="{$user['groups']}">
+</div>
+<hr>
+<div align="center">
+ <button class="btn btn-primary" type="submit">Apply Changes</button>
+</div>
 </form>
 HTML;
     }
@@ -564,6 +593,16 @@ HTML;
 <input type=hidden name="num" value="{$_GET['id']}">
 <p>Do you really want to remove this user? Keep in mind that this will prevent the user from accessing this site in the future and that this action cannot be undone without the user re-registering!</p>
 <p><input type="checkbox" id="cbc" name="confirm" value="y"><label for="cbc">I have read and understand the above warning.</label></p>
+<hr>
+<div class="box" align="center">
+<div style="float:left;text-align:center;width:50%">
+ <button class="btn btn-success" type="submit">Yes</buton>
+</div>
+<div style="float:left;text-align:center;width:50%">
+ <button class="btn btn-danger" data-dismiss="modal">No</buton>
+</div>
+&nbsp;
+</div>
 </form>
 HTML;
     }
@@ -1528,7 +1567,7 @@ HTML;
    case 'list':
    default:
    $page['title']="Manage Users";
-   $page['body']="<div class=\"list plug box\"><table width=100% class=\"dashboard row-select\">\n<tr>\n";
+   $page['body']="<div class=\"list plug box\"><table class=\"table table-striped\" width=100% class=\"dashboard row-select\">\n<thead>\n<tr>\n";
    $columns=array('num','name','email','groups');
    foreach ($columns as $column)
    {
@@ -1537,7 +1576,7 @@ HTML;
      $page['body'].="<th id=\"{$column}\">".ucwords($column)."</th>";
     }
    }
-   $page['body'].="<th>&nbsp;</th></tr>";
+   $page['body'].="<th>&nbsp;</th></thead></tr><tbody>";
    $query=$this->table->getData(null,$columns);
    $row_c=$query->rowCount();
    if ($row_c > $GLOBALS['USR']->rowspertable)
@@ -1585,13 +1624,13 @@ HTML;
        $row.="<td>".$value."</td>";
       }
      }
-     $row.="<td><span id=\"edit\" class=\"ui-icon ui-icon-pencil\" style=\"display:inline-block;cursor:pointer\"onclick=\"openAJAXModal('{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?ajax=1&section=user&action=edit&id={$user['num']}','Edit User #{$user['num']}')\" title=\"Edit User #{$user['num']}\"></span><span id=\"remove\" class=\"ui-icon ui-icon-trash\" style=\"display:inline-block\"onclick=\"openAJAXModal('{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?ajax=1&section=user&action=delete&id={$user['num']}','Remove User #{$user['num']}')\" title=\"Remove User #{$user['num']}\"></span></td></tr>\n";
+     $row.="<td><span data-toggle=\"modal\" data-target=\"#modal\" class=\"glyphicon glyphicon-edit\" onclick=\"populateModal('{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?ajax=1&section=user&action=edit&id={$user['num']}','Edit User #{$user['num']}')\" title=\"Edit User #{$user['num']}\"></span> <span data-toggle=\"modal\" data-target=\"#modal\" class=\"glyphicon glyphicon-remove-sign\" onclick=\"populateModal('{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?ajax=1&section=user&action=delete&id={$user['num']}','Remove User #{$user['num']}')\" title=\"Remove User #{$user['num']}\"></span></td></tr>\n";
      $c++;
     }
    }
    $page['body'].=$row;
    unset($row);
-   $page['body'].="</table>\n</div>".$page_div;
+   $page['body'].="</tbody>\n</table>\n</div>".$page_div;
    break;
   }
   if (!$_GET['ajax'])

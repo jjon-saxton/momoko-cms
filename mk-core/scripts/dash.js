@@ -107,17 +107,10 @@ function toggleInputState(p,q)
     }
 }
 
-function openAJAXModal(url,title)
+function populateModal(url,title)
 {
- $("div#modal").load(url).dialog({
-  modal:true,
-  title: title,
-  buttons: {
-   "Next":function(){
-    $("form#UserForm").submit();
-   }
-  }
- });
+ $("#modal .modal-title").html(title);
+ $("#modal .modal-body").load(url);
 }
 
 function iFetch(e,field){
