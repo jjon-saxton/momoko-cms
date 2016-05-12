@@ -898,30 +898,17 @@ HTML;
    if ($_GET['action'] == "new")
    {
     $chooser=<<<TXT
-	$("div#modal").load("//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=gethref&ajax=1&origin=new",function(){
-	 $("#vtabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
-	 }).on('mouseenter',"div.selectable",function(){
-		 $(this).addClass("ui-state-hover");
-		 }).on('mouseleave',"div.selectable",function(){
-			$(this).removeClass("ui-state-hover");
-		 }).on('click',"div.selectable",function(){
-		   var location=$(this).find("a#location").attr('href');
-           $.get(location,function(html){
-		    $("#pagebody").html(html);
-            $("div.jqte_editor").html(html);
-           })
-		   $("div#modal").dialog('close');
-	    });
-	$("div#modal").dialog({
-		 height: 500,
-		 width: 800,
-		 modal: true,
-		 title: "New From...",
-         close: function(){
-            $(this).empty(); //empty the dialog box so it may be filled by ajax again later.
-            $(this).find('*').addBack().off(); //destroy all even handlers so they may be re-used with new data later.
-         }
+    $("#modal .modal-title").html("New From...")
+	$("#modal .modal-body").load("//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=gethref&ajax=1&origin=new",function(){
+     $(this).on('click','div.selectable',function(){
+      var location=$(this).find("a#location").attr('href');
+      $.get(location,function(html){
+       $(".jqte_editor").html(html);
+      });
+     });
+     $(".selectable").attr("data-dismiss",'modal');
 	});
+    $("#modal").modal('show');
 TXT;
    }
    

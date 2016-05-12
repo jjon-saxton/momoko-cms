@@ -135,7 +135,7 @@ class MomokoDashboard implements MomokoObject
      
      $text.=<<<HTML
 <div id="{$content['num']}" class="page box {$content['status']}"><h4 style="display:inline-block;clear:left" class="module">{$content['title']}</h4>
-<div class="actions "style="float:right"><a href="{$GLOBALS['SET']['siteroot']}/{$content['link']}" id="location" style="display:none">Open</a> <span id="view" class="ui-icon ui-icon-folder-open" style="display:inline-block" title="Open/Download"></span> <span id="edit" class="ui-icon ui-icon-pencil" style="display:inline-block" title="Edit"></span> <span id="delete" class="ui-icon ui-icon-trash" style="display:inline-block" title="Delete"></span></div>
+<div class="actions "style="float:right"><a href="{$GLOBALS['SET']['siteroot']}/{$content['link']}" id="location" style="display:none">Open</a><span id="view" class="glyphicon glyphicon-folder-open" title="Open/Download"></span> <span id="edit" class="glyphicon glyphicon-edit" title="Edit"></span> <span id="delete" class="glyphicon glyphicon-remove" title="Delete"></span></div>
 <div class="properties">{$content['date_created']}, {$content['date_modified']}, {$content['author']}, {$content['mime_type']}</div>
 <div class="summary">{$content['text']}</div>
 </div>
@@ -180,14 +180,23 @@ HTML;
    
    $text=<<<HTML
    <div id="Logs" class="box">
-   <form id="Filter">
+   <form role="form" class="form-inline" id="Filter">
    <input type=hidden name="action" value="{$_GET['action']}">
    <input type=hidden name="list" value="{$_GET['list']}">
    <table width=100% id="Filters">
-   <tr valign=middle><th>Filters:</th><td><label for="type">Type</label>: <select id="type" name="filter[type]">{$type_opts}</select></td><td><label for="time">Timeframe</label>: <select id="time" name="filter[time]">{$time_opts}</select></td><td align=left><button type=submit>Apply</button></td></tr>
-   </table>
+   <tr valign=middle><strong>Filters:</strong>
+   <div class="form-group">
+    <label for="type">Type</label>
+    <select class="form-control" id="type" name="filter[type]">{$type_opts}</select>
+   </div>
+   <div class="form-group">
+    <label for="time">Timeframe:</label>
+    <select class="form-control" id="time" name="filter[time]">{$time_opts}</select>
+   </div>
+   <button class="btn btn-default" type=submit>Apply</button></td></tr>
    </form>
-   <table width=100% class="dashboard">
+   <table class="table table-striped" width=100% class="dashboard">
+   <thead>
    <tr>
 HTML;
 
@@ -198,7 +207,7 @@ HTML;
      $text.="<th>".ucwords($th)."</th>";
     }
    }
-   $text.="</tr>";
+   $text.="</tr>\n</thead>\n<tbody>";
    
    $where=null;
    if (is_array(@$_GET['filter']))
@@ -297,7 +306,7 @@ HTML;
     }
     $text.="</tr>\n";
    }
-   $info['inner_body']="<h2>Event Logs</h2>\n".$text."</table>\n</div>".$page_div;
+   $info['inner_body']="<h2>Event Logs</h2>\n".$text."</tbod></table>\n</div>".$page_div;
    break;
    case 'addins':
    default:
@@ -618,8 +627,7 @@ HTML;
     {
      case 'site':
      $page['body']=<<<HTML
-<form method=post>
-<ul id="SettingsForm" class="noindent nobullet">
+<form role="form" method=post>
 HTML;
      $query=$this->table->getData();
      $settings=$query->fetchALL(PDO::FETCH_ASSOC);
@@ -642,19 +650,19 @@ HTML;
        break;
       }
       $title=ucwords($title);
-      $page['body'].="<li><label for=\"{$setting['key']}\">{$title}: </label>";
+      $page['body'].="<div class=\"form-group\"><label for=\"{$setting['key']}\">{$title}:</label>";
       switch ($setting['key'])
       {
        case 'version':
-       $page['body'].="<span id=\"{$setting['key']}\">{$setting['value']} <em class=\"message\">changed only by update script!</em></span>";
+       $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">\n<div class=\"alert alert-warning\"><em>changed only by update script!</em></div>";
        break;
        case 'template':
-       $page['body'].="<span id=\"{$setting['key']}\">{$setting['value']} <em class=\"message\">change in <a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance\">site appearance</a></em></span>";
+       $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">\n<div class=\"alert alert-warning\"><em>change in <a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance\">site appearance</a></em></div>";
        break;
        //TODO add special cases for e-mail settings
        case 'email_mta':
        $mtas=array(array('name'=>"PHP mail()",'value'=>"phpmail"),array('name'=>'*Nix sendmail()','value'=>"sendmail",'tip'=>"Only works on Unix-like systems"),array('name'=>"SMTP",'value'=>"smtp",'tip'=>"For either local SMTP or remote SMTP (including gMail) servers.")); //TODO find a way of building this array by actually detecting supported mtas
-       $page['body'].="<select id=\"email_mta\" onchange=\"changeServerInputs()\" name=\"email_mta\">\n";
+       $page['body'].="<select class=\"form-control\" id=\"email_mta\" onchange=\"changeServerInputs()\" name=\"email_mta\">\n";
        foreach ($mtas as $auth)
        {
          if ($auth['value'] == $setting['value'])
@@ -684,12 +692,12 @@ HTML;
            default:
            $type="text";
          }
-         $page['body'].="<li><label for=\"{$setting['key']}_{$key}\">{$name}:</label> <input onkeyup=\"serializeInputs('{$setting['key']}')\" id=\"{$setting['key']}_{$key}\" name=\"{$key}\" type=\"{$type}\" value=\"{$val}\"></li>\n";
+         $page['body'].="<div class=\"form-group\"><label for=\"{$setting['key']}_{$key}\">{$name}:</label> <input class=\"form-control\" onkeyup=\"serializeInputs('{$setting['key']}')\" id=\"{$setting['key']}_{$key}\" name=\"{$key}\" type=\"{$type}\" value=\"{$val}\"></li>\n";
        }
-       $page['body'].="</ul>\n<input type=\"hidden\" name=\"{$setting['key']}\" value=\"{$setting['value']}\">";
+       $page['body'].="<input type=\"hidden\" name=\"{$setting['key']}\" value=\"{$setting['value']}\">\n</div>";
        break;
        case 'use_ssl':
-       $page['body'].="<select id=\"${setting['key']}\" name=\"{$setting['key']}\">\n";
+       $page['body'].="<select class=\"form-control\" id=\"${setting['key']}\" name=\"{$setting['key']}\">\n";
        $opts=array(array('value'=>'','title'=>"No"),array('value'=>'yes','title'=>"Only in senstive areas"),array('value'=>'strict','title'=>"For entire site"));
        foreach ($opts as $option)
        {
@@ -709,20 +717,20 @@ HTML;
        case 'rewrite':
        if (!$setting['value'])
        {
-        $page['body'].="<span id=\"{$setting['key']}\"><input type=radio id=\"{$setting['key']}1\" name=\"{$setting['key']}\" value=\"1\"> <label for=\"{$setting['key']}1\">Yes</label> <input type=radio id=\"{$setting['key']}0\" name=\"{$setting['key']}\" checked=checked value=\"\"> <label for=\"{$setting['key']}0\">No</label></span>";
+        $page['body'].="<div id=\"{$setting['key']}\"><input type=radio id=\"{$setting['key']}1\" name=\"{$setting['key']}\" value=\"1\"> <label for=\"{$setting['key']}1\">Yes</label> <input type=radio id=\"{$setting['key']}0\" name=\"{$setting['key']}\" checked=checked value=\"\"> <label for=\"{$setting['key']}0\">No</label></div>";
        }
        else
        {
-        $page['body'].="<span id=\"{$setting['key']}\"><input type=radio id=\"{$setting['key']}1\" name=\"{$setting['key']}\" checked=checked value=\"1\"> <label for=\"{$setting['key']}1\">Yes</label> <input type=radio id=\"{$setting['key']}0\" name=\"{$setting['key']}\" value=\"\"> <label for=\"{$setting['key']}0\">No</label></span>";
+        $page['body'].="<div id=\"{$setting['key']}\"><input type=radio id=\"{$setting['key']}1\" name=\"{$setting['key']}\" checked=checked value=\"1\"> <label for=\"{$setting['key']}1\">Yes</label> <input type=radio id=\"{$setting['key']}0\" name=\"{$setting['key']}\" value=\"\"> <label for=\"{$setting['key']}0\">No</label></div>";
        }
        break;
        default:
-       $page['body'].="<input type=text id=\"{$setting['key']}\" name=\"{$setting['key']}\" value=\"{$setting['value']}\"></li>\n";
+       $page['body'].="<input class=\"form-control\" type=text id=\"{$setting['key']}\" name=\"{$setting['key']}\" value=\"{$setting['value']}\"></li>\n";
        break;
       }
-      $page['body'].="</li>\n";
+      $page['body'].="</div>\n";
      }
-     $page['body'].="</ul>\n<h3>Save</h3>\n<div class=\"box\" align=\"center\"><button type=submit name=\"send\" value=\"1\">Save Changes</button>\n</div>\n</form>";
+     $page['body'].="<h3>Save</h3>\n<div class=\"box\" align=\"center\"><button class=\"btn btn-primary\" type=submit name=\"send\" value=\"1\">Save Changes</button>\n</div>\n</form>";
      break;
      case 'user':
      $dtfs['short']=array('m/d/Y','m-d-Y','m.d.Y','j M Y');
