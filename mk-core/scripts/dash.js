@@ -61,12 +61,6 @@ $(function(){
   });
 });
 
-function toggleSidebar()
-{
- $("div#overlay").toggle('slide')
- $("div.sidebar").toggle('slide');
-}
-
 function serializeInputs(key)
 {
  var serial=$("#"+key+" input, #"+key+" select, #"+key+" textarea").serialize();

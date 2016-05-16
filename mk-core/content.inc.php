@@ -1391,9 +1391,13 @@ HTML;
   </div>
  </div>
 </div>
-<div id="overlay" class="overlay" style="display:none" onclick="toggleSidebar();">&nbsp;</div>
-<div id="dashboard" class="sidebar">
-<button id="sidebarClose" class="close" onclick="toggleSidebar()">&times;</button>
+<div id="sidebar" class="modal fade left" role="dialog">
+ <div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+     <button type="button" class="close" data-dismiss="modal">&times;</button>
+    </div>
+    <div id="dashboard" class="modal-body">
 <h1>{$GLOBALS['SET']['name']}</h1>
 <h4>User</h4>
 <ul id="UserPlugs" class="plug list">
@@ -1402,8 +1406,12 @@ HTML;
 {$contentlists}
 <h4>Exit</h4>
 <ul id="ExitPlugs" class="plug list">
-<li><a href="javascript:void();" onclick="toggleSidebar();">Close Dashboard</a></li>{$rockout}
+<li><a href="#sidebar" data-dismiss="modal">Close Dashboard</a></li>{$rockout}
 </ul>
+</div>
+    </div>
+  </div>
+ </div>
 </div>
 {$split['body']}
 HTML;
