@@ -19,13 +19,14 @@ $(function(){
     var caller=event.currentTarget.id;
 
     $("#modal .modal-title").html("Link Browser...");
-    $("#modal .modal-body").load("?section=content&action=gethref&ajax=1",function(){
+    $("#modal .modal-body").empty().load("?section=content&action=gethref&ajax=1",function(){
      $(this).on('click',"div.selectable",function(){
       var location=$(this).find("a#location").attr('href');
       $("input#mediabox-"+caller).val(location);
      });
      $("div.page").attr("data-dismiss",'modal');
     });
+    $("#modal .modal-footer").remove();
   });
   
   $(".page div.actions").find("span").click(function(){
@@ -62,13 +63,7 @@ $(function(){
 
 function toggleSidebar()
 {
- $("button#sidebarClose").button({
-  icons: {
-   primary: "ui-icon-closethick"
-  },
-  text: false
- });
- $("div#overlay").toggle('fade')
+ $("div#overlay").toggle('slide')
  $("div.sidebar").toggle('slide');
 }
 
@@ -110,7 +105,8 @@ function toggleInputState(p,q)
 function populateModal(url,title)
 {
  $("#modal .modal-title").html(title);
- $("#modal .modal-body").load(url);
+ $("#modal .modal-body").empty().load(url);
+ $("#modal .modal-footer").remove();
 }
 
 function iFetch(e,field){
@@ -143,46 +139,22 @@ function iUpload(field,pkg){
 }
 
 function showAdd(){
-	$("div#dialog-fill").load("?ajax=1&section=addin&action=new", function(data){
-	$(this).dialog({
-		autoOpen: true,
-		title: "Add Addin",
-		height: 300,
-		width: 350,
-		modal: true,
-		buttons: {
-			Go: function(){
-				doAdd();
-				$(this).dialog("close");
- },
-			Cancel: function(){
-				$(this).dialog("close");
-			}
-		}
-         });
+    $("#modal .modal-title").html("Upload New Addin");
+	$("#modal .modal-body").empty().load("?ajax=1&section=addin&action=new", function(data){
 	});
+    $("#modal .modal-footer").remove();
+    $("#modal .modal-content").append("<div class=\"modal-footer\"><div class=\"center\"><button class=\"btn btn-primary\" onclick=\"doAdd()\">Add</button></div></div>");
+    $("#modal").modal();
 }
 
 function showRemove(id,event){
 	event.preventDefault();
-	$("div#dialog-fill").load("?ajax=1&section=addin&action=delete&num="+id, function(data){
-	$(this).dialog({
-		autoOpen: true,
-		title: "Remove Addin?",
-		height:250,
-		width:350,
-		modal: true,
-		buttons: {
-			"Yes": function() {
-				doRemove(id);
-				$(this).dialog("close");
- },
-			"No": function(){
-				$(this).dialog("close");
-			}
-		}
-	  });
+    $("#modal .modal-title").html("Remove Addin?")
+	$("#modal .modal-body").empty().load("?ajax=1&section=addin&action=delete&num="+id, function(data){
 	});
+    $("#modal .modal-footer").remove();
+    $("#modal .modal-content").append("<div class=\"modal-footer\"><div class=\"half center\"><button class=\"btn btn-success\" onclick=\"doRemove("+id+")\">Yes</buton></div><div class=\"half center\"><button data-dismiss=\"modal\" class=\"btn btn-danger\">No</button></div></div>");
+    $("#modal").modal();
 }
 
 function doAdd(){

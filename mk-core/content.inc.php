@@ -1541,10 +1541,10 @@ class MomokoAddinForm implements MomokoObject
 	{
 	  if ($name != 'num')
 	  {
-	    $vars['addin_list'].="<td id=\"".$name."\" class=\"ui-widget-content\">".$row[$name]."</td>";
+	    $vars['addin_list'].="<td id=\"".$name."\">".$row[$name]."</td>";
 	  }
 	}
-	$vars['addin_list'].="<td class=\"ui-widget-content\"><a class=\"ui-icon ui-icon-trash\" style=\"display:inline-block\" onclick=\"showRemove('".$row['num']."',event)\" title=\"Delete\" href=\"javascript:void()\"></a></td>\n</tr>\n";
+	$vars['addin_list'].="<td><a class=\"glyphicon glyphicon-remove\" onclick=\"showRemove('".$row['num']."',event)\" title=\"Delete\" href=\"javascript:void()\"></a></td>\n</tr>\n";
       }
     }
     $vars['site_location']=$GLOBALS['SET']['siteroot'];

@@ -60,8 +60,8 @@ HTML;
     $info['inner_body']=<<<HTML
 <h2>Choose What to Import</h2>
 <p>We have gone through the data you uploaded and found that we can import the following. Please check the box next to <strong>all</strong> the data you wish to import.
-<form action="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=switchboard&plug=importer&action=import" method="post">
-{$checks}<div align=center><button type="submit" name="status" value="importing">Import Selected Data</button></div> 
+<form role="form" action="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=switchboard&plug=importer&action=import" method="post">
+{$checks}<div align=center><button type="submit" class="btn btn-primary" name="status" value="importing">Import Selected Data</button></div> 
 </form>
 HTML;
    }
@@ -71,19 +71,20 @@ HTML;
    $info['inner_body']=<<<HTML
 <h2>Content Importer</h2>
 <p>The purpose of this switchboard plug is to provide a means through which you can import content into MomoKO 2.x from another platform including MomoKO 1.x. To begin you will need to select the type of data you have (i.e. MomoKO 1.x data, XML data from Wordpress or another platform). Once we know this you can then upload the data. Finally you will decide what you would like to import.</p>
-<form action="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=switchboard&plug=importer&action=upload" enctype="multipart/form-data" method="post">
-<p>To begin select the type of data below:<br>
-<select name="type">
+<form role="form"a ction="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=switchboard&plug=importer&action=upload" enctype="multipart/form-data" method="post">
+<label for="select">To begin select the type of data below:</label>
+<select id="select" class="form-control" name="type">
 <option value="mk1">MomoKO v1.0-1.6</option>
 <option value="wp">WordPress XML</option>
 <option value="xml">Generic XML</option>
 <option value="sql">Generic SQL</option>
 <option value="cdd">Comma-delinated Document</option>
-</select></p>
-<p>Now choose the the file that contains this data, it could be an XML file or a zip archive. If you are moving from MomoKO v1.0-1.5, this will be a zip file you created when following the instructions on our wiki. Choose the file:<br>
-<input name="data" type="file"></p>
+</select>
+<br>
+<label for="file">Now choose the the file that contains this data, it could be an XML file or a zip archive. If you are moving from MomoKO v1.0-1.5, this will be a zip file you created when following the instructions on our wiki. Choose the file:</label>
+<input id="file" class="form-control" name="data" type="file">
 <p>Now hit the button and wait for the upload:<br>
-<button type="submit" name="status" value="sending">Upload Data</button></p>
+<button class="btn btn-primary" type="submit" name="status" value="sending">Upload Data</button></p>
 </form>
 HTML;
   }
