@@ -896,7 +896,7 @@ HTML;
     $maplist=$map->getModule('html');
     $templates=new DataBaseTable('addins');
     $query=$templates->getData("type:'template'",array('dir','shortname'),"shortname");
-    $templatesettings="<ul class=\"nobullet noindent\">\n<li><label for=\"layout\">Layout:</label> <select id=\"layout\" name=\"template\">\n";
+    $templatesettings="<ul class=\"nobullet noindent\">\n<div class=\"form-group\"><label for=\"layout\">Layout:</label> <select class=\"form-control\" id=\"layout\" name=\"template\">\n";
     while ($template=$query->fetch(PDO::FETCH_ASSOC))
     {
      if ($template['dir'] == $GLOBALS['SET']['template'])
@@ -908,7 +908,7 @@ HTML;
       $templatesettings.="<option value=\"{$template['dir']}\">{$template['shortname']}</option>\n";
      }
     }
-    $templatesettings.="</select> <a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&list=addins\" title=\"Template addins are listed here, add or remove them to change your selection.\">Manage Addins</a></li>\n<li><label for=\"style\">Style:</label> <select id=\"style\" name=\"style\">";
+    $templatesettings.="</select> <a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&list=addins\" title=\"Template addins are listed here, add or remove them to change your selection.\">Manage Addins</a></div>\n<div class=\"form-group\"><label for=\"style\">Style:</label> <select class=\"form-control\" id=\"style\" name=\"style\">";
     $files=fetch_files("addins/".$GLOBALS['SET']['template'],'styles');
     $style=$templates->getData("dir:'".$GLOBALS['SET']['template']."'",array('num','headtags'));
     $style=$style->fetch(PDO::FETCH_ASSOC);
@@ -932,7 +932,7 @@ HTML;
         $templatesettings.="<option value=\"{$file}\">{$name}</option>\n";
       }
     }
-    $templatesettings.="</select></li>\n</ul>";
+    $templatesettings.="</select></div>";
 
     $modulelayout="<div class=\"screenshot\" style=\"background-image:url('".$GLOBALS['SET']['siteroot'].$GLOBALS['SET']['filedir']."addins/".$GLOBALS['SET']['template']."/screenshot.png')\">".file_get_contents($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."addins/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm")."</div>";
     $addins=new DataBaseTable('addins');
@@ -949,7 +949,7 @@ HTML;
      $mod_obj="Momoko".ucwords($module['dir'])."Module";
      $mod_obj=new $mod_obj();
      $module['settings']=$mod_obj->settingsToHTML($module['settings']);
-     $modulelist[$module['zone']].="<div id=\"{$module['num']}\" class=\"module portlet box\">\n<div class=\"portlet-header\">{$module['shortname']}</div>\n<div class=\"portlet-content\">{$module['settings']}</div>\n</div>\n";
+     $modulelist[$module['zone']].="<div id=\"{$module['num']}\" class=\"module panel panel-info\">\n<div class=\"panel-heading\"><h4 class=\"panel-title\">{$module['shortname']}<span data-target=\"#collapse{$module['num']}\" data-toggle=\"collapse\" class=\"right glyphicon glyphicon-plus\"></span></h4></div>\n<div id=\"collapse{$module['num']}\" class=\"panel-collapse collapse\">\n<div class=\"panel-body\">{$module['settings']}</div>\n</div>\n</div>\n";
     }
     if (preg_match_all("/<!-- MODULEPLACEHOLDER:(?P<arguments>.*?) -->/",$modulelayout,$list))
     {
@@ -971,11 +971,12 @@ HTML;
      $modulelayout=preg_replace("/<!-- MODULESOURCE -->/",$modulelist[0],$modulelayout);
     }
 
+    /*jQueryUI and is added below as there is no better solution for drag-drop lists available at this time*/
     $page['body']=<<<HTML
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 <script language="javascript">
 $(function(){
  $(".dialog").hide();
- 
  $("select#layout").change(function(){
   $.getJSON("{$GLOBALS['SET']['siteroot']}/ajax.php?action=fetch_files&dir=addins/"+$(this).val()+"&limit=styles",function(j){
    $("select#style").fadeOut('fast',function(){
@@ -1005,53 +1006,34 @@ $(function(){
  $("ul.map ul").addClass("nobullet");
  
  $("#MapList .subnav").parent()
-		.prepend("<span class='droparrow ui-icon ui-icon-carat-1-e'></span>");
+		.prepend("<span class='droparrow glyphicon glyphicon-plus'>&nbsp;</span>");
 	$("#MapList span.droparrow").click(function(event){
 		event.stopPropagation();
 		$(this).parent().find("ul.subnav").toggle("slow");
-		if ($(this).hasClass('ui-icon-carat-1-e'))
+		if ($(this).hasClass('glyphicon-plus'))
 		{
-			$(this).removeClass('ui-icon-carat-1-e');
-			$(this).addClass('ui-icon-carat-1-se');
+			$(this).removeClass('glyphicon-plus');
+			$(this).addClass('glyphicon-minus');
 		}
 		else
 		{
-			$(this).removeClass('ui-icon-carat-1-se');
-			$(this).addClass('ui-icon-carat-1-e');
+			$(this).removeClass('glyphicon-minus');
+			$(this).addClass('glyphicon-plus');
 		}
 	});
     $(".column").sortable({
       connectWith: ".column",
-      handle: ".portlet-header",
-      cancel: ".portlet-toggle",
-      placeholder: "portlet-placeholder ui-corner-all"
+      handle: ".panel-heading",
+      placeholder: "alert alert-success"
     });
-    $(".portlet")
-      .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-      .find( ".portlet-header" )
-        .addClass( "ui-widget-header ui-corner-all" )
-        .prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
-    $(".portlet-toggle").click(function() {
-      var icon = $( this );
-      icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
-      icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
-    });
-	$( "#MapList ul" )
+    $("#MapList ul b.caret").parent().remove();
+	$( "#MapList ul" ).addClass('list-group')
     		.sortable({
-			placeholder: 'ui-state-highlight',
+			placeholder: 'alert alert-success',
 		})
     		.find( "li" )
-        		.addClass( "ui-state-default ui-corner-all" )
-			.click(function(event){
-				event.stopPropagation();
-				if ($(this).hasClass('ui-state-highlight')){
-					$(this).removeClass('ui-state-highlight');
-	 			}
-				else{
-					$('.ui-state-highlight').removeClass('ui-state-highlight');
-					$(this).addClass('ui-state-highlight');
-				}
-			})
+        		.addClass( "list-group-item" )
+            .find("ul").removeClass('dropdown-menu').hide()
 			.find("a")
 				.click(function(event){ event.preventDefault(); });
 });
@@ -1062,7 +1044,7 @@ $(function(){
 <form method=post id="Template">
 <input type=hidden name="section" value="template">
 {$templatesettings}
-<button type=submit name="send" value="1">Change Template</button>
+<button class="btn btn-primary" type=submit name="send" value="1">Change Template</button>
 </form>
 </div>
 <form method=post id="MapForm">
@@ -1073,7 +1055,7 @@ $(function(){
 </ul>
 <input type=hidden name="section" value="map">
 <input type=hidden id="map" name="raw_dom">
-<div align=right><button id="ReOrder">Re-Order</button></div>
+<div align=right><button class="btn btn-primary" id="ReOrder">Re-Order</button></div>
 </div>
 </form>
 <form method=post id="ModuleForm">
@@ -1084,7 +1066,7 @@ $(function(){
 </div>
 <input type=hidden name="section" value="modules">
 <input type=hidden id="mods" name="raw_dom">
-<div align=center><button id="SaveMods">Update Modules</button></div>
+<div align=center><button class="btn btn-primary" id="SaveMods">Update Modules</button></div>
 </form>
 </div>
 </div>
