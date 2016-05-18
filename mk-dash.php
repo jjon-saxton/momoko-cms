@@ -654,10 +654,40 @@ HTML;
       switch ($setting['key'])
       {
        case 'version':
-       $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">\n<div class=\"alert alert-warning\"><em>changed only by update script!</em></div>";
+       $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">";
+
+       $raw=ftp_get_contents("ftp://ftp.momokocms.org/core/momokoversions.lst","anonymous@momokocms.org");
+       $raw=explode("\n",$raw);
+       $list=array();
+       foreach ($raw as $row)
+       {
+        list($r['num'],$r['level'])=explode(",",$row);
+        $list[$r['level']][]=$r['num'];
+        if ($r['num'] == $setting['value'])
+        {
+         $path=$r['level'];
+        }
+       }
+       $update=false;
+       foreach ($list[$path] as $v)
+       {
+        if ($v > $setting['value'])
+        {
+         $update=$v;
+        }
+       }
+
+       if ($update)
+       {
+        $page['body'].="\n<div class=\"alert alert-warning\">MomoKO {$update} is out now! <a href=\"https://github.com/jjon-saxton/momoko-cms/wiki/{$update}:-Upgrading\">more information</a></div>";
+       }
+       else
+       {
+        $page['body'].="\n<div class=\"alert alert-success\">MomoKO is up-to-date!</div>";
+       }
        break;
        case 'template':
-       $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">\n<div class=\"alert alert-warning\"><em>change in <a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance\">site appearance</a></em></div>";
+       $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">\n<div class=\"alert alert-info\">Change in <a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance\">site appearance</a></div>";
        break;
        //TODO add special cases for e-mail settings
        case 'email_mta':

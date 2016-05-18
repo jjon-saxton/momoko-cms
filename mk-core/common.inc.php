@@ -780,6 +780,36 @@ function get_author($num)
  return $author;
 }
 
+function ftp_get_contents($url,$user=null,$password=null)
+{
+ $location=parse_url($url);
+ $conn=ftp_connect($location['host']);
+ if (empty($user))
+ {
+  $user=$location['user'];
+ }
+
+ if (empty($password) && !empty($location['password']))
+ {
+  $password=$location['password'];
+ }
+
+ ftp_login($conn,$user,$password);
+ ob_start();
+ ftp_get($conn,"php://output",$location['path'],FTP_ASCII);
+ $str=ob_get_contents();
+ ob_end_clean();
+
+ if (!empty($str))
+ {
+  return $str;
+ }
+ else
+ {
+  return false;
+ }
+}
+
 function compile_head()
 {
  $html=null;
