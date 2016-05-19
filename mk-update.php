@@ -67,7 +67,10 @@ HTML;
 <title>MomoKO Guided Updater: web</title>
 <link href="./mk-core/styles/momoko.css" rel="stylesheet" type="text/css">
 <style type=text/css>
+body {background-color: Window; color: WindowText}
+div.box {border: 1px solid WindowText; border-radius: 5px; background-color: white; color: black}
 div.body {width:90%; margin: auto}
+.title {text-align:center}
 .panel-footer.installer {height:55px}
 </style>
 </head>

@@ -46,18 +46,6 @@ class DataBaseSchema extends PDO
    return $query->fetchALL(PDO::FETCH_ASSOC);
   }
  }
-
- public function dropTable($table)
- {
-  if ($this->query("DROP TABLE `".$this->ini['schema']['tableprefix'].$table."`"))
-  {
-   return true;
-  }
-  else
-  {
-   return false;
-  }
- }
 }
 
 class DataBaseTable extends DataBaseSchema
@@ -382,6 +370,21 @@ class DataBaseTable extends DataBaseSchema
   catch (Exception $err)
   {
    trigger_error("SQL Server Error: ".$err->getMessage(),E_USER_ERROR);
+  }
+
+  return true;
+ }
+
+ public function drop()
+ {
+  try
+  {
+   $this->query("DROP TABLE `".$this->table."`");
+  }
+  catch (Exception $e)
+  {
+   trigger_error("SQL Server Error: ".$e->getMessage(),E_USER_ERROR);
+   return false;
   }
 
   return true;
