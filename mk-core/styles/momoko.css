@@ -17,19 +17,16 @@ ul.plug.list li a:active, ul.plug.list li a:hover {border:1px solid #eee;backgro
 .preview h6 {font-size:1em; color:#777}
 .no-drag {background-color:rgba(239,239,255,0.7)}
 
-.portlet {width:100%; max-width:150px; margin:0 1em 1em 0; padding:0.3em}
-.portlet-header {cursor:move;padding: 0.2em 0.3em; margin-bottom: 0.5em; position: relative}
-.portlet-toggle {cursor:pointer;position: absolute; top: 50%; right: 0; margin-top: -8px}
-.portlet-content {padding: 0.4em}
-.portlet-content input {max-width:50px}
-.portlet-placeholder {width:100%;max-width:150px;border: 1px dotted black; margin: 0 1em 1em 0; height: 50px}
-
 div.page {border:1px solid #999; border-radius:6px; margin:2px; padding:4px}
 div.selectable {cursor:pointer}
+.ui-sortable-handle {cursor:move}
 
-.error {color:red}
-.success {color:green}
+
+.quarter {width:25%;float:left}
+.third {width:33.32%;float:left}
 .half {width:50%;float:left}
+.full {width:100%;clear:both}
+.overtext {position:absolute;top:50%;margin:0;padding:0;z-index:1;text-shadow:#444 2px 2px 4px}
 
 #MapList ul { list-style-type: none; margin: 0; padding: 0; min-height: 10px }
 #MapList ul li { margin: 3px; padding: 0.4em; }
