@@ -60,7 +60,7 @@ function create_tables($config)
   }
   
   if ($okay == $tottables)
-  {
+  {$admin
     return true;
   }
   else
@@ -131,7 +131,7 @@ HTML;
 HTML;
   
   $admin['password']=crypt($admin['password'],$site['session']);
-  $admin['groups']="users.admin";
+  $admin['groups']="users,admin";
   $admin['shortdateformat']=$defaults['sdf'];
   $admin['longdateformat']=$defaults['ldf'];
   $admin['timeformat']=$defaults['tf'];
