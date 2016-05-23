@@ -287,8 +287,8 @@ HTML;
 <input class="form-control" type=text id="basedir" name="settings[basedir]" value="{$basedir}">
 </div>
 <div class="form-group">
-<label for="filedir">Absolute path where attachments and other content will be uploaded:</label>
-<input class="form-control" type=text id="filedir" name="settings[filedir]" value="{$basedir}/mk-content/">
+<label for="filedir">Path where attachments and other content will be uploaded:</label>
+<div class="alert alert-default" id="basedir">{$basedir}/</div><input class="form-control" type=text id="filedir" name="settings[filedir]" value="/mk-content/">
 </div>
 </div>
 </div>

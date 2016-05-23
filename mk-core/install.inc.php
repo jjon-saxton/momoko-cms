@@ -198,9 +198,9 @@ HTML;
   $rows['users'][]=array('name'=>'guest','password'=>'guest','email'=>$admin['email'],'groups'=>"nobody",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'timeformat'=>$defaults['tf'],'rowspertable'=>$defaults['rpt']);
   $rows['users'][]=$admin;
   
-  $rows['settings'][]=array('key'=>'version','value'=>'2.1');
+  $rows['settings'][]=array('key'=>'version','value'=>'2.2');
   $rows['settings'][]=array('key'=>'name','value'=>$site['name']);
-  $rows['settings'][]=array('key'=>'template','value'=>'quirk');
+  $rows['settings'][]=array('key'=>'template','value'=>'fluidity');
   $rows['settings'][]=array('key'=>'support_email','value'=>$admin['email']);
   $rows['settings'][]=array('key'=>'owner','value'=>$admin['name']);
   $rows['settings'][]=array('key'=>'security_logging','value'=>1);
@@ -247,6 +247,14 @@ HTML;
   {
    $okay++;
   }
+  $addin_tbl=new DataBaseTable('addins'); //Need addins table to set values for default layout
+  $layout_q=$addin_tbl->getData("dir=`fluidity`");
+  $fluidity=$layout_q->fetch(PDO::FETCH_ASSOC);
+  $fluidity['enabled']="y";
+  $fluidity['headtags']=<<<HTML
+<link href="//{$site['baseuri']}/mk-content/addins/fluidity/white.css" rel="stylesheet" type="text/css">
+HTML;
+ $fluidity=$addin_tbl->updateData($fluidity);
   
   if ($okay == $tottbls)
   {
@@ -257,6 +265,7 @@ HTML;
     trigger_error("Only ".$okay." of ".$tottbls." tables were populated! Please empty the tables and try again.",E_USER_WARNING);
     return false;
   }
+
 }
 
 function db_upgrade($level,$version,$backup=null)
