@@ -131,7 +131,7 @@ HTML;
 HTML;
   
   $admin['password']=crypt($admin['password'],$site['session']);
-  $admin['groups']="users,admin";
+  $admin['groups']="admin,users";
   $admin['shortdateformat']=$defaults['sdf'];
   $admin['longdateformat']=$defaults['ldf'];
   $admin['timeformat']=$defaults['tf'];
