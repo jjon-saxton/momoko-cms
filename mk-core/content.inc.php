@@ -182,158 +182,6 @@ class MomokoNavigation
  }
 }
 
-class MomokoNews implements MomokoObject
-{
-	public $user;
-	public $news_list;
-	public $info;
-	private $table;
-	
-	public function __construct($user)
-	{
-  $this->user=$user;
-  parse_str($options,$this->options);
-  $this->table=new DataBaseTable('content');
-  $query=$this->table->getData("type:'post'");
-  $this->news_list=$query->fetchAll(PDO::FETCH_ASSOC);
-	}
-	
-	public function __get($key)
-	{
-	 return $this->info[$key];
-	}
-	
-	public function __set($key,$var)
-	{
-	 //TODO Set a new key in $this->info
-	}
-	
-	public function getPostByHeadline($title)
-	{
-	 $query=$this->table->getData("title:'".$title."'",array('num'),null,1);
-	 $data=$query->fetch(PDO::FETCH_ASSOC);
-	 $this->getPostByID($data['num']);
-	}
-	
-	public function getPostByID($num)
-	{
-	 $query=$this->table->getData("num:'".$num."'",null,null,1);
-	 $info=$query->fetch(PDO::FETCH_ASSOC);
-	 $post_created=strtotime($info['date_created']);
-	 if ($info['date_modified'])
-	 {
-	  $post_modified=strtotime($info['date_modified']);
-	 }
-	 $date=date($GLOBALS['USR']->longdateformat,$post_created);
-	 $info['inner_body']=<<<HTML
-<h2>{$info['title']}</h2>
-<div class="date">{$date}</div>
-<artcile class="box">{$info['text']}</article>
-HTML;
-  $info['full_html']="<html>\n<body>\n{$this->info['inner_body']}\n</body>\n</html>";
-  $this->info=$info;
-	}
-	
-	public function get()
-	{
-	 //TODO Get something?
-	}
-
- public function put($data,$prepend=true)
- {
-  $key=strtotime($data['date'].$data['time']);
-  $data['update']=date("d M Y H:i:s",$key);
-  unset($data['date'],$data['time']);
-  $array[$key]=$data;
-  momoko_changes($GLOBALS['USR'],'added',$this); //Log changes based on settings
-  if ($prepend == TRUE)
-  {
-   return array_merge($array,$this->getModule('array'));
-  }
-  else
-  {
-   return array_merge($this->getModule('array'),$array);
-  }
- }
-
- public function update($data,$key)
- {
-  $ndate=strtotime($data['date'].$data['time']);
-  $data['update']=date("d M Y H:i:s",$ndate);
-  unset($data['date'],$data['time']);
-  $array=$this->getModule('array');
-  $array[$key]=$data;
-  momoko_changes($GLOBALS['USR'],'updated',$this); //Log the change
-  return $array;
- }
-
- public function drop($key)
- {
-  $array=$this->getModule('array');
-  unset($array[$key]);
-  momoko_changes($GLOBALS['USR'],'deleted',$this);
-  return $array;
- }
-
- public function convertNewsToXMLObj($arr, &$obj)
- {
-  foreach ($arr as $item)
-  {
-   $node=$obj->addChild('item');
-   foreach($item as $name=>$text)
-   {
-    if ($name == 'article')
-    {
-     $subnode=$node->addChild($name);
-     $subnode->addCData($text);
-    }
-    elseif ($name != 'date')
-    {
-     $subnode=$node->addChild($name,$text);
-    }
-   }
-  }
-  return;
- }
-
- public function write(array $arr)
- {
-  $xmlstr=<<<XML
-<?xml version="1.0"?>
-<reel>
-</reel>
-XML;
-  $xmlobj=new SimpleXMLExtended($xmlstr);
-  $this->convertNewsToXmlObj($arr,$xmlobj);
-  $dom=new DOMDocument('1.0'); //Folowing lines are used to process XML in easier to read format, for anyone who cares
-  $dom->preserveWhiteSpace=false;
-  $dom->formatOutput=true;
-  $dom->loadXML($xmlobj->asXML());
-  $data=$dom->saveXML();
-  if (file_put_contents($GLOBALS['SET']['pagedir'].'/news.xml',$data)) // Replace with actual path!
-  {
-   momoko_changes($GLOBALS['USR'],'updated',$this,"Changes were written to {$GLOBALS['SET']->pagedir}/news.xml!");
-   return true;
-  }
-  else
-  {
-   trigger_error("Could not write to news.xml, check permissions!",E_USER_WARNING);
-   return false;
-  }
- }
-	
- private function generateUUID($prefix=null,$chars)
- {
-  $chars=md5($chars);
-  $uuid=substr($chars,0,8) . '-';
-  $uuid.=substr($chars,8,4) . '-';
-  $uuid.=substr($chars,12,4) . '-';
-  $uuid.=substr($chars,16,4) . '-';
-  $uuid.=substr($chars,20,12);
-  return $prefix.$uuid;
- }
-}
-
 class MomokoFeed implements MomokoObject
 {
  private $table;
@@ -575,7 +423,7 @@ class MomokoAttachment implements MomokoObject
     $hiddenvals=<<<HTML
 <input type=hidden name="type" value="attachment">
 <input type=hidden name="date_created" value="{$now}">
-<input type=hidden name="author" value="{$GLOBALS['USR']->num}">
+<input type=hidden name="author" value="{$this->user->num}">
 HTML;
    }
    else
@@ -718,10 +566,13 @@ class MomokoPage implements MomokoObject
 {
  private $table;
  private $page;
+ private $user;
  private $info=array();
  
- public function __construct($path, array $additional_vars=null)
+ public function __construct($path,MomokoSession $user, array $additional_vars=null)
  {
+  $this->user=$user;
+
   $table=new DataBaseTable('content');
   
   $title=basename($path);
@@ -865,7 +716,7 @@ class MomokoPage implements MomokoObject
     $hiddenvals=<<<HTML
 <input type=hidden name="type" value="{$type}">
 <input type=hidden name="date_created" value="{$now}">
-<input type=hidden name="author" value="{$GLOBALS['USR']->num}">
+<input type=hidden name="author" value="{$this->user->num}">
 <input type=hidden name="mime_type" value="text/html">
 HTML;
    }
@@ -982,7 +833,7 @@ HTML;
    }
    elseif ($type == 'Post')
    {
-    $now_h=date($GLOBALS['USR']->shortdateformat);
+    $now_h=date($this->user->shortdateformat);
     unset($statuses['cloaked'],$statuses['private']);
     $status_opts=null;
     foreach($statuses as $value=>$name)
@@ -1001,7 +852,7 @@ HTML;
 <input type=hidden name="parent" value="0">
 <ul class="noindent nobullet">
 <li>Post Date: {$now_h}</li>
-<li>Post Author: {$GLOBALS['USR']->name}</li>
+<li>Post Author: {$this->user->name}</li>
 <li><label for="status">Post Status:</label> <select id="status" name="status">{$status_opts}</select>
 </ul>
 </div>
@@ -1030,12 +881,12 @@ HTML;
   }
   elseif (!$authorized)
   {
-   $page=new MomokoError("403 Forbidden");
+   $page=new MomokoError("403 Forbidden",$this->user);
    return $page->inner_body;
   }
   else
   {
-   $page=new MomokoError("404 Not Found");
+   $page=new MomokoError("404 Not Found",$this->user);
    return $page->inner_body;
   }
  }
@@ -1107,7 +958,7 @@ HTML;
  private function hasAccess()
  {
   $grouplist=explode(",",$this->has_access);
-  if ($GLOBALS['USR']->inGroup('admin'))
+  if ($this->user->inGroup('admin'))
   {
    return true;
   }
@@ -1116,7 +967,7 @@ HTML;
    switch ($this->status)
    {
     case 'locked':
-    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
+    if ($this->user->inGroup('admin') || $this->user->inGroup('editor'))
     {
      return true;
     }
@@ -1135,7 +986,7 @@ HTML;
   {
    foreach ($grouplist as $group)
    {
-    if ($GLOBALS['USR']->inGroup($group))
+    if ($this->user->inGroup($group))
     {
      return true;
     }
@@ -1152,9 +1003,9 @@ class MomokoError implements MomokoObject
  private $inner_body;
  private $error_msg;
 
- public function __construct($title,$msg=null,array $additional_vars=null)
+ public function __construct($title,$user,$msg=null,array $additional_vars=null)
  {
-  $this->page=new MomokoPage($title);
+  $this->page=new MomokoPage($title,$user);
   $this->error_msg=$msg;
   header("Status: ".$this->page->title);
   header("HTTP/1.0 ".$this->page->title);
@@ -1202,14 +1053,17 @@ class MomokoError implements MomokoObject
 
 class MomokoTemplate implements MomokoObject, MomokoPageObject
 {
- private $cur_path;
+ private $user;
  private $template;
+ private $conf;
  private $info=array();
  
- public function __construct($path)
+ public function __construct(MomokoSession $user,MomokoSiteConfig $conf)
  {
-  $this->cur_path=$path;
-  $this->info=$this->readInfo();
+  $this->user=$user;
+  $this->conf=$conf;
+  $this->template=$conf->basedir.TEMPLATEPATH;
+  $this->info=$this->get();
  }
  
  public function __get($var)
@@ -1232,25 +1086,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
  
  public function get()
  {
-  if ((pathinfo($this->cur_path,PATHINFO_EXTENSION) == 'html' || pathinfo($this->cur_path,PATHINFO_EXTENSION) == 'htm') && file_exists($GLOBALS['SET']->basedir.$this->cur_path))
-  {
-   $this->template=$this->cur_path;
-  }
-  elseif (file_exists($GLOBALS['SET']['basedir'].$this->cur_path.'/default.tpl.html'))
-  {
-   $this->template=$this->cur_path.'/default.tpl.html';
-  }
-  else
-  {
-   $this->template=TEMPLATEPATH;
-  }
-  
-  return file_get_contents($GLOBALS['SET']['basedir'].$this->template);
- }
-
- private function readInfo()
- {
-  $raw=$this->get();
+  $raw=file_get_contents($this->template);
   preg_match("/<head>(?P<head>.*?)<\/head>/smU",$raw,$match);
   $split['head']=$match['head'];
   unset($match);
@@ -1259,7 +1095,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   $body_tag="<body".$match['body_props'].">";
   unset($match);
   
-  if (!$GLOBALS['USR']->inGroup('users'))
+  if (!$this->user->inGroup('users'))
   {
    $umopts="<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-login.php\">Login</a></li>";
    $rockout=null;
@@ -1270,11 +1106,11 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
    $rockout="\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/?action=logout\">Logout</a></li>\n";
   }
   $contentlists=null;
-  if ($GLOBALS['USR']->inGroup('admin'))
+  if ($this->user->inGroup('admin'))
   {
    $umopts.="\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=new\">Register</a></li>";
   }
-  if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
+  if ($this->user->inGroup('admin') || $this->user->inGroup('editor'))
   {
    if($_SERVER['QUERY_STRING'])
    {
@@ -1313,7 +1149,7 @@ HTML;
 </ul>
 HTML;
   }
-  if ($GLOBALS['USR']->inGroup('admin'))
+  if ($this->user->inGroup('admin'))
   {
    $sb_tbl=new DataBaseTable('addins');
    $sb_q=$sb_tbl->getData("type:'switchboard'",array('dir','shortname'));
@@ -1365,7 +1201,7 @@ HTML;
 {$addin_tags}
 {$split['head']}
 HTML;
-  if ($GLOBALS['USR']->inGroup('users'))
+  if ($this->user->inGroup('users'))
   {
    $dashup="<div id=\"dashOpen\"><button id=\"sidebarOpen\" onclick=\"toggleSidebar()\">My Dashboard</button></div>";
   }
@@ -1634,7 +1470,7 @@ class MomokoAddin implements MomokoObject
       {
 	$new=$this->table->getData("num:'= ".$num."'",null,null,1);
 	$info=$new->toArray();
-	momoko_changes($GLOBALS['USR'],'added',$this);
+	momoko_changes($this->user,'added',$this);
 	if (is_array($info[0]))
 	{
 	  return $info[0];
@@ -1684,7 +1520,7 @@ class MomokoAddin implements MomokoObject
       {
 	$new=$this->table->getData("num:'= ".$num."'",null,null,1);
 	$info=$new->toArray();
-	momoko_changes($GLOBALS['USR'],'updated',$this);
+	momoko_changes($this->user,'updated',$this);
 	if (is_array($info[0]))
 	{
 	  return $info[0];
@@ -1773,7 +1609,7 @@ HTML;
     $ddata['num']=$data->num;
     if ($table->removeData($ddata) && rmdirr($GLOBALS['SET']['basedir'].'/addins/'.$data->dir))
     {
-      momoko_changes($GLOBALS['USR'],'dropped',$this);
+      momoko_changes($this->user,'dropped',$this);
       $ddata['succeed']=true;
     }
     else
@@ -1853,7 +1689,7 @@ HTML;
   
   if ($update=$this->table->updateData($ndata))
   {
-    momoko_changes($GLOBALS['USR'],'toggled',$this,"Addin is enabled is now set to=".$ndata['enabled']);
+    momoko_changes($this->user,'toggled',$this,"Addin is enabled is now set to=".$ndata['enabled']);
     return $ndata['enabled'];
   }
   else
@@ -1869,7 +1705,7 @@ HTML;
   {
    foreach ($list as $item)
    {
-    if ($item == 'ALL' || $GLOBALS['USR']->inGroup($item))
+    if ($item == 'ALL' || $this->user->inGroup($item))
     {
      $auth=true;
     }

@@ -177,7 +177,7 @@ else
 $props['link']=$GLOBALS['SET']['baseuri']."/?action=".strtolower($formname);
 $props['recovery']=$GLOBALS['SET']['baseuri']."/mk-login.php?action=reset";
 
-$form=new MomokoPage($formname,$props);
+$form=new MomokoPage($formname,$auth,$props);
 
-$tpl=new MomokoTemplate(pathinfo("/",PATHINFO_DIRNAME));
+$tpl=new MomokoTemplate($auth,$config);
 print $tpl->toHTML($form);

@@ -55,12 +55,12 @@ require_once $config->basedir.'/mk-core/user.inc.php';
 
 if (@$_SESSION['data'])
 {
- $GLOBALS['USR']=unserialize($_SESSION['data']);
+ $auth=unserialize($_SESSION['data']);
 }
 else
 {
- $GLOBALS['USR']=new MomokoSession();
- $_SESSION['data']=serialize($GLOBALS['USR']);;
+ $auth=new MomokoSession();
+ $_SESSION['data']=serialize($auth);
 }
 
 $_SESSION['modern']=false;
@@ -240,7 +240,6 @@ interface MomokoObject
 {
  public function __get($var);
  public function __set($key,$value);
- public function get();
 }
 
 class MomokoVariableHandler
@@ -533,7 +532,7 @@ function momoko_html_errors($num,$str,$file,$line,$context)
    $error['action']="error caught";
    $error['message']=$text;
    
-   if ($table instanceof DataBaseTable)
+   if (@$table instanceof DataBaseTable)
    {
     try
     {

@@ -5,10 +5,15 @@ require dirname(__FILE__)."/mk-core/content.inc.php";
 class MomokoDashboard implements MomokoObject
 {
  public $table;
+ private $user;
+ private $config;
  private $info=array();
 
- public function __construct($section=null)
+ public function __construct($section=null,MomokoSession $user, MomokoSiteConfig $config)
  {
+  $this->user=$user;
+  $this->config=$config;
+
   switch ($section)
   {
    case 'addin':
@@ -68,8 +73,8 @@ class MomokoDashboard implements MomokoObject
    $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols);
    $row_c=$query->rowCount();
    $pages=paginate($row_c);
-   $prev=@$_GET['offset']-$GLOBALS['USR']->rowspertable;
-   $next=@$_GET['offset']+$GLOBALS['USR']->rowspertable;
+   $prev=@$_GET['offset']-$this->user->rowspertable;
+   $next=@$_GET['offset']+$this->user->rowspertable;
    if ($prev >= 0)
    {
     $prev=0;
@@ -77,7 +82,7 @@ class MomokoDashboard implements MomokoObject
    if (count($pages) > 1)
    {
     $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols,NULL,$GLOBALS['USR']->rowspertable,@$_GET['offset']);
-    $page_div="<div id=\"pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list={$list}&offset={$prev}\">Previous</a></td><td align=center>";
+    $page_div="<div id=\"pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$this->config->siteroot}/mk-dash.php?section=content&list={$list}&offset={$prev}\">Previous</a></td><td align=center>";
     foreach ($pages as $page)
     {
      if ($page['offset'] == @$_GET['offset'])
@@ -86,10 +91,10 @@ class MomokoDashboard implements MomokoObject
      }
      else
      {
-      $page_div.="<a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list={$list}&offest={$page['offset']}\">{$page['number']}</a>";
+      $page_div.="<a href=\"{$this->config->siteroot}/mk-dash.php?section=content&list={$list}&offest={$page['offset']}\">{$page['number']}</a>";
      }
     }
-    $page_div.="</td><td align=right><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list={$list}&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
+    $page_div.="</td><td align=right><a href=\"{$this->config->siteroot}/mk-dash.php?section=content&list={$list}&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
    }
    else
    {
@@ -100,14 +105,14 @@ class MomokoDashboard implements MomokoObject
     $summary_len=300;
     while($content=$query->fetch(PDO::FETCH_ASSOC))
     {
-     $content['date_created']=date($GLOBALS['USR']->shortdateformat,strtotime($content['date_created']));
+     $content['date_created']=date($this->user->shortdateformat,strtotime($content['date_created']));
      if ($content['date_modified'])
      {
-      $content['date_modified']=date($GLOBALS['USR']->shortdateformat,strtotime($content['date_modified']));
+      $content['date_modified']=date($this->user->shortdateformat,strtotime($content['date_modified']));
      }
      else
      {
-      $content['date_modified']=date($GLOBALS['USR']->shortdateformat,strtotime($content['date_created']));
+      $content['date_modified']=date($this->user->shortdateformat,strtotime($content['date_created']));
      }
      $content['author']=get_author($content['author']); //Fetches the author object
      $content['author']=ucwords($content['author']->name); //Narrows down to just the name
@@ -135,7 +140,7 @@ class MomokoDashboard implements MomokoObject
      
      $text.=<<<HTML
 <div id="{$content['num']}" class="page box {$content['status']}"><h4 style="display:inline-block;clear:left" class="module">{$content['title']}</h4>
-<div class="actions "style="float:right"><a href="{$GLOBALS['SET']['siteroot']}/{$content['link']}" id="location" style="display:none">Open</a><span id="view" class="glyphicon glyphicon-folder-open" title="Open/Download"></span> <span id="edit" class="glyphicon glyphicon-edit" title="Edit"></span> <span id="delete" class="glyphicon glyphicon-remove" title="Delete"></span></div>
+<div class="actions "style="float:right"><a href="{$this->config->siteroot}/{$content['link']}" id="location" style="display:none">Open</a><span id="view" class="glyphicon glyphicon-folder-open" title="Open/Download"></span> <span id="edit" class="glyphicon glyphicon-edit" title="Edit"></span> <span id="delete" class="glyphicon glyphicon-remove" title="Delete"></span></div>
 <div class="properties">{$content['date_created']}, {$content['date_modified']}, {$content['author']}, {$content['mime_type']}</div>
 <div class="summary">{$content['text']}</div>
 </div>
@@ -230,16 +235,16 @@ HTML;
    $query=$table->getData($where);
    $row_c=$query->rowCount();
 
-   if ($row_c > $GLOBALS['USR']->rowspertable)
+   if ($row_c > $this->user->rowspertable)
    {
     unset($query);
-    $query=$table->getData($where,NULL,NULL,$GLOBALS['USR']->rowspertable,@$_GET['offset']);
+    $query=$table->getData($where,NULL,NULL,$this->user->rowspertable,@$_GET['offset']);
    }
 
    $query_str=http_build_query($_GET);
    $pages=paginate($row_c,@$_GET['offset']);
-   $prev=@$_GET['offset']-$GLOBALS['USR']->rowspertable;
-   $next=@$_GET['offset']+$GLOBALS['USR']->rowspertable;
+   $prev=@$_GET['offset']-$this->user->rowspertable;
+   $next=@$_GET['offset']+$this->user->rowspertable;
    if ($prev < 0)
    {
     $prev=0;
@@ -250,10 +255,10 @@ HTML;
    }
    if (count($pages) > 1)
    {
-    $page_div="<div id=\"Pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?{$query_str}&offset={$prev}\">Previous</a></td><td align=center>";
+    $page_div="<div id=\"Pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$this->config->siteroot}/mk-dash.php?{$query_str}&offset={$prev}\">Previous</a></td><td align=center>";
     if (count($pages) >= 10)
     {
-     $page_div.="<select id=\"PageList\" onchange=\"window.location='{$GLOBALS['SET']['siteroot']}/mk-dash.php?{$query_str}&offset='+$(this).val()\" name=\"page_dropdown\">\n";
+     $page_div.="<select id=\"PageList\" onchange=\"window.location='{$this->config->siteroot}/mk-dash.php?{$query_str}&offset='+$(this).val()\" name=\"page_dropdown\">\n";
      foreach ($pages as $page)
      {
       if ($page['offset'] == @$_GET['offset'])
@@ -277,11 +282,11 @@ HTML;
       }
       else
       {
-       $page_div.="<a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?{$query_str}&offset={$page['offset']}\">{$page['number']}</a> ";
+       $page_div.="<a href=\"{$this->config->siteroot}/mk-dash.php?{$query_str}&offset={$page['offset']}\">{$page['number']}</a> ";
       }
      }
     }
-    $page_div.="</td><td align=right><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?{$query_str}&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
+    $page_div.="</td><td align=right><a href=\"{$this->config->siteroot}/mk-dash.php?{$query_str}&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
    }
    else
    {
@@ -296,7 +301,7 @@ HTML;
      if ($col == 'time')
      {
       $unixt=strtotime($value);
-      $time=date($GLOBALS['USR']->shortdateformat." ".$GLOBALS['USR']->timeformat,$unixt);
+      $time=date($this->user->shortdateformat." ".$this->user->timeformat,$unixt);
       $text.="<td id=\"{$col}\">{$time}</td>";
      }
      elseif ($col != 'num')
@@ -306,7 +311,7 @@ HTML;
     }
     $text.="</tr>\n";
    }
-   $info['inner_body']="<h2>Event Logs</h2>\n".$text."</tbod></table>\n</div>".$page_div;
+   $info['inner_body']="<h2>Event Logs</h2>\n".$text."</tbody></table>\n</div>".$page_div;
    break;
    case 'addins':
    default:
@@ -808,10 +813,10 @@ $(function(){
  <input class="form-control" type=password id="npass2" disabled="disabled" name="newpassword2">
 </div>
 <h3>Settings</h3>
-<input type=hidden name="num" value="{$GLOBALS['USR']->num}">
+<input type=hidden name="num" value="{$this->user->num}">
 HTML;
      $columns=array('name','email','shortdateformat','longdateformat','timeformat','rowspertable');
-     $query=$this->table->getData("num:'".$GLOBALS['USR']->num."'",$columns,null,1);
+     $query=$this->table->getData("num:'".$this->user->num."'",$columns,null,1);
      $user=$query->fetch(PDO::FETCH_ASSOC);
      foreach ($columns as $form_field)
      {
@@ -1664,11 +1669,11 @@ HTML;
 
 if (@$_GET['action'] == 'login' || @$_GET['action'] == 'logout' || @$_GET['action'] == 'register')
 {
- header("Location: ".$GLOBAL['SET']['sec_protocol'].$GLOBALS['SET']['baseuri']."?action=".$_GET['action']);
+ header("Location: ".$config->sec_protocol.$config->baseuri."?action=".$_GET['action']);
 }
 else
 {
- if ($GLOBALS['USR']->inGroup('users')) //User must be logged in!
+ if ($auth->inGroup('users')) //User must be logged in!
  {
   if ($_GET['section'] == 'switchboard')
   {
@@ -1684,7 +1689,7 @@ else
   }
   else
   {
-   $child=new MomokoDashboard($_GET['section']);
+   $child=new MomokoDashboard($_GET['section'],$auth,$config);
    if (!empty($_GET['action']))
    {
        $child->getByAction($_GET['action'],$_POST);
@@ -1693,7 +1698,7 @@ else
  }
  else
  {
-  $child=new MomokoError('403 Forbidden');
+  $child=new MomokoError('403 Forbidden',$auth);
  }
  
  if ($_GET['ajax'] == TRUE)
@@ -1702,7 +1707,7 @@ else
  }
  else
  {
-  $tpl=new MomokoTemplate('/');
+  $tpl=new MomokoTemplate($auth,$config);
   echo $tpl->toHTML($child);
  }
 }

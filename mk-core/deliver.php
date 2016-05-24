@@ -1,11 +1,11 @@
 <?php
 
-function do_attachment($path,$id=null)
+function do_attachment($path,$user,$id=null)
 {
  header("Location: {$_GET['link']}");
 }
 
-function do_feed($path,$type=null)
+function do_feed($path,$user,$type=null)
 {
    $child=new MomokoFeed($path);
    $child->type=$type;
@@ -14,7 +14,7 @@ function do_feed($path,$type=null)
    print $child->full_html;
 }
 
-function do_page($path,$id=null)
+function do_page($path,$user,$id=null)
 {
 if (@$path && (pathinfo($path,PATHINFO_EXTENSION) == 'htm' || pathinfo($path,PATHINFO_EXTENSION) == 'html'))
 {
@@ -43,32 +43,14 @@ elseif (@$path && pathinfo(@$path,PATHINFO_EXTENSION) == 'txt')
 
 if (!@$child)
 {
- $child=new MomokoPage($path);
+ $child=new MomokoPage($path,$user);
  if ($id)
  {
   $child->fetchByID($id);
  }
 }
 
- $tpl=new MomokoTemplate(pathinfo($path,PATHINFO_DIRNAME));
- print $tpl->toHTML($child);
-}
-
-function do_post($path,$id=null)
-{
- $child=new MomokoNews($GLOBALS['USR']);
- if (!$id)
- {
-  $headline=basename($path);
-  $child->getPostByHeadline($headline);
- }
- else
- {
-  $child->getPostByID($id);
- }
- 
- $tpl=new MomokoTemplate(dirname($path));
- print $tpl->toHTML($child);
+ return $child;
 }
 
 function do_addin($path,$id=null,$action=null)

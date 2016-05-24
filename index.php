@@ -8,18 +8,18 @@ if (!file_exists(dirname(__FILE__)."/database.ini")) //database.ini does not exi
 require dirname(__FILE__)."/mk-core/common.inc.php";
 require dirname(__FILE__)."/mk-core/content.inc.php";
 
-if (is_writable($GLOBALS['SET']['basedir']))
+if (is_writable($config->basedir))
 {
  trigger_error("Security Notice: MomoKO's base directory is writable!",E_USER_NOTICE);
 }
-if (!is_writable($GLOBALS['SET']['filedir']))
+if (!is_writable($config->basedir.$config->filedir))
 {
  trigger_error("MomoKO's content storage directory is not writable!",E_USER_NOTICE);
 }
 
-if ($GLOBALS['SET']['version'] < preg_replace("/[^0-9,.]/","",MOMOKOVERSION)) // It is possible the database does not match the script version
+if ($config->version < preg_replace("/[^0-9,.]/","",MOMOKOVERSION)) // It is possible the database does not match the script version
 {
- header("Location: http://".$GLOBALS['SET']['baseuri']."/mk-update.php");
+ header("Location: http://".$config->basedir."/mk-update.php");
  exit();
 }
 
@@ -47,11 +47,9 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    $child=new MomokoAttachment($path);
    break;
    case 'post':
-   //TODO possibly seperate post and page, even though the actions would be the same
-   //break;
    case 'page':
    default:
-   $child=new MomokoPage($path);
+   $child=new MomokoPage($path,$auth);
    break;
   }
   switch ($_GET['action'])
@@ -59,7 +57,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    case 'new':
    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
    {
-    $child=new MomokoPage("New...");
+    $child=new MomokoPage("New...",$auth);
     $child->put($_POST);
    }
    else
@@ -83,12 +81,12 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    }
    else
    {
-    header("Location: https://".$GLOBALS['SET']['baseuri']."?action=login&re=edit");
+    header("Location: https://".$config->baseuri."?action=login&re=edit");
     exit();
    }
    break;
    case 'delete':
-   if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
+   if ($auth->inGroup('admin') || $auth->inGroup('editor'))
    {
     if ($_GET['p'])
     {
@@ -109,22 +107,22 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    case 'login':
    if (@!empty($_POST['password']))
    {
-    if ($GLOBALS['USR']->login($_POST['name'],$_POST['password']))
+    if ($auth->login($_POST['name'],$_POST['password']))
     {
-     $_SESSION['data']=serialize($GLOBALS['USR']);
+     $_SESSION['data']=serialize($auth);
      if (@!empty($_GET['re']))
      {
-      header("Location: http://".$GLOBALS['SET']['baseuri']."?action=".$_GET['re']);
+      header("Location: http://".$config->baseuri."?action=".$_GET['re']);
      }
      else
      {
-      header("Location: http://".$GLOBALS['SET']['baseuri']."#logged-in");
+      header("Location: http://".$config->baseuri."#logged-in");
      }
      exit();
     }
     else
     {
-     $child=new MomokoError('401 Unauthorized');
+     $child=new MomokoError('401 Unauthorized',$auth);
     }
    }
    else
@@ -153,16 +151,16 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    break;
    break;
    case 'logout':
-   if ($GLOBALS['USR']->logout())
+   if ($auth->logout())
    {
-    $_SESSION['data']=serialize($GLOBALS['USR']);
-    header("Location: http://".$GLOBALS['SET']['baseuri']."#logged-out");
+    $_SESSION['data']=serialize($auth);
+    header("Location: http://".$config->baseuri."#logged-out");
     exit();
    }
    break;
   }
 
-  $tpl=new MomokoTemplate(pathinfo("/",PATHINFO_DIRNAME));
+  $tpl=new MomokoTemplate($auth,$config);
   print $tpl->toHTML($child);
 }
 else
@@ -198,16 +196,22 @@ else
   $id=$type;
   break;
   case "addin":
-  case "post":
   case "attachment":
   case "page":
   $run="do_".$type;
+  case "post":
+  $run="do_page";
   $path_parts=array_splice($path_parts,1);
   break;
   default:
   $run="do_page";
  }
 
- $run(implode("/",$path_parts),$id);
+ $child=$run(implode("/",$path_parts),$auth,$id);
+ if ($child instanceof MomokoPage || $child instanceof MomokoFeed)
+ {
+  $tpl=new MomokoTemplate($auth,$config);
+  print $tpl->toHTML($child);
+ }
 }
 ?>
