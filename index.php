@@ -55,7 +55,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
   switch ($_GET['action'])
   {
    case 'new':
-   if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
+   if ($auth->inGroup('admin') || $auth->inGroup('editor'))
    {
     $child=new MomokoPage("New...",$auth);
     $child->put($_POST);
