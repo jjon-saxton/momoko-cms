@@ -982,7 +982,7 @@ HTML;
      parse_str($module['settings'],$module['settings']);
      require_once $GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."addins/".$module['dir']."/module.php";
      $mod_obj="Momoko".ucwords($module['dir'])."Module";
-     $mod_obj=new $mod_obj();
+     $mod_obj=new $mod_obj($this->user);
      $module['settings']=$mod_obj->settingsToHTML($module['settings']);
      $modulelist[$module['zone']].="<div id=\"{$module['num']}\" class=\"module panel panel-info\">\n<div class=\"panel-heading\"><h4 class=\"panel-title\">{$module['shortname']}<span data-target=\"#collapse{$module['num']}\" data-toggle=\"collapse\" class=\"right glyphicon glyphicon-plus\"></span></h4></div>\n<div id=\"collapse{$module['num']}\" class=\"panel-collapse collapse\">\n<div class=\"panel-body\">{$module['settings']}</div>\n</div>\n</div>\n";
     }

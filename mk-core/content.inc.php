@@ -1,16 +1,18 @@
 <?php
-require_once $GLOBALS['SET']['basedir'].'/mk-core/simple_html_dom.php';
+require_once $config->basedir.'/mk-core/simple_html_dom.php';
 
 class MomokoNavigation
 {
  public $user;
  public $options=array();
  public $map=array();
+ private $config;
  private $table;
 
  public function __construct($user,$options)
  {
   $this->user=$user;
+  $this->config=new MomokoSiteConfig();
   parse_str($options,$this->options);
   $this->table=new DataBaseTable('content');
   $this->map=$this->scanContent();
@@ -81,13 +83,13 @@ class MomokoNavigation
   $text=null;
   foreach ($map as $item)
   {
-   if ($GLOBALS['SET']['rewrite'] == true)
+   if ($this->config->rewrite == true)
    {
-    $href=$GLOBALS['SET']['siteroot']."/".$item['href'];
+    $href=$this->config->siteroot."/".$item['href'];
    }
    else
    {
-    $href=$GLOBALS['SET']['siteroot']."/?p=".$item['id'];
+    $href=$this->config->siteroot."/?p=".$item['id'];
    }
    if (is_array($item['children']))
    {
@@ -116,13 +118,13 @@ class MomokoNavigation
 
   foreach ($map as $item)
   {
-   if ($GLOBALS['SET']['rewrite'] == true)
+   if ($this->config->rewrite == true)
    {
-    $href="//".$GLOALS['SET']['baseuri']."/".$item['href'];
+    $href="//".$this->config->baseuri."/".$item['href'];
    }
    else
    {
-    $href="//".$GLOBALS['SET']['baseuri']."/?p=".$item['id'];
+    $href="//".$this->config->baseuri."/?p=".$item['id'];
    }
 
    if ($display == "list")
@@ -185,12 +187,14 @@ class MomokoNavigation
 class MomokoFeed implements MomokoObject
 {
  private $table;
+ private $config;
  private $options=array();
  private $info=array();
 
  public function __construct($path, array $additional_vars=null)
  {
   $this->table=new DataBaseTable('content');
+  $this->config=new MomokoSiteConfig();
   $this->options['where_str']="status: 'public'";
  }
 
@@ -220,8 +224,8 @@ class MomokoFeed implements MomokoObject
 
  public function get()
  {
-  $name=htmlspecialchars($GLOBALS['SET']['name'],ENT_XML1,'UTF-8');
-  $uri=htmlspecialchars("//".$GLOBALS['SET']['baseuri']."/",ENT_XML1,'UTF-8');
+  $name=htmlspecialchars($this->config->name,ENT_XML1,'UTF-8');
+  $uri=htmlspecialchars("//".$this->config->baseuri."/",ENT_XML1,'UTF-8');
   $query=$this->table->getData("type:'post'");
   $dom=new DOMDocument('1.0','UTF-8');
 
@@ -1142,10 +1146,10 @@ HTML;
    $contentlists.=<<<HTML
 <h4>Content</h4>
 <ul id="ContentPlugs" class="plug list">
-<li><a href="{$GLOBALS['SET']['siteroot']}/?action=new">New</a></li>{$curconlinks}
-<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list=pages">All Pages</a></li>
-<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list=posts">All Posts</a></li>
-<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
+<li><a href="{$this->conf->siteroot}/?action=new">New</a></li>{$curconlinks}
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=pages">All Pages</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=posts">All Posts</a></li>
+<li><a href="{$this->confg->siteroot}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
 </ul>
 HTML;
   }
@@ -1158,7 +1162,7 @@ HTML;
    {
     while ($sb_row=$sb_q->fetch())
     {
-        $switchboards.="<li><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=switchboard&plug={$sb_row['dir']}\">{$sb_row['shortname']}</a></li>\n";
+        $switchboards.="<li><a href=\"{$this->conf->siteroot}/mk-dash.php?section=switchboard&plug={$sb_row['dir']}\">{$sb_row['shortname']}</a></li>\n";
     }
    }
    $contentlists.=<<<HTML
@@ -1170,7 +1174,7 @@ HTML;
 </ul>
 <h4>Addins</h4>
 <ul id="SwitchPlugs" class="plug list">
-{$switchboards}<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&list=addins">All Addins</a></li>
+{$switchboards}<li><a href="{$this->conf->siteroot}/mk-dash.php?section=site&list=addins">All Addins</a></li>
 </ul>
 HTML;
   }
@@ -1179,8 +1183,8 @@ HTML;
   if ($_GET['action'] == 'edit' || $_GET['action'] == 'new')
   {
    $editor=<<<HTML
-<link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/mk-core/styles/editor.css" type=text/css>
-<script type="text/javascript" src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/editor.js"></script>
+<link rel="stylesheet" href="//{$this->conf->baseuri}/mk-core/styles/editor.css" type=text/css>
+<script type="text/javascript" src="//{$this->conf->baseuri}/mk-core/scripts/editor.js"></script>
 HTML;
   }
   else
@@ -1192,12 +1196,12 @@ HTML;
 <title>~{sitename} - ~{pagetitle}</title>
 <!-- Meta Tags? -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/bootstrap.js"></script>
-{$editor}<script src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/dash.js" type="text/javascript"></script>
-<link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/mk-core/styles/momoko.css" type="text/css">
+<script src="//{$this->conf->baseuri}/mk-core/scripts/bootstrap.js"></script>
+{$editor}<script src="//{$this->conf->baseuri}/mk-core/scripts/dash.js" type="text/javascript"></script>
+<link rel="stylesheet" href="//{$this->conf->baseuri}/mk-core/styles/momoko.css" type="text/css">
 
-<link rel="alternate" type="application/rss+xml" title="Post Feed: RSS" href="{$GLOBALS['SET']['siteroot']}/?content=rss">
-<link rel="alternate" type="application/atom+xml" title="Post Feed: ATOM" href="{$GLOBALS['SET']['siteroot']}/?content=atom">
+<link rel="alternate" type="application/rss+xml" title="Post Feed: RSS" href="{$this->conf->siteroot}/?content=rss">
+<link rel="alternate" type="application/atom+xml" title="Post Feed: ATOM" href="{$this->conf->siteroot}/?content=atom">
 {$addin_tags}
 {$split['head']}
 HTML;
@@ -1207,7 +1211,7 @@ HTML;
   }
   else
   {
-   $dashup="<div id=\"dashOpen\"><button id=\"sidebarLogin\" onclick=\"window.location='//{$GLOBALS['SET']['baseuri']}/mk-login.php'\">Login</button></div>";
+   $dashup="<div id=\"dashOpen\"><button id=\"sidebarLogin\" onclick=\"window.location='//{$this->conf->baseuri}/mk-login.php'\">Login</button></div>";
   }
 
  if ($_SESSION['modern'])
@@ -1234,7 +1238,7 @@ HTML;
      <button type="button" class="close" data-dismiss="modal">&times;</button>
     </div>
     <div id="dashboard" class="modal-body">
-<h1>{$GLOBALS['SET']['name']}</h1>
+<h1>{$this->conf->name}</h1>
 <h4>User</h4>
 <ul id="UserPlugs" class="plug list">
 {$umopts}
@@ -1282,8 +1286,8 @@ HTML;
  else
  {
   $html=$this->info['full'];
-  $vars['siteroot']=$GLOBALS['SET']['siteroot'];
-  $vars['sitename']=$GLOBALS['SET']['name'];
+  $vars['siteroot']=$this->conf->siteroot;
+  $vars['sitename']=$this->conf->name;
   $vars['pagetitle']="Untitled";
   $vars['templatedir']=$vars['siteroot'].dirname($this->template);
   $vars['pagedir']=$vars['siteroot'].PAGEROOT;
@@ -1307,7 +1311,7 @@ HTML;
    $vars['body']=$page->inner_body;
   }
 
-  $ch=new MomokoVariableHandler($vars);
+  $ch=new MomokoVariableHandler($vars,$this->user);
   $html=$ch->replace($html);
 
   return $html;

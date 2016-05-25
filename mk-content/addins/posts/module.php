@@ -8,7 +8,7 @@ class MomokoPostsModule extends MomokoModule implements MomokoModuleInterface
  private $table;
  private $settings=array();
  
- public function __construct()
+ public function __construct(MomokoSession $user)
  {
   $this->opt_keys=array('sort'=>array('type'=>'select','options'=>array('recent')),'length'=>array('type'=>'number'),'num'=>array('type'=>'number')); //TODO add other sort types
   $this->info=$this->getInfoFromDB();

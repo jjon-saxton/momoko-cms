@@ -2,27 +2,6 @@
 #Load settings from database
 require_once dirname(__FILE__).'/database.inc.php';
 $config=new MomokoSiteConfig();
-if (empty($config->baseuri) && (!defined("INCLI") || INCLI)) //Set some defaults
-{
- $config->baseuri=$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']);
-}
-if ($config->use_ssl == "strict") //ADD protocol
-{
- $config->sec_protocol="https://";
- $config->siteroot="https://".$config->baseuri;
-}
-else
-{
- if ($config->use_ssl == "yes")
- {
-  $config->sec_protocol="https://";
- }
- else
- {
-  $config->sec_protocol="http://";
- }
- $config->siteroot="//".$config->baseuri;
-}
 $config->sys_groups=array('nobody','users','suspended','editor','cli','admin');
 
 $GLOBALS['SET']=$config->getSettings(); //TODO remove this, it is only here to serve legacy functions!
@@ -95,6 +74,28 @@ class MomokoSiteConfig
  public function __construct()
  {
    $this->table=new DataBaseTable('settings');
+
+   if (empty($this->baseuri) && (!defined("INCLI") || INCLI)) //Set some defaults
+   {
+    $this->baseuri=$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']);
+   }
+   if ($this->use_ssl == "strict") //ADD protocol
+   {
+    $this->sec_protocol="https://";
+    $this->siteroot="https://".$this->baseuri;
+   }
+   else
+   {
+    if ($this->use_ssl == "yes")
+    {
+     $this->sec_protocol="https://";
+    }
+    else
+    {
+     $this->sec_protocol="http://";
+    }
+    $this->siteroot="//".$this->baseuri;
+   }
 
    return $this->table;
  }
@@ -226,7 +227,7 @@ class MomokoModule
 
 interface MomokoModuleInterface
 {
-  public function __construct();
+  public function __construct(MomokoSession $user);
   public function getModule($format='html');
   public function getInfoFromDB();
 }
@@ -245,10 +246,14 @@ interface MomokoObject
 class MomokoVariableHandler
 {
   private $varlist=array();
+  private $user;
+  private $config;
 
-  public function __construct(array $varlist)
+  public function __construct(array $varlist,MomokoSession $user)
   {
-	  $this->varlist=$varlist;
+   $this->varlist=$varlist;
+   $this->user=$user;
+   $this->config=new MomokoSiteConfig();
   }
 
   public function __get($key)
@@ -312,9 +317,9 @@ class MomokoVariableHandler
     {
      if ($module['type'] == 'module') //Sanity check!
      {
-      require_once $GLOBALS['SET']['basedir']."/".$GLOBALS['SET']['filedir']."addins/{$module['dir']}/".$module['type'].".php";
+      require_once $this->config->basedir."/".$this->config->filedir."addins/{$module['dir']}/".$module['type'].".php";
       $class="Momoko".ucwords($module['dir'])."Module";
-      $mod=new $class();
+      $mod=new $class($this->user);
       $text.=$mod->getModule('html');
      }
     }
@@ -492,7 +497,8 @@ function file_url($url){
 #Error handlers
 function momoko_html_errors($num,$str,$file,$line,$context)
 {
-  if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($GLOBALS['SET']['error_logging'] > 1))
+  $cfg=new MomokoSiteConfig();
+  if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($cfg->error_logging > 1))
   {
    $text="PHP Error (".$num."; ".$str.") on line ".$line." of ".$file."!\n";
    try
@@ -580,7 +586,8 @@ HTML;
 
 function momoko_cli_errors($num,$str,$file,$line,$context)
 {
-  if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($GLOBALS['SET']['error_logging'] > 1))
+  $cfg=new MomokoSiteConfig();
+  if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($cfg->error_logging > 1))
   {
     if (file_exists($GLOBALS['CFG']->logdir.'/error.log'))
     {

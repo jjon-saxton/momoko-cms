@@ -6,7 +6,7 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
  private $actions=array();
  private $settings=array();
 
- public function __construct()
+ public function __construct(MomokoSession $user)
  {
   $this->info=$this->getInfoFromDB();
   $this->opt_keys=array('type'=>array('type'=>'select','options'=>array('image','video','audio','object')),'width'=>array('type'=>'number'),'height'=>array('type'=>'number'),'link1'=>array('type'=>'link'),'link2'=>array('type'=>'link'));

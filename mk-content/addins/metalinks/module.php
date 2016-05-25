@@ -3,30 +3,26 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
 {
  public $info;
  public $opt_keys=array();
- private $usr;
+ private $user;
+ private $cfg;
  private $actions=array();
  private $settings=array();
 
- public function __construct()
+ public function __construct(MomokoSession $user)
  {
+  $cfg=new MomokoSiteConfig();
   $this->info=$this->getInfoFromDB();
-  $this->usr=$GLOBALS['USR'];
   $this->opt_keys=array('display'=>array('type'=>'select','options'=>array('line','box')));
   parse_str($this->info->settings,$this->settings);
   
-  /*if ($GLOBALS['SET']['rewrite'])
+  $actions[]=array('href'=>"//".$cfg->baseuri."/?content=rss",'title'=>"Post Feeds: RSS");
+  $actions[]=array('href'=>"//".$cfg->baseuri."/?content=atom",'title'=>"Post Feeds: ATOM");
+  if (!$user->inGroup('nobody'))
   {
-   $feeds="feeds.xml";
+   $actions[]=array('href'=>'#sidebar','data-toggle'=>"modal",'title'=>'My Dashboard');
   }
-  else
-  {
-   $feeds="?content=feeds";
-  }
-  $actions[]=array('href'=>GLOBAL_PROTOCOL."//".$GLOBALS['SET']['baseuri']."/".$feeds,'title'=>"RSS Feeds"); TODO reactivate this for 2.0*/
-  if (!$GLOBALS['USR']->inGroup('nobody'))
-  {
-   $actions[]=array('href'=>'javascript:void();','onclick'=>"toggleSidebar();",'title'=>'My Dashboard');
-  }
+  $this->user=$user;
+  $this->cfg=$cfg;
   $this->actions=$actions;
  }
 
@@ -44,16 +40,16 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
   if ($this->settings['display'] == 'box')
   {
    $userlinks=$this->listUserActions("<li>__LINK__</li>\n");
-   if ($GLOBALS['USR']->inGroup('nobody'))
+   if ($this->user->inGroup('nobody'))
    {
     $userinfo=<<<HTML
-<li><a href="{$protocol}//{$GLOBALS['SET']['baseuri']}/mk-login.php">Login</a></li>
+<li><a href="{$protocol}//{$this->cfg->baseuri}/mk-login.php">Login</a></li>
 HTML;
    }
    else
    {
     $userinfo=<<<HTML
-<li>Welcome <strong>{$this->usr->name}</strong>!</li>
+<li>Welcome <strong>{$this->user->name}</strong>!</li>
 HTML;
    }
    return <<<HTML
@@ -69,16 +65,16 @@ HTML;
   else
   {
    $userlink=$this->listUserActions(" | __LINK__");
-   if ($GLOBALS['USR']->inGroup('nobody'))
+   if ($this->user->inGroup('nobody'))
    {
     $userinfo=<<<HTML
-<a href="{$protocol}//{$GLOBALS['SET']['baseuri']}/mk-login.php">Login</a>";
+<a href="{$this->cfg->sec_protcol}//{$this->cfg->baseuri}/mk-login.php">Login</a>
 HTML;
    }
    else
    {
     $userinfo=<<<HTML
-Welcome <strong>{$this->usr->name}</strong>
+Welcome <strong>{$this->user->name}</strong>
 HTML;
    }
    return <<<HTML
@@ -92,11 +88,12 @@ HTML;
   $html=null;
   foreach ($this->actions as $action)
   {
-   if (@$action['onclick'])
+   $attr_str=null;
+   foreach ($action as $attr=>$val)
    {
-    $props=" onclick=\"{$action['onclick']}\"";
+    $attr_str.=$attr." =\"{$val}\" ";
    }
-   $html.=preg_replace("/__LINK__/","<a href=\"{$action['href']}\"{$props} title=\"".$action['title']."\">".$action['title']."</a>",$wrapper);
+   $html.=preg_replace("/__LINK__/","<a {$attr_str}>".$action['title']."</a>",$wrapper);
   }
 
   return $html;
