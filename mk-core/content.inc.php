@@ -1101,18 +1101,18 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   
   if (!$this->user->inGroup('users'))
   {
-   $umopts="<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-login.php\">Login</a></li>";
+   $umopts="<li><a href=\"{$this->conf->sec_protocol}{$this->conf->baseuri}/mk-login.php\">Login</a></li>";
    $rockout=null;
   }
   else
   {
-   $umopts="<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=settings\">Settings</a></li>";
-   $rockout="\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/?action=logout\">Logout</a></li>\n";
+   $umopts="<li><a href=\"{$this->conf->siteroot}/mk-dash.php?section=user&action=settings\">Settings</a></li>";
+   $rockout="\n<li><a href=\"{$this->conf->sec_protocol}{$this->conf->baseuri}/?action=logout\">Logout</a></li>\n";
   }
   $contentlists=null;
   if ($this->user->inGroup('admin'))
   {
-   $umopts.="\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=new\">Register</a></li>";
+   $umopts.="\n<li><a href=\"{$this->conf->siteroot}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"{$this->conf->siteroot}/mk-dash.php?section=user&action=new\">Register</a></li>";
   }
   if ($this->user->inGroup('admin') || $this->user->inGroup('editor'))
   {
@@ -1168,9 +1168,9 @@ HTML;
    $contentlists.=<<<HTML
 <h4>Site</h4>
 <ul id="SitePlugs" class="plug list">
-<li><a href="{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs">Logs</a></li>
-<li><a href="{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=settings">Settings</a></li>
-<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance">Appearance</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=site&list=logs">Logs</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=site&action=settings">Settings</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=site&action=appearance">Appearance</a></li>
 </ul>
 <h4>Addins</h4>
 <ul id="SwitchPlugs" class="plug list">

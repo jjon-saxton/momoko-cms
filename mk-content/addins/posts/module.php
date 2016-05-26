@@ -5,6 +5,7 @@ class MomokoPostsModule extends MomokoModule implements MomokoModuleInterface
  public $news_list;
  public $info=array();
  public $opt_keys=array();
+ private $config;
  private $table;
  private $settings=array();
  
@@ -16,6 +17,8 @@ class MomokoPostsModule extends MomokoModule implements MomokoModuleInterface
   $this->table=new DataBaseTable('content');
   $query=$this->table->getData("type:'post' status:'public'",null,"date_created >"); //TODO sort should be a variable so we can use other sort types
   $this->news_list=$query->fetchAll(PDO::FETCH_ASSOC);
+  $this->user=$user;
+  $this->config=new MomokoSiteConfig();
  }
 	
  public function getModule ($format='html')
@@ -53,55 +56,6 @@ class MomokoPostsModule extends MomokoModule implements MomokoModuleInterface
 		{
 			case 'array':
 			return $data;
-			case 'rss':
-			$uri_root='http://'.$GLOBALS['SET']['baseuri'].'/';
-   $dom=new DOMDocument('1.0', 'UTF-8');
-			$rss=$dom->appendChild(new DOMElement('rss'));
-			$rss_version=$rss->setAttribute('version','2.0');
-			$channel=$rss->appendChild(new DOMElement('channel'));
-			$ftitle=$channel->appendChild(new DOMElement('title',$GLOBALS['SET']['name'].' News Feed'));
-			$flink=$channel->appendChild(new DOMElement('link',$uri_root));
-			$fdes=$channel->appendChild(new DOMElement('description',$GLOBALS['SET']['name']." Atom Feed for news items"));
-			foreach ($data as $news)
-			{
-				$item=$channel->appendChild(new DOMElement('item'));
-				$title=$item->appendChild(new DOMElement('title',$news['headline']));
-				$link=$item->appendChild(new DOMElement('link',$uri_root.$news['file']));
-				$pubdate=$item->appendChild(new DOMElement('pubDate',gmdate('Y-m-d\TH:i:s\Z',$news['timestamp'])));
-				$guid=$item->appendChild(new DOMElement('guid',$this->generateUUID(null,$news['timestamp'])));
-				$des=$item->appendChild(new DOMElement('description',$news['summary']));
-			}
-			$xml=$dom->saveXML();
-			return $xml;
-			break;
-			case 'atom':
-			$uri_root='//'.$GLOBALS['SET']['baseuri'].'/';
-   $dom=new DOMDocument('1.0', 'UTF-8');
-   $feed=$dom->appendChild(new DOMElement('feed',null,'http://www.w3.org/2005/Atom'));
-			$ftitle=$feed->appendChild(new DOMElement('title',$GLOBALS['SET']['name'].' News Feed','http://www.w3.org/2005/Atom'));
-			$fstitle=$feed->appendChild(new DOMElement('subtitle',$GLOBALS['SET']['name']." Atom Feed for news items"));
-			$flink_self=$feed->appendChild(new DOMElement('link'));
-			$flink_self_href=$flink_self->setAttribute('href',$uri_root."index.php/atom.xml");
-			$flink_self_rel=$flink_self->setAttribute('rel','self');
-			$flink_site=$feed->appendChild(new DOMElement('link'));
-			$flink_self_href=$flink_site->setAttribute('href',$uri_root."index.php");
-			foreach ($data as $news)
-			{
-				$entry=$feed->appendChild(new DOMElement('entry',null,'http://www.w3.org/2005/Atom'));
-				$title=$entry->appendChild(new DOMElement('title',$news['headline']));
-				$link=$entry->appendChild(new DOMElement('link'));
-				$link_href=$link->setAttribute('href',$uri_root.$new['href']);
-				$link_alt=$entry->appendChild(new DOMElement('link'));
-				$link_alt_rel=$link_alt->setAttribute('rel','alternate');
-				$link_alt_type=$link_alt->setAttribute('type','text/html');
-				$link_alt_href=$link_alt->setAttribute('href',$uri_root.$news['href']);
-				$uuid=$entry->appendChild(new DOMElement('id',$this->generateUUID("urn:uuid:",$news['timestamp'])));
-				$date=$entry->appendChild(new DOMElement('updated',gmdate('Y-m-d\TH:i:s\Z',$news['timestamp'])));
-				$summary=$entry->appendChild(new DOMElement('summary',$news['summary']));
-			}
-   $xml=$dom->saveXML();
-			return $xml;
-			break;
 			case 'html':
 			default:
 		 $html="<div id=\"NewsList\" class=\"news box\">\n";
@@ -122,8 +76,8 @@ class MomokoPostsModule extends MomokoModule implements MomokoModuleInterface
 		 $c=1;
 		 foreach($data as $news)
 		 {
-			 $news['file']=$GLOBALS['SET']['baseuri'].$news['href'];
-			 $news['date']=date($GLOBALS['USR']->shortdateformat,$news['timestamp']);
+			 $news['file']=$this->config->baseuri.$news['href'];
+			 $news['date']=date($this->user->shortdateformat,$news['timestamp']);
 			 if ($max > 0 && $c<=$max)
 			 {
 			  if (strlen($news['summary']) > $this->settings['length'])

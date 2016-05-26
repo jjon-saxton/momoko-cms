@@ -174,8 +174,8 @@ else
 {
 	$formname="Login";
 }
-$props['link']=$GLOBALS['SET']['baseuri']."/?action=".strtolower($formname);
-$props['recovery']=$GLOBALS['SET']['baseuri']."/mk-login.php?action=reset";
+$props['link']=$config->baseuri."/?action=".strtolower($formname);
+$props['recovery']=$config->baseuri."/mk-login.php?action=reset";
 
 $form=new MomokoPage($formname,$auth,$props);
 
