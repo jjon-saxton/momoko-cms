@@ -19,6 +19,10 @@ a img { /* this selector removes the default blue border displayed in some brows
     border: none;
 }
 
+a.glyphicon:hover { /* Removes underline from any glyphicon anchors*/
+text-decoration:none
+}
+
 table { background: #000 }
 td, th, tf { background: #fff }
 

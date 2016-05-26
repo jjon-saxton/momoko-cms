@@ -927,14 +927,14 @@ HTML;
    $page['title']="Site Appearance";
    if (!$user_data['raw_dom'] && !$user_data['send'])
    {
-    $map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
+    $map=new MomokoNavigation($this->user,'display=simple');
     $maplist=$map->getModule('html');
     $templates=new DataBaseTable('addins');
     $query=$templates->getData("type:'template'",array('dir','shortname'),"shortname");
     $templatesettings="<ul class=\"nobullet noindent\">\n<div class=\"form-group\"><label for=\"layout\">Layout:</label> <select class=\"form-control\" id=\"layout\" name=\"template\">\n";
     while ($template=$query->fetch(PDO::FETCH_ASSOC))
     {
-     if ($template['dir'] == $GLOBALS['SET']['template'])
+     if ($template['dir'] == $this->config->template)
      {
       $templatesettings.="<option selected=selected value=\"{$template['dir']}\">{$template['shortname']}</option>\n";
      }
@@ -943,9 +943,9 @@ HTML;
       $templatesettings.="<option value=\"{$template['dir']}\">{$template['shortname']}</option>\n";
      }
     }
-    $templatesettings.="</select> <a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&list=addins\" title=\"Template addins are listed here, add or remove them to change your selection.\">Manage Addins</a></div>\n<div class=\"form-group\"><label for=\"style\">Style:</label> <select class=\"form-control\" id=\"style\" name=\"style\">";
-    $files=fetch_files("addins/".$GLOBALS['SET']['template'],'styles');
-    $style=$templates->getData("dir:'".$GLOBALS['SET']['template']."'",array('num','headtags'));
+    $templatesettings.="</select> <a href=\"{$this->config->siteroot}/mk-dash.php?section=site&list=addins\" title=\"Template addins are listed here, add or remove them to change your selection.\">Manage Addins</a></div>\n<div class=\"form-group\"><label for=\"style\">Style:</label> <select class=\"form-control\" id=\"style\" name=\"style\">";
+    $files=fetch_files("addins/".$this->config->template,'styles');
+    $style=$templates->getData("dir:'".$this->config->template."'",array('num','headtags'));
     $style=$style->fetch(PDO::FETCH_ASSOC);
     $doc=new DOMDocument(); //Create a DOM document to parse headtags
     $doc->loadHTML($style['headtags']); //Load headtags into DOM for parsing
@@ -969,7 +969,7 @@ HTML;
     }
     $templatesettings.="</select></div>";
 
-    $modulelayout="<div class=\"screenshot\" style=\"background-image:url('".$GLOBALS['SET']['siteroot'].$GLOBALS['SET']['filedir']."addins/".$GLOBALS['SET']['template']."/screenshot.png')\">".file_get_contents($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."addins/".$GLOBALS['SET']['template']."/".$GLOBALS['SET']['template'].".pre.htm")."</div>";
+    $modulelayout="<div class=\"screenshot\" style=\"background-image:url('".$this->config->siteroot.$this->config->filedir."addins/".$this->config->template."/screenshot.png')\">".file_get_contents($this->config->basedir.$this->config->filedir."addins/".$this->config->template."/".$this->config->template.".pre.htm")."</div>";
     $addins=new DataBaseTable('addins');
     $dbquery=$addins->getData("type:'module'",array('num','dir','shortname','zone','settings'),'order');
     $modulelist=NULL;
@@ -980,7 +980,7 @@ HTML;
       $module['zone']=0;
      }
      parse_str($module['settings'],$module['settings']);
-     require_once $GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."addins/".$module['dir']."/module.php";
+     require_once $this->config->basedir.$this->config->filedir."addins/".$module['dir']."/module.php";
      $mod_obj="Momoko".ucwords($module['dir'])."Module";
      $mod_obj=new $mod_obj($this->user);
      $module['settings']=$mod_obj->settingsToHTML($module['settings']);
@@ -1013,7 +1013,7 @@ HTML;
 $(function(){
  $(".dialog").hide();
  $("select#layout").change(function(){
-  $.getJSON("{$GLOBALS['SET']['siteroot']}/ajax.php?action=fetch_files&dir=addins/"+$(this).val()+"&limit=styles",function(j){
+  $.getJSON("{$this->config->siteroot}/ajax.php?action=fetch_files&dir=addins/"+$(this).val()+"&limit=styles",function(j){
    $("select#style").fadeOut('fast',function(){
     var opts='';
     for (var i=0; i < j.length; i++)
@@ -1114,7 +1114,7 @@ HTML;
    {
     $new_map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
     $new_map->reOrderbyHTML($user_data['raw_dom']);
-    header("Location:http:{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance");
+    header("Location:http:{$this->config->siteroot}/mk-dash.php?section=site&action=appearance");
     exit();
    }
    elseif ($user_data['section'] == 'modules')
@@ -1140,7 +1140,7 @@ HTML;
       $data['order']++;
      }
     }
-    header("Location: {$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance");
+    header("Location: {$this->config->siteroot}/mk-dash.php?section=site&action=appearance");
     exit();
    }
    else
@@ -1153,7 +1153,7 @@ HTML;
     $list=$addins->getData("dir:'{$user_data['template']}'",array('num','dir'),null,1);
     $template=$list->fetch(PDO::FETCH_ASSOC);
     $template['enabled']='y';
-    $template['headtags']="<link rel=\"stylesheet\" href=\"{$GLOBALS['SET']['siteroot']}{$GLOBALS['SET']['filedir']}addins/{$template['dir']}/{$user_data['style']}\" type=\"text/css\">";
+    $template['headtags']="<link rel=\"stylesheet\" href=\"{$this->config->siteroot}{$this->config->filedir}addins/{$template['dir']}/{$user_data['style']}\" type=\"text/css\">";
     $style=$addins->updateData($template);
     
     $settings=new DataBaseTable('settings');
@@ -1161,19 +1161,19 @@ HTML;
     $data['value']=$user_data['template'];
     $template=$settings->updateData($data);
     
-    header("Location: {$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance");
+    header("Location: {$this->config->siteroot}/mk-dash.php?section=site&action=appearance");
     exit();
    }
    break;
    case 'fetch':
    $finfo['src']=file_url($_GET['uri']);
    $finfo['name']=rawurldecode(basename($finfo['src']));
-   $finfo['author']=$GLOBALS['USR']->num;
+   $finfo['author']=$this->user->num;
    $finfo['date_created']=date("Y-m-d H:i:s");
-   $finfo['temp']=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].time();
+   $finfo['temp']=$this->config->basedir.$this->config->tempdir.time();
    if (copy($finfo['src'],$finfo['temp']))
    {
-    $finfo['perm']=$GLOBALS['SET']['filedir'].$finfo['name'];
+    $finfo['perm']=$this->config->filedir.$finfo['name'];
     if (class_exists('finfo'))
     {
        $upload_info=new finfo(FILEINFO_MIME_TYPE);
@@ -1189,9 +1189,9 @@ HTML;
     $finfo['title']=$finfo['name']; //currently we only accept attachment uploads this way so a file name is an attachment title
     if ($new_ko=$this->table->putData($finfo))
     {
-     if (rename($finfo['temp'],$GLOBALS['SET']['basedir'].$finfo['perm']))
+     if (rename($finfo['temp'],$this->config->basedir.$finfo['perm']))
      {
-      $finfo['link']=$GLOBALS['SET']['siteroot'].$finfo['perm'];
+      $finfo['link']=$this->config->siteroot.$finfo['perm'];
      }
      if ($_GET['ajax'] == 1)
      {
@@ -1234,7 +1234,7 @@ HTML;
     {
      if ($_FILES['addin']['error'] == UPLOAD_ERR_OK)
      {
-      $temp=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].time().$_FILES['addin']['name'];
+      $temp=$this->config->basedir.$this->config->tempdir.time().$_FILES['addin']['name'];
       move_uploaded_file($_FILES['addin']['tmp_name'],$temp);
       $zip=new ZipArchive();
       if ($zip->open($temp) === TRUE)
@@ -1350,9 +1350,9 @@ HTML;
       }
       $finfo['author']=$GLOBALS['USR']->num;
       $finfo['date_created']=date("Y-m-d H:i:s");
-      $finfo['temp']=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir']."temp-attach-".time();
+      $finfo['temp']=$GLOBALS['SET']['basedir'].$this->config->tempdir."temp-attach-".time();
     
-      if (is_writable($GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir']))
+      if (is_writable($GLOBALS['SET']['basedir'].$this->config->tempdir))
       {
        move_uploaded_file($_FILES['file']['tmp_name'],$finfo['temp']) or die(trigger_error("Cannot move file to '{$finfo['temp']}'!"));
        if ($finfo['mime_type'] == "text/html")
@@ -1381,7 +1381,7 @@ HTML;
          }
          else
          {
-          $finfo['link']=$GLOBALS['SET']['siteroot']."?p=".$new_ko;
+          $finfo['link']=$this->config->siteroot."?p=".$new_ko;
           $finfo['edit']=$finfo['link']."&action=edit";
          }
         }
@@ -1395,9 +1395,9 @@ HTML;
        {
         $finfo['type']='attachment';
         $finfo['title']=$finfo['name'];
-        $finfo['link']=$GLOBALS['SET']['sec_protocol'].$GLOBALS['SET']['baseuri'].$GLOBALS['SET']['filedir'].$finfo['name'];
+        $finfo['link']=$this->config->sec_protocol.$this->config->baseuri.$this->config->filedir.$finfo['name'];
         $finfo['edit']="#";
-        if(rename($finfo['temp'],$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$finfo['name']))
+        if(rename($finfo['temp'],$GLOBALS['SET']['basedir'].$this->config->filedir.$finfo['name']))
         {
          try
          {
@@ -1406,20 +1406,20 @@ HTML;
          catch (Exception $err)
          {
           trigger_error("Caught exception '".$err->getMessage()."' while attempting to add attachment to database",E_USER_ERROR);
-          ulink($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$finfo['name']);
+          ulink($this->config->filedir.$finfo['name']);
           $finfo['error']=$err->getMessage();
          }
         }
         else
         {
-         $finfo['error']="Could not move attachment to its permenant location (".$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$finfo['name'].")!";
+         $finfo['error']="Could not move attachment to its permenant location (".$GLOBALS['SET']['basedir'].$this->config->filedir.$finfo['name'].")!";
          }
        }
       }
       else
       {
        trigger_error("Cannot write to temporary storage directory!",E_USER_WARNING);
-       if (file_exists($GLOBALS['SET']['filedir']."/temp"))
+       if (file_exists($this->config->filedir."/temp"))
        {
         $finfo['error']="Temp folder not writable!";
        }
@@ -1505,18 +1505,18 @@ HTML;
     $hsep="&";
     if (!$content->link)
     {
-     if ($GLOBALS['SET']['rewrite'])
+     if ($this->config->rewrite)
      {
-      $href=$GLOBALS['SET']['siteroot']."/{$content->type}/".urlencode($content->title).".htm";
+      $href=$this->config->siteroot."/{$content->type}/".urlencode($content->title).".htm";
       $hsep="?";
      }
      elseif ($content->type == 'page')
      {
-      $href=$GLOBALS['SET']['siteroot']."/?p={$content->num}";
+      $href=$this->config->siteroot."/?p={$content->num}";
      }
      else
      {
-      $href=$GLOBALS['SET']['sitroot']."/?content={$content->type}&p={$content->num}";
+      $href=$this->config->sitreoot."/?content={$content->type}&p={$content->num}";
      }
      if (@$_GET['origin'] == "new")
      {
@@ -1544,7 +1544,7 @@ HTML;
 
    if (@$_GET['origin'] == "new")
    {
-    $blank="<div id=\"0\" class=\"page selectable box\"><a id=\"location\" href=\"{$GLOBALS['SET']['siteroot']}{$GLOBALS['SET']['filedir']}/forms/new.htm\" style=\"display:none\">[insert]</a><strong>Blank Page or Post</strong></div>";
+    $blank="<div id=\"0\" class=\"page selectable box\"><a id=\"location\" href=\"{$this->config->siteroot}{$this->config->filedir}/forms/new.htm\" style=\"display:none\">[insert]</a><strong>Blank Page or Post</strong></div>";
    }
 
    if (ini_get('allow_url_fopen'))
@@ -1567,11 +1567,11 @@ HTML;
 <div id="External" class="tab-pane fade in active">
 {$blank}
 <h4 class="module">Upload</h4>
-<form enctype="multipart/form-data" action="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&action=upload&ajax=1" method="post" target="droptarget">
+<form enctype="multipart/form-data" action="{$this->config->siteroot}/mk-dash.php?section=content&action=upload&ajax=1" method="post" target="droptarget">
 <div id="ExtURI"><label for="uri">A file from the web: </label><input{$exturi_perams} type=url id="uri" name="uri" placeholder="http://" onkeypress="iFetch(event,this)"></div>
 <div id="ExtFile"><label for="file">A file on your computer: </label><input type=file id="file" name="file" onchange="iUpload(this)"></div>
 </form>
-<div id="FileInfo"><iframe id="FileTarget" name="droptarget" style="display:none" src="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&action=upload&ajax=1"></iframe></div>
+<div id="FileInfo"><iframe id="FileTarget" name="droptarget" style="display:none" src="{$this->config->siteroot}/mk-dash.php?section=content&action=upload&ajax=1"></iframe></div>
 </div>
 <div id="Pages" class="tab-pane fade">
 <h4 class="module">Select a Page</h4>
@@ -1604,15 +1604,15 @@ HTML;
    $page['body'].="<th>&nbsp;</th></thead></tr><tbody>";
    $query=$this->table->getData(null,$columns);
    $row_c=$query->rowCount();
-   if ($row_c > $GLOBALS['USR']->rowspertable)
+   if ($row_c > $this->user->rowspertable)
    {
-    $query=$this->table->getData(null,$columns,null,$GLOBALS['USR']->rowspertable,@$_GET['offset']);
+    $query=$this->table->getData(null,$columns,null,$this->user->rowspertable,@$_GET['offset']);
     $prev=@$_GET['offset']-$GLOBALS['USR']->rowspertable;
     if ($prev < 0)
     {
      $prev=0;
     }
-    $page_div="<div id=\"UserPages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=user&action=list&offset={$prev}\">Previous</a></td><td align=center>";
+    $page_div="<div id=\"UserPages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$this->config->siteroot}/mk-dash.php?section=user&action=list&offset={$prev}\">Previous</a></td><td align=center>";
     $pages=paginate($row_c,@$_GET['offset']);
     foreach ($pages as $page)
     {
@@ -1622,7 +1622,7 @@ HTML;
      }
      else
      {
-      $page_div.="<a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=user&action=list&offset={$page['offset']}\">{$page['number']}</a> ";
+      $page_div.="<a href=\"{$this->config->siteroot}/mk-dash.php?section=user&action=list&offset={$page['offset']}\">{$page['number']}</a> ";
      }
     }
     $next=@$_GET['offset']+$GLOBALS['USR']->rowspertable;
@@ -1630,7 +1630,7 @@ HTML;
     {
      $next=0;
     }
-    $page_div.="</td><td align=right><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=user&action=list&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
+    $page_div.="</td><td align=right><a href=\"{$this->config->siteroot}/mk-dash.php?section=user&action=list&offset={$next}\">Next</a></td>\n</tr>\n</table></div>";
    }
    else
    {
@@ -1649,7 +1649,7 @@ HTML;
        $row.="<td>".$value."</td>";
       }
      }
-     $row.="<td><span data-toggle=\"modal\" data-target=\"#modal\" class=\"glyphicon glyphicon-edit\" onclick=\"populateModal('{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?ajax=1&section=user&action=edit&id={$user['num']}','Edit User #{$user['num']}')\" title=\"Edit User #{$user['num']}\"></span> <span data-toggle=\"modal\" data-target=\"#modal\" class=\"glyphicon glyphicon-remove-sign\" onclick=\"populateModal('{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?ajax=1&section=user&action=delete&id={$user['num']}','Remove User #{$user['num']}')\" title=\"Remove User #{$user['num']}\"></span></td></tr>\n";
+     $row.="<td><a href=\"#modal\" data-toggle=\"modal\" class=\"glyphicon glyphicon-edit\" onclick=\"populateModal('{$this->config->siteroot}/mk-dash.php?ajax=1&section=user&action=edit&id={$user['num']}','Edit User #{$user['num']}')\" title=\"Edit User #{$user['num']}\"></a> <a href=\"#modal\" data-toggle=\"modal\" class=\"glyphicon glyphicon-remove-sign\" onclick=\"populateModal('{$this->config->siteroot}/mk-dash.php?ajax=1&section=user&action=delete&id={$user['num']}','Remove User #{$user['num']}')\" title=\"Remove User #{$user['num']}\"></span></td></tr>\n";
      $c++;
     }
    }
@@ -1679,7 +1679,7 @@ else
   {
    if (!empty($_GET['plug']))
    {
-    require_once $GLOBALS['SET']['basedir']."/mk-content/addins/{$_GET['plug']}/plug.inc.php";
+    require_once $config->basedir."/mk-content/addins/{$_GET['plug']}/plug.inc.php";
     $child=new MomokoSwitchboard();
    }
    else

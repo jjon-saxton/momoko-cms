@@ -834,6 +834,8 @@ function compile_head()
 
 function fetch_files($dir,$limitto=null)
 {
+ $cfg=new MomokoSiteConfig();
+ $set=$cfg->getSettings();
  $dir=str_replace(" ","+",$dir);
  $files=array();
  switch ($limitto)
@@ -845,7 +847,7 @@ function fetch_files($dir,$limitto=null)
    $name="/*";
    break;
  }
- foreach (glob($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$dir.$name) as $file)
+ foreach (glob($set['basedir'].$set['filedir'].$dir.$name) as $file)
  {
   switch ($limitto)
   {
