@@ -272,21 +272,10 @@ class MomokoVariableHandler
   {
     switch ($item)
     {
-      case 'usercontrols':
-      if (@$GLOBALS['USR'] instanceof MomokoSession)
-      {
-        $mod=new MomokoUCPModule($GLOBALS['USR'],$argstr);
-        return $mod->getModule('html');
-      }
-      else
-      {
-        return null;
-      }
-      break;
       case 'pagecontrols':
-      if (@$GLOBALS['USR'] instanceof MomokoSession)
+      if (@$this->user instanceof MomokoSession)
       {
-        $mod=new MomokoPCModule($GLOBALS['USR'],$argstr);
+        $mod=new MomokoPCModule($this->user,$argstr);
         return $mod->getModule('html');
       }
       else
@@ -589,14 +578,14 @@ function momoko_cli_errors($num,$str,$file,$line,$context)
   $cfg=new MomokoSiteConfig();
   if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($cfg->error_logging > 1))
   {
-    if (file_exists($GLOBALS['CFG']->logdir.'/error.log'))
+    if (file_exists($cfg->logdir.'/error.log'))
     {
-      $log=fopen($GLOBALS['CFG']->logdir.'/error.log','a') or die("Error log could not be open for write!");
+      $log=fopen($cfg->logdir.'/error.log','a') or die("Error log could not be open for write!");
       fwrite($log,"[".date("Y-m-d H:i:s")."] PHP Error (".$num."; ".$str.") in ".$line." of ".$file."!\n");
     }
     else
     {
-      die("Error log does not exist at configured location: ".$GLOBALS['CFG']->logdir."!");
+      die("Error log does not exist at configured location: ".$cfg->logdir."!");
     }
   }
   
@@ -610,7 +599,8 @@ function momoko_cli_errors($num,$str,$file,$line,$context)
 #Change logging handler
 function momoko_changes($user,$action,$resource,$message=null)
 {
-  if ($GLOBALS['SET']['security_logging'] > 0)
+  $cfg=new MomokoSiteConfig();
+  if ($cfg->security_logging > 0)
   {
       switch (get_class($resource))
       {
@@ -633,7 +623,8 @@ function momoko_changes($user,$action,$resource,$message=null)
 
 function momoko_basic_changes($user,$action,$target,$message=null)
 {
-  if ($GLOBALS['SET']['security_logging'] > 0)
+  $cfg=new MomokoSiteConfig();
+  if ($cfg->security_logging > 0)
   {
    if (!empty($message))
    {
@@ -657,12 +648,12 @@ function momoko_basic_changes($user,$action,$target,$message=null)
 }
 
 #Misc functions
-function paginate($total,$offset=0)
+function paginate($total,MomokoSession $user,$offset=0)
 {
- $total_pp=ceil($total/$GLOBALS['USR']->rowspertable);
+ $total_pp=ceil($total/$user->rowspertable);
  for($c=1;$c<=$total_pp;$c++)
  {
-  $offset_c=($c*$GLOBALS['USR']->rowspertable)-$GLOBALS['USR']->rowspertable;
+  $offset_c=($c*$GLOBALS['USR']->rowspertable)-$user->rowspertable;
   $pages[]=array('offset'=>$offset_c,'number'=>$c);
  }
 

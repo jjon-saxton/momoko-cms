@@ -72,7 +72,7 @@ class MomokoDashboard implements MomokoObject
    $text="<div id=\"ContentList\" class=\"box\">\n";
    $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols);
    $row_c=$query->rowCount();
-   $pages=paginate($row_c);
+   $pages=paginate($row_c,$this->user);
    $prev=@$_GET['offset']-$this->user->rowspertable;
    $next=@$_GET['offset']+$this->user->rowspertable;
    if ($prev >= 0)
@@ -242,7 +242,7 @@ HTML;
    }
 
    $query_str=http_build_query($_GET);
-   $pages=paginate($row_c,@$_GET['offset']);
+   $pages=paginate($row_c,$this->user,@$_GET['offset']);
    $prev=@$_GET['offset']-$this->user->rowspertable;
    $next=@$_GET['offset']+$this->user->rowspertable;
    if ($prev < 0)
@@ -1613,7 +1613,7 @@ HTML;
      $prev=0;
     }
     $page_div="<div id=\"UserPages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$this->config->siteroot}/mk-dash.php?section=user&action=list&offset={$prev}\">Previous</a></td><td align=center>";
-    $pages=paginate($row_c,@$_GET['offset']);
+    $pages=paginate($row_c,$this->user,@$_GET['offset']);
     foreach ($pages as $page)
     {
      if ($page['offset'] == @$_GET['offset'])
