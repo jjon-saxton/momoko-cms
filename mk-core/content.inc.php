@@ -328,12 +328,14 @@ class MomokoFeed implements MomokoObject
 class MomokoAttachment implements MomokoObject
 {
  private $table;
+ private $config;
  private $page;
  private $info=array();
  
  public function __construct($path, array $additional_vars=null)
  {
   $table=new DataBaseTable('content');
+  $this->config=new MomokoSiteConfig();
   
   $title=basename($path);
   $category_tree=trim(dirname($path),"./");
@@ -511,7 +513,7 @@ HTML;
   if ($_POST['drop'])
   {
    $data['num']=$this->info['num'];
-   $file=$GLOBALS['SET']['basedir'].'/'.preg_replace("%http://".$GLOBALS['SET']['baseuri']."/%",'',$this->link);
+   $file=$this->config->basedir.'/'.preg_replace("%http://".$this->config->baseuri."/%",'',$this->link);
    if (unlink($file))
    {
     try
@@ -533,7 +535,7 @@ HTML;
     $info['inner_body']=<<<HTML
 <div id="DeleteAttachment" class="message box">
 <h3 class="message title">Attachment Gone</h3>
-<p>The attachment you selected was deleted! You may now <a href="//{$GLOBALS['SET']['baseuri']}/">return</a> to your home page!</p>
+<p>The attachment you selected was deleted! You may now <a href="//{$this->config->baseuri}/">return</a> to your home page!</p>
 </div>
 HTML;
    }
@@ -571,11 +573,13 @@ class MomokoPage implements MomokoObject
  private $table;
  private $page;
  private $user;
+ private $config;
  private $info=array();
  
  public function __construct($path,MomokoSession $user, array $additional_vars=null)
  {
   $this->user=$user;
+  $this->config=new MomokoSiteConfig();
 
   $table=new DataBaseTable('content');
   
@@ -653,12 +657,12 @@ class MomokoPage implements MomokoObject
   {
    if (($_GET['action'] == 'edit' && $data['num']) && $update=$this->table->updateData($data))
    {
-    header("Location: http://{$GLOBALS['SET']['baseuri']}/?p={$data['num']}");
+    header("Location: http://{$this->config->baseuri}/?p={$data['num']}");
     exit();
    }
    elseif ($_GET['action'] == 'new' && $new=$this->table->putData($data))
    {
-    header("Location: http://{$GLOBALS['SET']['baseuri']}/?p={$new}");
+    header("Location: http://{$this->config->baseuri}/?p={$new}");
     exit();
    }
    else
@@ -754,7 +758,7 @@ HTML;
    {
     $chooser=<<<TXT
     $("#modal .modal-title").html("New From...")
-	$("#modal .modal-body").load("//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=gethref&ajax=1&origin=new",function(){
+	$("#modal .modal-body").load("//{$this->config->baseuri}/mk-dash.php?section=content&action=gethref&ajax=1&origin=new",function(){
      $(this).on('click','div.selectable',function(){
       var location=$(this).find("a#location").attr('href');
       $.get(location,function(html){
@@ -777,7 +781,7 @@ $(function(){
  }
   
  $("textarea").jqte({
-  dashuri:"//{$GLOBALS['SET']['baseuri']}/mk-dash.php",
+  dashuri:"//{$this->config->baseuri}/mk-dash.php",
   color:false,
   strike:false,
   formats:[{$formats}],
@@ -915,7 +919,7 @@ HTML;
     $info['inner_body']=<<<HTML
 <div id="DeletePage" class="message box">
 <h3 class="message title">Page Gone</h3>
-<p>The page you selected was removed! You may now <a href="//{$GLOBALS['SET']['baseuri']}/">return</a> to your home page!</p>
+<p>The page you selected was removed! You may now <a href="//{$this->config->baseuri}/">return</a> to your home page!</p>
 </div>
 HTML;
    }
@@ -954,7 +958,7 @@ HTML;
     $vars=array();
    }
    
-   $vars['siteroot']=$GLOBALS['SET']['siteroot'];
+   $vars['siteroot']=$this->config->siteroot;
    
    return $vars;
  }
@@ -1004,12 +1008,14 @@ class MomokoError implements MomokoObject
 {
  public $name;
  private $page;
+ private $config;
  private $inner_body;
  private $error_msg;
 
  public function __construct($title,$user,$msg=null,array $additional_vars=null)
  {
   $this->page=new MomokoPage($title,$user);
+  $this->config=new MomokoSiteConfig();
   $this->error_msg=$msg;
   header("Status: ".$this->page->title);
   header("HTTP/1.0 ".$this->page->title);
@@ -1049,8 +1055,8 @@ class MomokoError implements MomokoObject
  private function setVars($vars)
  {
   $vars['error_msg']=$this->error_msg;
-  $vars['admin_email']=$GLOBALS['SET']['support_email'];
-  $vars['forgot_password']='http://'.$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].ADDINROOT.'passreset/';
+  $vars['admin_email']=$this->config->support_email;
+  $vars['forgot_password']=$this->config->sec_protocol.$this->config->baseuri."/mk-login.php?action=reset";
   return $vars;
  }
 }
@@ -1322,6 +1328,7 @@ HTML;
 class MomokoAddinForm implements MomokoObject
 {
   public $form;
+  private $config;
   private $info=array();
   
   public function __construct($form=null)
@@ -1331,6 +1338,8 @@ class MomokoAddinForm implements MomokoObject
       $this->form=$form;
       $this->info=$this->parse();
     }
+
+    $this->config=new MomokoSiteConfig();
   }
   
   public function __get($var)
@@ -1352,13 +1361,13 @@ class MomokoAddinForm implements MomokoObject
   
   public function get()
   {
-    return file_get_contents($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."forms/addin".$this->form.".htm");
+    return file_get_contents($this->config->basedir.$this->config->filedir."forms/addin".$this->form.".htm");
   }
   
   private function parse()
   {
     $info=parse_page($this->get());
-    $vars['sitedir']=$GLOBALS['SET']['baseuri'];
+    $vars['sitedir']=$this->config->baseuri;
     $table=new DataBaseTable('addins');
     
     switch($this->form)
@@ -1395,7 +1404,7 @@ class MomokoAddinForm implements MomokoObject
 	$vars['addin_list'].="<td><a class=\"glyphicon glyphicon-remove\" onclick=\"showRemove('".$row['num']."',event)\" title=\"Delete\" href=\"javascript:void()\"></a></td>\n</tr>\n";
       }
     }
-    $vars['site_location']=$GLOBALS['SET']['siteroot'];
+    $vars['site_location']=$this->config->siteroot;
       
     $vh=new MomokoVariableHandler($vars);
     $info['inner_body']=$vh->replace($info['inner_body']);
@@ -1408,14 +1417,16 @@ class MomokoAddin implements MomokoObject
  public $path;
  public $isEnabled;
  private $table;
+ private $config;
  private $info=array();
 
  public function __construct($path=null)
  {
   $this->table=new DataBaseTable('addins');
+  $this->config=new MomokoSiteConfig();
   if (!empty($path))
   {
-   $manifest=xmltoarray($GLOBALS['SET']['basedir'].$path.'/manifest.xml'); //Load manifest
+   $manifest=xmltoarray($this->config->basedir.$path.'/manifest.xml'); //Load manifest
    $this->info=$this->parseManifest($manifest);
    
    $db=new DataBaseTable("addins");
@@ -1462,7 +1473,7 @@ class MomokoAddin implements MomokoObject
   }
   else
   {
-    $destination=$GLOBALS['CFG']->basedir.$data['dir'];
+    $destination=$this->config->basedir.$data['dir'];
     if (mkdir($destination))
     {
       $zip=new ZipArchive;
@@ -1502,7 +1513,7 @@ class MomokoAddin implements MomokoObject
   }
   else
   {
-    $destination=$GLOBALS['CFG']->basedir.$data['dir'];
+    $destination=$this->config->basedir.$data['dir'];
     if (!file_exists($destination))
     {
       unlink($data['archive']);
@@ -1550,7 +1561,7 @@ class MomokoAddin implements MomokoObject
   if (!empty($file))
   {
     $result=false;
-    $filename=$GLOBALS['SET']['tempdir'].'/'.$file['name'];
+    $filename=$this->config->tempdir.'/'.$file['name'];
     if ($file['error'] == UPLOAD_ERR_OK && move_uploaded_file($file['tmp_name'],$filename))
     {
       $result=true;
@@ -1611,7 +1622,7 @@ HTML;
   if ($_POST['send'] == "Yes")
   {
     $ddata['num']=$data->num;
-    if ($table->removeData($ddata) && rmdirr($GLOBALS['SET']['basedir'].'/addins/'.$data->dir))
+    if ($table->removeData($ddata) && rmdirr($this->config->basedir.'/addins/'.$data->dir))
     {
       momoko_changes($this->user,'dropped',$this);
       $ddata['succeed']=true;
@@ -1659,7 +1670,7 @@ HTML;
  {
   $query=$this->table->getData("num:'= ".$id."'",array('`num`','`dir`','`enabled`'),null,1);
   $data=$query->fetch(PDO::FETCH_OBJ);
-  $path=$GLOBALS['SET']['basedir']."/addins/".$data->dir."/";
+  $path=$this->config->basedir."/addins/".$data->dir."/";
   
   $manifest=xmltoarray($path.'/manifest.xml'); //Load manifest
   $this->info=$this->parseManifest($manifest);
