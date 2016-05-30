@@ -62,12 +62,12 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    }
    else
    {
-    header("Location: https://".$GLOBALS['SET']['baseuri']."?action=login&re=new");
+    header("Location: https://".$config->baseuri."?action=login&re=new");
     exit();
    }
    break;
    case 'edit':
-   if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
+   if ($auth->inGroup('admin') || $auth->inGroup('editor'))
    {
     if ($_GET['p'])
     {
@@ -127,7 +127,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    }
    else
    {
-    header("Location: //".$GLOBALS['SET']['baseuri']."/mk-login.php");
+    header("Location: //".$config->baseuri."/mk-login.php");
 	exit();
    }
    break;
@@ -137,17 +137,17 @@ if(isset($_GET['action']) && !empty($_GET['action']))
     $usr=new MomokoUser($_POST['name']);
     if ($usr->put($_POST))
     {
-     header("Location: //".$GLOBALS['SET']['baseuri']."/mk-login.php");
+     header("Location: //".$config->baseuri."/mk-login.php");
      exit();
     }
    }
    else
    {
-    header("Location: //".$GLOBALS['SET']['baseuri']."/mk-login.php?action=new");
+    header("Location: //".$config->baseuri."/mk-login.php?action=new");
     exit();
    }
    case 'passreset':
-   header("Location: //".$GLOBALS['SET']['baseuri']."/mk-login.php?action=reset");
+   header("Location: //".$config->baseuri."/mk-login.php?action=reset");
    break;
    break;
    case 'logout':
