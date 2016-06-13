@@ -397,7 +397,7 @@ HTML;
      $default=$query->fetch(PDO::FETCH_ASSOC);
      $group_opts=null;
      $group_num=1;
-     foreach ($GLOBALS['SET']['sys_groups'] as $name)
+     foreach ($this->config->sys_groups as $name)
      {
         if ($name != 'cli' && $name != 'nobody')
         {
@@ -492,7 +492,7 @@ HTML;
      $group_arry=explode(",",$user['groups']);
      $group_opts=null;
      $group_num=1;
-     foreach ($GLOBALS['SET']['sys_groups'] as $name)
+     foreach ($this->config->sys_groups as $name)
      {
         if ($name != 'cli' && $name != 'nobody')
         {

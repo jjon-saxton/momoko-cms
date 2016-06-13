@@ -4,8 +4,6 @@ require_once dirname(__FILE__).'/database.inc.php';
 $config=new MomokoSiteConfig();
 $config->sys_groups=array('nobody','users','suspended','editor','cli','admin');
 
-//$GLOBALS['SET']=$config->getSettings(); //TODO remove this, it is only here to serve legacy functions!
-
 //Set Constants
 if ($config->rewrite)
 {
