@@ -1346,13 +1346,12 @@ class MomokoAddinForm implements MomokoObject
   
   public function __construct($form=null)
   {
+    $this->config=new MomokoSiteConfig();
     if (!empty($form))
     {
       $this->form=$form;
       $this->info=$this->parse();
     }
-
-    $this->config=new MomokoSiteConfig();
   }
   
   public function __get($var)
