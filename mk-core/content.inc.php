@@ -1017,7 +1017,7 @@ class MomokoError implements MomokoObject
  private $inner_body;
  private $error_msg;
 
- public function __construct($title,$user,$msg=null,array $additional_vars=null)
+ public function __construct($title,MomokoSession $user,$msg=null,array $additional_vars=null)
  {
   $this->page=new MomokoPage($title,$user);
   $this->config=new MomokoSiteConfig();
