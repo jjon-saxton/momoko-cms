@@ -882,6 +882,14 @@ HTML;
  public function get()
  {
   $authorized=$this->hasAccess();
+  if (empty($this->user) || !($this->user instanceof MomokoSession))
+  {
+   $user=new MomokoSession(); //create a guest session in case usere is empty to prevent cascading errors
+  }
+  else
+  {
+   $user=$this->user; //copy the current session if it is okay.
+  }
 
   if ($authorized && $this->text)
   {
@@ -889,12 +897,12 @@ HTML;
   }
   elseif (!$authorized)
   {
-   $page=new MomokoError("403 Forbidden",$this->user);
+   $page=new MomokoError("403 Forbidden",$user);
    return $page->inner_body;
   }
   else
   {
-   $page=new MomokoError("404 Not Found",$this->user);
+   $page=new MomokoError("404 Not Found",$user);
    return $page->inner_body;
   }
  }
