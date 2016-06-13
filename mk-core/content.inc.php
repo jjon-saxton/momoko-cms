@@ -966,7 +966,12 @@ HTML;
  private function hasAccess()
  {
   $grouplist=explode(",",$this->has_access);
-  if ($this->user->inGroup('admin'))
+  if (empty($this->user))
+  {
+   trigger_error("No user passed when attempting to check for access rights. Defaulting to no access. This is a programing error.",E_USER_NOTICE);
+   return false;
+  }
+  elseif ($this->user->inGroup('admin'))
   {
    return true;
   }
