@@ -127,8 +127,8 @@ function iUpload(field,pkg){
     }
 
     field.form.submit();
-    $("#file span#msg").remove();
-    $("#file").append("<span id=\"msg\">Uploading...</span>");
+    $("#ExtFile #msg").remove();
+    $("#ExtFile").append("<div id=\"msg\" class=\"alert alert-info\">Uploading...</div>");
     field.disabled=true;
 }
 

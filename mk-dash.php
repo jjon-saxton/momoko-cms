@@ -1454,21 +1454,24 @@ HTML;
      if (!$finfo['error'])
      {
       $script_body=<<<TXT
-$('span#msg',pDoc).html("Uploaded!").addClass("success");
+$('#ExtFile #msg',pDoc).html("Uploaded!").removeClass('alert-info').addClass('alert-success');
 $('div#FileInfo',pDoc).append("<div onclick=\"window.location='{$finfo['edit']}'\" class=\"page selectable box\"><a id=\"location\" href=\"{$finfo['link']}\" style=\"display:none\">[insert]</a><strong>{$finfo['title']}</strong></div>");
 window.setTimeout(function(){
- $("span#msg",pDoc).remove();
- $('input#file',pDoc).removeAttr('disabled');
+ $("#ExtFile #msg",pDoc).fadeOut('slow');
+ $('input#file',pDoc).val("").removeAttr('disabled');
 }, 1500);
 TXT;
      }
      else
      {
      $script_body=<<<TXT
-$('span#msg',pDoc).html('{$finfo['error']}').addClass("error");
+$('#ExtFile #msg',pDoc).html('{$finfo['error']}').removeClass("alert-info").addClass("alert-danger");
 window.setTimeout(function(){
- $('input#file',pDoc).removeAttr('disabled');
+ $('input#file',pDoc).val("").removeAttr('disabled');
 }, 1500);
+window.setTimeout(function(){
+ $("#ExtFile #msg",pDoc).fadeOut('slow');
+}, 4500);
 TXT;
      }
      
