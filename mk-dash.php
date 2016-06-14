@@ -1350,9 +1350,9 @@ HTML;
       }
       $finfo['author']=$GLOBALS['USR']->num;
       $finfo['date_created']=date("Y-m-d H:i:s");
-      $finfo['temp']=$GLOBALS['SET']['basedir'].$this->config->tempdir."temp-attach-".time();
+      $finfo['temp']=$this->config->basedir.$this->config->tempdir."temp-attach-".time();
     
-      if (is_writable($GLOBALS['SET']['basedir'].$this->config->tempdir))
+      if (is_writable($this->config->basedir.$this->config->tempdir))
       {
        move_uploaded_file($_FILES['file']['tmp_name'],$finfo['temp']) or die(trigger_error("Cannot move file to '{$finfo['temp']}'!"));
        if ($finfo['mime_type'] == "text/html")
@@ -1397,7 +1397,7 @@ HTML;
         $finfo['title']=$finfo['name'];
         $finfo['link']=$this->config->sec_protocol.$this->config->baseuri.$this->config->filedir.$finfo['name'];
         $finfo['edit']="#";
-        if(rename($finfo['temp'],$GLOBALS['SET']['basedir'].$this->config->filedir.$finfo['name']))
+        if(rename($finfo['temp'],$this->config->basedir.$this->config->filedir.$finfo['name']))
         {
          try
          {
@@ -1419,7 +1419,7 @@ HTML;
       else
       {
        trigger_error("Cannot write to temporary storage directory!",E_USER_WARNING);
-       if (file_exists($this->config->filedir."/temp"))
+       if (file_exists($this->config->basedir.$this->config->tempdir))
        {
         $finfo['error']="Temp folder not writable!";
        }
