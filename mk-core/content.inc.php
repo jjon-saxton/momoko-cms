@@ -1168,7 +1168,7 @@ HTML;
 <li><a href="{$this->conf->siteroot}/?action=new">New</a></li>{$curconlinks}
 <li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=pages">All Pages</a></li>
 <li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=posts">All Posts</a></li>
-<li><a href="{$this->confg->siteroot}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
 </ul>
 HTML;
   }
