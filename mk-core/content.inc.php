@@ -36,7 +36,7 @@ class MomokoNavigation
     case 'flat':
     $text=$this->getTopMap($this->map,$this->options['style']);
     break;
-    case'simple':
+    case 'simple':
     default:
     $text=$this->getListItems($this->map);
    }
@@ -1133,7 +1133,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   {
    $umopts.="\n<li><a href=\"{$this->conf->siteroot}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"{$this->conf->siteroot}/mk-dash.php?section=user&action=new\">Register</a></li>";
   }
-  if ($this->user->inGroup('admin') || $this->user->inGroup('editor'))
+  if ((basename($_SERVER['PHP_SELF']) == "mk-dash.php" || empty($_GET['action'])) && ($this->user->inGroup('admin') || $this->user->inGroup('editor')))
   {
    if($_SERVER['QUERY_STRING'])
    {
@@ -1170,6 +1170,17 @@ HTML;
 <li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=posts">All Posts</a></li>
 <li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
 </ul>
+HTML;
+  }
+  elseif ($this->user->inGroup('admin') || $this->user->inGroup('editor'))
+  {
+    $contentlists.=<<<HTML
+<h4>Content</h4>
+<ul id="ContentPlugs" class="plug list">
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=pages">All Pages</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=posts">All Posts</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
+</ul>  
 HTML;
   }
   if ($this->user->inGroup('admin'))
