@@ -20,7 +20,7 @@ class MomokoDashboard implements MomokoObject
    case 'switchboard':
    $this->table=new DataBaseTable('addins');
    break;
-   case'content':
+   case 'content':
    $this->table=new DataBaseTable('content');
    break;
    case 'site':
@@ -727,9 +727,9 @@ HTML;
            default:
            $type="text";
          }
-         $page['body'].="<div class=\"form-group\"><label for=\"{$setting['key']}_{$key}\">{$name}:</label> <input class=\"form-control\" onkeyup=\"serializeInputs('{$setting['key']}')\" id=\"{$setting['key']}_{$key}\" name=\"{$key}\" type=\"{$type}\" value=\"{$val}\"></li>\n";
+         $page['body'].="<li><div class=\"form-group\"><label for=\"{$setting['key']}_{$key}\">{$name}:</label> <input class=\"form-control\" onkeyup=\"serializeInputs('{$setting['key']}')\" id=\"{$setting['key']}_{$key}\" name=\"{$key}\" type=\"{$type}\" value=\"{$val}\"></div></li>\n";
        }
-       $page['body'].="<input type=\"hidden\" name=\"{$setting['key']}\" value=\"{$setting['value']}\">\n</div>";
+       $page['body'].="</ul>\n<input type=\"hidden\" name=\"{$setting['key']}\" value=\"{$setting['value']}\">";
        break;
        case 'use_ssl':
        $page['body'].="<select class=\"form-control\" id=\"${setting['key']}\" name=\"{$setting['key']}\">\n";
