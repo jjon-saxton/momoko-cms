@@ -60,7 +60,7 @@ function create_tables($config)
   }
   
   if ($okay == $tottables)
-  {$admin
+  {
     return true;
   }
   else
