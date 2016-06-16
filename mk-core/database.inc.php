@@ -93,6 +93,7 @@ class DataBaseTable extends DataBaseSchema
   {
    $cols_stmt=implode(', ',$cols);
    $cols_stmt=rtrim($cols_stmt,', ');
+   var_dump($cols_stmt);
    if ($this->query("ALTER TABLE `".$this->table."` ADD (".$cols_stmt.")"))
    {
      $fieldlist=$this->getFields();
