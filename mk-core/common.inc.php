@@ -651,7 +651,7 @@ function paginate($total,MomokoSession $user,$offset=0)
  $total_pp=ceil($total/$user->rowspertable);
  for($c=1;$c<=$total_pp;$c++)
  {
-  $offset_c=($c*$GLOBALS['USR']->rowspertable)-$user->rowspertable;
+  $offset_c=(($c-1)*$user->rowspertable);
   $pages[]=array('offset'=>$offset_c,'number'=>$c);
  }
 

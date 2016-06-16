@@ -19,7 +19,7 @@ if (!is_writable($config->basedir.$config->filedir))
 
 if ($config->version < preg_replace("/[^0-9,.]/","",MOMOKOVERSION)) // It is possible the database does not match the script version
 {
- header("Location: http://".$config->basedir."/mk-update.php");
+ header("Location: http://".$config->baseuri."/mk-update.php");
  exit();
 }
 

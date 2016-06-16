@@ -278,9 +278,9 @@ function db_upgrade($level,$version,$backup=null)
   {
    $db->createBackup($config->basedir."/momoko-db-".time().".sql") or die(trigger_error("Could not create backup!", E_USER_WARNING));
   }
-  $tables['addins']=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
+  $tables['addins']=new DataBaseTable('addins');
   echo("Altering addin table columns...\n");
-  $tables['addins']->putField("enabled","char",1,"NOT NULL") or die(trigger_error("could not add 'enabled' column, you may need to manually add this column, see our release notes for more details!",E_USER_WARNING));
+  $tables['addins']->updateFields(array("`enabled` CHAR(1) NOT NULL")) or die(trigger_error("could not add 'enabled' column, you may need to manually add this column, see our release notes for more details!",E_USER_WARNING));
   echo("Dropping old/unused tables...\n");
   $db->dropTable(DAL_TABLE_PRE.'merchants',DAL_DB_DEFAULT) or die(trigger_error("Unable to drop old table '".DAL_TABLE_PRE."merchants'!",E_USER_ERROR));
   echo("Adding the new settings table...\n");

@@ -5,7 +5,7 @@ require './mk-core/install.inc.php';
 require './mk-core/common.inc.php';
 $version=MOMOKOVERSION;
 list($major,$minor,$revision)=explode('.',preg_replace("/[^0-9,.]/","",$version));
-list($db_major,$db_minor)=explode('.',$GLOBALS['SET']['version']);
+list($db_major,$db_minor)=explode('.',$config->version);
 
 if ($revision >= 80 && $_GET['override'] != 'y')
 {
@@ -29,7 +29,7 @@ HTML;
 }
 elseif ($db_major == $major)
 {
- $update=db_upgrade('minor',$GLOBALS['SET']['version']);
+ $update=db_upgrade('minor',$config->version);
  $body=<<<HTML
 <div class="panel panel-success">
 <div class="panel-heading">
@@ -46,7 +46,7 @@ HTML;
 }
 else
 {
- $update=db_upgrade('major',$GLOBALS['SET']['version']);
+ $update=db_upgrade('major',$this->$config->version);
  $body=<<<HTML
 div class="panel panel-success">
 <div class="panel-heading">
