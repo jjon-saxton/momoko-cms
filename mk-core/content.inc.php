@@ -1235,19 +1235,10 @@ HTML;
 {$addin_tags}
 {$split['head']}
 HTML;
-  if ($this->user->inGroup('users'))
-  {
-   $dashup="<div id=\"dashOpen\"><button id=\"sidebarOpen\" onclick=\"toggleSidebar()\">My Dashboard</button></div>";
-  }
-  else
-  {
-   $dashup="<div id=\"dashOpen\"><button id=\"sidebarLogin\" onclick=\"window.location='//{$this->conf->baseuri}/mk-login.php'\">Login</button></div>";
-  }
 
  if ($_SESSION['modern'])
  {
   $split['body']=<<<HTML
-{$dashup}
 <div id="modal" class="modal fade" role="dialog">
  <div class="modal-dialog">
   <div class="modal-content">
