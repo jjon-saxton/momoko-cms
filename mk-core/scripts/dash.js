@@ -1,13 +1,7 @@
 $(function(){
  if (!readCookie('ss')){ //Detects javascript and cookie support need for dashboard
-    createCookie('ss','partial',365);
+    createCookie('ss','full',365);
     window.location.reload();
- }
- else if (readCookie('ss') == 'partial'){
-    if ($(".sidebar").css('display')){
-        createCookie('ss','full',365);
-        window.location.reload();
-    }
  }
 
  $("button.answer#false").click(function(event){

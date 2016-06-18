@@ -6,6 +6,16 @@ if (!empty($_GET['action']))
 {
     switch ($_GET['action'])
     {
+        case 'force-modern':
+          $_SESSION['modern']='full';
+          setcookie('ss',$_SESSION['modern'],time()+60*60*24*365);
+          header("Location: ".$config->siteroot);
+        break;
+        case 'keep-classic':
+          $_SESSION['classic']=true;
+          setcookie('ss','classic',time()+60*60*24*365);
+          header("Location: ".$config->siteroot);
+        break;
         case 'new':
 	    $formname="Register";
         break;

@@ -1236,7 +1236,7 @@ HTML;
 {$split['head']}
 HTML;
 
- if ($_SESSION['modern'])
+ if ($_SESSION['modern'] == 'full')
  {
   $split['body']=<<<HTML
 <div id="modal" class="modal fade" role="dialog">
@@ -1274,6 +1274,38 @@ HTML;
   </div>
  </div>
 </div>
+{$split['body']}
+HTML;
+ }
+ elseif ($_SESSION['modern'] == 'partial' && !$_SESSION['classic'])
+ {
+   $split['body']=<<<HTML
+<script language="javascript" type="text/javascript">
+  $(document).ready(function(){
+    $('#modal').modal('show');
+  });
+</script>
+<div id="modal" class="modal fade" role="dialog">
+ <div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+     <h4 class="modal-title">JavaScript support detected!</h4>
+    </div>
+    <div class="modal-body">
+     <p>Your browser does support javascript. If you'd like you can switch to a better supported, feature-rich layout by informing MomoKO that JavaScript is enabled. You will only have to do this once. Do you wish to switch to a better layout?</p>
+    </div>
+    <div class="modal-footer">
+     <a href="{$this->config->siteroot}mk-login.php?action=force-modern" class="btn btn-success">Yes</a>
+     <a href="{$this->config->siteroot}mk-login.php?action=keep-classic" class="btn btn-danger">No</a>
+    </div>
+  </div>
+ </div>
+</div>
+<noscript>
+<div class="alert alert-warning">
+<p>Your browser does not support JavaScript! To use a better theme, please enable JavaScript, if available.
+</div>
+</noscript>
 {$split['body']}
 HTML;
  }
