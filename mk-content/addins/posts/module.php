@@ -44,7 +44,7 @@ class MomokoPostsModule extends MomokoModule implements MomokoModuleInterface
     }
     else
     {
-     $item['href']="/?content=post&p=".$post['num'];
+     $item['href']="/?p=".$post['num'];
     }
     $item['summary']=preg_replace("/<h2>(.*?)<\/h2>/smU",'',$post['text']);
     $data[]=$item;

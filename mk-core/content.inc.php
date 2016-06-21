@@ -890,10 +890,39 @@ HTML;
   {
    $user=$this->user; //copy the current session if it is okay.
   }
-
-  if ($authorized && $this->text)
+  
+  if ($this->type == 'post')
   {
-   return $this->text;
+    if (!empty($this->date_modified))
+    {
+      $datetranslated=date($this->user->longdateformat." ".$this->user->timeformat,strtotime($this->date_modified));
+    }
+    else
+    {
+      $datetranslated=date($this->user->longdateformat." ".$this->user->timeformat,strtotime($this->date_created));
+    }
+    $html=<<<HTML
+<h1>{$this->title}</h1>
+<div class="post-date">{$datetranslated}</div>
+{$this->text}
+HTML;
+  }
+  elseif ($this->type == 'page')
+  {
+    $html=$this->text;
+  }
+  elseif ($this->type == 'attachment')
+  {
+    //set $blob by getting the contents of an attachment
+  }
+
+  if ($authorized && $html)
+  {
+   return $html;
+  }
+  elseif ($blob)
+  {
+    return $blob;
   }
   elseif (!$authorized)
   {
