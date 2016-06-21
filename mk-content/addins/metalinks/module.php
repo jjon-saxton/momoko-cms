@@ -15,11 +15,10 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
   $this->opt_keys=array('display'=>array('type'=>'select','options'=>array('line','box')));
   parse_str($this->info->settings,$this->settings);
   
-  $actions[]=array('href'=>"//".$cfg->baseuri."/?content=rss",'title'=>"Post Feeds: RSS");
-  $actions[]=array('href'=>"//".$cfg->baseuri."/?content=atom",'title'=>"Post Feeds: ATOM");
   if (!$user->inGroup('nobody'))
   {
-   $actions[]=array('href'=>'#sidebar','data-toggle'=>"modal",'title'=>'My Dashboard');
+   $actions[]=array('href'=>'#sidebar','data-toggle'=>"modal", "title"=>"Dashboard");
+   $actions[]=array('href'=>$cfg->siteroot."/?action=logout","title"=>"Logout");
   }
   $this->user=$user;
   $this->cfg=$cfg;
@@ -37,9 +36,9 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
  public function getModule($format='html')
  {
   $protocol=SECURE_PROTOCOL;
+  $userlinks=$this->listUserActions("<li>__LINK__</li>\n");
   if ($this->settings['display'] == 'box')
   {
-   $userlinks=$this->listUserActions("<li>__LINK__</li>\n");
    if ($this->user->inGroup('nobody'))
    {
     $userinfo=<<<HTML
@@ -49,22 +48,25 @@ HTML;
    else
    {
     $userinfo=<<<HTML
-<li>Welcome <strong>{$this->user->name}</strong>!</li>
+<li>Welcome <a href="#MLList" class="dropdown-toggle" data-toggle="dropdown"><strong>{$this->user->name}<span class="caret"></span></strong></a>!</li>
 HTML;
    }
    return <<<HTML
 <h4 class="module">Meta</h4>
-<div id="UCPBox" class="ucp box">
+<div id="MLBox" class="metalinks box">
 <ul class="nobullet noindent">
-{$userinfo}
+<li>{$userinfo}</li>
+<li id="MLList" class="dropdown"><ul class="dropdown-menu" role="menu">
 {$userlinks}
+</ul></li>
+<li><a href="">Post Feed: RSS</a></li>
+<li><a href="">Post Feed: ATOM</a></li>
 </ul>
 </div>
 HTML;
   }
   else
   {
-   $userlink=$this->listUserActions(" | __LINK__");
    if ($this->user->inGroup('nobody'))
    {
     $userinfo=<<<HTML
@@ -74,11 +76,16 @@ HTML;
    else
    {
     $userinfo=<<<HTML
-Welcome <strong>{$this->user->name}</strong>
+Welcome <a href="#MLine" class="dropdown-toggle" data-toggle="dropdown"><strong>{$this->user->name}<span class="caret"></strong></a>
 HTML;
    }
    return <<<HTML
-<span id="UCPLine" class="ucp">{$userinfo}{$userlink}</span>
+<div id="MLLine" class="dropdown metalinks">
+{$userinfo} | <a href="//{$this->cfg->baseuri}/?content=rss">Post Feed: RSS</a> | <a href="//{$this->cfg->baseuri}/?content=rss">Post Feed: ATOM</a></span>
+<ul role="menu" class="dropdown-menu">
+{$userlinks}
+</ul>
+</div>
 HTML;
   }
  }

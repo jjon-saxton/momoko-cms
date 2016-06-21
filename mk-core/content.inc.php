@@ -1180,7 +1180,7 @@ HTML;
 <li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=pages">All Pages</a></li>
 <li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=posts">All Posts</a></li>
 <li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
-</ul>  
+</ul>
 HTML;
   }
   if ($this->user->inGroup('admin'))
@@ -1263,11 +1263,12 @@ HTML;
 <h4>User</h4>
 <ul id="UserPlugs" class="plug list">
 {$umopts}
+{$rockout}
 </ul>
 {$contentlists}
 <h4>Exit</h4>
 <ul id="ExitPlugs" class="plug list">
-<li><a href="#sidebar" data-dismiss="modal">Close Dashboard</a></li>{$rockout}
+<li><a href="#sidebar" data-dismiss="modal">Close Dashboard</a></li>
 </ul>
 </div>
     </div>

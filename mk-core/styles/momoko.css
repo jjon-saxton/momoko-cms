@@ -32,4 +32,6 @@ div.selectable {cursor:pointer}
 #MapList ul li { margin: 3px; padding: 0.4em; }
 #MapList ul .ui-icon { display: inline-block; }
 
+#MLLine {display: inline-block; }
+
 #dashboard {max-height: 100vh; overflow-y: auto}
