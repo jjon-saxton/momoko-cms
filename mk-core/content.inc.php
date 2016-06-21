@@ -715,7 +715,7 @@ class MomokoPage implements MomokoObject
    }
    else
    {
-    $type="page";
+    $type=$this->type;
    }
    
    $now=date("Y-m-d H:i:s");
@@ -747,16 +747,22 @@ HTML;
    else
    {
     $formats='["p","Normal"], ["h3","Header 3"], ["h4","Header 4"]';
-    if ($_GET['action'] == 'new')
-    {
-     $type_links="<div id=\"type_select\"><input type=\"radio\" id=\"t1\" name=\"type\" value=\"page\"><label for=\"t1\">Page</label> <input type=\"radio\" id=\"t2\" checked=checked name=\"type\" value=\"post\"><label for=\"t2\">Post</label></div>";
-    }
    }
    $type=ucwords($type);
    $chooser=null;
    if ($_GET['action'] == "new")
    {
-    $chooser=<<<TXT
+     if (empty($_GET['content']))
+     {
+       $chooser=<<<TXT
+$("#modal .modal-title").html("New Content Type?");
+$("#modal .modal-body").html("<a href='?content=page&action=new' class='btn btn-default'>Page <a href='?content=post&action=new' class='btn btn-default'>Post</a>");
+$("#modal").modal('show');
+TXT;
+     }
+     else
+     {
+      $chooser=<<<TXT
     $("#modal .modal-title").html("New From...")
 	$("#modal .modal-body").load("//{$this->config->baseuri}/mk-dash.php?section=content&action=gethref&ajax=1&origin=new",function(){
      $(this).on('click','div.selectable',function(){
@@ -769,6 +775,7 @@ HTML;
 	});
     $("#modal").modal('show');
 TXT;
+     }
    }
    
    $info['title']="Edit {$type}: ".$this->title;
@@ -789,11 +796,6 @@ $(function(){
   placeholder: "Page body..."
  });
  
- $("#type_select").css("text-align","center");
- $("#type_select input:radio").change(function(){
-  window.location="?action=new&content="+$("#type_select input:radio:checked").val();
- });
- 
  $("select#status").change(function(){
   if ($("select#status").val() == "private"){
    $("input#private").removeAttr('disabled');
@@ -807,7 +809,6 @@ $(function(){
 <form role="form" method=post>
 {$hiddenvals}
 <h2>Edit {$type}: <input type=text name="title" placeholder="{$type} Title" id="title" value="{$this->title}"></h2>
-{$type_links}
 <div id="PageEditor">
 <ul class="nav nav-tabs">
 <li class="active"><a data-toggle="tab" href="#PageBody">Body</a></li>
@@ -907,13 +908,13 @@ HTML;
 {$this->text}
 HTML;
   }
-  elseif ($this->type == 'page')
-  {
-    $html=$this->text;
-  }
   elseif ($this->type == 'attachment')
   {
     //set $blob by getting the contents of an attachment
+  }
+  else //if it is not a post or attachment assume it is some kind of page
+  {
+    $html=$this->text;
   }
 
   if ($authorized && $html)
@@ -1005,7 +1006,7 @@ HTML;
   $grouplist=explode(",",$this->has_access);
   if (empty($this->user))
   {
-   trigger_error("No user passed when attempting to check for access rights. Defaulting to no access. This is a programing error.",E_USER_NOTICE);
+   trigger_error("No user passed when attempting to check for access rights. Defaulting to no access. This is a programming error.",E_USER_NOTICE);
    return false;
   }
   elseif ($this->user->inGroup('admin'))
