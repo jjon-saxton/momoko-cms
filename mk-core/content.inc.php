@@ -892,7 +892,7 @@ HTML;
    $user=$this->user; //copy the current session if it is okay.
   }
   
-  if ($this->type == 'post')
+  if ($this->type == 'post' && empty($_GET['action']) && empty($_GET['ajax']))
   {
     if (!empty($this->date_modified))
     {
@@ -1184,8 +1184,8 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
      $type="Page";
     }
     $curconlinks.=<<<HTML
-<li><a href="{$qstr}action=edit">Edit This {$type}</a></li>
-<li><a href="{$qstr}action=delete">Delete This {$type}</a></li>
+<li><a href="{$qstr}action=edit">Edit This</a></li>
+<li><a href="{$qstr}action=delete">Delete This</a></li>
 HTML;
    }
    else
@@ -1854,4 +1854,3 @@ HTML;
   return $array;
  }
 }
-

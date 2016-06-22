@@ -1509,13 +1509,9 @@ HTML;
       $href=$this->config->siteroot."/{$content->type}/".urlencode($content->title).".htm";
       $hsep="?";
      }
-     elseif ($content->type == 'page')
-     {
-      $href=$this->config->siteroot."/?p={$content->num}";
-     }
      else
      {
-      $href=$this->config->sitreoot."/?content={$content->type}&p={$content->num}";
+      $href=$this->config->siteroot."/?p={$content->num}";
      }
      if (@$_GET['origin'] == "new")
      {

@@ -49,7 +49,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    case 'post':
    case 'page':
    default:
-   $child=new MomokoPage($path,$auth);
+   $child=new MomokoContent($path,$auth);
    break;
   }
   switch ($_GET['action'])
@@ -57,7 +57,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    case 'new':
    if ($auth->inGroup('admin') || $auth->inGroup('editor'))
    {
-    $child=new MomokoPage("New...",$auth);
+    $child=new MomokoContent("New...",$auth);
     $child->put($_POST);
    }
    else

@@ -187,7 +187,7 @@ else
 $props['link']=$config->baseuri."/?action=".strtolower($formname);
 $props['recovery']=$config->baseuri."/mk-login.php?action=reset";
 
-$form=new MomokoPage($formname,$auth,$props);
+$form=new MomokoContent($formname,$auth,$props);
 
 $tpl=new MomokoTemplate($auth,$config);
 print $tpl->toHTML($form);
