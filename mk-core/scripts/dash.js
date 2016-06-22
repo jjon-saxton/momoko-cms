@@ -23,23 +23,9 @@ $(function(){
     $("#modal .modal-footer").remove();
   });
   
-  $(".page div.actions").find("span").click(function(){
-   var location=$(this).parent().find("a#location").attr('href');
-   var action=$(this).attr('id');
-   if (action != 'view')
-   {
-    window.location=location+"action="+action;
-   }
-   else
-   {
-    location=location.slice(0,-1);
-    window.location=location;
-   }
-  });
-             
   $( "#add-addin" )
       .button()
-      .click(function(){ showAdd() }); 
+      .click(function(){ showAdd() });
      
   $("button#sidebarOpen").button({
    icons: {
@@ -62,7 +48,7 @@ function serializeInputs(key)
  $("input[name="+key+"]").val(serial);
 }
 
-function changeServerInputs() 
+function changeServerInputs()
 {
  switch ($("select#email_mta").val())
  {
@@ -174,7 +160,7 @@ function doAdd(){
          console.debug(data);
 	     $("table#addins").append("<tr class=\"error\" id=\"newError\">\n<td colspan=\"4\">"+data.msg+"</td>>\n</tr>");
 	    }
-	},'json');	
+	},'json');
 }
 
 function doRemove(id) {

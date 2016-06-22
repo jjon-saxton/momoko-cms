@@ -1,10 +1,5 @@
 <?php
 
-function do_attachment($path,$user,$id=null)
-{
- header("Location: {$_GET['link']}");
-}
-
 function do_feed($path,$user,$type=null)
 {
    $child=new MomokoFeed($path);
@@ -14,7 +9,7 @@ function do_feed($path,$user,$type=null)
    print $child->full_html;
 }
 
-function do_page($path,$user,$id=null)
+function do_content($path,$user,$id=null)
 {
 if (@$path && (pathinfo($path,PATHINFO_EXTENSION) == 'htm' || pathinfo($path,PATHINFO_EXTENSION) == 'html'))
 {
@@ -43,7 +38,7 @@ elseif (@$path && pathinfo(@$path,PATHINFO_EXTENSION) == 'txt')
 
 if (!@$child)
 {
- $child=new MomokoPage($path,$user);
+ $child=new MomokoContent($path,$user);
  if ($id)
  {
   $child->fetchByID($id);

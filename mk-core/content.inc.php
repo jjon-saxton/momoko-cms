@@ -568,7 +568,7 @@ HTML;
  }
 }
 
-class MomokoPage implements MomokoObject
+class MomokoContent implements MomokoObject
 {
  private $table;
  private $page;

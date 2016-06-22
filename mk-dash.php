@@ -130,17 +130,13 @@ class MomokoDashboard implements MomokoObject
       }
       else
       {
-       $content['link']="?content={$content['type']}&p={$content['num']}&";
+       $content['link']="?p={$content['num']}&";
       }
-     }
-     else
-     {
-      $content['link']="?content={$content['type']}&link={$content['link']}&";
      }
      
      $text.=<<<HTML
 <div id="{$content['num']}" class="page box {$content['status']}"><h4 style="display:inline-block;clear:left" class="module">{$content['title']}</h4>
-<div class="actions "style="float:right"><a href="{$this->config->siteroot}/{$content['link']}" id="location" style="display:none">Open</a><span id="view" class="glyphicon glyphicon-folder-open" title="Open/Download"></span> <span id="edit" class="glyphicon glyphicon-edit" title="Edit"></span> <span id="delete" class="glyphicon glyphicon-remove" title="Delete"></span></div>
+<div class="actions "style="float:right"><a href="{$this->config->siteroot}/{$content['link']}action=view" class="glyphicon glyphicon-folder-open" title="Open/Download"></a> <a href="{$this->config->siteroot}/{$content['link']}action=edit" class="glyphicon glyphicon-edit" title="Edit"></a> <a href="{$this->config->siteroot}/{$content['link']}action=delete" class="glyphicon glyphicon-remove" title="Delete"></a></div>
 <div class="properties">{$content['date_created']}, {$content['date_modified']}, {$content['author']}, {$content['mime_type']}</div>
 <div class="summary">{$content['text']}</div>
 </div>
@@ -1362,7 +1358,7 @@ HTML;
         {
          preg_match("/<title>(?P<title>.*?)<\/title>/smU",$raw,$match);
          $finfo['title']=$match['title'];
-         unset($match);  
+         unset($match);
          preg_match("/<body>(?P<body>.*?)<\/body>/smU",$raw,$match);
          $finfo['text']=$match['body'];
          unset($match);

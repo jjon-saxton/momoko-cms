@@ -196,19 +196,22 @@ else
   $id=$type;
   break;
   case "addin":
+  $run="do_addin";
+  break;
   case "attachment":
   case "page":
-  $run="do_".$type;
   case "post":
-  $run="do_page";
-  $path_parts=array_splice($path_parts,1);
-  break;
   default:
-  $run="do_page";
+  $run="do_content";
+ }
+ 
+ if (is_array($path_parts))
+ {
+  $path_parts=array_splice($path_parts,1);
  }
 
  $child=$run(implode("/",$path_parts),$auth,$id);
- if ($child instanceof MomokoPage || $child instanceof MomokoFeed)
+ if ($child instanceof MomokoContent || $child instanceof MomokoFeed)
  {
   $tpl=new MomokoTemplate($auth,$config);
   print $tpl->toHTML($child);
