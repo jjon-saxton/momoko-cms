@@ -59,8 +59,8 @@ HTML;
 <li id="MLList" class="dropdown"><ul class="dropdown-menu" role="menu">
 {$userlinks}
 </ul></li>
-<li><a href="">Post Feed: RSS</a></li>
-<li><a href="">Post Feed: ATOM</a></li>
+<li><a href="{$this->cfg->baseuri}/?content=rss">Post Feed: RSS</a></li>
+<li><a href="{$this->cfg->baseuri}/?content=atom">Post Feed: ATOM</a></li>
 </ul>
 </div>
 HTML;
@@ -81,7 +81,7 @@ HTML;
    }
    return <<<HTML
 <div id="MLLine" class="dropdown metalinks">
-{$userinfo} | <a href="//{$this->cfg->baseuri}/?content=rss">Post Feed: RSS</a> | <a href="//{$this->cfg->baseuri}/?content=rss">Post Feed: ATOM</a></span>
+{$userinfo} | <a href="//{$this->cfg->baseuri}/?content=rss">Post Feed: RSS</a> | <a href="//{$this->cfg->baseuri}/?content=atom">Post Feed: ATOM</a></span>
 <ul role="menu" class="dropdown-menu">
 {$userlinks}
 </ul>

@@ -1,7 +1,7 @@
 <?php
 
 function create_tables($config)
-{  
+{
   $def['settings'][0]="`key` VARCHAR(30) NOT NULL PRIMARY KEY";
   $def['settings'][1]="`value` VARCHAR(255) NOT NULL";
 
@@ -127,7 +127,7 @@ HTML;
 <body>
 <p>As of today I have a new site running MomoKO!</p>
 </body>
-</html> 
+</html>
 HTML;
   
   $admin['password']=crypt($admin['password'],$site['session']);
@@ -139,7 +139,7 @@ HTML;
   
   $rows['content'][]=array('title'=>"Hello World!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'page','order'=>1, 'parent'=>0,'author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');
   $rows['content'][]=array('title'=>"Welcome!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'post','parent'=>0,'author'=>1,'text'=>$firstpost,'mime_type'=>'text/html');
-  foreach (glob($site['basedir']."/mk-content/error/*.htm") as $file)
+  foreach (glob($site['basedir']."/mk-content/errors/*.htm") as $file)
   {
    $raw=file_get_contents($file);
    if (preg_match("/<title>(?P<title>.*?)<\/title>/smU",$raw,$match) > 0)
