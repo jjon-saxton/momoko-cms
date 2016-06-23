@@ -34,4 +34,4 @@ div.selectable {cursor:pointer}
 
 #MLLine {display: inline-block; }
 
-#dashboard {max-height: 100vh; overflow-y: auto}
+#dashboard {max-height: 100vh; overflow-x: hidden}
