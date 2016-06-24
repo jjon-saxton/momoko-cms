@@ -1501,7 +1501,7 @@ HTML;
      $addins=null;
      while ($page=$list->fetch(PDO::FETCH_OBJ))
      {
-       $addins.="<div id=\"{$page->num}\" class=\"page selectable box\"><a id=\"location\" href=\"\" style=\"display:none\">[insert]</a><strong>{$page->longname}</strong><p>{$page->description}</p></div>";
+       $addins.="<div id=\"{$page->dir}\" class=\"page selectable box\"><strong>{$page->longname}</strong><p>{$page->description}</p></div>";
      }
      $page['title']="Addin Picker...";
      $page['body']=<<<HTML
@@ -1509,6 +1509,14 @@ HTML;
 {$addins}
 </div>
 HTML;
+   break;
+   case 'addinform':
+     $info=$this->table->getData("dir:`{$_GET['addin']}`");
+     $info=$info->fetch(PDO::FETCH_OBJ);
+     require_once $this->config->basedir.$this->config->filedir."addins/".$info->dir."/page.php";
+     $addin=new MomokoPageAddin();
+     $page['title']="Addin Form";
+     $page['body']=$addin->getForm();
    break;
    case 'gethref':
    $blank=null;

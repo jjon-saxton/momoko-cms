@@ -756,7 +756,7 @@ HTML;
      {
        $chooser=<<<TXT
 $("#modal .modal-title").html("New Content Type?");
-$("#modal .modal-body").html("<a href='?content=page&action=new' class='btn btn-default'>Page <a href='?content=post&action=new' class='btn btn-default'>Post</a> <a href='?content=addin+page&action=new' class='btn btn-default'>Addin Page/Section</a>");
+$("#modal .modal-body").html("<a href='?content=page&action=new' class='btn btn-default'>Page <a href='?content=addin+page&action=new' class='btn btn-default'>Addin-driven Page</a> <a href='?content=post&action=new' class='btn btn-default'>Post</a>");
 $("#modal").modal('show');
 TXT;
      }
@@ -766,10 +766,8 @@ TXT;
     $("#modal .modal-title").html("Addin Picker...");
 	$("#modal .modal-body").load("//{$this->config->baseuri}/mk-dash.php?section=addin&action=picker&ajax=1&origin=new",function(){
      $(this).on('click','div.selectable',function(){
-      var location=$(this).find("a#location").attr('href');
-      $.get(location,function(html){
-       $(".jqte_editor").html(html);
-      });
+      var addin=$(this).attr('id');
+      $("#AddinSettings").load("//{$this->config->baseuri}/mk-dash.php?section=addin&action=addinform&addin="+addin+"&ajax=1&origin=new").removeClass("alert alert-warning");
      });
      $(".selectable").attr("data-dismiss",'modal');
 	});
@@ -885,15 +883,27 @@ HTML;
    }
    elseif ($type == 'Addin Page')
    {
+     $addin=new MomokoAddin($this->link);
+     if (empty($addin->dir))
+     {
+       $addinsettings="<div id=\"AddinSettings\" class=\"alert alert-warning\">\n<p>Please <a href=\"#modal\" data-toggle=\"modal\">select</a> an addin!</p>\n</div>";
+     }
+     else
+     {
+       include $this->config->basedir.$this->config->filedir."/addins/".$addin->dir."/page.php";
+       $page=new MomokoPageAddin();
+       $addinsettings=$page->getForm();
+     }
      $info['inner_body']=<<<HTML
 <script language="javascript" type="text/javascript">
 $(function(){
   {$chooser}
 });
 </script>
-<div class="alert alert-warning">
-<p>We are working to support addin-driven pages and sections. This feature will be implemented by 2.1.87a</p>
-</div>
+<form role="form" method=post>
+{$hiddenvals}
+<h2>Edit {$type}: <input type=text name="title" placeholder="{$type} Title" id="title" value="{$this->title}"></h2>
+{$addinsettings}
 HTML;
    }
    $info['inner_body'].=<<<HTML
@@ -1865,9 +1875,9 @@ HTML;
     }
    }
 
+
    $array[$node['@name']]['attr']=$node['@attributes'];
   }
-
   if (array_key_exists('authority',$array))
   {
    $authority=$array['authority']['value'];
@@ -1879,7 +1889,6 @@ HTML;
    }
    $array['authority']=$lists;
   }
-
   return $array;
  }
 }

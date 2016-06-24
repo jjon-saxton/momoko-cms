@@ -230,6 +230,13 @@ interface MomokoModuleInterface
   public function getInfoFromDB();
 }
 
+interface MomokoPageAddinInterface
+{
+  public function __construct(MomokoSession $user);
+  public function getPage($settings);
+  public function getForm();
+}
+
 interface MomokoPageObject
 {
   public function toHTML($child=null);
@@ -362,7 +369,7 @@ class MomokoVariableHandler
 	      $text=preg_replace("/<!-- VAR:".$var." -->/","<!-- Notice: variable '".$var."' not set or empty -->",$text);
 	     }
       }
-    } 
+    }
 
     if (preg_match_all("/<var>(?P<var>.*?)<\/var>/",$text,$list))
     {
@@ -465,14 +472,14 @@ class MomokoVariableHandler
 }
 
 class SimpleXMLExtended extends SimpleXMLElement
-{   
+{
  public function addCData($cdata_text)
  {
-  $node= dom_import_simplexml($this);   
-  $no = $node->ownerDocument;   
-  $node->appendChild($no->createCDATASection($cdata_text));   
- }   
-} 
+  $node= dom_import_simplexml($this);
+  $no = $node->ownerDocument;
+  $node->appendChild($no->createCDATASection($cdata_text));
+ }
+}
 
 function file_url($url){
   $parts = parse_url($url);
