@@ -756,14 +756,30 @@ HTML;
      {
        $chooser=<<<TXT
 $("#modal .modal-title").html("New Content Type?");
-$("#modal .modal-body").html("<a href='?content=page&action=new' class='btn btn-default'>Page <a href='?content=post&action=new' class='btn btn-default'>Post</a>");
+$("#modal .modal-body").html("<a href='?content=page&action=new' class='btn btn-default'>Page <a href='?content=post&action=new' class='btn btn-default'>Post</a> <a href='?content=addin+page&action=new' class='btn btn-default'>Addin Page/Section</a>");
 $("#modal").modal('show');
+TXT;
+     }
+     elseif ($_GET['content'] == 'addin page')
+     {
+      $chooser=<<<TXT
+    $("#modal .modal-title").html("Addin Picker...");
+	$("#modal .modal-body").load("//{$this->config->baseuri}/mk-dash.php?section=content&action=addinpicker&ajax=1&origin=new",function(){
+     $(this).on('click','div.selectable',function(){
+      var location=$(this).find("a#location").attr('href');
+      $.get(location,function(html){
+       $(".jqte_editor").html(html);
+      });
+     });
+     $(".selectable").attr("data-dismiss",'modal');
+	});
+    $("#modal").modal('show');
 TXT;
      }
      else
      {
       $chooser=<<<TXT
-    $("#modal .modal-title").html("New From...")
+    $("#modal .modal-title").html("New From...");
 	$("#modal .modal-body").load("//{$this->config->baseuri}/mk-dash.php?section=content&action=gethref&ajax=1&origin=new",function(){
      $(this).on('click','div.selectable',function(){
       var location=$(this).find("a#location").attr('href');
@@ -864,6 +880,19 @@ HTML;
 <li>Post Author: {$this->user->name}</li>
 <li><label for="status">Post Status:</label> <select id="status" name="status">{$status_opts}</select>
 </ul>
+</div>
+HTML;
+   }
+   elseif ($type == 'Addin Page')
+   {
+     $info['inner_body']=<<<HTML
+<script language="javascript" type="text/javascript">
+$(function(){
+  {$chooser}
+});
+</script>
+<div class="alert alert-warning">
+<p>We are working to support addin-driven pages and sections. This feature will be implemented by 2.1.87a</p>
 </div>
 HTML;
    }
