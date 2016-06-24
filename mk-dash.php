@@ -1496,6 +1496,20 @@ HTML;
     break;
    }
    break;
+   case 'picker':
+     $list=$this->table->getData("type:`page`");
+     $addins=null;
+     while ($page=$list->fetch(PDO::FETCH_OBJ))
+     {
+       $addins.="<div id=\"{$page->num}\" class=\"page selectable box\"><a id=\"location\" href=\"\" style=\"display:none\">[insert]</a><strong>{$page->longname}</strong><p>{$page->description}</p></div>";
+     }
+     $page['title']="Addin Picker...";
+     $page['body']=<<<HTML
+<div id="AddinPages">
+{$addins}
+</div>
+HTML;
+   break;
    case 'gethref':
    $blank=null;
    $list=$this->table->getData(null,null,'order');

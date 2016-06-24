@@ -764,7 +764,7 @@ TXT;
      {
       $chooser=<<<TXT
     $("#modal .modal-title").html("Addin Picker...");
-	$("#modal .modal-body").load("//{$this->config->baseuri}/mk-dash.php?section=content&action=addinpicker&ajax=1&origin=new",function(){
+	$("#modal .modal-body").load("//{$this->config->baseuri}/mk-dash.php?section=addin&action=picker&ajax=1&origin=new",function(){
      $(this).on('click','div.selectable',function(){
       var location=$(this).find("a#location").attr('href');
       $.get(location,function(html){
