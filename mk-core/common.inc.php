@@ -232,8 +232,8 @@ interface MomokoModuleInterface
 
 interface MomokoPageAddinInterface
 {
-  public function __construct(MomokoSession $user);
-  public function getPage($settings);
+  public function __construct($settings, MomokoSession $user);
+  public function getPage();
   public function getForm();
 }
 
@@ -735,7 +735,8 @@ function build_sorter($key)
 
 function xmltoarray($file)
 {
- require_once $GLOBALS['SET']['basedir']."/mk-core/mk-xml.class.php";
+ $config=new MomokoSiteConfig();
+ require_once $config->basedir."/mk-core/mk-xml.class.php";
 
  $xml=new MomokoXMLHandler();
  $xml->read($file);
@@ -859,4 +860,5 @@ function fetch_files($dir,$limitto=null)
  }
  
  return $files;
+
 }

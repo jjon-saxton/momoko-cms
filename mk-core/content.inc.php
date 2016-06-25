@@ -653,8 +653,17 @@ class MomokoContent implements MomokoObject
  
  public function put($data)
  {
-  if (@$data['text'])
+  if (@$data['title'])
   {
+   if (is_array($data['set']))
+   {
+     $data['text']=null;
+     foreach($data['set'] as $k=>$v)
+     {
+       $data['text'].=$k."=\"{$v}\"\n";
+     }
+     $data['text']=trim($data['text'],"\n");
+   }
    if (($_GET['action'] == 'edit' && $data['num']) && $update=$this->table->updateData($data))
    {
     header("Location: http://{$this->config->baseuri}/?p={$data['num']}");
@@ -903,7 +912,22 @@ $(function(){
 <form role="form" method=post>
 {$hiddenvals}
 <h2>Edit {$type}: <input type=text name="title" placeholder="{$type} Title" id="title" value="{$this->title}"></h2>
+<ul class="nav nav-tabs">
+<li class="active"><a data-toggle="tab" href="#AddinSets">Addin Settings</a></li>
+<li><a data-toggle="tab" href="#PageProps">Properties</a></li>
+</ul>
+<div class="tab-content">
+<div id="AddinSets" class="tab-pane fade in active">
 {$addinsettings}
+</div>
+<div id="PageProps" class="tab-pane fade">
+<input type=hidden name="parent" value="0">
+<ul class="noindent nobullet">
+<li>Post Date: {$now_h}</li>
+<li>Post Author: {$this->user->name}</li>
+<li><label for="status">Post Status:</label> <select id="status" name="status">{$status_opts}</select>
+</ul>
+</div>
 HTML;
    }
    $info['inner_body'].=<<<HTML
@@ -946,6 +970,23 @@ HTML;
 <div class="post-date">{$datetranslated}</div>
 {$this->text}
 HTML;
+  }
+  elseif ($this->type == 'addin page')
+  {
+    $tbl=new DataBaseTable('addins');
+    $query=$tbl->getData("dir:`{$this->link}`");
+    $addin=$query->fetch(PDO::FETCH_OBJ);
+    $html="<h1>".$this->title."</h1>\n";
+    if (!empty($addin->dir))
+    {
+      require_once $this->config->basedir.$this->config->filedir."addins/".$addin->dir."/page.php";
+      $page=new MomokoPageAddin($this->text,$this->user);
+      $html.=$page->getPage();
+    }
+    else
+    {
+      $html.="<div class=\"alert alert-danger\">Could not load addin '{$this->link}'. Addin not found.</div>";
+    }
   }
   elseif ($this->type == 'attachment')
   {
