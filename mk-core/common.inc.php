@@ -653,9 +653,13 @@ function momoko_basic_changes($user,$action,$target,$message=null)
 }
 
 #Misc functions
-function paginate($total,MomokoSession $user,$offset=0)
+function paginate($total,MomokoSession $user,$offset=0,$perpage=null)
 {
- $total_pp=ceil($total/$user->rowspertable);
+ if (empty($perpage))
+ {
+  $perpage=$user->rowspertable;
+ }
+ $total_pp=ceil($total/$perpage);
  for($c=1;$c<=$total_pp;$c++)
  {
   $offset_c=(($c-1)*$user->rowspertable);

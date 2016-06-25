@@ -68,9 +68,10 @@ class MomokoDashboard implements MomokoObject
    case 'pages':
    case 'posts':
    case 'attachments':
+   $where="type:`".rtrim($list,"s")."`";
    $cols=null; //TODO remove this from all queries
    $text="<div id=\"ContentList\" class=\"box\">\n";
-   $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols);
+   $query=$this->table->getData($where,$cols);
    $row_c=$query->rowCount();
    $pages=paginate($row_c,$this->user);
    $prev=@$_GET['offset']-$this->user->rowspertable;

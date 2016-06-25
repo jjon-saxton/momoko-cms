@@ -69,7 +69,7 @@ class MomokoNavigation
    {
     $content[]=array('id'=>$data['num'],'title'=>$data['title'],'href'=>"/".$pfolder.urlencode($data['title']).".htm",'children'=>$this->scanContent($data['num']));
    }
-   elseif ($data['type'] == "page" && ($data['status'] != "cloaked" && $data['status'] != "locked"))
+   elseif (($data['type'] == "addin page" || $data['type'] == "page") && ($data['status'] != "cloaked" && $data['status'] != "locked"))
    {
     $content[]=array('id'=>$data['num'],'title'=>$data['title'],'href'=>"/".$pfolder.urlencode($data['title']).".htm");
    }
@@ -718,7 +718,11 @@ class MomokoContent implements MomokoObject
     }
    }
    
-   if ($_GET['content'])
+   if ($_GET['content'] == "addin page")
+   {
+     $type="page";
+   }
+   elseif (!empty($_GET['content']))
    {
     $type=$_GET['content'];
    }
@@ -744,6 +748,47 @@ HTML;
 <input type=hidden name="date_modified" value="{$now}">
 HTML;
    }
+   
+   if ($this->mime_type == "text/html" && $_GET['content'] != "addin page")
+   {
+    $editor=<<<HTML
+<textarea class="form-control" id="pagebody" name="text">
+{$this->inner_body}
+</textarea>
+HTML;
+   }
+   elseif ($_GET['content'] != "addin page")
+   {
+    $mimeparts=explode("/",$this->mime_type);
+    switch ($mimeparts[0])
+    {
+     case 'application':
+     $tbl=new DataBaseTable('addins');
+     $query=$tbl->getData("dir:`{$mimeparts[1]}`");
+     $addin=$query->fetch(PDO::FETCH_OBJ);
+     if (!empty($addin->dir))
+     {
+      require_once $this->config->basedir.$this->config->filedir."addins/".$addin->dir."/page.php";
+      $addin=new MomokoPageAddin($this->text,$this->user);
+      $editor=$addin->getForm();
+     }
+     break;
+     case 'text':
+     default:
+     $editor=<<<HTML
+<textarea class="form-control" name="text">
+{$this->text}
+</textarea>
+HTML;
+    }
+   }
+   else
+   {
+     $editor=<<<HTML
+<div id="AddinSettings" class="alert alert-warning">Please <a href="#modal" data-toggle="modal">select</a> an addin to drive this page's dynamic content.</div>
+HTML;
+   }
+   
    $type_links=null;
    if ($type == 'page')
    {
@@ -765,7 +810,7 @@ HTML;
      {
        $chooser=<<<TXT
 $("#modal .modal-title").html("New Content Type?");
-$("#modal .modal-body").html("<a href='?content=page&action=new' class='btn btn-default'>Page <a href='?content=addin+page&action=new' class='btn btn-default'>Addin-driven Page</a> <a href='?content=post&action=new' class='btn btn-default'>Post</a>");
+$("#modal .modal-body").html("<a href='?content=page&action=new' class='btn btn-default'>Static Page <a href='?content=addin+page&action=new' class='btn btn-default'>Dynamic Page</a> <a href='?content=post&action=new' class='btn btn-default'>Post</a>");
 $("#modal").modal('show');
 TXT;
      }
@@ -839,9 +884,7 @@ $(function(){
 </ul>
 <div class="tab-content">
 <div id="PageBody" class="tab-pane fade in active">
-<textarea class="form-control" id="pagebody" name="text">
-{$this->inner_body}
-</textarea>
+{$editor}
 </div>
 HTML;
   if ($type == 'Page')
@@ -880,46 +923,6 @@ HTML;
      }
     }
     $info['inner_body'].=<<<HTML
-<div id="PageProps" class="tab-pane fade">
-<input type=hidden name="parent" value="0">
-<ul class="noindent nobullet">
-<li>Post Date: {$now_h}</li>
-<li>Post Author: {$this->user->name}</li>
-<li><label for="status">Post Status:</label> <select id="status" name="status">{$status_opts}</select>
-</ul>
-</div>
-HTML;
-   }
-   elseif ($type == 'Addin Page')
-   {
-     $addin=new MomokoAddin($this->link);
-     if (empty($addin->dir))
-     {
-       $addinsettings="<div id=\"AddinSettings\" class=\"alert alert-warning\">\n<p>Please <a href=\"#modal\" data-toggle=\"modal\">select</a> an addin!</p>\n</div>";
-     }
-     else
-     {
-       include $this->config->basedir.$this->config->filedir."/addins/".$addin->dir."/page.php";
-       $page=new MomokoPageAddin();
-       $addinsettings=$page->getForm();
-     }
-     $info['inner_body']=<<<HTML
-<script language="javascript" type="text/javascript">
-$(function(){
-  {$chooser}
-});
-</script>
-<form role="form" method=post>
-{$hiddenvals}
-<h2>Edit {$type}: <input type=text name="title" placeholder="{$type} Title" id="title" value="{$this->title}"></h2>
-<ul class="nav nav-tabs">
-<li class="active"><a data-toggle="tab" href="#AddinSets">Addin Settings</a></li>
-<li><a data-toggle="tab" href="#PageProps">Properties</a></li>
-</ul>
-<div class="tab-content">
-<div id="AddinSets" class="tab-pane fade in active">
-{$addinsettings}
-</div>
 <div id="PageProps" class="tab-pane fade">
 <input type=hidden name="parent" value="0">
 <ul class="noindent nobullet">
@@ -971,30 +974,42 @@ HTML;
 {$this->text}
 HTML;
   }
-  elseif ($this->type == 'addin page')
-  {
-    $tbl=new DataBaseTable('addins');
-    $query=$tbl->getData("dir:`{$this->link}`");
-    $addin=$query->fetch(PDO::FETCH_OBJ);
-    $html="<h1>".$this->title."</h1>\n";
-    if (!empty($addin->dir))
-    {
-      require_once $this->config->basedir.$this->config->filedir."addins/".$addin->dir."/page.php";
-      $page=new MomokoPageAddin($this->text,$this->user);
-      $html.=$page->getPage();
-    }
-    else
-    {
-      $html.="<div class=\"alert alert-danger\">Could not load addin '{$this->link}'. Addin not found.</div>";
-    }
-  }
   elseif ($this->type == 'attachment')
   {
     //set $blob by getting the contents of an attachment
   }
   else //if it is not a post or attachment assume it is some kind of page
   {
-    $html=$this->text;
+    if ($this->mime_type == "text/html")
+    {
+     $html=$this->text;
+    }
+    else
+    {
+      $mimeparts=explode("/",$this->mime_type);
+      switch($mimeparts[0])
+      {
+        case 'application':
+        $tbl=new DataBaseTable("addins");
+        $query=$tbl->getData("dir:`{$mimeparts[1]}`");
+        $addin=$query->fetch(PDO::FETCH_OBJ);
+        $html="<h1>".$this->title."</h1>\n";
+        if (!empty($addin->dir))
+        {
+          require_once $this->config->basedir.$this->config->filedir."addins/".$addin->dir."/page.php";
+          $page=new MomokoPageAddin($this->text,$this->user);
+          $html.=$page->getPage();
+        }
+        else
+        {
+          $html.="<div class=\"alert alert-danger\">Could not load addin '{$mimeparts[1]}'. Addin not found.</div>";
+        }
+        break;
+        case 'text':
+        default:
+        $html=$this->text;
+      }
+    }
   }
 
   if ($authorized && $html)
