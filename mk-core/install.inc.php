@@ -27,9 +27,10 @@ function create_tables($config)
   $def['content'][7]="`author` INT(255)";
   $def['content'][8]="`has_access` VARCHAR(20)";
   $def['content'][9]="`mime_type` VARCHAR(20)";
-  $def['content'][10]="`parent` TEXT";
-  $def['content'][11]="`text` TEXT";
-  $def['content'][12]="`link` TEXT";
+  $def['content'][10]="`tags` TEXT";
+  $def['content'][11]="`parent` TEXT";
+  $def['content'][12]="`text` TEXT";
+  $def['content'][13]="`link` TEXT";
   
   $def['log'][0]="`num` INT (11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['log'][1]="`time` DATETIME";
@@ -315,6 +316,16 @@ function db_upgrade($level,$version,$backup=null)
    $owner=$owner['name'];
   }
   $config->owner=$owner;
+ }
+ 
+ if ($version <= 2.1)
+ {
+   $tables['content']=new DataBaseTable('content');
+   $newfields['content']=array("`tags` TEXT");
+   foreach ($newfields as $tblname=>$cols)
+   {
+     $tables[$tblname]=>updateFields($cols);
+   }
  }
 
  $new_content=scan_core_content($config);
