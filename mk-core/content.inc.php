@@ -895,6 +895,10 @@ HTML;
  <label for="parent">Parent Page:</label>
  <select class="form-control" id="parent" name="parent">{$parent_opts}</select>
 </div>
+<div class="form-group" title="Comma-seperated list of tags">
+ <label for="tags">Tags:</label>
+ <input type="text" class="form-control" id="tags" name="tags" value="{$this->tags}">
+</div>
 <div class="form-group">
  <label for="status">Page Status:</label>
  <select class="form-control" id="status" name="status">{$status_opts}</select>
@@ -925,11 +929,22 @@ HTML;
     $info['inner_body'].=<<<HTML
 <div id="PageProps" class="tab-pane fade">
 <input type=hidden name="parent" value="0">
-<ul class="noindent nobullet">
-<li>Post Date: {$now_h}</li>
-<li>Post Author: {$this->user->name}</li>
-<li><label for="status">Post Status:</label> <select id="status" name="status">{$status_opts}</select>
-</ul>
+<div class="form-group">
+ <label for="pdate">Post Date:</label>
+ <span id="pdate" class="form-control">{$now_h}</span>
+</div>
+<div class="form-group">
+ <label for="pauthor">Post Author:</label>
+ <span id="pauthor" class="form-control">{$this->user->name}</span>
+</div>
+<div class="form-group" title="comma-seperated list of tags">
+ <label for="tags">Tags:</label>
+ <input type="text" id="tags" class="form-control" name="tags" value="{this->tags}">
+</div>
+<div class="form-group">
+ <label for="status">Post Status:</label>
+ <select id="status" class="form-control" name="status">{$status_opts}</select>
+</div>
 </div>
 HTML;
    }
