@@ -32,6 +32,13 @@ function create_tables($config)
   $def['content'][12]="`text` TEXT";
   $def['content'][13]="`link` TEXT";
   
+  $def['tags'][0]="`num` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
+  $def['tags'][1]="`name` TEXT";
+  
+  $def['tcassoc'][0]="`row` INT(11) NOT NULL AUTO_INCRMENT PRIMARY KEY";
+  $def['tcassoc'][1]="`tag_num` INT(11)";
+  $def['tcassoc'][2]="`con_num` INT(11)";
+  
   $def['log'][0]="`num` INT (11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['log'][1]="`time` DATETIME";
   $def['log'][2]="`type` VARCHAR(8) NOT NULL";
@@ -320,11 +327,21 @@ function db_upgrade($level,$version,$backup=null)
  
  if ($version <= 2.1)
  {
+   $newtables['tags'][0]="`num` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
+   $newtables['tags'][1]="`name` TEXT";
+  
+   $newtables['tcassoc'][0]="`row` INT(11) NOT NULL AUTO_INCRMENT PRIMARY KEY";
+   $newtables['tcassoc'][1]="`tag_num` INT(11)";
+   $newtables['tcassoc'][2]="`con_num` INT(11)";
+   foreach ($newtables as $tblname=>$cols)
+   {
+     $db->addTable($tblname,$cols);
+   }
    $tables['content']=new DataBaseTable('content');
    $newfields['content']=array("`tags` TEXT");
    foreach ($newfields as $tblname=>$cols)
    {
-     $tables[$tblname]=>updateFields($cols);
+     $tables[$tblname]->updateFields($cols);
    }
  }
 

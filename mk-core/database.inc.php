@@ -142,7 +142,7 @@ class DataBaseTable extends DataBaseSchema
     ++$i;
    }
    $q=trim(preg_replace("/(?P<key>(?:[a-z][a-z0-9_]*))(:)`(?P<values>.*?)`/is","",$q)." ");
-  } 
+  }
   elseif (preg_match_all("/(?P<key>(?:[a-z][a-z0-9_]*))(:)'(?P<values>.*?)'/is",$q,$filters) > 0) //Old style for compatability, will be deprecated.
   {
    $where=array();
@@ -244,6 +244,19 @@ class DataBaseTable extends DataBaseSchema
 
   return $result;
  }
+ 
+ public function getByQuery($stmt)
+ {
+   $sql="SELECT FROM `{$this->table}`".$stmt;
+   try
+   {
+     $result=$this->query($sql);
+   }
+   catch (Exception $err)
+   {
+     trigger_error("SQL Server Error: ".$err->getMessage(),E_USER_ERROR);
+   }
+ }
 
  public function updateData(array $fieldarray)
  {
@@ -334,7 +347,7 @@ class DataBaseTable extends DataBaseSchema
     $cols.="`".$field."`,";
     $placeholders.=":".$field.",";
     $values[':'.$field]=$value;
-   } 
+   }
   }
   $cols=rtrim($cols,",");
   $placeholders=rtrim($placeholders,",");
