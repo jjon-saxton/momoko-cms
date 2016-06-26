@@ -15,11 +15,18 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
   $this->opt_keys=array('display'=>array('type'=>'select','options'=>array('line','box')));
   parse_str($this->info->settings,$this->settings);
   
+  if (($user->inGroup('editor') || $user->inGroup('admin')) && basename($_SERVER['PHP_SELF']) && empty($_GET['action']))
+  {
+    $actions[]=array('href'=>$cfg->siteroot."/?p={$_GET['p']}&action=edit",'title'=>"Edit This");
+    $actions[]=array('href'=>$cfg->siteroot."/?p={$_GET['p']}&action=delete",'title'=>"Delete This");
+  }
+  
   if (!$user->inGroup('nobody'))
   {
    $actions[]=array('href'=>'#sidebar','data-toggle'=>"modal", "title"=>"Dashboard");
    $actions[]=array('href'=>$cfg->siteroot."/?action=logout","title"=>"Logout");
   }
+  
   $this->user=$user;
   $this->cfg=$cfg;
   $this->actions=$actions;
