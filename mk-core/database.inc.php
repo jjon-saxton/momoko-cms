@@ -247,7 +247,7 @@ class DataBaseTable extends DataBaseSchema
  
  public function getByQuery($stmt)
  {
-   $sql="SELECT FROM `{$this->table}`".$stmt;
+   $sql="SELECT FROM `{$this->table}` ".$stmt;
    try
    {
      $result=$this->query($sql);

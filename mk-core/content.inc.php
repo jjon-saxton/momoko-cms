@@ -325,6 +325,128 @@ class MomokoFeed implements MomokoObject
  }
 }
 
+class MomokoTags
+{
+  private $tags;
+  private $assoc;
+  private $con;
+  
+  public function __construct()
+  {
+    $this->tags=new DataBaseTable('tags');
+    $this->assoc=new DataBaseTable('tcassoc');
+    $this->con=new DataBaseTable('content');
+  }
+  
+  public function getTags()
+  {
+    $q=$this->tags->getData(null,array('name'));
+    while ($info=$q->fetch(PDO::FETCH_ASSOC))
+    {
+      $tags[]=$info['name'];
+    }
+    
+    return $tags;
+  }
+  
+  public function addNew(array $tags)
+  {
+    foreach ($tags as $t)
+    {
+      $q=$this->tags->getData("name:`{$t}`");
+      $info=$q->fetch(PDO::FETCH_ASSOC);
+      
+      if (empty($info['num']))
+      {
+        $data['name']=$t;
+        $new[]=$this->tags->putData($data);
+      }
+    }
+    
+    if (is_array($new))
+    {
+      return $new;
+    }
+    else
+    {
+      return null;
+    }
+  }
+  
+  public function changeAssoc($pid,array $tags)
+  {
+    $tids=$this->addNew($tags);
+    $tids=array();
+    foreach ($tags as $t)
+    {
+      $q=$this->tags->getData("name:`{$t}`");
+      $info=$q->fetch(PDO::FETCH_OBJ);
+      
+      $tids[]=$info->num;
+    }
+    
+    $list=array();
+    $q=$this->assoc->getData("con_num:`= {$pid}`");
+    while ($assoc=$q->fetch(PDO::FETCH_OBJ))
+    {
+      $list[]=$assoc->tag_num;
+    }
+    
+    $new_tags=array_diff($tids,$list); //Find tids to put in assoc
+    foreach ($new_tags as $num)
+    {
+      $data['tag_num']=$num;
+      $data['con_num']=$pid;
+      $this->assoc->putData($data);
+    }
+    
+    $del_tags=array_diff($list,$tids); //Finds tids to remove form assoc
+    foreach ($del_tags as $rnum)
+    {
+      $q=$this->assoc->getData("con_num:`= {$pid}` tag_num:`= {$rnum}`");
+      $info=$q->fetch(PDO::FETCH_ASSOC);
+      $data['row']=$info['row'];
+      $this->assoc->deleteData($data);
+    }
+  }
+  
+  public function getContent(array $tags)
+  {
+    $content=$this->con;
+    
+    foreach ($list as $name) //get all tag ids and put them into an array
+    {
+      $q=$tag->getData("name:`{$name}`",array('num'));
+      $info=$q->fetch(PDO::FETCH_ASSOC);
+      $tids[]=$info['num'];
+    }
+  
+    foreach ($tids as $tnum) //find all content ids and put them into an array
+    {
+      $q=$assoc->getData("tag_num:`= {$tnum}`",array('con_num'));
+      $ko=$q->fetch(PDO::FETCH_ASSOC);
+      $cids[]=$ko['num'];
+    }
+  
+    $where="WHERE ";
+    foreach ($cids as $num)
+    {
+     if (!empty($num))
+      {
+        $where.="num={$num} OR ";
+      }
+    }
+    if ($where != "WHERE ")
+    {
+      return $content->getByQuery($where);
+    }
+    else
+    {
+      return false;
+    }
+  }
+}
+
 class MomokoAttachment implements MomokoObject
 {
  private $table;
@@ -655,6 +777,12 @@ class MomokoContent implements MomokoObject
  {
   if (@$data['title'])
   {
+   if (!empty($data['tags']))
+   {
+     $tags=new MomokoTags();
+     $tarr=explode(",",$data['tags']);
+     $tags->changeAssoc($data['num'],$tarr);
+   }
    if (is_array($data['set']))
    {
      $data['text']=null;

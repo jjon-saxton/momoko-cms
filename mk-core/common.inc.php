@@ -787,49 +787,6 @@ function get_author($num)
  return $author;
 }
 
-function list_content_by_tag()
-{
-  $tag=new DataBaseTable('tags');
-  $content=new DataBaseTable('content');
-  $assoc=new DataBaseTable('tcassoc');
-  
-  $list=func_get_args(); //in case of a list of tags
-  if (is_array($list[0])) //in case of an array of tags
-  {
-    $list=$list[0];
-  }
-  foreach ($list as $name) //get all tag ids and put them into an array
-  {
-    $q=$tag->getData("name:`{$name}`",array('num'));
-    $info=$q->fetch(PDO::FETCH_ASSOC);
-    $tids[]=$info['num'];
-  }
-  
-  foreach ($tids as $tnum) //find all content ids and put them into an array
-  {
-    $q=$assoc->getData("tag_num:`= {$tnum}`",array('con_num'));
-    $ko=$q->fetch(PDO::FETCH_ASSOC);
-    $cids[]=$ko['num'];
-  }
-  
-  $where="WHERE ";
-  foreach ($cids as $num)
-  {
-    if (!empty($num))
-    {
-     $where.="num={$num} OR ";
-    }
-  }
-  if ($where != "WHERE ")
-  {
-   return $content->getByQuery($where);
-  }
-  else
-  {
-    return false;
-  }
-}
-
 function ftp_get_contents($url,$user=null,$password=null)
 {
  $location=parse_url($url);
