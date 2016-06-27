@@ -60,7 +60,17 @@ class MomokoPageAddin implements MomokoPageAddinInterface
      $total_posts++;
     }
     unset($full_list);
-    $list=$this->table->getData("type:`post`",null,$sort,$perpage,$_GET['offset']);
+    if ($this->tags)
+    {
+      $tlist=explode(",",$this->tags);
+      $tags=new MomokoTags();
+      $list=$tags->getContent($tlist,'post',$sort,$perpage,$_GET['offset']);
+    }
+    else
+    {
+      echo "No tags";
+      $list=$this->table->getData("type:`post`",null,$sort,$perpage,$_GET['offset']);
+    }
     $html="<div id=\"PostList\" class=\"panel-group\">\n";
     while ($post=$list->fetch(PDO::FETCH_OBJ))
     {
@@ -117,6 +127,10 @@ HTML;
 <label for="num">Post per Page:</label>
 <input id="num" class="form-control" type="number" name="set[num]" value="{$this->num}">
 <input id="per_user" type="checkbox" name="set[user_length]" {$un}value=1> <label for="per_user">Per User Settings</label>
+</div>
+<div class="form-group">
+<label for="filter">Filter by Tags:</label>
+<input type="text" class="form-control" name="set[tags]" value="{$this->tags}">
 </div>
 HTML;
   }

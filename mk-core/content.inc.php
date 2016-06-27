@@ -410,35 +410,74 @@ class MomokoTags
     }
   }
   
-  public function getContent(array $tags)
+  public function getContent(array $tags,$type=null,$sort=null,$limit=null,$offset=null)
   {
-    $content=$this->con;
-    
-    foreach ($list as $name) //get all tag ids and put them into an array
+    foreach ($tags as $name) //get all tag ids and put them into an array
     {
-      $q=$tag->getData("name:`{$name}`",array('num'));
+      $q=$this->tags->getData("name:`{$name}`",array('num'));
       $info=$q->fetch(PDO::FETCH_ASSOC);
       $tids[]=$info['num'];
     }
   
     foreach ($tids as $tnum) //find all content ids and put them into an array
     {
-      $q=$assoc->getData("tag_num:`= {$tnum}`",array('con_num'));
-      $ko=$q->fetch(PDO::FETCH_ASSOC);
-      $cids[]=$ko['num'];
+      $q=$this->assoc->getData("tag_num:`= {$tnum}`",array('con_num'));
+      while ($ko=$q->fetch(PDO::FETCH_ASSOC))
+      {
+       $cids[]=$ko['con_num'];
+      }
     }
   
     $where="WHERE ";
-    foreach ($cids as $num)
+    $nums=array();
+    foreach ($cids as $num) //create num=num or statetment for each pid found
     {
      if (!empty($num))
       {
-        $where.="num={$num} OR ";
+        $nums[]="`num`={$num}";
       }
     }
+    $num_str=implode($nums," OR ");
+    
+    if (!empty($type)) //add type filter if present
+    {
+      $where.="({$num_str}) AND `type` LIKE '".$type."'";
+    }
+    else
+    {
+      $where.=$num_str;
+    }
+    
     if ($where != "WHERE ")
     {
-      return $content->getByQuery($where);
+      $sql=$where;
+      if (!empty($sort))
+      {
+        if (preg_match("/(?P<col>.*)( )(?P<operator><|>)/",$sort,$orderby))
+        {
+          if ($orderby['operator'] == '>')
+          {
+            $sql.=" ORDER BY `".$orderby['col']."` DESC";
+          }
+          else
+          {
+            $sql.=" ORDER BY `".$orderby['col']."` ASC";
+          }
+        }
+        else
+        {
+          $sql.=" ORDER BY `".$sort."` ASC";
+        }
+      }
+      if ($limit > 0)
+      {
+        $sql.=" LIMIT ".$limit;
+      }
+      if ($offset > 0)
+      {
+        $sql.=" OFFSET ".$offset;
+      }
+      return $this->con->getByQuery($sql);
     }
     else
     {

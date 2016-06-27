@@ -247,7 +247,7 @@ class DataBaseTable extends DataBaseSchema
  
  public function getByQuery($stmt)
  {
-   $sql="SELECT FROM `{$this->table}` ".$stmt;
+   $sql="SELECT * FROM `{$this->table}` ".$stmt;
    try
    {
      $result=$this->query($sql);
@@ -256,6 +256,8 @@ class DataBaseTable extends DataBaseSchema
    {
      trigger_error("SQL Server Error: ".$err->getMessage(),E_USER_ERROR);
    }
+   
+   return $result;
  }
 
  public function updateData(array $fieldarray)
