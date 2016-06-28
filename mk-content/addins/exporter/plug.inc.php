@@ -27,41 +27,44 @@ class MomokoSwitchboard implements MomokoObject
 
  public function get()
  {
-  if (!empty($_POST['type']))
-  {
-    require_once $GLOBALS['SET']['basedir']."/mk-content/addins/".$_GET['plug']."/includes/".$_POST['type'].".inc.php";
-  }
-
+  $conf=new MomokoSiteConfig();
+  
   $info['title']="Switchboard: ".ucwords($_GET['plug']);
   switch ($_GET['action'])
   {
-   case 'export':
-   if (export_data($_SESSION['exporter']['data']))
+   case 'download':
+   if ($_POST['type'])
    {
-    unset($_SESSION['importer']);
-    $info['inner_body']=<<<HTML
+     require_once $conf->basedir.$conf->filedir."addins/exporter/includes/".$_POST['type'].".inc.php";
+     if ($archive=ready_data($_POST['name']))
+     {
+       $info['inner_body']=<<<HTML
 <h2>Content Exported</h2>
-<p>Your data has been exported.</p>
-<div align="center"><button onclick="window.location='//{$GLOBALS['SET']['baseuri']}'">Return to Site</button></div>
+<p>Your content has been exported in the selected format and is available for download. If you selected MomoKO Archive as your data type, please note that the file can only be imported by MomoKO 2.2 and above.</p>
+<a href="{$conf->siteroot}{$conf->filedir}{$archive}" class="btn btn-default">Download Data</a>
 HTML;
+     }
    }
    break;
    case 'form':
    default:
+   $ctime=time();
    $info['inner_body']=<<<HTML
 <h2>Content Exporter</h2>
 <p>The purpose of this switchboard plug is to provide a means through which you can export content from MomoKO 2.x  as a backup or to move to another instance or platform</p>
-<form role="form"a ction="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=switchboard&plug=importer&action=upload" enctype="multipart/form-data" method="post">
+<form role="form" action="//{$conf->baseuri}/mk-dash.php?section=switchboard&plug=exporter&action=download" method="post">
 <label for="select">To begin select the type of data below:</label>
 <select id="select" class="form-control" name="type">
-<option value="mk1">MomoKO v1.0-1.6</option>
+<option value="mk">MomoKO Archive</option>
 <option value="wp">WordPress XML</option>
 <option value="xml">Generic XML</option>
 <option value="sql">Generic SQL</option>
 <option value="cdd">Comma-delinated Document</option>
 </select>
+<label for="name">Archive Name:</label>
+<input type="text" id="name" name="name" class="form-control" placeholder="mk-export-{$ctime}">
 <p>Now hit the button and wait for the download:<br>
-<button class="btn btn-primary" type="submit" name="status" value="getting">Download Data</button></p>
+<button class="btn btn-primary" type="submit" name="status" value="getting">Prepare Data</button></p>
 </form>
 HTML;
   }
