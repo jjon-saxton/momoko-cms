@@ -277,17 +277,6 @@ class MomokoVariableHandler
   {
     switch ($item)
     {
-      case 'pagecontrols':
-      if (@$this->user instanceof MomokoSession)
-      {
-        $mod=new MomokoPCModule($this->user,$argstr);
-        return $mod->getModule('html');
-      }
-      else
-      {
-        return null;
-      }
-      break;
       case 'nav':
       $mod=new MomokoNavigation(null,$argstr);
       return $mod->getModule('html');
@@ -301,8 +290,23 @@ class MomokoVariableHandler
   private function loadModsByZone($q)
   {
    parse_str($q,$info);
+   $assoc=new DataBaseTable("mzassoc");
+   $mod_q=$assoc->getData("zone:`= {$info['id']}`");
+   $mods=array();
+   while ($row=$mod_q->fetch(PDO::FETCH_ASSOC))
+   {
+     $mods[]=$row['mod'];
+   }
+   $where="WHERE ";
+   $nums=array();
+   foreach ($mods as $num)
+   {
+     $nums[]="`num`={$num}";
+   }
+   $num_str=implode($nums," OR ");
+   $where.="({$num_str})";
    $table=new DataBaseTable("addins");
-   $query=$table->getData("zone:'= ".$info['id']."'",array('num','dir','type'),'order');
+   $query=$table->getByQuery($where);
    $text=null;
 
    if($query->rowCount() > 0)
