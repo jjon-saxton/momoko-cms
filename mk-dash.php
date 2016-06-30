@@ -968,10 +968,14 @@ HTML;
 
     $modulelayout="<div class=\"screenshot\" style=\"background-image:url('".$this->config->siteroot.$this->config->filedir."addins/".$this->config->template."/screenshot.png')\">".file_get_contents($this->config->basedir.$this->config->filedir."addins/".$this->config->template."/".$this->config->template.".pre.htm")."</div>";
     $addins=new DataBaseTable('addins');
-    $dbquery=$addins->getData("type:'module'",array('num','dir','shortname','zone','settings'),'order');
+    $dbquery=$addins->getData("type:'module'",array('num','dir','shortname','settings'),'order');
+    $assoc=new DataBaseTable('mzassoc');
     $modulelist=NULL;
     while ($module=$dbquery->fetch(PDO::FETCH_ASSOC))
     {
+     $zone_q=$assoc->getData("mod:`= {$module['num']}`");
+     $mz=$zone_q->fetch(PDO::FETCH_ASSOC);
+     $module['zone']=$mz['zone'];
      if (!$module['zone']) //in case no zone is given, for example a new addin, set the zone to 0
      {
       $module['zone']=0;
@@ -1003,7 +1007,7 @@ HTML;
      $modulelayout=preg_replace("/<!-- MODULESOURCE -->/",$modulelist[0],$modulelayout);
     }
 
-    /*jQueryUI and is added below as there is no better solution for drag-drop lists available at this time*/
+    /*jQueryUI is added below as there is no better solution for drag-drop lists available at this time*/
     $page['body']=<<<HTML
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 <script language="javascript">
@@ -1117,18 +1121,21 @@ HTML;
    elseif ($user_data['section'] == 'modules')
    {
     $table=new DataBaseTable('addins');
+    $assoc=new DataBaseTable('mzassoc');
     $html=str_get_html($user_data['raw_dom']);
     foreach ($html->find("div.column") as $node)
     {
-     $data['zone']=$node->id;
+     $mz['zone']=$node->id;
      $data['order']=1;
      foreach ($node->find("div.module") as $mod)
      {
       $data['num']=$mod->id;
+      $mz['mod']=$mod->id; //TODO only update when there is a change
       $data['settings']=http_build_query($user_data[$data['num']]);
       try
       {
        $update=$table->updateData($data);
+       $mzu=$assoc->putData($mz); //TODO find away to remove mods deleted from zone
       }
       catch (Exception $err)
       {
