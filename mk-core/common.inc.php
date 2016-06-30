@@ -309,7 +309,7 @@ class MomokoVariableHandler
    $query=$table->getByQuery($where);
    $text=null;
 
-   if($query->rowCount() > 0)
+   if($query && $query->rowCount() > 0)
    {
     while ($module=$query->fetch(PDO::FETCH_ASSOC))
     {
