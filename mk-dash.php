@@ -1060,7 +1060,24 @@ $(function(){
     $(".column").sortable({
       connectWith: ".column",
       handle: ".panel-heading",
-      placeholder: "alert alert-success"
+      placeholder: "alert alert-success",
+      receive:function(e,ui){
+        ui.sender.data('copied',true);
+      }
+    });
+    $("#0.column").sortable({
+      helper:function(e,li){
+        this.copyHelper=li.clone().insertAfter(li);
+        $(this).data('copied',false);
+        return li.clone();
+      },
+      stop: function(e,ui){
+        var copied=$(this).data('copied');
+        if (!copied){
+          this.copyHelper.remove();
+        }
+        this.copyHelper=null;
+      },
     });
     $("#MapList ul b.caret").parent().remove();
 	$( "#MapList ul" ).addClass('list-group')
