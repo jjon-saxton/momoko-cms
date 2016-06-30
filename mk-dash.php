@@ -997,10 +997,7 @@ HTML;
     }
     foreach ($modulelist as $zone=>$div)
     {
-     if ($zone != 0 && !in_array("zone=".$zone,$list['arguments'])) //Finds any modules that my have been orphaned by a layout change. Make sure not to include any that are set to zone 0 already!
-     {
-      $modulelist[0].=$modulelist[$zone];
-     }
+      $modulelist[0].=$modulelist[$zone]; //Adds a copy of all modules to module source.
     }
     if (preg_match_all("/<!-- MODULESOURCE -->/",$modulelayout,$list))
     {
