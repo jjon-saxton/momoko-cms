@@ -55,11 +55,10 @@ HTML;
 <form role="form" action="//{$conf->baseuri}/mk-dash.php?section=switchboard&plug=exporter&action=download" method="post">
 <label for="select">To begin select the type of data below:</label>
 <select id="select" class="form-control" name="type">
-<option value="mk">MomoKO Archive</option>
-<option value="wp">WordPress XML</option>
-<option value="xml">Generic XML</option>
+<option value="mkr">MomoKO Archive</option>
+<option value="wxr">WordPress XML</option>
+<option value="rss">Generic RSS</option>
 <option value="sql">Generic SQL</option>
-<option value="cdd">Comma-delinated Document</option>
 </select>
 <label for="name">Archive Name:</label>
 <input type="text" id="name" name="name" class="form-control" placeholder="mk-export-{$ctime}">

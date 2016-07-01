@@ -74,11 +74,11 @@ HTML;
 <form role="form"a ction="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=switchboard&plug=importer&action=upload" enctype="multipart/form-data" method="post">
 <label for="select">To begin select the type of data below:</label>
 <select id="select" class="form-control" name="type">
+<option value="mkr">MomoKO v2.2+</option>
 <option value="mk1">MomoKO v1.0-1.6</option>
-<option value="wp">WordPress XML</option>
-<option value="xml">Generic XML</option>
+<option value="wxr">WordPress XML</option>
+<option value="rss">Generic RSS</option>
 <option value="sql">Generic SQL</option>
-<option value="cdd">Comma-delinated Document</option>
 </select>
 <br>
 <label for="file">Now choose the the file that contains this data, it could be an XML file or a zip archive. If you are moving from MomoKO v1.0-1.5, this will be a zip file you created when following the instructions on our wiki. Choose the file:</label>
