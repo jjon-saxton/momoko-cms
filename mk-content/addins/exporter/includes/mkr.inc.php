@@ -11,7 +11,7 @@ function ready_data($name=null)
   $db=new DataBaseSchema();
   $temppath=$conf->basedir.$conf->tempdir.$name."/";
   mkdir($temppath);
-  //$db->createBackup($temppath."data.sql"); TODO backup method must be implemented
+  $db->createBackup($temppath."data.sql");
   
   $fullname=$conf->basedir.$conf->filedir.$name.".zip";
   $arch=new ZipArchive;
@@ -19,7 +19,7 @@ function ready_data($name=null)
   if ($r === TRUE)
   {
     $arch->addFromString('MANIFEST',"version='{$conf->version}'");
-    //$arch->addFile($temppath."data.sql","data.sql");
+    $arch->addFile($temppath."data.sql","data.sql");
     rmdirr($temppath);
     $arch->addEmptyDir($conf->filedir);
     $attachments=scandir($conf->basedir.$conf->filedir);

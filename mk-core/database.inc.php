@@ -46,6 +46,31 @@ class DataBaseSchema extends PDO
    return $query->fetchALL(PDO::FETCH_ASSOC);
   }
  }
+ 
+ public function createBackup($file)
+ {
+   $tables=$this->showTables();
+   
+   $sql=null;
+   foreach ($tables as $info)
+   {
+     $table=new DataBaseTable($info['name']);
+     $tfile=dirname($file).$info['name'].".sql";
+     $table->dump('sql',$tfile);
+     $sql.=file_get_contents($tfile);
+     unlink($tfile);
+   }
+   
+   if (file_put_contents($sql,$file))
+   {
+     return true;
+   }
+   else
+   {
+     trigger_error("Could not create database backup file '{$file}'",E_USER_WARNING);
+     return false;
+   }
+ }
 }
 
 class DataBaseTable extends DataBaseSchema
@@ -388,6 +413,34 @@ class DataBaseTable extends DataBaseSchema
   }
 
   return true;
+ }
+ 
+ public function dump($type='sql',$file=null)
+ {
+   if (empty($file))
+   {
+     $config=new MomokoSiteConfig();
+     $file=$config->basedir.$config->filedir.$this->table."-dump-".date('Ymd His').".sql";
+   }
+   
+   switch ($type)
+   {
+     case 'rss':
+     //TODO make RSS XML from table data
+     break;
+     case 'sql':
+     $query="SELECT * INTO OUTFILE '{$file}' FROM `{$this->table}`";
+     try
+     {
+       return $this->query($query);
+     }
+     catch (Exception $e)
+     {
+       trigger_error("SQL Error: ".$e->getMessage());
+       return false;
+     }
+     break;
+   }
  }
 
  public function drop()
