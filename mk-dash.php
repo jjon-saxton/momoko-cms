@@ -1136,6 +1136,7 @@ HTML;
    {
     $table=new DataBaseTable('addins');
     $assoc=new DataBaseTable('mzassoc');
+    $assoc->emptyData(); //Clear old modules and settings, best way to avoid duplicates with information we have
     $html=str_get_html($user_data['raw_dom']);
     foreach ($html->find("div.column") as $node)
     {
@@ -1144,12 +1145,15 @@ HTML;
      foreach ($node->find("div.module") as $mod)
      {
       $data['num']=$mod->id;
-      $mz['mod']=$mod->id; //TODO only update when there is a change
-      $data['settings']=http_build_query($user_data[$data['num']]);
+      $mz['mod']=$mod->id;
+      $mz['settings']=http_build_query($user_data[$data['num']]);
       try
       {
        $update=$table->updateData($data);
-       $mzu=$assoc->putData($mz); //TODO find away to remove mods deleted from zone
+       if ($mz['zone'] != 0)
+       {
+         $mzu=$assoc->putData($mz); //TODO find away to remove mods deleted from zone
+       }
       }
       catch (Exception $err)
       {

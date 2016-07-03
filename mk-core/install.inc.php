@@ -16,6 +16,11 @@ function create_tables($config)
   $def['addins'][9]="`description` TEXT";
   $def['addins'][10]="`headtags` TEXT";
   
+  $def['mzassoc'][0]="`row` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT";
+  $def['mzassoc'][1]="`mod` INT(11) NOT NULL";
+  $def['mzassoc'][2]="`zone` INT(11) NOT NULL";
+  $def['mzassoc'][3]="`settings` TEXT";
+  
   $def['content'][0]="`num` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['content'][1]="`title` VARCHAR(100) NOT NULL";
   $def['content'][2]="`order` INT(11)";
@@ -332,9 +337,12 @@ function db_upgrade($level,$version,$backup=null)
    $newtables['tcassoc'][0]="`row` INT(11) NOT NULL AUTO_INCRMENT PRIMARY KEY";
    $newtables['tcassoc'][1]="`tag_num` INT(11)";
    $newtables['tcassoc'][2]="`con_num` INT(11)";
+   
    $newtables['mzassoc'][0]="`row` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
    $newtables['mzassoc'][1]="`mod` INT(11)";
    $newtables['mzassoc'][2]="`zone` INT(11)";
+   $newtables['mzassoc'][3]="`settings` TEXT";
+   
    foreach ($newtables as $tblname=>$cols)
    {
      $db->addTable($tblname,$cols);
