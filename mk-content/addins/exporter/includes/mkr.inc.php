@@ -20,7 +20,6 @@ function ready_data($name=null)
   {
     $arch->addFromString('MANIFEST',"version='{$conf->version}'");
     $arch->addFile($temppath."data.sql","data.sql");
-    rmdirr($temppath);
     $arch->addEmptyDir($conf->filedir);
     $attachments=scandir($conf->basedir.$conf->filedir);
     foreach ($attachments as $name)
@@ -31,6 +30,7 @@ function ready_data($name=null)
      }
     }
     $arch->close();
+    rmdirr($temppath);
     
     return $name.".zip";
   }

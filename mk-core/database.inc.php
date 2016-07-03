@@ -51,17 +51,15 @@ class DataBaseSchema extends PDO
  {
    $tables=$this->showTables();
    
-   $sql=null;
+   $sql=null; //TODO CREATE DATABASE?
    foreach ($tables as $info)
    {
-     $table=new DataBaseTable($info['name']);
-     $tfile=dirname($file).$info['name'].".sql";
-     $table->dump('sql',$tfile);
-     $sql.=file_get_contents($tfile);
-     unlink($tfile);
+     $key="Tables_in_{$this->ini['schema']['name']}";
+     $table=new DataBaseTable($info[$key],false);
+     $sql.=$table->dump('sql')."\n";
    }
    
-   if (file_put_contents($sql,$file))
+   if (file_put_contents($file,$sql))
    {
      return true;
    }
@@ -79,10 +77,17 @@ class DataBaseTable extends DataBaseSchema
  protected $indices;
  protected $results;
 
- public function __construct($table,$schema=null,$file='database.ini')
+ public function __construct($table,$short=true,$file='database.ini')
  {
   $settings=parent::__construct($schema,$file);
-  $this->table=$settings['schema']['tableprefix'].$table;
+  if ($short)
+  {
+    $this->table=$settings['schema']['tableprefix'].$table;
+  }
+  else
+  {
+    $this->table=$table;
+  }
 
   $fieldlist=$this->getFields();
   foreach ($fieldlist as $field)
@@ -417,26 +422,52 @@ class DataBaseTable extends DataBaseSchema
  
  public function dump($type='sql',$file=null)
  {
-   if (empty($file))
-   {
-     $config=new MomokoSiteConfig();
-     $file=$config->basedir.$config->filedir.$this->table."-dump-".date('Ymd His').".sql";
-   }
-   
    switch ($type)
    {
      case 'rss':
      //TODO make RSS XML from table data
      break;
      case 'sql':
-     $query="SELECT * INTO OUTFILE '{$file}' FROM `{$this->table}`";
-     try
+     $fields=$this->getFields();
+     $sql="CREATE TABLE `{$this->table}` (";
+     foreach ($fields as $col)
      {
-       return $this->query($query);
+       $sql.="`{$col->Field}` ".strtoupper($col->Type)." ";
+       if ($col->Null == "NO")
+       {
+        $sql.="NOT NULL ";
+       }
+       if ($col->Key == "PRI")
+       {
+         $sql.="PRIMARY KEY ";
+       }
+       $sql.=strtoupper($col->Extra).", ";
      }
-     catch (Exception $e)
+     $sql=rtrim($sql,", ");
+     $sql.=") ENGINE MY_ISAM;\n";
+     $query=$this->getData();
+     while ($row=$query->fetch(PDO::FETCH_ASSOC))
      {
-       trigger_error("SQL Error: ".$e->getMessage());
+       $sql.="INSERT INTO `{$this->table}` SET ";
+       foreach ($row as $col=>$val)
+       {
+         $sql.="{$col}='{$val}', ";
+       }
+       $sql=rtrim($sql,", ");
+       $sql.=";\n";
+     }
+     $sql=rtrim($sql,"\n");
+     if (empty($file))
+     {
+       return $sql;
+     }
+     elseif (file_put_contents($file,$sql))
+     {
+       return true;
+     }
+     else
+     {
+       trigger_error("Could not save {$file}!",E_USER_WARNING);
        return false;
      }
      break;
