@@ -1,19 +1,22 @@
 <?php
 class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterface
 {
- public $info;
- public $opt_keys=array();
- private $user;
- private $cfg;
+ protected $settings=array();
  private $actions=array();
- private $settings=array();
 
- public function __construct(MomokoSession $user)
+ public function __construct(MomokoSession $user,$extset=null)
  {
   $cfg=new MomokoSiteConfig();
   $this->info=$this->getInfoFromDB();
   $this->opt_keys=array('display'=>array('type'=>'select','options'=>array('line','box')));
-  parse_str($this->info->settings,$this->settings);
+  if (empty($extset))
+  {
+    parse_str($this->info->settings,$this->settings);
+  }
+  else
+  {
+    parse_str($extset,$this->settings);
+  }
   
   if (($user->inGroup('editor') || $user->inGroup('admin')) && basename($_SERVER['PHP_SELF']) && empty($_GET['action']))
   {

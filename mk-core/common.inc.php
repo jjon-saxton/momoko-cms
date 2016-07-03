@@ -186,8 +186,21 @@ class MomokoSiteConfig
 
 class MomokoModule
 {
-	public function settingsToHTML(array $values)
+ public function __get($key)
+ {
+  if (array_key_exists($key,$this->settings))
+  {
+   return $this->settings[$key];
+  }
+  else
+  {
+   return false;
+  }
+ }
+
+	public function settingsToHTML()
 	{
+	 $values=$this->settings;
 	 $html="<ul id=\"settings\" class=\"noindent nobullet\">\n";
 	 foreach ($this->opt_keys as $key=>$value)
 	 {
@@ -225,7 +238,7 @@ class MomokoModule
 
 interface MomokoModuleInterface
 {
-  public function __construct(MomokoSession $user);
+  public function __construct(MomokoSession $user,$extset=null);
   public function getModule($format='html');
   public function getInfoFromDB();
 }
@@ -293,9 +306,11 @@ class MomokoVariableHandler
    $assoc=new DataBaseTable("mzassoc");
    $mod_q=$assoc->getData("zone:`= {$info['id']}`");
    $mods=array();
+   $settings=array();
    while ($row=$mod_q->fetch(PDO::FETCH_ASSOC))
    {
      $mods[]=$row['mod'];
+     $settings[]=$row['settings'];
    }
    $where="WHERE ";
    $nums=array();
@@ -311,15 +326,17 @@ class MomokoVariableHandler
 
    if($query && $query->rowCount() > 0)
    {
+    $c=0;
     while ($module=$query->fetch(PDO::FETCH_ASSOC))
     {
      if ($module['type'] == 'module') //Sanity check!
      {
       require_once $this->config->basedir."/".$this->config->filedir."addins/{$module['dir']}/".$module['type'].".php";
       $class="Momoko".ucwords($module['dir'])."Module";
-      $mod=new $class($this->user);
+      $mod=new $class($this->user,$settings[$c]);
       $text.=$mod->getModule('html');
      }
+     $c++;
     }
    }
    else

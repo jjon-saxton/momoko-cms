@@ -3,25 +3,20 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
 {
  public $info;
  public $opt_keys=array();
+ protected $settings=array();
  private $actions=array();
- private $settings=array();
 
- public function __construct(MomokoSession $user)
+ public function __construct(MomokoSession $user,$extset=null)
  {
   $this->info=$this->getInfoFromDB();
   $this->opt_keys=array('type'=>array('type'=>'select','options'=>array('image','video','audio','object')),'width'=>array('type'=>'number'),'height'=>array('type'=>'number'),'link1'=>array('type'=>'link'),'link2'=>array('type'=>'link'));
-  parse_str($this->info->settings,$this->settings); 
- }
-
- public function __get($key)
- {
-  if (array_key_exists($key,$this->settings))
+  if (empty($extset))
   {
-   return $this->settings[$key];
+    parse_str($this->info->settings,$this->settings); 
   }
   else
   {
-   return false;
+    parse_str($extset,$this->settings);
   }
  }
 

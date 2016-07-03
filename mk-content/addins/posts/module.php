@@ -5,15 +5,22 @@ class MomokoPostsModule extends MomokoModule implements MomokoModuleInterface
  public $news_list;
  public $info=array();
  public $opt_keys=array();
+ protected $settings=array();
  private $config;
  private $table;
- private $settings=array();
  
- public function __construct(MomokoSession $user)
+ public function __construct(MomokoSession $user,$extset=null)
  {
   $this->opt_keys=array('sort'=>array('type'=>'select','options'=>array('recent')),'length'=>array('type'=>'number'),'num'=>array('type'=>'number')); //TODO add other sort types
   $this->info=$this->getInfoFromDB();
-  parse_str($this->info->settings,$this->settings);
+  if (empty($extset))
+  {
+    parse_str($this->info->settings,$this->settings);
+  }
+  else
+  {
+    parse_str($extset,$this->settings);
+  }
   $this->table=new DataBaseTable('content');
   $query=$this->table->getData("type:'post' status:'public'",null,"date_created >"); //TODO sort should be a variable so we can use other sort types
   $this->news_list=$query->fetchAll(PDO::FETCH_ASSOC);

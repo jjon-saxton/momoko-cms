@@ -976,15 +976,15 @@ HTML;
      $zone_q=$assoc->getData("mod:`= {$module['num']}`");
      $mz=$zone_q->fetch(PDO::FETCH_ASSOC);
      $module['zone']=$mz['zone'];
+     $module['settings']=$mz['settings'];
      if (!$module['zone']) //in case no zone is given, for example a new addin, set the zone to 0
      {
       $module['zone']=0;
      }
-     parse_str($module['settings'],$module['settings']);
      require_once $this->config->basedir.$this->config->filedir."addins/".$module['dir']."/module.php";
      $mod_obj="Momoko".ucwords($module['dir'])."Module";
-     $mod_obj=new $mod_obj($this->user);
-     $module['settings']=$mod_obj->settingsToHTML($module['settings']);
+     $mod_obj=new $mod_obj($this->user,$module['settings']);
+     $module['settings']=$mod_obj->settingsToHTML();
      $modulelist[$module['zone']].="<div id=\"{$module['num']}\" class=\"module panel panel-info\">\n<div class=\"panel-heading\"><h4 class=\"panel-title\">{$module['shortname']}<span data-target=\"#collapse{$module['num']}\" data-toggle=\"collapse\" class=\"right glyphicon glyphicon-plus\"></span></h4></div>\n<div id=\"collapse{$module['num']}\" class=\"panel-collapse collapse\">\n<div class=\"panel-body\">{$module['settings']}</div>\n</div>\n</div>\n";
     }
     if (preg_match_all("/<!-- MODULEPLACEHOLDER:(?P<arguments>.*?) -->/",$modulelayout,$list))
@@ -997,7 +997,10 @@ HTML;
     }
     foreach ($modulelist as $zone=>$div)
     {
-      $modulelist[0].=$modulelist[$zone]; //Adds a copy of all modules to module source.
+      if ($zone != 0)
+      {
+        $modulelist[0].=$modulelist[$zone]; //Adds a copy of all modules to module source.
+      }
     }
     if (preg_match_all("/<!-- MODULESOURCE -->/",$modulelayout,$list))
     {
@@ -1152,7 +1155,7 @@ HTML;
        $update=$table->updateData($data);
        if ($mz['zone'] != 0)
        {
-         $mzu=$assoc->putData($mz); //TODO find away to remove mods deleted from zone
+         $mzu=$assoc->putData($mz);
        }
       }
       catch (Exception $err)
