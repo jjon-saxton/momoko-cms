@@ -22,11 +22,11 @@ function ready_data($name=null)
     $arch->addFile($temppath."data.ini","data.mis");
     $arch->addEmptyDir($conf->filedir);
     $attachments=scandir($conf->basedir.$conf->filedir);
-    foreach ($attachments as $name)
+    foreach ($attachments as $aname)
     {
-     if (!is_dir($conf->basedir.$conf->filedir.$name))
+     if (!is_dir($conf->basedir.$conf->filedir.$aname))
      {
-      $arch->addFile($conf->basedir.$conf->filedir.$name,$conf->filedir.$name);
+      $arch->addFile($conf->basedir.$conf->filedir.$aname,$conf->filedir.$name);
      }
     }
     $arch->close();
