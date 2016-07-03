@@ -2,7 +2,6 @@
 
 function ready_data(array $file)
 {
- //TODO actually parse the data into the temporary folder and get it ready to add to MK2's database
  $temp=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'];
  if (is_writeable($temp))
  {
