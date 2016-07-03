@@ -47,16 +47,19 @@ class DataBaseSchema extends PDO
   }
  }
  
- public function createBackup($file)
+ public function createBackup($file,$type='mis')
  {
    $tables=$this->showTables();
+   $key="Tables_in_{$this->ini['schema']['name']}";
    
+   switch ($type)
+   {
+     case 'sql':
    $sql=null; //TODO CREATE DATABASE?
    foreach ($tables as $info)
    {
-     $key="Tables_in_{$this->ini['schema']['name']}";
      $table=new DataBaseTable($info[$key],false);
-     $sql.=$table->dump('sql')."\n";
+     $sql.=$table->dump($type)."\n";
    }
    
    if (file_put_contents($file,$sql))
@@ -67,6 +70,36 @@ class DataBaseSchema extends PDO
    {
      trigger_error("Could not create database backup file '{$file}'",E_USER_WARNING);
      return false;
+   }
+     break;
+     case 'mis':
+     default:
+     $text=array();
+     foreach ($this->ini as $set=>$val)
+     {
+       if ($set != "name")
+       {
+         $text[$set]=null;
+         foreach ($val as $tset=>$tval)
+         {
+           $text[$set].=$tset."= \"{$tval}\"\n";
+         }
+       }
+     }
+     
+     foreach ($tables as $info)
+     {
+       $table=new DataBaseTable($info[$key],false);
+       $text[$info[$key]]=$table->dump($type);
+     }
+     
+     $ini=null;
+     foreach ($text as $section=>$values)
+     {
+       $ini.="[{$section}]\n{$values}\n";
+     }
+     
+     return file_put_contents($file,$ini);
    }
  }
 }
@@ -420,15 +453,15 @@ class DataBaseTable extends DataBaseSchema
   return true;
  }
  
- public function dump($type='sql',$file=null)
+ public function dump($type='mis',$file=null)
  {
+   $fields=$this->getFields();
    switch ($type)
    {
      case 'rss':
      //TODO make RSS XML from table data
      break;
      case 'sql':
-     $fields=$this->getFields();
      $sql="CREATE TABLE `{$this->table}` (";
      foreach ($fields as $col)
      {
@@ -471,6 +504,46 @@ class DataBaseTable extends DataBaseSchema
        return false;
      }
      break;
+     case 'mis':
+     default:
+     $text['cols']=null;
+     foreach ($fields as $col)
+     {
+       $text['cols'].=$col->Field."[Type] = \"{$col->Type}\"\n";
+       $text['cols'].=$cols->Field."[Key] = \"{$col->Key}\"\n";
+       $text['cols'].=$cols->Field."[Null] = \"{$col->Null}\"\n";
+       $text['cols'].=$col->Field."[Extras] = \"{$col->Extras}\"\n";
+     }
+     $query=$this->getData();
+     $text['rows']=null;
+     while ($row=$query->fetch(PDO::FETCH_ASSOC))
+     {
+       $id=$row[$this->indices['primary']];
+       foreach ($row as $col=>$data)
+       {
+         $text['rows'].=$id."[$col] = \"{$data}\"\n";
+       }
+     }
+     
+     $ini=null;
+     foreach ($text as $section=>$pairs)
+     {
+       $ini.="[{$section}]\n{$pairs}\n";
+     }
+     
+     if (empty($file))
+     {
+       return $ini;
+     }
+     elseif (file_put_contents($file,$ini))
+     {
+       return true;
+     }
+     else
+     {
+       trigger_error("Cannot save MIS INI '{$file}'",E_USER_WARNING);
+       return false;
+     }
    }
  }
 
