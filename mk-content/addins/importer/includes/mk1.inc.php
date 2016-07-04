@@ -66,7 +66,6 @@ function add_pages_r($folder,$xml_obj,$p=0)
 {
     $order=1;
     $content=new DataBaseTable('content');
-    //var_dump($p);
 
     foreach ($xml_obj as $tag)
     {

@@ -27,9 +27,10 @@ class MomokoSwitchboard implements MomokoObject
 
  public function get()
  {
+  $conf=new MomokoSiteConfig();
   if (!empty($_POST['type']))
   {
-    require_once $GLOBALS['SET']['basedir']."/mk-content/addins/".$_GET['plug']."/includes/".$_POST['type'].".inc.php";
+    require_once $conf->basedir."/mk-content/addins/".$_GET['plug']."/includes/".$_POST['type'].".inc.php";
   }
 
   $info['title']="Switchboard: ".ucwords($_GET['plug']);
@@ -60,7 +61,7 @@ HTML;
     $info['inner_body']=<<<HTML
 <h2>Choose What to Import</h2>
 <p>We have gone through the data you uploaded and found that we can import the following. Please check the box next to <strong>all</strong> the data you wish to import.
-<form role="form" action="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=switchboard&plug=importer&action=import" method="post">
+<form role="form" action="{$conf->siteroot}/mk-dash.php?section=switchboard&plug=importer&action=import" method="post">
 {$checks}<div align=center><button type="submit" class="btn btn-primary" name="status" value="importing">Import Selected Data</button></div> 
 </form>
 HTML;
@@ -71,7 +72,7 @@ HTML;
    $info['inner_body']=<<<HTML
 <h2>Content Importer</h2>
 <p>The purpose of this switchboard plug is to provide a means through which you can import content into MomoKO 2.x from another platform including MomoKO 1.x. To begin you will need to select the type of data you have (i.e. MomoKO 1.x data, XML data from Wordpress or another platform). Once we know this you can then upload the data. Finally you will decide what you would like to import.</p>
-<form role="form"a ction="//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=switchboard&plug=importer&action=upload" enctype="multipart/form-data" method="post">
+<form role="form" action="{$conf->siteroot}/mk-dash.php?section=switchboard&plug=importer&action=upload" enctype="multipart/form-data" method="post">
 <label for="select">To begin select the type of data below:</label>
 <select id="select" class="form-control" name="type">
 <option value="mkr">MomoKO v2.2+</option>

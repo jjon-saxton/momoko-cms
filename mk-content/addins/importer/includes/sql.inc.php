@@ -2,7 +2,18 @@
 
 function ready_data(array $file)
 {
-  return array('pages'=>true,'posts'=>true,'files'=>false);
+  $conf=new MomokoSiteConfig();
+  $temp=$conf->basedir.$conf->tempdir;
+  if (is_writable($temp))
+  {
+    $temp.=time()."-import.sql";
+    move_uploaded_file($file['tmp_name'],$temp);
+    $importable['name']=$temp;
+  }
+  $importable['pages']=true;
+  $importable['posts']=true;
+  $importable['files']=false;
+  return $importable;
 }
 
 function import_data($file)

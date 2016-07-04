@@ -9,6 +9,7 @@ function ready_data(array $file)
   {
     $temp=time()."-import.zip";
     move_uploaded_file($file['tmp_name'],$temp) or die ($temp." not moved!");
+    $importable['name']=$temp;
     $z=new ZipArchive;
     if ($z->open($temp) === TRUE)
     {
