@@ -960,10 +960,10 @@ HTML;
    if ($type == 'page')
    {
     $formats='["p","Normal"], ["h2","Header 2"], ["h3","Header 3"], ["h4","Header 4"], ["pre","Preformatted"]';
-    if ($_GET['action'] == 'new')
-    {
-     $type_links="<div id=\"type_select\"><input type=\"radio\" id=\"t1\" checked=checked name=\"type\" value=\"page\"><label for=\"t1\">Page</label> <input type=\"radio\" id=\"t2\" name=\"type\" value=\"post\"><label for=\"t2\">Post</label></div>";
-    }
+   }
+   elseif ($type == 'attachment')
+   {
+     $formats='["p","Normal"],';
    }
    else
    {
@@ -977,7 +977,7 @@ HTML;
      {
        $chooser=<<<TXT
 $("#modal .modal-title").html("New Content Type?");
-$("#modal .modal-body").html("<a href='?content=page&action=new' class='btn btn-default'>Static Page <a href='?content=addin+page&action=new' class='btn btn-default'>Dynamic Page</a> <a href='?content=post&action=new' class='btn btn-default'>Post</a>");
+$("#modal .modal-body").html("<a href='?content=page&action=new' class='btn btn-default'>Static Page <a href='?content=addin+page&action=new' class='btn btn-default'>Dynamic Page</a> <a href='?content=post&action=new' class='btn btn-default'>Post</a> <a href='?content=attachment&action=new' class='btn btn-default'>Attachment</a>");
 $("#modal").modal('show');
 TXT;
      }
@@ -993,6 +993,21 @@ TXT;
      $(".selectable").attr("data-dismiss",'modal');
 	});
     $("#modal").modal('show');
+TXT;
+     }
+     elseif ($_GET['content'] == "attachment")
+     {
+       $chooser=<<<TXT
+   $("#modal .modal-title").html("Uploader...");
+   $("#modal .modal-body").load("//{$this->config->baseuri}/mk-dash.php?section=content&action=gethref&ajax=1&origin=attachment",function(){
+     $(".modal-body li:not(.active)").hide();
+     $(this).on('click','div.selectable',function(){
+       var num=$(this).attr('id');
+       window.location="//{$this->config->baseuri}/p="+num+"&action=edit";
+     });
+   });
+   
+   $("#modal").modal('show');
 TXT;
      }
      else
@@ -1077,7 +1092,7 @@ HTML;
 </div>
 HTML;
    }
-   elseif ($type == 'Post')
+   elseif ($type == 'Post' || $type == "Attachment")
    {
     $now_h=date($this->user->shortdateformat);
     unset($statuses['cloaked'],$statuses['private']);
@@ -1097,16 +1112,16 @@ HTML;
 <div id="PageProps" class="tab-pane fade">
 <input type=hidden name="parent" value="0">
 <div class="form-group">
- <label for="pdate">Post Date:</label>
+ <label for="pdate">{$type} Date:</label>
  <span id="pdate" class="form-control">{$now_h}</span>
 </div>
 <div class="form-group">
- <label for="pauthor">Post Author:</label>
+ <label for="pauthor">{$type} Author:</label>
  <span id="pauthor" class="form-control">{$this->user->name}</span>
 </div>
 <div class="form-group" title="comma-seperated list of tags">
  <label for="tags">Tags:</label>
- <input type="text" id="tags" class="form-control" name="tags" value="{this->tags}">
+ <input type="text" id="tags" class="form-control" name="tags" value="{$this->tags}">
 </div>
 <div class="form-group">
  <label for="status">Post Status:</label>

@@ -123,16 +123,14 @@ class MomokoDashboard implements MomokoObject
       preg_match("/^(.{1,".$summary_len."})[\s]/i", $content['text'], $matches);
       $content['text']=$matches[0].'...';
      }
-     if (!$content['link'])
+     
+     if ($GLOBALS['SET']['rewrite'])
      {
-      if ($GLOBALS['SET']['rewrite'])
-      {
-       $content['link']=$content['type']."/".urlencode($content['title'].".htm?");
-      }
-      else
-      {
-       $content['link']="?p={$content['num']}&";
-      }
+      $content['link']=$content['type']."/".urlencode($content['title'].".htm?");
+     }
+     else
+     {
+      $content['link']="?p={$content['num']}&";
      }
      
      $text.=<<<HTML
