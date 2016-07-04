@@ -20,9 +20,8 @@ function ready_data(array $file)
 
 function import_data($temp)
 {
-  $xml=file_get_contents($temp);
+  $tagarr=xmltoarray($temp);
   unlink($temp);
-  $tagarr=xmltoarray($xml);
   
   foreach ($tagarr as $tag)
   {
