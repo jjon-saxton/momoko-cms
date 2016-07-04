@@ -56,8 +56,6 @@ HTML;
 <label for="select">To begin select the type of data below:</label>
 <select id="select" class="form-control" name="type">
 <option value="mkr">MomoKO Archive</option>
-<option value="wxr">WordPress XML</option>
-<option value="rss">Generic RSS</option>
 <option value="sql">Generic SQL</option>
 </select>
 <label for="name">Archive Name:</label>
