@@ -2,7 +2,8 @@
 
 function ready_data(array $file)
 {
- $temp=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'];
+ $conf=new MomokoSiteConfig();
+ $temp=$conf->basedir.$conf->tempdir;
  if (is_writeable($temp))
  {
     $temp.=time()."import.zip";
@@ -34,7 +35,8 @@ function ready_data(array $file)
 
 function import_data($archive)
 {
- $extracto=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].time().'import';
+ $conf=new MomokoSiteConfig();
+ $extracto=$conf->basedir.$conf->tempdir.time().'import';
  $z=new ZipArchive;
  if ($z->open($archive))
  {
@@ -79,7 +81,7 @@ function add_pages_r($folder,$xml_obj,$p=0)
                 $page['type']="page";
                 $page['date_created']=date("Y-m-d H:i:s");
                 $page['status']="public";
-                $page['author']=$GLOBALS['USR']->num;
+                $page['author']=1;
                 $page['mime_type']="text/html";
                 $page['parent']=$p;
                 $me=$content->putData($page);
@@ -94,7 +96,7 @@ function add_pages_r($folder,$xml_obj,$p=0)
                 $page['type']="page";
                 $page['date_created']=date("Y-m-d H:i:s");
                 $page['status']="public";
-                $page['author']=$GLOBALS['USR']->num;
+                $page['author']=1;
                 $page['mime_type']="text/html";
                 $page['parent']=$p;
 
@@ -139,7 +141,7 @@ function add_pages_r($folder,$xml_obj,$p=0)
                 $page['type']="page";
                 $page['date_created']=date("Y-m-d H:i:s");
                 $page['status']="public";
-                $page['author']=$GLOBALS['USR']->num;
+                $page['author']=1;
                 $page['mime_type']="text/html";
                 $page['parent']=$p['num'];
                 $page['text']=$page['inner_body'];
@@ -160,6 +162,7 @@ function add_pages_r($folder,$xml_obj,$p=0)
 function add_files_r($folder)
 {
     $content=new DataBaseTable('content');
+    $conf=new MomokoSiteConfig();
     foreach (scandir($folder) as $item)
     {
         if (is_dir($folder.$item) && ($item != "." || $item != ".."))
@@ -168,7 +171,7 @@ function add_files_r($folder)
         }
         else
         {
-            if (!file_exists($GLOBALS['SET']['baseuri'].$GLOBALS['SET']['filedir'].$item)) // all attachments are store in the filedir, there is no hiarchy there for mk2, as such we need to make file names unique to avoid overwrites
+            if (!file_exists($conf->baseuri.$conf->filedir.$item)) // all attachments are store in the filedir, there is no hiarchy there for mk2, as such we need to make file names unique to avoid overwrites
             {
                 $file['title']=$item;
             }
@@ -179,7 +182,7 @@ function add_files_r($folder)
             $file['type']="attachment";
             $file['status']="public";
             $file['date_created']=date("Y-m-d H:i:s");
-            $file['author']=$GLOBALS['USR']->num;
+            $file['author']=1;
             if (class_exists('finfo'))
             {
                 $finfo=new finfo(FILEINFO_MIME_TYPE);
@@ -191,11 +194,11 @@ function add_files_r($folder)
                 $finfo['mime_type']="application/octet-stream";
             }
             $file['parent']=0; //since files can only be assigned to pages and 1.x did not support his, we will set all files to root
-            $file['link']=$GLOBALS['SET']['baseuri'].$GLOBALS['SET']['filedir'].$file['title'];
+            $file['link']=$conf->baseuri.$conf->filedir.$file['title'];
 
             if ($items[]=$content->putData($files))
             {
-                rename($folder.$item,$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$file['title']);
+                rename($folder.$item,$conf->basedir.$conf->filedir.$file['title']);
             }
         }
     }
@@ -222,7 +225,7 @@ function add_posts($file)
         $post['type']="post";
         $post['date_created']=date("Y-m-d H:i:s",strtotime($temp['update']));
         $post['status']="public";
-        $post['author']=$GLOBALS['USR']->num;
+        $post['author']=1;
         $post['mime_type']="text/html";
         $post['parent']=0; //Posts don't have a hiarchy so all posts are under root
         $post['text']=$temp['article'];
