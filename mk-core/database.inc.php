@@ -102,6 +102,30 @@ class DataBaseSchema extends PDO
      return file_put_contents($file,$ini);
    }
  }
+ 
+ public function restoreBackup(array $is)
+ {
+   foreach ($is as $sec=>$set)
+   {
+     if ($sec != "schema" && $sec != "database")
+     {
+      $table=new DataBaseTable($set,false);
+      foreach ($set as $row)
+      {
+        $r[]=$table->putData($row);
+      }
+     }
+   }
+   
+   if (!empty($r) && is_array($r))
+   {
+     return true;
+   }
+   else
+   {
+     return false;
+   }
+ }
 }
 
 class DataBaseTable extends DataBaseSchema
@@ -506,29 +530,15 @@ class DataBaseTable extends DataBaseSchema
      break;
      case 'mis':
      default:
-     $text['cols']=null;
-     foreach ($fields as $col)
-     {
-       $text['cols'].=$col->Field."[Type] = \"{$col->Type}\"\n";
-       $text['cols'].=$cols->Field."[Key] = \"{$col->Key}\"\n";
-       $text['cols'].=$cols->Field."[Null] = \"{$col->Null}\"\n";
-       $text['cols'].=$col->Field."[Extras] = \"{$col->Extras}\"\n";
-     }
      $query=$this->getData();
-     $text['rows']=null;
+     $ini=null;
      while ($row=$query->fetch(PDO::FETCH_ASSOC))
      {
        $id=$row[$this->indices['primary']];
        foreach ($row as $col=>$data)
        {
-         $text['rows'].=$id."[$col] = \"{$data}\"\n";
+         $ini.=$id."[$col] = \"{$data}\"\n";
        }
-     }
-     
-     $ini=null;
-     foreach ($text as $section=>$pairs)
-     {
-       $ini.="[{$section}]\n{$pairs}\n";
      }
      
      if (empty($file))
