@@ -373,6 +373,25 @@ class MomokoTags
     }
   }
   
+  public function deleteAll($num,$type='con')
+  {
+    $q=$this->assoc->getData("{$type}_num:`= {$num}`");
+    $deleted=array();
+    while ($data=$q->fetch(PDO::FETCH_ASSOC))
+    {
+      $deleted[]=$this->assoc->deleteData($data);
+    }
+    
+    if (!empty($deleted) && is_array($deleted))
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  
   public function changeAssoc($pid,array $tags)
   {
     $tids=$this->addNew($tags);
@@ -816,12 +835,17 @@ class MomokoContent implements MomokoObject
  {
   if (@$data['title'])
   {
+   $tags=new MomokoTags();
    if (!empty($data['tags']))
    {
-     $tags=new MomokoTags();
      $tarr=explode(",",$data['tags']);
      $tags->changeAssoc($data['num'],$tarr);
    }
+   else
+   {
+     $tags->deleteAll($data['num']); //Remove any tags
+   }
+   
    if (is_array($data['set']))
    {
      $data['text']=null;
