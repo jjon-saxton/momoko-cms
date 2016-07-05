@@ -68,7 +68,6 @@ class MomokoPageAddin implements MomokoPageAddinInterface
     }
     else
     {
-      echo "No tags";
       $list=$this->table->getData("type:`post`",null,$sort,$perpage,$_GET['offset']);
     }
     $html="<div id=\"PostList\" class=\"panel-group\">\n";
