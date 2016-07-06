@@ -1,0 +1,6 @@
+[submodule "mk-content/addins/gallerypage"]
+	path = mk-content/addins/gallerypage
+	url = https://github.com/jjon-saxton/momoko-addin-gallerypage.git
+[submodule "mk-content/addins/tagcloud"]
+	path = mk-content/addins/tagcloud
+	url = https://github.com/jjon-saxton/momoko-addin-tagcloud.git
