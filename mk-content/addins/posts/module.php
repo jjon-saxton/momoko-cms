@@ -87,20 +87,11 @@ class MomokoPostsModule extends MomokoModule implements MomokoModuleInterface
 			 $news['date']=date($this->user->shortdateformat,$news['timestamp']);
 			 if ($max > 0 && $c<=$max)
 			 {
-			  if (strlen($news['summary']) > $this->settings['length'])
-                          {
-                           $matches = array();
-  			   preg_match("/^(.{1,".$this->settings['length']."})[\s]/i", $news['summary'], $matches);
-                           $text=$matches[0].'... <a href="//'.$news['file'].'">more</a>';
-                          }
-			  else
-                          {
-                           $text=$news['summary'].' <a href="//'.$news['file'].'">view/comment on article</a>';
-                          }
+			  $text=truncate($news['summary'],$this->settings['length'],"... <a href=\"//".$news['file']."\">more</a>",true,true);
 			  $html.=<<<HTML
 <div id="{$news['date']}" class="news item">
-<h4 class="headline">{$news['headline']}</h4>
-<div class="date">{$news['date']}</div>
+<h4 class="headline"><a href="//{$news['file']}" title="View Article">{$news['headline']}</a></h4>
+<div class="post-date">{$news['date']}</div>
 <div class="summary">
 {$text}
 </div>

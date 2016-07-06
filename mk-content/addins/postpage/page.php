@@ -81,10 +81,19 @@ class MomokoPageAddin implements MomokoPageAddinInterface
       {
         $datetime=date($this->user->longdateformat." ".$this->user->timeformat,strtotime($post->date_created));
       }
+      
+      if ($sum_no_restrict == false)
+      {
+        $text=truncate($post->text,$sum_len,"...",true,true);
+      }
+      else
+      {
+        $text=$post->text;
+      }
       $html.=<<<HTML
 <div id="{$post->num}" class="panel panel-default">
   <div class="panel-heading"><strong><a href="{$this->config->siteroot}/?p={$post->num}">{$post->title}</a></strong> - {$datetime}</div>
-  <div class="panel-body">{$post->text}</div>
+  <div class="panel-body">{$text}</div>
   <div class="panel-footer"><a href="{$this->config->siteroot}/?p={$post->num}" class="btn btn-default">View Post</a></div>
 </div>
 HTML;

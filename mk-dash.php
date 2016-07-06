@@ -120,8 +120,7 @@ class MomokoDashboard implements MomokoObject
      $content['text']=preg_replace("/<h2>(.*?)<\/h2>/smU",'',$content['text']); //get rid of page title, it will be styleized and placed elsewhere.
      if (strlen($content['text']) > $summary_len)
      {
-      preg_match("/^(.{1,".$summary_len."})[\s]/i", $content['text'], $matches);
-      $content['text']=$matches[0].'...';
+      $content['text']=truncate($content['text'],$summary_len,"...",true,true);
      }
      
      if ($GLOBALS['SET']['rewrite'])
