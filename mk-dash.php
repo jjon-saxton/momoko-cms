@@ -986,8 +986,8 @@ HTML;
      require_once $this->config->basedir.$this->config->filedir."addins/".$module['dir']."/module.php";
      $mod_obj="Momoko".ucwords($module['dir'])."Module";
      $mod_obj=new $mod_obj($this->user,$module['settings']);
-     $module['settings']=$mod_obj->settingsToHTML();
-     $modulelist[$module['zone']].="<div id=\"{$module['num']}\" class=\"module panel panel-info\">\n<div class=\"panel-heading\"><h4 class=\"panel-title\">{$module['shortname']}<a href=\"#collapse{$module['num']}-{COL}-{$module['assoc']}\" data-toggle=\"collapse\" class=\"right glyphicon glyphicon-plus\"></a></h4></div>\n<div id=\"collapse{$module['num']}-{COL}-{$module['assoc']}\" class=\"panel-collapse collapse\">\n<div class=\"panel-body\">{$module['settings']}</div>\n</div>\n</div>\n";
+     $module['settings']=$mod_obj->settingsToHTML("mod-".$module['num']."-{COL}-".$module['assoc']);
+     $modulelist[$module['zone']].="<div id=\"mod-{$module['num']}-{COL}-{$module['assoc']}\" class=\"module panel panel-info\">\n<div class=\"panel-heading\"><h4 class=\"panel-title\">{$module['shortname']}<a href=\"#collapse{$module['num']}-{COL}-{$module['assoc']}\" data-toggle=\"collapse\" class=\"right glyphicon glyphicon-plus\"></a></h4></div>\n<div id=\"collapse{$module['num']}-{COL}-{$module['assoc']}\" class=\"panel-collapse collapse\">\n<div class=\"panel-body\">{$module['settings']}</div>\n</div>\n</div>\n";
     }
     if (preg_match_all("/<!-- MODULEPLACEHOLDER:(?P<arguments>.*?) -->/",$modulelayout,$list))
     {
@@ -1149,9 +1149,10 @@ HTML;
      $data['order']=1;
      foreach ($node->find("div.module") as $mod)
      {
-      $data['num']=$mod->id;
-      $mz['mod']=$mod->id;
-      $mz['settings']=http_build_query($user_data[$data['num']]);
+      list($name,$mid,$oldzone,$oldrow)=explode("-",$mod->id);
+      $data['num']=$mid;
+      $mz['mod']=$mid;
+      $mz['settings']=http_build_query($user_data[$mod->id]);
       try
       {
        $update=$table->updateData($data);

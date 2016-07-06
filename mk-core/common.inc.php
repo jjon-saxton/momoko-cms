@@ -198,8 +198,13 @@ class MomokoModule
   }
  }
 
-	public function settingsToHTML()
+	public function settingsToHTML($id=null)
 	{
+	 if (empty($id))
+	 {
+	   $id=$this->info->num;
+	 }
+	 
 	 $values=$this->settings;
 	 $html="<ul id=\"settings\" class=\"noindent nobullet\">\n";
 	 foreach ($this->opt_keys as $key=>$value)
@@ -209,13 +214,13 @@ class MomokoModule
 	  {
 	   case 'text':
 	   case 'number':
-	   $item.="<input id=\"{$this->info->dir}-{$key}\" type={$value['type']} size=10 name=\"{$this->info->num}[{$key}]\" value=\"{$values[$key]}\"></li>\n";
+	   $item.="<input id=\"{$this->info->dir}-{$key}\" type={$value['type']} size=10 name=\"{$id}[{$key}]\" value=\"{$values[$key]}\"></li>\n";
 	   break;
 	   case 'link':
-	   $item.="<input id=\"{$this->info->dir}-{$key}\" type=\"text\" size=5 name=\"{$this->info->num}[{$key}]\" value=\"{$values[$key]}\"><button id=\"{$key}\" class=\"linkbrowse btn btn-info btn-sm\">Browse...</button></li>\n";
+	   $item.="<input id=\"{$this->info->dir}-{$key}\" type=\"text\" size=5 name=\"{$id}[{$key}]\" value=\"{$values[$key]}\"><button id=\"{$key}\" class=\"linkbrowse btn btn-info btn-sm\">Browse...</button></li>\n";
        break;
 	   case 'select':
-	   $item.="<select id=\"{$this->info->dir}-{$key}\" name=\"{$this->info->num}[{$key}]\">\n";
+	   $item.="<select id=\"{$this->info->dir}-{$key}\" name=\"{$id}[{$key}]\">\n";
 	   foreach ($value['options'] as $option)
 	   {
 	    if ($option == $values[$key])
