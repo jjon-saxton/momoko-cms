@@ -1197,7 +1197,46 @@ HTML;
   }
   elseif ($this->type == 'attachment')
   {
-    //set $blob by getting the contents of an attachment
+    $mimeparts=explode("/",$this->mime_type);
+    $linkparts=parse_url($this->link);
+    $locfile=$this->config->basedir.preg_replace("/momoko\//","",ltrim($linkparts['path'],"/"));
+    $html="<h1>{$this->title}</h1>\n";
+    if ($this->mime_type == "text/html")
+    {
+      $page=parse_page(file_get_contents($locfile));
+      $html.=$page['inner_body'];
+    }
+    elseif ($mimeparts[0] == "text")
+    {
+      $text=htmlentities(file_get_contents($locfile));
+      $html.=<<<HTML
+<pre class="code">
+{$text}
+</pre>
+HTML;
+    }
+    elseif ($mimeparts[0] == "image")
+    {
+      $html.=<<<HTML
+<figure class="preview">
+  <a href="{$this->link}" target="_new"><img src="{$this->link}" alt="{$this->title}" /></a>
+  <figcaption>{$this->text}</figcaption>
+</figure>
+HTML;
+    }
+    else
+    {
+      $html.=<<<HTML
+<div class="alert alert-info">
+<p>This attachment could not be embedded directly in a page. You can <a href="{$this->link}" target="_new">open</a> this file and view or downloaded by clicking the button below.</p>
+</div>
+HTML;
+    }
+    $html.=<<<HTML
+<div class="left">
+<a href="{$this->link}" class="btn btn-primary" target="_new" title="Open in new Tab/Window">Open</a>
+</div>
+HTML;
   }
   else //if it is not a post or attachment assume it is some kind of page
   {

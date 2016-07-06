@@ -1,6 +1,10 @@
 @import "./base.css";
 @import "./bootstrap.css";
 
+figure.preview {border:1px solid #000; border-radius: 2px; background-color: #fff; color:000}
+figure.preview img {max-width:100%; display:inline-block}
+figure.preview figurecaption {font-weight: bold; color: 000}
+
 ul.plug.list {padding-left:5px; list-style:none}
 ul.plug.list li a {display:block;padding:2px;margin:2px;text-decoration:none}
 ul.plug.list li a:link, ul.plug.list li a:visited {border:1px solid #ccc;background:#eee}

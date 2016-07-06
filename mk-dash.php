@@ -134,7 +134,7 @@ class MomokoDashboard implements MomokoObject
      
      $text.=<<<HTML
 <div id="{$content['num']}" class="page box {$content['status']}"><h4 style="display:inline-block;clear:left" class="module">{$content['title']}</h4>
-<div class="actions "style="float:right"><a href="{$this->config->siteroot}/{$content['link']}action=view" class="glyphicon glyphicon-folder-open" title="Open/Download"></a> <a href="{$this->config->siteroot}/{$content['link']}action=edit" class="glyphicon glyphicon-edit" title="Edit"></a> <a href="{$this->config->siteroot}/{$content['link']}action=delete" class="glyphicon glyphicon-remove" title="Delete"></a></div>
+<div class="actions" style="float:right"><a href="{$this->config->siteroot}/{$content['link']}" class="glyphicon glyphicon-folder-open" title="Open/Download"></a> <a href="{$this->config->siteroot}/{$content['link']}action=edit" class="glyphicon glyphicon-edit" title="Edit"></a> <a href="{$this->config->siteroot}/{$content['link']}action=delete" class="glyphicon glyphicon-remove" title="Delete"></a></div>
 <div class="properties">{$content['date_created']}, {$content['date_modified']}, {$content['author']}, {$content['mime_type']}</div>
 <div class="summary">{$content['text']}</div>
 </div>
