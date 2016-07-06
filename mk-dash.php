@@ -972,6 +972,11 @@ HTML;
     {
      $zone_q=$assoc->getData("mod:`= {$module['num']}`");
      $mz=$zone_q->fetch(PDO::FETCH_ASSOC);
+     $module['assoc']=$mz['row'];
+     if (empty($module['assoc']))
+     {
+       $module['assoc']=0;
+     }
      $module['zone']=$mz['zone'];
      $module['settings']=$mz['settings'];
      if (!$module['zone']) //in case no zone is given, for example a new addin, set the zone to 0
@@ -982,14 +987,14 @@ HTML;
      $mod_obj="Momoko".ucwords($module['dir'])."Module";
      $mod_obj=new $mod_obj($this->user,$module['settings']);
      $module['settings']=$mod_obj->settingsToHTML();
-     $modulelist[$module['zone']].="<div id=\"{$module['num']}\" class=\"module panel panel-info\">\n<div class=\"panel-heading\"><h4 class=\"panel-title\">{$module['shortname']}<span data-target=\"#collapse{$module['num']}\" data-toggle=\"collapse\" class=\"right glyphicon glyphicon-plus\"></span></h4></div>\n<div id=\"collapse{$module['num']}\" class=\"panel-collapse collapse\">\n<div class=\"panel-body\">{$module['settings']}</div>\n</div>\n</div>\n";
+     $modulelist[$module['zone']].="<div id=\"{$module['num']}\" class=\"module panel panel-info\">\n<div class=\"panel-heading\"><h4 class=\"panel-title\">{$module['shortname']}<a href=\"#collapse{$module['num']}-{COL}-{$module['assoc']}\" data-toggle=\"collapse\" class=\"right glyphicon glyphicon-plus\"></a></h4></div>\n<div id=\"collapse{$module['num']}-{COL}-{$module['assoc']}\" class=\"panel-collapse collapse\">\n<div class=\"panel-body\">{$module['settings']}</div>\n</div>\n</div>\n";
     }
     if (preg_match_all("/<!-- MODULEPLACEHOLDER:(?P<arguments>.*?) -->/",$modulelayout,$list))
     {
       foreach ($list['arguments'] as $query)
       {
         parse_str($query,$opts);
-        $modulelayout=preg_replace("/<!-- MODULEPLACEHOLDER:".preg_quote($query)." -->/",$modulelist[$opts['zone']],$modulelayout);
+        $modulelayout=preg_replace("/<!-- MODULEPLACEHOLDER:".preg_quote($query)." -->/",preg_replace("/{COL}/",$opts['zone'],$modulelist[$opts['zone']]),$modulelayout);
       }
     }
     foreach ($modulelist as $zone=>$div)
@@ -1001,7 +1006,7 @@ HTML;
     }
     if (preg_match_all("/<!-- MODULESOURCE -->/",$modulelayout,$list))
     {
-     $modulelayout=preg_replace("/<!-- MODULESOURCE -->/",$modulelist[0],$modulelayout);
+     $modulelayout=preg_replace("/<!-- MODULESOURCE -->/",preg_replace("/{COL}/",0,$modulelist[0]),$modulelayout);
     }
 
     /*jQueryUI is added below as there is no better solution for drag-drop lists available at this time*/
