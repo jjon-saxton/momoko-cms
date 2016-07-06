@@ -45,7 +45,7 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
 
  public function getModule($format='html')
  {
-  $protocol=SECURE_PROTOCOL;
+  $protocol=$this->cfg->sec_protcol;
   $userlinks=$this->listUserActions("<li>__LINK__</li>\n");
   if ($this->settings['display'] == 'box')
   {
@@ -69,8 +69,8 @@ HTML;
 <li id="MLList" class="dropdown"><ul class="dropdown-menu" role="menu">
 {$userlinks}
 </ul></li>
-<li><a href="{$this->cfg->baseuri}/?content=rss">Post Feed: RSS</a></li>
-<li><a href="{$this->cfg->baseuri}/?content=atom">Post Feed: ATOM</a></li>
+<li><a href="{$this->cfg->siteroot}/?content=rss">Post Feed: RSS</a></li>
+<li><a href="{$this->cfg->siteroot}/?content=atom">Post Feed: ATOM</a></li>
 </ul>
 </div>
 HTML;
