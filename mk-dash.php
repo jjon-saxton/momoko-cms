@@ -1071,7 +1071,6 @@ $(function(){
         ui.sender.data('copied',true);
         var num=$(e.target).children().length;
         $(newItem).attr('id','cloned-'+num);
-        alert($(newItem).attr('id'));
       }
     });
     $("#0.column").sortable({
