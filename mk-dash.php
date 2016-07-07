@@ -1353,7 +1353,7 @@ HTML;
        trigger_error("Could not reliably determine mime type of an uploaded file! finfo class does not exist, so mime type set by browser. Recommend updating PHP or installing the fileinfo PECL extension to avoid mime type spoofing.",E_USER_NOTICE);
        $finfo['mime_type']=$finfo['type'];
       }
-      $finfo['author']=$GLOBALS['USR']->num;
+      $finfo['author']=$this->user->num;
       $finfo['date_created']=date("Y-m-d H:i:s");
       $finfo['temp']=$this->config->basedir.$this->config->tempdir."temp-attach-".time();
     
