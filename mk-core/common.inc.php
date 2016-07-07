@@ -184,6 +184,83 @@ class MomokoSiteConfig
  }
 }
 
+class MomokoModuleList
+{
+  private $assoc;
+  private $mods;
+  protected $curusr;
+  
+  public function __construct(MomokoSession $user)
+  {
+    $this->assoc=new DataBaseTable('mzassoc');
+    $this->mods=new DataBaseTable('addins');
+    $this->curusr=$user;
+  }
+  
+  public function listByZone($zone=0)
+  {
+    $q=$this->assoc->getData("zone:`= {$zone}`");
+    return $q->fetchAll(PDO::FETCH_ASSOC);
+  }
+  
+  public function listByMod($mid=1)
+  {
+    $q=$this->assoc->getData("module:`= {$mid}`");
+    return $q->fetchAll(PDO::FETCH_ASSOC);
+  }
+  
+  public function listAll()
+  {
+    $q=$this->mods->getData("type:`module`");
+    $list=array();
+    while ($r=$q->fetch(PDO::FETCH_ASSOC))
+    {
+      $list[]=array('mod'=>$r['num']);
+    }
+    return $list;
+  }
+  
+  public function buildHTMLList($id=0,$section='template',$by='zone')
+  {
+    $conf=new MomokoSiteConfig();
+    $html=null;
+    $c=0;
+    switch ($by)
+    {
+      case 'source':
+      $list=$this->listALL();
+      break;
+      case 'module':
+      $list=$this->listByMod($id);
+      break;
+      case 'zone':
+      default:
+      $list=$this->listByZone($id);
+    }
+    
+    foreach ($list as $row)
+    {
+      $q=$this->mods->getData("num:`= {$row['mod']}`");
+      $mod=$q->fetch(PDO::FETCH_ASSOC);
+      require_once $conf->basedir.$conf->filedir."addins/".$mod['dir']."/module.php";
+      $mod_ob="Momoko".ucwords($mod['dir'])."Module";
+      $mod_ob=new $mod_ob($this->curusr,$row['settings']);
+      switch ($section)
+      {
+        case 'dash':
+        $form=$mod_ob->settingsToHTML("mod-{$row['mod']}-{COL}-{$c}");
+        $html.="<div id=\"mod-{$row['mod']}-{COL}-{$c}\" class=\"module panel panel-info\">\n<div class=\"panel-heading\"><h4 class=\"panel-title\">{$mod['shortname']}<a href=\"#collapse{$row['mod']}-{COL}-{$c}\" data-toggle=\"collapse\" class=\"right glyphicon glyphicon-plus\"></a></h4></div>\n<div id=\"collapse{$row['mod']}-{COL}-{$c}\" class=\"panel-collapse collapse\">\n<div class=\"panel-body\">{$form}</div>\n</div>\n</div>\n";
+        break;
+        case 'template':
+        $html.=$mod_ob->getModule('html');
+        default:
+      }
+      $c++;
+    }
+    return $html;
+  }
+}
+
 class MomokoModule
 {
  public function __get($key)
@@ -308,43 +385,17 @@ class MomokoVariableHandler
   private function loadModsByZone($q)
   {
    parse_str($q,$info);
-   $assoc=new DataBaseTable("mzassoc");
-   $mod_q=$assoc->getData("zone:`= {$info['id']}`");
-   $mods=array();
-   $settings=array();
-   while ($row=$mod_q->fetch(PDO::FETCH_ASSOC))
+   $ml=new MomokoModuleList($this->user);
+   $text=$ml->buildHTMLList($info['id']);
+   
+   if (!empty($text))
    {
-     $mods[]=$row['mod'];
-     $settings[]=$row['settings'];
-   }
-   $where="WHERE `num` IN ";
-   $num_str=implode($mods,", ");
-   $where.="({$num_str}) ORDER BY FIELD(`num`, {$num_str})";
-   $table=new DataBaseTable("addins");
-   $query=$table->getByQuery($where);
-   $text=null;
-
-   if($query && $query->rowCount() > 0)
-   {
-    $c=0;
-    while ($module=$query->fetch(PDO::FETCH_ASSOC))
-    {
-     if ($module['type'] == 'module') //Sanity check!
-     {
-      require_once $this->config->basedir."/".$this->config->filedir."addins/{$module['dir']}/".$module['type'].".php";
-      $class="Momoko".ucwords($module['dir'])."Module";
-      $mod=new $class($this->user,$settings[$c]);
-      $text.=$mod->getModule('html');
-     }
-     $c++;
-    }
+     return "<div id=\"MZ{$info['id']}\" class=\"modzone\">\n$text\n</div>\n";
    }
    else
    {
-    $text.="<!-- No Modules Set for Zone: {$info['id']} -->";
+     return "<!-- No modules set for Zone {$info['id']} -->";
    }
-   
-   return $text;
   }
 
   public function evalIf($exp,$true_block,$false_block=null)

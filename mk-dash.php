@@ -964,49 +964,20 @@ HTML;
     $templatesettings.="</select></div>";
 
     $modulelayout="<div class=\"screenshot\" style=\"background-image:url('".$this->config->siteroot.$this->config->filedir."addins/".$this->config->template."/screenshot.png')\">".file_get_contents($this->config->basedir.$this->config->filedir."addins/".$this->config->template."/".$this->config->template.".pre.htm")."</div>";
-    $addins=new DataBaseTable('addins');
-    $dbquery=$addins->getData("type:'module'",array('num','dir','shortname','settings'),'order');
-    $assoc=new DataBaseTable('mzassoc');
-    $modulelist=NULL;
-    while ($module=$dbquery->fetch(PDO::FETCH_ASSOC))
-    {
-     $zone_q=$assoc->getData("mod:`= {$module['num']}`");
-     $mz=$zone_q->fetch(PDO::FETCH_ASSOC);
-     $module['assoc']=$mz['row'];
-     if (empty($module['assoc']))
-     {
-       $module['assoc']=0;
-     }
-     $module['zone']=$mz['zone'];
-     $module['settings']=$mz['settings'];
-     if (!$module['zone']) //in case no zone is given, for example a new addin, set the zone to 0
-     {
-      $module['zone']=0;
-     }
-     require_once $this->config->basedir.$this->config->filedir."addins/".$module['dir']."/module.php";
-     $mod_obj="Momoko".ucwords($module['dir'])."Module";
-     $mod_obj=new $mod_obj($this->user,$module['settings']);
-     $module['settings']=$mod_obj->settingsToHTML("mod-".$module['num']."-{COL}-".$module['assoc']);
-     $modulelist[$module['zone']].="<div id=\"mod-{$module['num']}-{COL}-{$module['assoc']}\" class=\"module panel panel-info\">\n<div class=\"panel-heading\"><h4 class=\"panel-title\">{$module['shortname']}<a href=\"#collapse{$module['num']}-{COL}-{$module['assoc']}\" data-toggle=\"collapse\" class=\"right glyphicon glyphicon-plus\"></a></h4></div>\n<div id=\"collapse{$module['num']}-{COL}-{$module['assoc']}\" class=\"panel-collapse collapse\">\n<div class=\"panel-body\">{$module['settings']}</div>\n</div>\n</div>\n";
-    }
+    
+    $modulelist=new MomokoModuleList($this->user);
+    
     if (preg_match_all("/<!-- MODULEPLACEHOLDER:(?P<arguments>.*?) -->/",$modulelayout,$list))
     {
       foreach ($list['arguments'] as $query)
       {
         parse_str($query,$opts);
-        $modulelayout=preg_replace("/<!-- MODULEPLACEHOLDER:".preg_quote($query)." -->/",preg_replace("/{COL}/",$opts['zone'],$modulelist[$opts['zone']]),$modulelayout);
-      }
-    }
-    foreach ($modulelist as $zone=>$div)
-    {
-      if ($zone != 0)
-      {
-        $modulelist[0].=$modulelist[$zone]; //Adds a copy of all modules to module source.
+        $modulelayout=preg_replace("/<!-- MODULEPLACEHOLDER:".preg_quote($query)." -->/",preg_replace("/{COL}/",$opts['zone'],$modulelist->buildHTMLList($opts['zone'],'dash')),$modulelayout);
       }
     }
     if (preg_match_all("/<!-- MODULESOURCE -->/",$modulelayout,$list))
     {
-     $modulelayout=preg_replace("/<!-- MODULESOURCE -->/",preg_replace("/{COL}/",0,$modulelist[0]),$modulelayout);
+     $modulelayout=preg_replace("/<!-- MODULESOURCE -->/",preg_replace("/{COL}/","src",$modulelist->buildHTMLList(0,'dash','source')),$modulelayout);
     }
 
     /*jQueryUI is added below as there is no better solution for drag-drop lists available at this time*/
