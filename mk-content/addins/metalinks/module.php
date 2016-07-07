@@ -58,7 +58,7 @@ HTML;
    else
    {
     $userinfo=<<<HTML
-<li>Welcome <a href="#MLList" class="dropdown-toggle" data-toggle="dropdown"><strong>{$this->user->name}<span class="caret"></span></strong></a>!</li>
+<li>Welcome <a href="#MLList" class="dropdown-toggle" data-toggle="dropdown"><strong>{$this->user->name}<span class="caret"></span></strong></a></li>
 HTML;
    }
    return <<<HTML

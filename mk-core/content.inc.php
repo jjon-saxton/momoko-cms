@@ -1559,7 +1559,13 @@ HTML;
    $contentlists.=<<<HTML
 <h4>Content</h4>
 <ul id="ContentPlugs" class="plug list">
-<li><a href="{$this->conf->siteroot}/?action=new">New</a></li>{$curconlinks}
+<li><a href="javascript:void" onclick="$('#newMenu').slideToggle()">New</a></li>
+<li id="newMenu" style="display:none"><ul class="nobullet">
+<li><a href="{$this->conf->siteroot}/?content=page&action=new">Page</a></li>
+<li><a href="{$this->conf->siteroot}/?content=addin+page&action=new">Dynamic Page</a></li>
+<li><a href="{$this->conf->siteroot}/?content=post&action=new">Post</a></li>
+<li><a href="{$this->conf->siteroot}/?content=attachment&action=new">Attachment</a></li>
+</ul></li>{$curconlinks}
 <li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=pages">All Pages</a></li>
 <li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=posts">All Posts</a></li>
 <li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
