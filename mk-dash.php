@@ -132,6 +132,23 @@ class MomokoDashboard implements MomokoObject
       $content['link']="?p={$content['num']}&";
      }
      
+     $mimeparts=explode("/",$content['mime_type']);
+     if ($mimeparts[0] == "application")
+     {
+       $setarr=parse_ini_string($content['text']);
+       $content['mime_type']="Dynamic Page";
+       $content['text']=<<<HTML
+<p>Addin: {$mimeparts[1]}
+HTML;
+       foreach ($setarr as $set=>$val)
+       {
+         if (!empty($val))
+         {
+           $content['text'].=" , {$set}: {$val}";
+         }
+       }
+     }
+     
      $text.=<<<HTML
 <div id="{$content['num']}" class="page box {$content['status']}"><h4 style="display:inline-block;clear:left" class="module">{$content['title']}</h4>
 <div class="actions" style="float:right"><a href="{$this->config->siteroot}/{$content['link']}" class="glyphicon glyphicon-folder-open" title="Open/Download"></a> <a href="{$this->config->siteroot}/{$content['link']}action=edit" class="glyphicon glyphicon-edit" title="Edit"></a> <a href="{$this->config->siteroot}/{$content['link']}action=delete" class="glyphicon glyphicon-remove" title="Delete"></a></div>
