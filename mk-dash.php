@@ -1063,8 +1063,14 @@ $(function(){
       connectWith: ".column",
       handle: ".panel-heading",
       placeholder: "alert alert-success",
+      beforeStop: function(event,ui){
+        newItem=ui.item;
+      },
       receive:function(e,ui){
         ui.sender.data('copied',true);
+        var num=0; //TODO find last cloned and iterate this one past it
+        $(newItem).attr('id','cloned'+num);
+        alert($(newItem).attr('id'));
       }
     });
     $("#0.column").sortable({

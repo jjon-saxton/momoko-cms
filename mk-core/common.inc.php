@@ -318,11 +318,6 @@ class MomokoVariableHandler
      $settings[]=$row['settings'];
    }
    $where="WHERE `num` IN ";
-   $nums=array();
-   foreach ($mods as $num)
-   {
-     $nums[]="`num`={$num}";
-   }
    $num_str=implode($mods,", ");
    $where.="({$num_str}) ORDER BY FIELD(`num`, {$num_str})";
    $table=new DataBaseTable("addins");
