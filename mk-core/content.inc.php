@@ -1297,10 +1297,19 @@ HTML;
   $info['title']="Delete Page: ".$this->info['title'];
   if ($_POST['drop'])
   {
+   if (!empty($this->info['link']))
+   {
+     $linkparts=parse_url($this->info['link']);
+     $locfile=preg_replace("/\/momoko/","",$linkparts['path']);
+   }
    $data['num']=$this->info['num'];
    try
    {
     $delete=$this->table->deleteData($data);
+    if ($this->info['type'] == "attachment")
+    {
+      unlink($this->config->basedir.$locfile);
+    }
    }
    catch (Exception $err)
    {
