@@ -1058,7 +1058,17 @@ $(function(){
       receive:function(e,ui){
         ui.sender.data('copied',true);
         var num=$(e.target).children().length;
-        $(newItem).attr('id','cloned-'+num);
+        var oldid=$(newItem).attr('id');
+        var parts=oldid.split("-");
+        $(newItem).attr('id','cloned-'+parts[1]+'-'+num);
+        $(newItem).find('a.glyphicon-plus').attr('href','#collapse'+parts[1]+'-clone-'+num);
+        $(newItem).find('div.collapse').attr('id','collapse'+parts[1]+'-clone-'+num);
+        $(newItem).find('input, select').each(function(){
+          var oldname=$(this).attr('name');
+          var res=oldname.match(/(.*)\[(.*)\]/);
+          var key=res[2];
+          $(this).attr('name','cloned-'+parts[1]+'-'+num+'['+key+']');
+        });
       }
     });
     $("#0.column").sortable({
@@ -1140,7 +1150,6 @@ HTML;
     foreach ($html->find("div.column") as $node)
     {
      $mz['zone']=$node->id;
-     $data['order']=1;
      foreach ($node->find("div.module") as $mod)
      {
       list($name,$mid,$oldzone,$oldrow)=explode("-",$mod->id);
@@ -1159,7 +1168,6 @@ HTML;
       {
        trigger_error("Caught exception '".$err->getMessage()."' while attempting to update modules");
       }
-      $data['order']++;
      }
     }
     header("Location: {$this->config->siteroot}/mk-dash.php?section=site&action=appearance");
