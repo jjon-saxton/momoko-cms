@@ -1638,6 +1638,7 @@ HTML;
 
  if ($_SESSION['modern'] == 'full')
  {
+  $version=MOMOKOVERSION;
   $split['body']=<<<HTML
 <div id="modal" class="modal fade" role="dialog">
  <div class="modal-dialog">
@@ -1670,6 +1671,9 @@ HTML;
 <ul id="ExitPlugs" class="plug list">
 <li><a href="#sidebar" data-dismiss="modal">Close Dashboard</a></li>
 </ul>
+<div class="version alert alert-info">
+MomoKO v{$version}
+</div>
 </div>
     </div>
   </div>
