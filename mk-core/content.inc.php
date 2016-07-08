@@ -798,7 +798,7 @@ class MomokoContent implements MomokoObject
 
   $body=$this->get();
   $vars=$this->setVars($additional_vars);
-  $ch=new MomokoVariableHandler($vars);
+  $ch=new MomokoVariableHandler($vars,$this->user);
   $this->inner_body=$ch->replace($body);
  }
  
@@ -827,7 +827,7 @@ class MomokoContent implements MomokoObject
 
   $body=$this->get();
   $vars=$this->setVars($additional_vars);
-  $ch=new MomokoVariableHandler($vars);
+  $ch=new MomokoVariableHandler($vars,$this->user);
   $this->inner_body=$ch->replace($body);
  }
  
@@ -1777,11 +1777,13 @@ class MomokoAddinForm implements MomokoObject
 {
   public $form;
   private $config;
+  private $user;
   private $info=array();
   
-  public function __construct($form=null)
+  public function __construct($form=null, MomokoSession $user)
   {
     $this->config=new MomokoSiteConfig();
+    $this->user=$user;
     if (!empty($form))
     {
       $this->form=$form;
@@ -1853,7 +1855,7 @@ class MomokoAddinForm implements MomokoObject
     }
     $vars['site_location']=$this->config->siteroot;
       
-    $vh=new MomokoVariableHandler($vars);
+    $vh=new MomokoVariableHandler($vars,$this->user);
     $info['inner_body']=$vh->replace($info['inner_body']);
     return $info;
   }

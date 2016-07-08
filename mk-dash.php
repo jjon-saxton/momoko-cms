@@ -326,7 +326,7 @@ HTML;
    break;
    case 'addins':
    default:
-   $form=new MomokoAddinForm('list');
+   $form=new MomokoAddinForm('list',$this->user);
    $info['inner_body']=$form->inner_body;
    break;
   }
