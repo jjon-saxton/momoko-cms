@@ -664,11 +664,33 @@ HTML;
        case 'email_mta':
        $title="email transport authority";
        break;
+       case 'sec_protocol':
+       $title="security protocol";
+       break;
+       case 'siteroot':
+       $title="site root";
+       break;
+       case 'baseuri':
+       $title="site's URI";
+       break;
+       case 'basedir':
+       $title="site's base folder";
+       break;
+       case 'filedir':
+       $title="site's storage folder";
+       break;
+       case 'tempdir':
+       $title="site's temporary folder";
+       break;
       }
       $title=ucwords($title);
       $page['body'].="<div class=\"form-group\"><label for=\"{$setting['key']}\">{$title}:</label>";
       switch ($setting['key'])
       {
+       case 'sec_protocol':
+       case 'siteroot':
+       $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">\n<div class=\"alert alert-info\">For information only; automatically generated value.</div>\n";
+       break;
        case 'version':
        $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">";
 
