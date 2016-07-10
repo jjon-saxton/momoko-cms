@@ -1667,10 +1667,6 @@ HTML;
 {$rockout}
 </ul>
 {$contentlists}
-<h4>Exit</h4>
-<ul id="ExitPlugs" class="plug list">
-<li><a href="#sidebar" data-dismiss="modal">Close Dashboard</a></li>
-</ul>
 <div class="version alert alert-info">
 MomoKO v{$version}
 </div>
