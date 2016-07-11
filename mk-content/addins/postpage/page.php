@@ -53,6 +53,19 @@ class MomokoPageAddin implements MomokoPageAddinInterface
      $sum_len=$this->length;
     }
     
+    switch ($this->settings['sort'])
+    {
+      case 'recent':
+      $sort="date_created >";
+      break;
+      case 'oldest':
+      $sort="date_created <";
+      break;
+      case 'headline';
+      $sort="title <";
+      break;
+    }
+    
     $full_list=$this->table->getData("type:`post`");
     $total_posts=0;
     while ($full_list->fetch())
