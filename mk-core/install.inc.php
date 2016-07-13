@@ -226,7 +226,6 @@ HTML;
   $rows['settings'][]=array('key'=>'use_ssl','value'=>$site['use_ssl']);
   $rows['settings'][]=array('key'=>'email_mta','value'=>'phpmail');
   $rows['settings'][]=array('key'=>'email_server','value'=>"host=localhost");
-  $rows['settings'][]=array('key'=>'rewrite','value'=>0);
   
   $okay=0;
   $tottbls=0;
@@ -353,6 +352,10 @@ function db_upgrade($level,$version,$backup=null)
    {
      $tables[$tblname]->updateFields($cols);
    }
+   
+   $remove['key']='rewrite';
+   $tables['settings']=new DataBaseTable('settings');
+   $tables['settings']->deleteData($remove);
  }
 
  $new_content=scan_core_content($config);

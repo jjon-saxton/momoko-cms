@@ -18,10 +18,18 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
     parse_str($extset,$this->settings);
   }
   
-  if (($user->inGroup('editor') || $user->inGroup('admin')) && basename($_SERVER['PHP_SELF']) && empty($_GET['action']))
+  if (($user->inGroup('editor') || $user->inGroup('admin')) && basename($_SERVER['PHP_SELF']) != 'mk-dash.php' && empty($_GET['action']))
   {
-    $actions[]=array('href'=>$cfg->siteroot."/?p={$_GET['p']}&action=edit",'title'=>"Edit This");
-    $actions[]=array('href'=>$cfg->siteroot."/?p={$_GET['p']}&action=delete",'title'=>"Delete This");
+    if (empty($_GET['p']))
+    {
+      $base=$cfg->siteroot."/?";
+    }
+    else
+    {
+      $base=$cfg->siteroot."/?p={$_GET['p']}&";
+    }
+    $actions[]=array('href'=>$base."action=edit",'title'=>"Edit This");
+    $actions[]=array('href'=>$base."action=delete",'title'=>"Delete This");
   }
   
   if (!$user->inGroup('nobody'))
