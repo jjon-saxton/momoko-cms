@@ -179,12 +179,14 @@ class MomokoSession
 class MomokoUser
 {
   private $db;
+  private $config;
   private $path;
   private $info=array();
 
   public function __construct($path=null)
   {
     $this->db=new DataBaseTable('users');
+    $this->config=new MomokoSiteConfig();
     $this->path=$path;
   }
 
@@ -235,7 +237,7 @@ class MomokoUser
 
   public function getBySID($sid) //gets user information based on a session ID created during password resets
   {
-   $res=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].$sid.".txt";
+   $res=$this->config->basedir.$this->config->tempdir.$sid.".txt";
    list($num,$name,$email)=explode(",",file_get_contents($res));
    unlink($res); //the sid storing text file is not required any longer, best to clean it up
 
@@ -258,9 +260,9 @@ class MomokoUser
       }
       else
       {
-        if (isset($GLOBALS['SET']) && $GLOBALS['SET']['salt'])
+        if (isset($this->config->salt))
         {
-         $salt=$GLOBALS['SET']['salt'];
+         $salt=$this->config->salt;
         }
         else
         {
@@ -270,7 +272,7 @@ class MomokoUser
 	    $data['password']=crypt($data['password'],$salt);
         if (function_exists("momoko_changes"))
         {
-	     momoko_changes($GLOBALS['USR'],'added',$this);
+	     momoko_changes($this->user,'added',$this);
         }
         return $this->db->putData($data);
       }
@@ -279,7 +281,7 @@ class MomokoUser
 
   public function putSID($data,$sid)
   {
-    $dir=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'];
+    $dir=$this->config->basedir.$this->config->tempdir;
     $name=$sid.".txt";
 
     if (is_writable($dir))
@@ -296,7 +298,7 @@ class MomokoUser
     }
     else
     {
-     trigger_error($dir." not writable! Cannot write required session ID text file!",E_USER_ERROR);
+     trigger_error($dir." not writable! Cannot write required session ID text file ({$dir}{$name})!",E_USER_ERROR);
      return false;
     }
   }
@@ -305,14 +307,14 @@ class MomokoUser
   {
     $resource=$this->db->getData("name:'".$name."'",array('num'),null,1);
     $user=$resource->fetch(PDO::FETCH_OBJ);
-    momoko_changes($GLOBALS['USR'],'updated',$this);
+    momoko_changes($this->user,'updated',$this);
     return $this->updateByID($user->num,$data);
   }
   
   public function updateByID($num,array $data)
   {
     $data['num']=$num;
-    momoko_changes($GLOBALS['USR'],'updated',$this);
+    momoko_changes($this->user,'updated',$this);
     return $this->db->updateData($data);
   }
 
@@ -330,7 +332,7 @@ class MomokoUser
     $data=$this->db->getData("name:'".$name."'",array('num'),null,1);
     $row=$data->fetch(PDO::FETCH_OBJ);
     $del['num']=$row->num;
-    momoko_changes($GLOBALS['USR'],'deleted',$this);
+    momoko_changes($this->user,'deleted',$this);
     return $this->db->removeData($del);
   }
 }
