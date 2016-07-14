@@ -82,7 +82,7 @@ class MomokoDashboard implements MomokoObject
    }
    if (count($pages) > 1)
    {
-    $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols,NULL,$GLOBALS['USR']->rowspertable,@$_GET['offset']);
+    $query=$this->table->getData("type:'".rtrim($list,"s")."'",$cols,NULL,$$this->user->rowspertable,@$_GET['offset']);
     $page_div="<div id=\"pages\" class=\"box\"><table width=100% cellspacing=1 cellpadding=1>\n<tr>\n<td align=left><a href=\"{$this->config->siteroot}/mk-dash.php?section=content&list={$list}&offset={$prev}\">Previous</a></td><td align=center>";
     foreach ($pages as $page)
     {
@@ -123,7 +123,7 @@ class MomokoDashboard implements MomokoObject
       $content['text']=truncate($content['text'],$summary_len,"...",true,true);
      }
      
-     if ($GLOBALS['SET']['rewrite'])
+     if ($this->config->rewrite)
      {
       $content['link']=$content['type']."/".urlencode($content['title'].".htm?");
      }
@@ -345,9 +345,9 @@ HTML;
     case 'addin':
     if ($user_data['archive'])
     {
-     $destination=$GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].'addins/'.$user_data['dir'];
+     $destination=$this->config->basedir.$this->config->filedir.'addins/'.$user_data['dir'];
      $zip=new ZipArchive();
-     if ($zip->open($GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].$user_data['archive']))
+     if ($zip->open($this->config->basedir.$this->config->tempdir.$user_data['archive']))
      {
       $find=$this->table->getData("dir:'{$user_data['dir']}'");
       if ($find->rowCount > 0)
@@ -363,7 +363,7 @@ HTML;
       {
        if ($zip->extractTo($destination))
        {
-        unlink($GLOBALS['SET']['basedir'].$GLOBALS['SET']['tempdir'].$user_data['archive']);
+        unlink($this->config->basedir.$this->config->tempdir.$user_data['archive']);
         $status['num']=$add;
         $query=$this->table->getData("num:`= {$add}`",array('shortname','longname','type'));
         $status['info']=$query->fetch(PDO::FETCH_ASSOC);
@@ -469,20 +469,33 @@ HTML;
     }
     else
     {
-     try
+     if ($user_data['password'] == $user_data['password2'])
      {
-      $update=$this->table->putData($user_data);
-     }
-     catch (Exception $err)
-     {
-      trigger_error("Caught exception '".$err->getMessage()."' while attempting to add a new user via dashboard",E_USER_WARNING);
+       $user_data['password']=crypt($user_data['password2'],$this->config->salt);
+       try
+       {
+        $update=$this->table->putData($user_data);
+       }
+       catch (Exception $err)
+       {
+        trigger_error("Caught exception '".$err->getMessage()."' while attempting to add a new user via dashboard",E_USER_WARNING);
+       }
      }
      if ($update)
      {
       $page['body']=<<<HTML
 <div id="NewUserAdded" class="message box">
 <h3 class="message title">New User Added</h3>
-<p>A new user was added to MomoKO. You may <a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=user&action=new">return</a> to add another user, or continue on to other actions</p>
+<p>A new user was added to MomoKO. You may <a href="{$this->siteroot}/mk-dash.php?section=user&action=new">return</a> to add another user, or continue on to other actions</p>
+</div>
+HTML;
+     }
+     else
+     {
+       $page['body']=<<<HTML
+<div id="NewUserNotAdded" class="panel panel-warning">
+<h3 class="panel-title">New User Not Added</h3>
+<p>There was an error while attempting to add your user to MomoKO. This is usually just a problem with your passwords. Make sure <strong>both</strong> passwords match and try again. If this problem persists, check the logs for more information."</p>
 </div>
 HTML;
      }
@@ -519,7 +532,7 @@ HTML;
         }
      }
      $page['body']=<<<HTML
-<form role="form" id="UserForm" action="{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=edit&id={$user['num']}" method=post>
+<form role="form" id="UserForm" action="{$this->config->sec_protocol}{$this->config->baseuri}/mk-dash.php?section=user&action=edit&id={$user['num']}" method=post>
 <input type=hidden name="num" value="{$user['num']}">
 <ul id="FormList" class="nobullet noindent">
 <div class="form-group">
@@ -547,7 +560,7 @@ HTML;
     {
      if ($this->table->updateData($user_data))
      {
-      header("Location: {$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list");
+      header("Location: {$this->config->siteroot}/mk-dash.php?section=user&action=list");
      }
      else
      {
@@ -568,7 +581,7 @@ HTML;
      $select=$q->fetch(PDO::FETCH_ASSOC);
      if ($delete=$this->table->deleteData($select))
      {
-      if (rmdirr($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].'addins/'.$select['dir']))
+      if (rmdirr($this->config->basedir.$this->config->filedir.'addins/'.$select['dir']))
       {
        $status['code']=200;
        $status['num']=$select['num'];
@@ -603,7 +616,7 @@ HTML;
     {
      if ($this->table->deleteData($user_data))
      {
-      header("Location: {$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list");
+      header("Location: {$this->config->siteroot}/mk-dash.php?section=user&action=list");
      }
      else
      {
@@ -614,7 +627,7 @@ HTML;
     {
      $page['body']=<<<HTML
 <h2>Remove User?</h2>
-<form id="UserForm" action="{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=delete&id={$_GET['id']}" method=post>
+<form id="UserForm" action="{$this->config->siteroot}/mk-dash.php?section=user&action=delete&id={$_GET['id']}" method=post>
 <input type=hidden name="num" value="{$_GET['id']}">
 <p>Do you really want to remove this user? Keep in mind that this will prevent the user from accessing this site in the future and that this action cannot be undone without the user re-registering!</p>
 <p><input type="checkbox" id="cbc" name="confirm" value="y"><label for="cbc">I have read and understand the above warning.</label></p>
@@ -725,7 +738,7 @@ HTML;
        }
        break;
        case 'template':
-       $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">\n<div class=\"alert alert-info\">Change in <a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance\">site appearance</a></div>";
+       $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">\n<div class=\"alert alert-info\">Change in <a href=\"{$this->config->siteroot}/mk-dash.php?section=site&action=appearance\">site appearance</a></div>";
        break;
        //TODO add special cases for e-mail settings
        case 'email_mta':
@@ -906,7 +919,7 @@ HTML;
        $cur_info=$q->fetch(PDO::FETCH_ASSOC);
        if (($user_data['newpassword1'] == $user_data['newpassword2']) && (crypt($user_data['oldpassword'],$cur_info['password']) == $cur_info['password']))
        {
-         $user_data['password']=crypt($user_data['newpassword2'],$GLOBALS['SET']['salt']);
+         $user_data['password']=crypt($user_data['newpassword2'],$this->config->salt);
          $pass_changed['worked']=true;
        }
        else
@@ -931,7 +944,7 @@ HTML;
      $page['body']=<<<HTML
 <div id="SettingsChanged" class="message box">
 <h3 class="message title">{$section} Settings Changed</h3>
-<p>{$section} settings have been changed succesfully! Please feel free to <a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section={$_GET['section']}&action=settings">Return</a> to the previous page, or select another page or action.</p>
+<p>{$section} settings have been changed succesfully! Please feel free to <a href="{$this->config->siteroot}/mk-dash.php?section={$_GET['section']}&action=settings">Return</a> to the previous page, or select another page or action.</p>
 HTML;
 
      if ($user_data['pass_change'] && $pass_changed['worked'])
@@ -1158,7 +1171,7 @@ HTML;
    }
    elseif ($user_data['section'] == 'map')
    {
-    $new_map=new MomokoNavigation($GLOBALS['USR'],'display=simple');
+    $new_map=new MomokoNavigation($this->user,'display=simple');
     $new_map->reOrderbyHTML($user_data['raw_dom']);
     header("Location:http:{$this->config->siteroot}/mk-dash.php?section=site&action=appearance");
     exit();
@@ -1198,7 +1211,7 @@ HTML;
    else
    {
     $addins=new DataBaseTable('addins');
-    $list=$addins->getData("dir:'{$GLOBALS['SET']['template']}'",array('num','dir'),NULL,1);
+    $list=$addins->getData("dir:'{$this->config->template}'",array('num','dir'),NULL,1);
     $cur_template=$list->fetch(PDO::FETCH_ASSOC);
     $cur_template['enabled']='n';
     $kill_template=$addins->updateData($cur_template);
@@ -1427,7 +1440,7 @@ HTML;
           trigger_error("Caught exception '".$err->getMessage()."' while attempting to add attachment to database",E_USER_ERROR);
           $finfo['error']=$err->getMessage();
          }
-         if ($GLOBALS['SET']['rewrite'])
+         if ($this->config->rewrite)
          {
           //TODO set $finfo['link'] to human readable URI
          }
@@ -1464,7 +1477,7 @@ HTML;
         }
         else
         {
-         $finfo['error']="Could not move attachment to its permenant location (".$GLOBALS['SET']['basedir'].$this->config->filedir.$finfo['name'].")!";
+         $finfo['error']="Could not move attachment to its permenant location (".$this->config->basedir.$this->config->filedir.$finfo['name'].")!";
          }
        }
       }
@@ -1680,7 +1693,7 @@ HTML;
    if ($row_c > $this->user->rowspertable)
    {
     $query=$this->table->getData(null,$columns,null,$this->user->rowspertable,@$_GET['offset']);
-    $prev=@$_GET['offset']-$GLOBALS['USR']->rowspertable;
+    $prev=@$_GET['offset']-$this->user->rowspertable;
     if ($prev < 0)
     {
      $prev=0;
@@ -1698,7 +1711,7 @@ HTML;
       $page_div.="<a href=\"{$this->config->siteroot}/mk-dash.php?section=user&action=list&offset={$page['offset']}\">{$page['number']}</a> ";
      }
     }
-    $next=@$_GET['offset']+$GLOBALS['USR']->rowspertable;
+    $next=@$_GET['offset']+$this->user->rowspertable;
     if ($next > $row_C)
     {
      $next=0;
