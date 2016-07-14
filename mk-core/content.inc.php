@@ -1429,7 +1429,7 @@ class MomokoError implements MomokoObject
 
   $body=$this->page->inner_body;
   $vars=$this->setVars($additional_vars);
-  $ch=new MomokoVariableHandler($vars);
+  $ch=new MomokoVariableHandler($vars,$user);
   $this->inner_body=$ch->replace($body);
  }
 

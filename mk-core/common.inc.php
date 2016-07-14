@@ -564,6 +564,7 @@ function file_url($url){
 function momoko_html_errors($num,$str,$file,$line,$context)
 {
   $cfg=new MomokoSiteConfig();
+  $user=new MomokoSession();
   if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($cfg->error_logging > 1))
   {
    $text="PHP Error (".$num."; ".$str.") on line ".$line." of ".$file."!\n";
@@ -622,9 +623,9 @@ function momoko_html_errors($num,$str,$file,$line,$context)
     $info['error_type']=$num;
     if (class_exists('MomokoError'))
     {
-     $child=new MomokoError('Server_Error',$str,$info);
+     $child=new MomokoError('Server_Error',$user,$str,$info);
 
-     $tpl=new MomokoTemplate(pathinfo(@$path,PATHINFO_DIRNAME));
+     $tpl=new MomokoTemplate($user,$cfg);
      print $tpl->toHTML($child);
     }
     else
