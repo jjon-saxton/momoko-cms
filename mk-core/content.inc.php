@@ -865,7 +865,7 @@ class MomokoContent implements MomokoObject
    }
    elseif ($_GET['action'] == 'new' && $new=$this->table->putData($data))
    {
-    if (is_array($tarr)
+    if (is_array($tarr))
     {
       $tags->changeAssoc($new,$tarr);
     }

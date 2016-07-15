@@ -18,7 +18,7 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
     parse_str($extset,$this->settings);
   }
   
-  if (($user->inGroup('editor') || $user->inGroup('admin')) && basename($_SERVER['PHP_SELF']) != 'mk-dash.php' && empty($_GET['action']))
+  if ($user->inGroup('editor') || $user->inGroup('admin'))
   {
     if (empty($_GET['p']))
     {
@@ -28,8 +28,12 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
     {
       $base=$cfg->siteroot."/?p={$_GET['p']}&";
     }
-    $actions[]=array('href'=>$base."action=edit",'title'=>"Edit This");
-    $actions[]=array('href'=>$base."action=delete",'title'=>"Delete This");
+    $actions[]=array('href'=>$base."action=new",'title'=>"New...");
+    if (basename($_SERVER['PHP_SELF']) != 'mk-dash.php' && empty($_GET['action']))
+    {
+      $actions[]=array('href'=>$base."action=edit",'title'=>"Edit This");
+      $actions[]=array('href'=>$base."action=delete",'title'=>"Delete This");
+    }
   }
   
   if (!$user->inGroup('nobody'))
@@ -111,14 +115,17 @@ HTML;
  private function listUserActions($wrapper="__LINK__")
  {
   $html=null;
-  foreach ($this->actions as $action)
+  if (is_array($this->actions))
   {
-   $attr_str=null;
-   foreach ($action as $attr=>$val)
-   {
-    $attr_str.=$attr." =\"{$val}\" ";
-   }
-   $html.=preg_replace("/__LINK__/","<a {$attr_str}>".$action['title']."</a>",$wrapper);
+    foreach ($this->actions as $action)
+    {
+      $attr_str=null;
+      foreach ($action as $attr=>$val)
+      {
+        $attr_str.=$attr." =\"{$val}\" ";
+      }
+      $html.=preg_replace("/__LINK__/","<a {$attr_str}>".$action['title']."</a>",$wrapper);
+    }
   }
 
   return $html;
