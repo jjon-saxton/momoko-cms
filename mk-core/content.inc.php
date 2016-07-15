@@ -856,13 +856,19 @@ class MomokoContent implements MomokoObject
    }
    if (($_GET['action'] == 'edit' && $data['num']) && $update=$this->table->updateData($data))
    {
-    $tags->changeAssoc($data['num'],$tarr);
+    if (is_array($tarr))
+    {
+      $tags->changeAssoc($data['num'],$tarr);
+    }
     header("Location: http://{$this->config->baseuri}/?p={$data['num']}");
     exit();
    }
    elseif ($_GET['action'] == 'new' && $new=$this->table->putData($data))
    {
-    $tags->changeAssoc($new,$tarr);
+    if (is_array($tarr)
+    {
+      $tags->changeAssoc($new,$tarr);
+    }
     header("Location: http://{$this->config->baseuri}/?p={$new}");
     exit();
    }
