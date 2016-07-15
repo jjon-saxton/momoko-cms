@@ -839,11 +839,10 @@ class MomokoContent implements MomokoObject
    if (!empty($data['tags']))
    {
      $tarr=explode(",",$data['tags']);
-     $tags->changeAssoc($data['num'],$tarr);
    }
    else
    {
-     $tags->deleteAll($data['num']); //Remove any tags
+     $tags->deleteAll($data['num']); //Remove all tags
    }
    
    if (is_array($data['set']))
@@ -857,11 +856,13 @@ class MomokoContent implements MomokoObject
    }
    if (($_GET['action'] == 'edit' && $data['num']) && $update=$this->table->updateData($data))
    {
+    $tags->changeAssoc($data['num'],$tarr);
     header("Location: http://{$this->config->baseuri}/?p={$data['num']}");
     exit();
    }
    elseif ($_GET['action'] == 'new' && $new=$this->table->putData($data))
    {
+    $tags->changeAssoc($new,$tarr);
     header("Location: http://{$this->config->baseuri}/?p={$new}");
     exit();
    }
