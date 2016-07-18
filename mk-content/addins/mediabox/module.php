@@ -64,6 +64,16 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
    }
 
    return <<<HTML
+<script language="javascript" type="text/javascript">
+$(function(){
+  $("#MediaBox img").css("cursor","pointer").click(function(){
+    var src=$(this).attr('src');
+    $("#modal .modal-title").html("Image Viewer");
+    $("#modal .modal-body").html("<a href=\""+src+"\" title=\"Open full image in new tab\" target=\"_new\"><img width=\"100%\" src=\""+src+"\"></a>");
+    $("#modal").modal('show');
+  });
+});
+</script>
 <div id="MediaBox" class="box">
 {$media}
 </div>
