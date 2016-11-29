@@ -1,0 +1,14 @@
+[info]
+shortname = "Exporter"
+longname = "Content Exporter"
+type = "switchboard"
+description = "A special interface that will allow users to export their data for backup purposes or to import to a new MomoKO instance or other CMS."
+
+[authorization]
+whitelist = "admin"
+blacklist = "ALL"
+
+[attribution]
+author = "Jon Saxton"
+email = "cem@tower21studios.com"
+version = "0.1a"

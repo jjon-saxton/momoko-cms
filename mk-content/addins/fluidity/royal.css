@@ -1,6 +1,3 @@
-@import "fluidity-bootstrap.css";
-@import "jquery-ui-royal/jquery-ui.theme.min.css";
-
 body {background: #ecfdfe; padding-top: 70px}
 h1,h2,h3,h4,h5,h6 {color: #0078ae}
 hr {border-color: #6eac2c}

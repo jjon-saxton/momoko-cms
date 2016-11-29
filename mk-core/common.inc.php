@@ -2,30 +2,7 @@
 #Load settings from database
 require_once dirname(__FILE__).'/database.inc.php';
 $config=new MomokoSiteConfig();
-if (empty($config->baseuri) && (!defined("INCLI") || INCLI)) //Set some defaults
-{
- $config->baseuri=$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']);
-}
-if ($config->use_ssl == "strict") //ADD protocol
-{
- $config->sec_protocol="https://";
- $config->siteroot="https://".$config->baseuri;
-}
-else
-{
- if ($config->use_ssl == "yes")
- {
-  $config->sec_protocol="https://";
- }
- else
- {
-  $config->sec_protocol="http://";
- }
- $config->siteroot="//".$config->baseuri;
-}
 $config->sys_groups=array('nobody','users','suspended','editor','cli','admin');
-
-$GLOBALS['SET']=$config->getSettings(); //TODO remove this, it is only here to serve legacy functions!
 
 //Set Constants
 if ($config->rewrite)
@@ -55,12 +32,12 @@ require_once $config->basedir.'/mk-core/user.inc.php';
 
 if (@$_SESSION['data'])
 {
- $GLOBALS['USR']=unserialize($_SESSION['data']);
+ $auth=unserialize($_SESSION['data']);
 }
 else
 {
- $GLOBALS['USR']=new MomokoSession();
- $_SESSION['data']=serialize($GLOBALS['USR']);;
+ $auth=new MomokoSession();
+ $_SESSION['data']=serialize($auth);
 }
 
 $_SESSION['modern']=false;
@@ -95,6 +72,28 @@ class MomokoSiteConfig
  public function __construct()
  {
    $this->table=new DataBaseTable('settings');
+
+   if (empty($this->baseuri) && (!defined("INCLI") || INCLI)) //Set some defaults
+   {
+    $this->baseuri=$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']);
+   }
+   if ($this->use_ssl == "strict") //ADD protocol
+   {
+    $this->sec_protocol="https://";
+    $this->siteroot="https://".$this->baseuri;
+   }
+   else
+   {
+    if ($this->use_ssl == "yes")
+    {
+     $this->sec_protocol="https://";
+    }
+    else
+    {
+     $this->sec_protocol="http://";
+    }
+    $this->siteroot="//".$this->baseuri;
+   }
 
    return $this->table;
  }
@@ -139,7 +138,7 @@ class MomokoSiteConfig
    $ini=null;
    foreach ($settings as $key=>$value)
    {
-    $ini.=$key." = ".$value."\n";
+    $ini.=$key." = \"".$value."\"\n";
    }
    return $ini;
    break;
@@ -185,10 +184,105 @@ class MomokoSiteConfig
  }
 }
 
+class MomokoModuleList
+{
+  private $assoc;
+  private $mods;
+  protected $curusr;
+  
+  public function __construct(MomokoSession $user)
+  {
+    $this->assoc=new DataBaseTable('mzassoc');
+    $this->mods=new DataBaseTable('addins');
+    $this->curusr=$user;
+  }
+  
+  public function listByZone($zone=0)
+  {
+    $q=$this->assoc->getData("zone:`= {$zone}`");
+    return $q->fetchAll(PDO::FETCH_ASSOC);
+  }
+  
+  public function listByMod($mid=1)
+  {
+    $q=$this->assoc->getData("module:`= {$mid}`");
+    return $q->fetchAll(PDO::FETCH_ASSOC);
+  }
+  
+  public function listAll()
+  {
+    $q=$this->mods->getData("type:`module`");
+    $list=array();
+    while ($r=$q->fetch(PDO::FETCH_ASSOC))
+    {
+      $list[]=array('mod'=>$r['num']);
+    }
+    return $list;
+  }
+  
+  public function buildHTMLList($id=0,$section='template',$by='zone')
+  {
+    $conf=new MomokoSiteConfig();
+    $html=null;
+    $c=0;
+    switch ($by)
+    {
+      case 'source':
+      $list=$this->listALL();
+      break;
+      case 'module':
+      $list=$this->listByMod($id);
+      break;
+      case 'zone':
+      default:
+      $list=$this->listByZone($id);
+    }
+    
+    foreach ($list as $row)
+    {
+      $q=$this->mods->getData("num:`= {$row['mod']}`");
+      $mod=$q->fetch(PDO::FETCH_ASSOC);
+      require_once $conf->basedir.$conf->filedir."addins/".$mod['dir']."/module.php";
+      $mod_ob="Momoko".ucwords($mod['dir'])."Module";
+      $mod_ob=new $mod_ob($this->curusr,$row['settings']);
+      switch ($section)
+      {
+        case 'dash':
+        $form=$mod_ob->settingsToHTML("mod-{$row['mod']}-{COL}-{$c}");
+        $html.="<div id=\"mod-{$row['mod']}-{COL}-{$c}\" class=\"module panel panel-info\">\n<div class=\"panel-heading\"><h4 class=\"panel-title\">{$mod['shortname']}<a href=\"#collapse{$row['mod']}-{COL}-{$c}\" data-toggle=\"collapse\" class=\"right glyphicon glyphicon-plus\"></a></h4></div>\n<div id=\"collapse{$row['mod']}-{COL}-{$c}\" class=\"panel-collapse collapse\">\n<div class=\"panel-body\">{$form}</div>\n</div>\n</div>\n";
+        break;
+        case 'template':
+        $html.=$mod_ob->getModule('html');
+        default:
+      }
+      $c++;
+    }
+    return $html;
+  }
+}
+
 class MomokoModule
 {
-	public function settingsToHTML(array $values)
+ public function __get($key)
+ {
+  if (array_key_exists($key,$this->settings))
+  {
+   return $this->settings[$key];
+  }
+  else
+  {
+   return false;
+  }
+ }
+
+	public function settingsToHTML($id=null)
 	{
+	 if (empty($id))
+	 {
+	   $id=$this->info->num;
+	 }
+	 
+	 $values=$this->settings;
 	 $html="<ul id=\"settings\" class=\"noindent nobullet\">\n";
 	 foreach ($this->opt_keys as $key=>$value)
 	 {
@@ -197,13 +291,13 @@ class MomokoModule
 	  {
 	   case 'text':
 	   case 'number':
-	   $item.="<input id=\"{$this->info->dir}-{$key}\" type={$value['type']} size=10 name=\"{$this->info->num}[{$key}]\" value=\"{$values[$key]}\"></li>\n";
+	   $item.="<input id=\"{$this->info->dir}-{$key}\" type={$value['type']} size=10 name=\"{$id}[{$key}]\" value=\"{$values[$key]}\"></li>\n";
 	   break;
 	   case 'link':
-	   $item.="<input id=\"{$this->info->dir}-{$key}\" type=\"text\" size=5 name=\"{$this->info->num}[{$key}]\" value=\"{$values[$key]}\"><button id=\"{$key}\" class=\"linkbrowse\">Browse...</button></li>\n";
+	   $item.="<input id=\"{$this->info->dir}-{$key}\" type=\"text\" size=5 name=\"{$id}[{$key}]\" value=\"{$values[$key]}\"><button id=\"{$key}\" class=\"linkbrowse btn btn-info btn-sm\">Browse...</button></li>\n";
        break;
 	   case 'select':
-	   $item.="<select id=\"{$this->info->dir}-{$key}\" name=\"{$this->info->num}[{$key}]\">\n";
+	   $item.="<select id=\"{$this->info->dir}-{$key}\" name=\"{$id}[{$key}]\">\n";
 	   foreach ($value['options'] as $option)
 	   {
 	    if ($option == $values[$key])
@@ -226,9 +320,16 @@ class MomokoModule
 
 interface MomokoModuleInterface
 {
-  public function __construct();
+  public function __construct(MomokoSession $user,$extset=null);
   public function getModule($format='html');
   public function getInfoFromDB();
+}
+
+interface MomokoPageAddinInterface
+{
+  public function __construct($settings, MomokoSession $user);
+  public function getPage();
+  public function getForm();
 }
 
 interface MomokoPageObject
@@ -240,16 +341,19 @@ interface MomokoObject
 {
  public function __get($var);
  public function __set($key,$value);
- public function get();
 }
 
 class MomokoVariableHandler
 {
   private $varlist=array();
+  private $user;
+  private $config;
 
-  public function __construct(array $varlist)
+  public function __construct(array $varlist,MomokoSession $user)
   {
-	  $this->varlist=$varlist;
+   $this->varlist=$varlist;
+   $this->user=$user;
+   $this->config=new MomokoSiteConfig();
   }
 
   public function __get($key)
@@ -268,28 +372,6 @@ class MomokoVariableHandler
   {
     switch ($item)
     {
-      case 'usercontrols':
-      if (@$GLOBALS['USR'] instanceof MomokoSession)
-      {
-        $mod=new MomokoUCPModule($GLOBALS['USR'],$argstr);
-        return $mod->getModule('html');
-      }
-      else
-      {
-        return null;
-      }
-      break;
-      case 'pagecontrols':
-      if (@$GLOBALS['USR'] instanceof MomokoSession)
-      {
-        $mod=new MomokoPCModule($GLOBALS['USR'],$argstr);
-        return $mod->getModule('html');
-      }
-      else
-      {
-        return null;
-      }
-      break;
       case 'nav':
       $mod=new MomokoNavigation(null,$argstr);
       return $mod->getModule('html');
@@ -303,29 +385,17 @@ class MomokoVariableHandler
   private function loadModsByZone($q)
   {
    parse_str($q,$info);
-   $table=new DataBaseTable("addins");
-   $query=$table->getData("zone:'= ".$info['id']."'",array('num','dir','type'),'order');
-   $text=null;
-
-   if($query->rowCount() > 0)
+   $ml=new MomokoModuleList($this->user);
+   $text=$ml->buildHTMLList($info['id']);
+   
+   if (!empty($text))
    {
-    while ($module=$query->fetch(PDO::FETCH_ASSOC))
-    {
-     if ($module['type'] == 'module') //Sanity check!
-     {
-      require_once $GLOBALS['SET']['basedir']."/".$GLOBALS['SET']['filedir']."addins/{$module['dir']}/".$module['type'].".php";
-      $class="Momoko".ucwords($module['dir'])."Module";
-      $mod=new $class();
-      $text.=$mod->getModule('html');
-     }
-    }
+     return "<div id=\"MZ{$info['id']}\" class=\"modzone\">\n$text\n</div>\n";
    }
    else
    {
-    $text.="<!-- No Modules Set for Zone: {$info['id']} -->";
+     return "<!-- No modules set for Zone {$info['id']} -->";
    }
-   
-   return $text;
   }
 
   public function evalIf($exp,$true_block,$false_block=null)
@@ -371,7 +441,7 @@ class MomokoVariableHandler
 	      $text=preg_replace("/<!-- VAR:".$var." -->/","<!-- Notice: variable '".$var."' not set or empty -->",$text);
 	     }
       }
-    } 
+    }
 
     if (preg_match_all("/<var>(?P<var>.*?)<\/var>/",$text,$list))
     {
@@ -474,14 +544,14 @@ class MomokoVariableHandler
 }
 
 class SimpleXMLExtended extends SimpleXMLElement
-{   
+{
  public function addCData($cdata_text)
  {
-  $node= dom_import_simplexml($this);   
-  $no = $node->ownerDocument;   
-  $node->appendChild($no->createCDATASection($cdata_text));   
- }   
-} 
+  $node= dom_import_simplexml($this);
+  $no = $node->ownerDocument;
+  $node->appendChild($no->createCDATASection($cdata_text));
+ }
+}
 
 function file_url($url){
   $parts = parse_url($url);
@@ -493,7 +563,9 @@ function file_url($url){
 #Error handlers
 function momoko_html_errors($num,$str,$file,$line,$context)
 {
-  if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($GLOBALS['SET']['error_logging'] > 1))
+  $cfg=new MomokoSiteConfig();
+  $user=new MomokoSession();
+  if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($cfg->error_logging > 1))
   {
    $text="PHP Error (".$num."; ".$str.") on line ".$line." of ".$file."!\n";
    try
@@ -533,7 +605,7 @@ function momoko_html_errors($num,$str,$file,$line,$context)
    $error['action']="error caught";
    $error['message']=$text;
    
-   if ($table instanceof DataBaseTable)
+   if (@$table instanceof DataBaseTable)
    {
     try
     {
@@ -551,9 +623,9 @@ function momoko_html_errors($num,$str,$file,$line,$context)
     $info['error_type']=$num;
     if (class_exists('MomokoError'))
     {
-     $child=new MomokoError('Server_Error',$str,$info);
+     $child=new MomokoError('Server_Error',$user,$str,$info);
 
-     $tpl=new MomokoTemplate(pathinfo(@$path,PATHINFO_DIRNAME));
+     $tpl=new MomokoTemplate($user,$cfg);
      print $tpl->toHTML($child);
     }
     else
@@ -581,16 +653,17 @@ HTML;
 
 function momoko_cli_errors($num,$str,$file,$line,$context)
 {
-  if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($GLOBALS['SET']['error_logging'] > 1))
+  $cfg=new MomokoSiteConfig();
+  if (($num != E_USER_NOTICE && $num != E_NOTICE) || ($cfg->error_logging > 1))
   {
-    if (file_exists($GLOBALS['CFG']->logdir.'/error.log'))
+    if (file_exists($cfg->logdir.'/error.log'))
     {
-      $log=fopen($GLOBALS['CFG']->logdir.'/error.log','a') or die("Error log could not be open for write!");
+      $log=fopen($cfg->logdir.'/error.log','a') or die("Error log could not be open for write!");
       fwrite($log,"[".date("Y-m-d H:i:s")."] PHP Error (".$num."; ".$str.") in ".$line." of ".$file."!\n");
     }
     else
     {
-      die("Error log does not exist at configured location: ".$GLOBALS['CFG']->logdir."!");
+      die("Error log does not exist at configured location: ".$cfg->logdir."!");
     }
   }
   
@@ -604,7 +677,8 @@ function momoko_cli_errors($num,$str,$file,$line,$context)
 #Change logging handler
 function momoko_changes($user,$action,$resource,$message=null)
 {
-  if ($GLOBALS['SET']['security_logging'] > 0)
+  $cfg=new MomokoSiteConfig();
+  if ($cfg->security_logging > 0)
   {
       switch (get_class($resource))
       {
@@ -627,7 +701,8 @@ function momoko_changes($user,$action,$resource,$message=null)
 
 function momoko_basic_changes($user,$action,$target,$message=null)
 {
-  if ($GLOBALS['SET']['security_logging'] > 0)
+  $cfg=new MomokoSiteConfig();
+  if ($cfg->security_logging > 0)
   {
    if (!empty($message))
    {
@@ -651,12 +726,16 @@ function momoko_basic_changes($user,$action,$target,$message=null)
 }
 
 #Misc functions
-function paginate($total,$offset=0)
+function paginate($total,MomokoSession $user,$offset=0,$perpage=null)
 {
- $total_pp=ceil($total/$GLOBALS['USR']->rowspertable);
+ if (empty($perpage))
+ {
+  $perpage=$user->rowspertable;
+ }
+ $total_pp=ceil($total/$perpage);
  for($c=1;$c<=$total_pp;$c++)
  {
-  $offset_c=($c*$GLOBALS['USR']->rowspertable)-$GLOBALS['USR']->rowspertable;
+  $offset_c=(($c-1)*$user->rowspertable);
   $pages[]=array('offset'=>$offset_c,'number'=>$c);
  }
 
@@ -708,6 +787,125 @@ function rmdirr($dir,$empty_only=false)
   }
 }
 
+function truncate($text, $length = 100, $ending = '...', $exact = false, $considerHtml = true)
+{
+  if ($considerHtml)
+  {
+    // if the plain text is shorter than the maximum length, return the whole text
+    if (strlen(preg_replace('/<.*?>/', '', $text)) <= $length)
+    {
+      return $text;
+    }
+    // splits all html-tags to scanable lines
+    preg_match_all('/(<.+?>)?([^<>]*)/s', $text, $lines, PREG_SET_ORDER);
+    $total_length = strlen($ending);
+    $open_tags = array();
+    $truncate = '';
+    foreach ($lines as $line_matchings)
+    {
+      // if there is any html-tag in this line, handle it and add it (uncounted) to the output
+      if (!empty($line_matchings[1]))
+      {
+        // if it's an "empty element" with or without xhtml-conform closing slash
+        if (preg_match('/^<(\s*.+?\/\s*|\s*(img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param)(\s.+?)?)>$/is', $line_matchings[1]))
+        {
+          /* do nothing
+          if tag is a closing tag*/
+        }
+        else if (preg_match('/^<\s*\/([^\s]+?)\s*>$/s', $line_matchings[1], $tag_matchings))
+        {
+          // delete tag from $open_tags list
+          $pos = array_search($tag_matchings[1], $open_tags);
+          if ($pos !== false)
+          {
+            unset($open_tags[$pos]);
+          }
+          // if tag is an opening tag
+        }
+        else if (preg_match('/^<\s*([^\s>!]+).*?>$/s', $line_matchings[1], $tag_matchings))
+        {
+            // add tag to the beginning of $open_tags list
+            array_unshift($open_tags, strtolower($tag_matchings[1]));
+        }
+        // add html-tag to $truncate'd text
+        $truncate .= $line_matchings[1];
+      }
+      // calculate the length of the plain text part of the line; handle entities as one character
+      $content_length = strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', ' ', $line_matchings[2]));
+      if ($total_length+$content_length> $length)
+      {
+        // the number of characters which are left
+        $left = $length - $total_length;
+        $entities_length = 0;
+        // search for html entities
+        if (preg_match_all('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', $line_matchings[2], $entities, PREG_OFFSET_CAPTURE))
+        {
+          // calculate the real length of all entities in the legal range
+          foreach ($entities[0] as $entity)
+          {
+            if ($entity[1]+1-$entities_length <= $left)
+            {
+              $left--;
+              $entities_length += strlen($entity[0]);
+            }
+            else
+            {
+              // no more characters left
+              break;
+            }
+          }
+        }
+        $truncate .= substr($line_matchings[2], 0, $left+$entities_length);
+        // maximum lenght is reached, so get off the loop
+        break;
+      }
+      else
+      {
+        $truncate .= $line_matchings[2];
+        $total_length += $content_length;
+      }
+      // if the maximum length is reached, get off the loop
+      if($total_length>= $length)
+      {
+        break;
+      }
+    }
+  }
+  else
+  {
+    if (strlen($text) <= $length)
+    {
+      return $text;
+    }
+    else
+    {
+      $truncate = substr($text, 0, $length - strlen($ending));
+    }
+  }
+  // if the words shouldn't be cut in the middle...
+  if (!$exact)
+  {
+    // ...search the last occurance of a space...
+    $spacepos = strrpos($truncate, ' ');
+    if (isset($spacepos))
+    {
+      // ...and cut the text in this position
+      $truncate = substr($truncate, 0, $spacepos);
+    }
+  }
+  // add the defined ending to the text
+  $truncate .= $ending;
+  if($considerHtml)
+  {
+    // close all unclosed html-tags
+    foreach ($open_tags as $tag)
+    {
+      $truncate .= '</' . $tag . '>';
+    }
+  }
+  return $truncate;
+}
+
 function strrtrim($message,$strip)
 {
   // break message apart by strip string
@@ -733,7 +931,8 @@ function build_sorter($key)
 
 function xmltoarray($file)
 {
- require_once $GLOBALS['SET']['basedir']."/mk-core/mk-xml.class.php";
+ $config=new MomokoSiteConfig();
+ require_once $config->basedir."/mk-core/mk-xml.class.php";
 
  $xml=new MomokoXMLHandler();
  $xml->read($file);
@@ -757,6 +956,20 @@ function parse_page($data)
  return $array;
 }
 
+function locate_title($txt,$tag='h1') //Locates a title for a page without a head section, useful for pages from markdown sources
+{
+ $title="Untitled";
+ if (preg_match("/<{$tag}>(?P<title>.*?)<\/{$tag}>/smU",$txt,$match) > 0) //Find page title in $data
+ {
+  if (@$match['title']) //accept titles other than Blank and [Blank]
+  {
+   $title=$match['title'];
+  }
+ }
+
+ return $title;
+}
+
 function get_author($num)
 {
  $auth_table=new DataBaseTable('users');
@@ -764,6 +977,36 @@ function get_author($num)
  $author=$auth_query->fetch(PDO::FETCH_OBJ);
  
  return $author;
+}
+
+function ftp_get_contents($url,$user=null,$password=null)
+{
+ $location=parse_url($url);
+ $conn=ftp_connect($location['host']);
+ if (empty($user))
+ {
+  $user=$location['user'];
+ }
+
+ if (empty($password) && !empty($location['password']))
+ {
+  $password=$location['password'];
+ }
+
+ ftp_login($conn,$user,$password);
+ ob_start();
+ ftp_get($conn,"php://output",$location['path'],FTP_ASCII);
+ $str=ob_get_contents();
+ ob_end_clean();
+
+ if (!empty($str))
+ {
+  return $str;
+ }
+ else
+ {
+  return false;
+ }
 }
 
 function compile_head()
@@ -784,6 +1027,8 @@ function compile_head()
 
 function fetch_files($dir,$limitto=null)
 {
+ $cfg=new MomokoSiteConfig();
+ $set=$cfg->getSettings();
  $dir=str_replace(" ","+",$dir);
  $files=array();
  switch ($limitto)
@@ -795,7 +1040,7 @@ function fetch_files($dir,$limitto=null)
    $name="/*";
    break;
  }
- foreach (glob($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir'].$dir.$name) as $file)
+ foreach (glob($set['basedir'].$set['filedir'].$dir.$name) as $file)
  {
   switch ($limitto)
   {
@@ -811,4 +1056,5 @@ function fetch_files($dir,$limitto=null)
  }
  
  return $files;
+
 }

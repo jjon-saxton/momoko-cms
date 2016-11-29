@@ -1,62 +1,31 @@
 $(function(){
  if (!readCookie('ss')){ //Detects javascript and cookie support need for dashboard
-    createCookie('ss','partial',365);
+    createCookie('ss','full',365);
     window.location.reload();
- }
- else if (readCookie('ss') == 'partial'){
-    if ($(".sidebar").css('display')){
-        createCookie('ss','full',365);
-        window.location.reload();
-    }
  }
 
  $("button.answer#false").click(function(event){
   event.preventDefault();
   history.back();
  });
- $("button.linkbrowse").click(function(event){
+ $("button.linkbrowse").attr("data-toggle",'modal').attr("data-target",'#modal').click(function(event){
     event.preventDefault();
     var caller=event.currentTarget.id;
-	$("div#modal").load("?section=content&action=gethref&ajax=1",function(){
-	 $("#vtabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
-	 }).on('mouseenter',"div.selectable",function(){
-		 $(this).addClass("ui-state-hover");
-		 }).on('mouseleave',"div.selectable",function(){
-			$(this).removeClass("ui-state-hover");
-		 }).on('click',"div.selectable",function(){
-		   var location=$(this).find("a#location").attr('href');
-		   $("input#mediabox-"+caller).val(location);
-		   $("div#modal").dialog('close');
-	    });
-	$("div#modal").dialog({
-		 height: 500,
-		 width: 800,
-		 modal: true,
-		 title: "Link Chooser",
-         close: function(){
-            $(this).empty(); //empty the dialog box so it may be filled by ajax again later.
-            $(this).find('*').addBack().off(); //destroy all even handlers so they may be re-used with new data later.
-         }
-	});
- });
-  
-  $(".page div.actions").find("span").click(function(){
-   var location=$(this).parent().find("a#location").attr('href');
-   var action=$(this).attr('id');
-   if (action != 'view')
-   {
-    window.location=location+"action="+action;
-   }
-   else
-   {
-    location=location.slice(0,-1);
-    window.location=location;
-   }
+
+    $("#modal .modal-title").html("Link Browser...");
+    $("#modal .modal-body").empty().load("?section=content&action=gethref&ajax=1",function(){
+     $(this).on('click',"div.selectable",function(){
+      var location=$(this).find("a#location").attr('href');
+      $("input#mediabox-"+caller).val(location);
+     });
+     $("div.page").attr("data-dismiss",'modal');
+    });
+    $("#modal .modal-footer").remove();
   });
-             
+  
   $( "#add-addin" )
       .button()
-      .click(function(){ showAdd() }); 
+      .click(function(){ showAdd() });
      
   $("button#sidebarOpen").button({
    icons: {
@@ -72,18 +41,6 @@ $(function(){
   });
 });
 
-function toggleSidebar()
-{
- $("button#sidebarClose").button({
-  icons: {
-   primary: "ui-icon-closethick"
-  },
-  text: false
- });
- $("div#overlay").toggle('fade')
- $("div.sidebar").toggle('slide');
-}
-
 function serializeInputs(key)
 {
  var serial=$("#"+key+" input, #"+key+" select, #"+key+" textarea").serialize();
@@ -91,17 +48,15 @@ function serializeInputs(key)
  $("input[name="+key+"]").val(serial);
 }
 
-function changeServerInputs() 
+function changeServerInputs()
 {
  switch ($("select#email_mta").val())
  {
   case "smtp":
-  $("ul#email_server").html("<li><label for=\"email_server_host\">Host:</label> <input onkeyup=\"serializeInputs('email_server')\" id=\"email_server_host\" name=\"host\" type=\"text\" value=\"localhost\"></li>\n<li><label for=\"email_server_port\">Port:</label> <input onkeyup=\"serializeInputs('email_server')\" id=\"email_server_port\" name=\"host\" type=\"text\" placeholder=\"49\"></li>\n<li><label for=\"email_server_auth\">Use Authentication</label> <input onchange=\"serializeInputs('email_server')\" id=\"email_server_auth\" name=\"auth\" type=\"checkbox\" value=\"1\"></li>\n<li><label for=\"email_server_security\">Security:</label> <select onchange=\"serializeInputs('email_server')\" id=\"email_server_security\" name=\"security\">\n<option value=\"0\">None</option>\n<option value=\"tls\">TLS</option>\n<option value=\"ssl\">SSL</option>\n</select></li>\n<li><label for=\"email_server_user\">User:</label> <input onkeyup=\"serializeInputs('email_server')\" id=\"email_server_user\" name=\"user\" type=\"text\"></li>\n<li><label for=\"email_server_password\">Password:</label> <input onkeyup=\"serializeInputs('email_server')\" id=\"email_server_password\" name=\"password\" type=\"password\"></li>");
+  $("ul#email_server").html("<li><div class=\"form-group\"><label for=\"email_server_host\">Host:</label> <input class=\"form-control\" onkeyup=\"serializeInputs('email_server')\" id=\"email_server_host\" name=\"host\" type=\"text\" value=\"localhost\"></div></li>\n<li><div class=\"form-group\"><label for=\"email_server_port\">Port:</label> <input class=\"form-control\" onkeyup=\"serializeInputs('email_server')\" id=\"email_server_port\" name=\"host\" type=\"text\" placeholder=\"49\"></div></li>\n<li><div class=\"form-group\"><label for=\"email_server_auth\">Use Authentication?</label> <input onchange=\"serializeInputs('email_server')\" id=\"email_server_auth\" name=\"auth\" type=\"checkbox\" value=\"1\"></div></li>\n<li><div class=\"form-group\"><label for=\"email_server_security\">Security:</label> <select class=\"form-control\" onchange=\"serializeInputs('email_server')\" id=\"email_server_security\" name=\"security\">\n<option value=\"0\">None</option>\n<option value=\"tls\">TLS</option>\n<option value=\"ssl\">SSL</option>\n</select></div></li>\n<li><div class=\"form-group\"><label for=\"email_server_user\">User:</label> <input class=\"form-control\" onkeyup=\"serializeInputs('email_server')\" id=\"email_server_user\" name=\"user\" type=\"text\"></div></li>\n<li><div class=\"form-group\"><label for=\"email_server_password\">Password:</label> <input class=\"form-control\" onkeyup=\"serializeInputs('email_server')\" id=\"email_server_password\" name=\"password\" type=\"password\"></div></li>");
   break;
-  case "phpmail":
-  case "sendmail":
   default:
-  $("ul#email_server").html("<li><label for=\"email_server_host\">Host:</label> <input onkeyup=\"serializeInputs('email_server')\" id=\"email_server_host\" name=\"host\" type=\"text\" value=\"localhost\"></li>");
+  $("ul#email_server").html("<li><div class=\"form-group\"><label for=\"email_server_host\">Host:</label> <input class=\"form-control\" onkeyup=\"serializeInputs('email_server')\" id=\"email_server_host\" name=\"host\" type=\"text\" value=\"localhost\"></div></li>");
  }
 
  serializeInputs('email_server');
@@ -119,17 +74,11 @@ function toggleInputState(p,q)
     }
 }
 
-function openAJAXModal(url,title)
+function populateModal(url,title)
 {
- $("div#modal").load(url).dialog({
-  modal:true,
-  title: title,
-  buttons: {
-   "Next":function(){
-    $("form#UserForm").submit();
-   }
-  }
- });
+ $("#modal .modal-title").html(title);
+ $("#modal .modal-body").empty().load(url);
+ $("#modal .modal-footer").remove();
 }
 
 function iFetch(e,field){
@@ -156,52 +105,28 @@ function iUpload(field,pkg){
     }
 
     field.form.submit();
-    $("#file span#msg").remove();
-    $("#file").append("<span id=\"msg\">Uploading...</span>");
+    $("#ExtFile #msg").remove();
+    $("#ExtFile").append("<div id=\"msg\" class=\"alert alert-info\">Uploading...</div>");
     field.disabled=true;
 }
 
 function showAdd(){
-	$("div#dialog-fill").load("?ajax=1&section=addin&action=new", function(data){
-	$(this).dialog({
-		autoOpen: true,
-		title: "Add Addin",
-		height: 300,
-		width: 350,
-		modal: true,
-		buttons: {
-			Go: function(){
-				doAdd();
-				$(this).dialog("close");
- },
-			Cancel: function(){
-				$(this).dialog("close");
-			}
-		}
-         });
+    $("#modal .modal-title").html("Upload New Addin");
+	$("#modal .modal-body").empty().load("?ajax=1&section=addin&action=new", function(data){
 	});
+    $("#modal .modal-footer").remove();
+    $("#modal .modal-content").append("<div class=\"modal-footer\"><div class=\"center\"><button class=\"btn btn-primary\" onclick=\"doAdd()\">Add</button></div></div>");
+    $("#modal").modal();
 }
 
 function showRemove(id,event){
 	event.preventDefault();
-	$("div#dialog-fill").load("?ajax=1&section=addin&action=delete&num="+id, function(data){
-	$(this).dialog({
-		autoOpen: true,
-		title: "Remove Addin?",
-		height:250,
-		width:350,
-		modal: true,
-		buttons: {
-			"Yes": function() {
-				doRemove(id);
-				$(this).dialog("close");
- },
-			"No": function(){
-				$(this).dialog("close");
-			}
-		}
-	  });
+    $("#modal .modal-title").html("Remove Addin?")
+	$("#modal .modal-body").empty().load("?ajax=1&section=addin&action=delete&num="+id, function(data){
 	});
+    $("#modal .modal-footer").remove();
+    $("#modal .modal-content").append("<div class=\"modal-footer\"><div class=\"half center\"><button class=\"btn btn-success\" onclick=\"doRemove("+id+")\">Yes</buton></div><div class=\"half center\"><button data-dismiss=\"modal\" class=\"btn btn-danger\">No</button></div></div>");
+    $("#modal").modal();
 }
 
 function doAdd(){
@@ -235,7 +160,7 @@ function doAdd(){
          console.debug(data);
 	     $("table#addins").append("<tr class=\"error\" id=\"newError\">\n<td colspan=\"4\">"+data.msg+"</td>>\n</tr>");
 	    }
-	},'json');	
+	},'json');
 }
 
 function doRemove(id) {

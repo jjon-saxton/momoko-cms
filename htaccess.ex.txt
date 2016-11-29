@@ -1,19 +1,6 @@
 # Example .htaccess file for MomoKO's 'pretty urls' and error documents make modification below
 # and save the file as '.htaccess'
 
-# Modify the RewriteBase if you are using MomoKO in a subdirectory or in a
-# VirtualDocumentRoot and the rewrite rules are not working properly.
-# For example if your site is at http://example.com/momoko uncomment and
-# modify the following line:  # RewriteBase /momoko
-#  # If your site is running in a VirtualDocumentRoot at http://example.com/,
-# uncomment the following line:
-# RewriteBase /
-# Rewrite URLs of the form 'x' to the form 'index.php?q=x'.
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !=/favicon.ico
-RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
-
 # If you would like to use MomoKO to serve apache error documents include the
 # following lines, otherwise remove them
 

@@ -1,10 +1,10 @@
 @import "./base.css";
-@import "./boilerplate.css";
+@import "./bootstrap.css";
 
-div#dashOpen {position:fixed;top:0;left:0;opacity:0.8;z-index:1950;}
-div#overlay {z-index:1950}
-div.sidebar {width:30%;max-width:400px;height:100%; display:none; position:fixed; left:0; top: 0; background:white;color:black; z-index:1951}
-.sidebar h4{text-align:center;color:black}
+figure.preview {border:1px solid #000; border-radius: 2px; background-color: #fff; color:000}
+figure.preview img {max-width:100%; display:inline-block}
+figure.preview figurecaption {font-weight: bold; color: 000}
+
 ul.plug.list {padding-left:5px; list-style:none}
 ul.plug.list li a {display:block;padding:2px;margin:2px;text-decoration:none}
 ul.plug.list li a:link, ul.plug.list li a:visited {border:1px solid #ccc;background:#eee}
@@ -21,19 +21,21 @@ ul.plug.list li a:active, ul.plug.list li a:hover {border:1px solid #eee;backgro
 .preview h6 {font-size:1em; color:#777}
 .no-drag {background-color:rgba(239,239,255,0.7)}
 
-.portlet {width:100%; max-width:150px; margin:0 1em 1em 0; padding:0.3em}
-.portlet-header {cursor:move;padding: 0.2em 0.3em; margin-bottom: 0.5em; position: relative}
-.portlet-toggle {cursor:pointer;position: absolute; top: 50%; right: 0; margin-top: -8px}
-.portlet-content {padding: 0.4em}
-.portlet-content input {max-width:50px}
-.portlet-placeholder {width:100%;max-width:150px;border: 1px dotted black; margin: 0 1em 1em 0; height: 50px}
-
 div.page {border:1px solid #999; border-radius:6px; margin:2px; padding:4px}
 div.selectable {cursor:pointer}
+.ui-sortable-handle {cursor:move}
 
-.error {color:red}
-.success {color:green}
+
+.quarter {width:25%;float:left}
+.third {width:33.32%;float:left}
+.half {width:50%;float:left}
+.full {width:100%;clear:both}
+.overtext {position:absolute;top:50%;margin:0;padding:0;z-index:1;text-shadow:#444 2px 2px 4px}
 
 #MapList ul { list-style-type: none; margin: 0; padding: 0; min-height: 10px }
 #MapList ul li { margin: 3px; padding: 0.4em; }
 #MapList ul .ui-icon { display: inline-block; }
+
+#MLLine {display: inline-block; }
+
+#dashboard {max-height: 100vh; overflow-x: hidden}

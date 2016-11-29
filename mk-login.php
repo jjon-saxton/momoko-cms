@@ -6,6 +6,16 @@ if (!empty($_GET['action']))
 {
     switch ($_GET['action'])
     {
+        case 'force-modern':
+          $_SESSION['modern']='full';
+          setcookie('ss',$_SESSION['modern'],time()+60*60*24*365);
+          header("Location: ".$config->siteroot);
+        break;
+        case 'keep-classic':
+          $_SESSION['classic']=true;
+          setcookie('ss','classic',time()+60*60*24*365);
+          header("Location: ".$config->siteroot);
+        break;
         case 'new':
 	    $formname="Register";
         break;
@@ -68,15 +78,15 @@ if (!empty($_GET['action']))
             if ($_POST['pass1'] == $_POST['pass2'])
             {
                 $mail->AddAddress($info->email);
-                $mail->Subject=$GLOBALS['SET']['name'].": Your Password has been reset!";
+                $mail->Subject=$config->name.": Your Password has been reset!";
                 $mail->Body=<<<HTML
 Hello {$info->name},
 
 This is a friendly e-mail confirming that you have reset your password. We are sorry for any incovience this may have caused you and hope you will never have to see this message again. To assist with that please keep your password in a secure place, and remember not to share it with anyone!
 
-If you believe you are recieving this e-mail in error, for example, you did not request your password to be reset, please contact the site administration immediately at {$GLOBALS['SET']['support_email']} so they can investigate the matter further. They may instruct you to reset your password again. For your reference, we have included the reset link at the end of this e-mail.
+If you believe you are recieving this e-mail in error, for example, you did not request your password to be reset, please contact the site administration immediately at {$config->support_email} so they can investigate the matter further. They may instruct you to reset your password again. For your reference, we have included the reset link at the end of this e-mail.
 
-In case you need to reset again, the link is: {$GLOBALS['SET']['baseuri']}/mk-login.php?action=reset
+In case you need to reset again, the link is: {$config->baseuri}/mk-login.php?action=reset
 
 Sorry for any inconvience!
 HTML;
@@ -85,13 +95,13 @@ Hello {$info->name},
 
 This is a friendly e-mail confirming that you have reset your password. We are sorry for any incovience this may have caused you and hope you will never have to see this message again. To assist with that please keep your password in a secure place, and remember not to share it with anyone!
 
-If you believe you are recieving this e-mail in error, for example, you did not request your password to be reset, please contact the site administration immediately at {$GLOBALS['SET']['support_email']} so they can investigate the matter further. They may instruct you to reset your password again. For your reference, we have included the reset link at the end of this e-mail.
+If you believe you are recieving this e-mail in error, for example, you did not request your password to be reset, please contact the site administration immediately at {$config->support_email} so they can investigate the matter further. They may instruct you to reset your password again. For your reference, we have included the reset link at the end of this e-mail.
 
-In case you need to reset again, the link is: {$GLOBALS['SET']['baseuri']}/mk-login.php?action=reset
+In case you need to reset again, the link is: {$config->baseuri}/mk-login.php?action=reset
 
 Sorry for any inconvience!
 TXT;
-                $data['password']=crypt($_POST['pass2'],$GLOBALS['SET']['salt']);
+                $data['password']=crypt($_POST['pass2'],$config->salt);
                 if ($usr->updateByID($info->num,$data))
                 {
                     $mail->Send();
@@ -115,11 +125,11 @@ TXT;
                 $data[0]=$info->num;
                 $data[1]=$info->name;
                 $data[2]=$info->email;
-                if ($sid=$usr->putSID($data,crypt(time(),$GLOBALS['SET']['salt'])))
+                if ($sid=$usr->putSID($data,crypt(time(),$config->salt)))
                 {
-                    $link="http://".$GLOBALS['SET']['baseuri']."/mk-login.php?action=reset&sid=".$sid;
+                    $link="http://".$config->baseuri."/mk-login.php?action=reset&sid=".$sid;
                     $mail->AddAddress($info->email);
-                    $mail->Subject=$GLOBALS['SET']['name'].": Your Password Reset Instructions";
+                    $mail->Subject=$config->name.": Your Password Reset Instructions";
                     $mail->Body=<<<HTML
 Hello {$info->name},
 Per your request we are sending you instructions on how to reset your password. If you did <strong>not</strong> make this request, you may ignore this e-mail. Your password has not been reset yet!
@@ -174,10 +184,10 @@ else
 {
 	$formname="Login";
 }
-$props['link']=$GLOBALS['SET']['baseuri']."/?action=".strtolower($formname);
-$props['recovery']=$GLOBALS['SET']['baseuri']."/mk-login.php?action=reset";
+$props['link']=$config->baseuri."/?action=".strtolower($formname);
+$props['recovery']=$config->baseuri."/mk-login.php?action=reset";
 
-$form=new MomokoPage($formname,$props);
+$form=new MomokoContent($formname,$auth,$props);
 
-$tpl=new MomokoTemplate(pathinfo("/",PATHINFO_DIRNAME));
+$tpl=new MomokoTemplate($auth,$config);
 print $tpl->toHTML($form);

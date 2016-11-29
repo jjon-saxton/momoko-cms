@@ -1,16 +1,18 @@
 <?php
-require_once $GLOBALS['SET']['basedir'].'/mk-core/simple_html_dom.php';
+require_once $config->basedir.'/mk-core/simple_html_dom.php';
 
 class MomokoNavigation
 {
  public $user;
  public $options=array();
  public $map=array();
+ private $config;
  private $table;
 
  public function __construct($user,$options)
  {
   $this->user=$user;
+  $this->config=new MomokoSiteConfig();
   parse_str($options,$this->options);
   $this->table=new DataBaseTable('content');
   $this->map=$this->scanContent();
@@ -34,7 +36,7 @@ class MomokoNavigation
     case 'flat':
     $text=$this->getTopMap($this->map,$this->options['style']);
     break;
-    case'simple':
+    case 'simple':
     default:
     $text=$this->getListItems($this->map);
    }
@@ -67,7 +69,7 @@ class MomokoNavigation
    {
     $content[]=array('id'=>$data['num'],'title'=>$data['title'],'href'=>"/".$pfolder.urlencode($data['title']).".htm",'children'=>$this->scanContent($data['num']));
    }
-   elseif ($data['type'] == "page" && ($data['status'] != "cloaked" && $data['status'] != "locked"))
+   elseif (($data['type'] == "addin page" || $data['type'] == "page") && ($data['status'] != "cloaked" && $data['status'] != "locked"))
    {
     $content[]=array('id'=>$data['num'],'title'=>$data['title'],'href'=>"/".$pfolder.urlencode($data['title']).".htm");
    }
@@ -81,13 +83,13 @@ class MomokoNavigation
   $text=null;
   foreach ($map as $item)
   {
-   if ($GLOBALS['SET']['rewrite'] == true)
+   if ($this->config->rewrite == true)
    {
-    $href=$GLOBALS['SET']['siteroot']."/".$item['href'];
+    $href=$this->config->siteroot."/".$item['href'];
    }
    else
    {
-    $href=$GLOBALS['SET']['siteroot']."/?p=".$item['id'];
+    $href=$this->config->siteroot."/?p=".$item['id'];
    }
    if (is_array($item['children']))
    {
@@ -116,13 +118,13 @@ class MomokoNavigation
 
   foreach ($map as $item)
   {
-   if ($GLOBALS['SET']['rewrite'] == true)
+   if ($this->config->rewrite == true)
    {
-    $href="//".$GLOALS['SET']['baseuri']."/".$item['href'];
+    $href="//".$this->config->baseuri."/".$item['href'];
    }
    else
    {
-    $href="//".$GLOBALS['SET']['baseuri']."/?p=".$item['id'];
+    $href="//".$this->config->baseuri."/?p=".$item['id'];
    }
 
    if ($display == "list")
@@ -182,167 +184,17 @@ class MomokoNavigation
  }
 }
 
-class MomokoNews implements MomokoObject
-{
-	public $user;
-	public $news_list;
-	public $info;
-	private $table;
-	
-	public function __construct($user)
-	{
-  $this->user=$user;
-  parse_str($options,$this->options);
-  $this->table=new DataBaseTable('content');
-  $query=$this->table->getData("type:'post'");
-  $this->news_list=$query->fetchAll(PDO::FETCH_ASSOC);
-	}
-	
-	public function __get($key)
-	{
-	 return $this->info[$key];
-	}
-	
-	public function __set($key,$var)
-	{
-	 //TODO Set a new key in $this->info
-	}
-	
-	public function getPostByHeadline($title)
-	{
-	 $query=$this->table->getData("title:'".$title."'",array('num'),null,1);
-	 $data=$query->fetch(PDO::FETCH_ASSOC);
-	 $this->getPostByID($data['num']);
-	}
-	
-	public function getPostByID($num)
-	{
-	 $query=$this->table->getData("num:'".$num."'",null,null,1);
-	 $info=$query->fetch(PDO::FETCH_ASSOC);
-	 $post_created=strtotime($info['date_created']);
-	 if ($info['date_modified'])
-	 {
-	  $post_modified=strtotime($info['date_modified']);
-	 }
-	 $date=date($GLOBALS['USR']->longdateformat,$post_created);
-	 $info['inner_body']=<<<HTML
-<h2>{$info['title']}</h2>
-<div class="date">{$date}</div>
-<artcile class="box">{$info['text']}</article>
-HTML;
-  $info['full_html']="<html>\n<body>\n{$this->info['inner_body']}\n</body>\n</html>";
-  $this->info=$info;
-	}
-	
-	public function get()
-	{
-	 //TODO Get something?
-	}
-
- public function put($data,$prepend=true)
- {
-  $key=strtotime($data['date'].$data['time']);
-  $data['update']=date("d M Y H:i:s",$key);
-  unset($data['date'],$data['time']);
-  $array[$key]=$data;
-  momoko_changes($GLOBALS['USR'],'added',$this); //Log changes based on settings
-  if ($prepend == TRUE)
-  {
-   return array_merge($array,$this->getModule('array'));
-  }
-  else
-  {
-   return array_merge($this->getModule('array'),$array);
-  }
- }
-
- public function update($data,$key)
- {
-  $ndate=strtotime($data['date'].$data['time']);
-  $data['update']=date("d M Y H:i:s",$ndate);
-  unset($data['date'],$data['time']);
-  $array=$this->getModule('array');
-  $array[$key]=$data;
-  momoko_changes($GLOBALS['USR'],'updated',$this); //Log the change
-  return $array;
- }
-
- public function drop($key)
- {
-  $array=$this->getModule('array');
-  unset($array[$key]);
-  momoko_changes($GLOBALS['USR'],'deleted',$this);
-  return $array;
- }
-
- public function convertNewsToXMLObj($arr, &$obj)
- {
-  foreach ($arr as $item)
-  {
-   $node=$obj->addChild('item');
-   foreach($item as $name=>$text)
-   {
-    if ($name == 'article')
-    {
-     $subnode=$node->addChild($name);
-     $subnode->addCData($text);
-    }
-    elseif ($name != 'date')
-    {
-     $subnode=$node->addChild($name,$text);
-    }
-   }
-  }
-  return;
- }
-
- public function write(array $arr)
- {
-  $xmlstr=<<<XML
-<?xml version="1.0"?>
-<reel>
-</reel>
-XML;
-  $xmlobj=new SimpleXMLExtended($xmlstr);
-  $this->convertNewsToXmlObj($arr,$xmlobj);
-  $dom=new DOMDocument('1.0'); //Folowing lines are used to process XML in easier to read format, for anyone who cares
-  $dom->preserveWhiteSpace=false;
-  $dom->formatOutput=true;
-  $dom->loadXML($xmlobj->asXML());
-  $data=$dom->saveXML();
-  if (file_put_contents($GLOBALS['SET']['pagedir'].'/news.xml',$data)) // Replace with actual path!
-  {
-   momoko_changes($GLOBALS['USR'],'updated',$this,"Changes were written to {$GLOBALS['SET']->pagedir}/news.xml!");
-   return true;
-  }
-  else
-  {
-   trigger_error("Could not write to news.xml, check permissions!",E_USER_WARNING);
-   return false;
-  }
- }
-	
- private function generateUUID($prefix=null,$chars)
- {
-  $chars=md5($chars);
-  $uuid=substr($chars,0,8) . '-';
-  $uuid.=substr($chars,8,4) . '-';
-  $uuid.=substr($chars,12,4) . '-';
-  $uuid.=substr($chars,16,4) . '-';
-  $uuid.=substr($chars,20,12);
-  return $prefix.$uuid;
- }
-}
-
 class MomokoFeed implements MomokoObject
 {
  private $table;
+ private $config;
  private $options=array();
  private $info=array();
 
  public function __construct($path, array $additional_vars=null)
  {
   $this->table=new DataBaseTable('content');
+  $this->config=new MomokoSiteConfig();
   $this->options['where_str']="status: 'public'";
  }
 
@@ -372,8 +224,8 @@ class MomokoFeed implements MomokoObject
 
  public function get()
  {
-  $name=htmlspecialchars($GLOBALS['SET']['name'],ENT_XML1,'UTF-8');
-  $uri=htmlspecialchars("//".$GLOBALS['SET']['baseuri']."/",ENT_XML1,'UTF-8');
+  $name=htmlspecialchars($this->config->name,ENT_XML1,'UTF-8');
+  $uri=htmlspecialchars("//".$this->config->baseuri."/",ENT_XML1,'UTF-8');
   $query=$this->table->getData("type:'post'");
   $dom=new DOMDocument('1.0','UTF-8');
 
@@ -473,15 +325,197 @@ class MomokoFeed implements MomokoObject
  }
 }
 
+class MomokoTags
+{
+  private $tags;
+  private $assoc;
+  private $con;
+  
+  public function __construct()
+  {
+    $this->tags=new DataBaseTable('tags');
+    $this->assoc=new DataBaseTable('tcassoc');
+    $this->con=new DataBaseTable('content');
+  }
+  
+  public function getTags()
+  {
+    $q=$this->tags->getData(null,array('name'));
+    while ($info=$q->fetch(PDO::FETCH_ASSOC))
+    {
+      $tags[]=$info['name'];
+    }
+    
+    return $tags;
+  }
+  
+  public function addNew(array $tags)
+  {
+    foreach ($tags as $t)
+    {
+      $q=$this->tags->getData("name:`{$t}`");
+      $info=$q->fetch(PDO::FETCH_ASSOC);
+      
+      if (empty($info['num']))
+      {
+        $data['name']=$t;
+        $new[]=$this->tags->putData($data);
+      }
+    }
+    
+    if (is_array($new))
+    {
+      return $new;
+    }
+    else
+    {
+      return null;
+    }
+  }
+  
+  public function deleteAll($num,$type='con')
+  {
+    $q=$this->assoc->getData("{$type}_num:`= {$num}`");
+    $deleted=array();
+    while ($data=$q->fetch(PDO::FETCH_ASSOC))
+    {
+      $deleted[]=$this->assoc->deleteData($data);
+    }
+    
+    if (!empty($deleted) && is_array($deleted))
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  
+  public function changeAssoc($pid,array $tags)
+  {
+    $tids=$this->addNew($tags);
+    $tids=array();
+    foreach ($tags as $t)
+    {
+      $q=$this->tags->getData("name:`{$t}`");
+      $info=$q->fetch(PDO::FETCH_OBJ);
+      
+      $tids[]=$info->num;
+    }
+    
+    $list=array();
+    $q=$this->assoc->getData("con_num:`= {$pid}`");
+    while ($assoc=$q->fetch(PDO::FETCH_OBJ))
+    {
+      $list[]=$assoc->tag_num;
+    }
+    
+    $new_tags=array_diff($tids,$list); //Find tids to put in assoc
+    foreach ($new_tags as $num)
+    {
+      $data['tag_num']=$num;
+      $data['con_num']=$pid;
+      $this->assoc->putData($data);
+    }
+    
+    $del_tags=array_diff($list,$tids); //Finds tids to remove form assoc
+    foreach ($del_tags as $rnum)
+    {
+      $q=$this->assoc->getData("con_num:`= {$pid}` tag_num:`= {$rnum}`");
+      $info=$q->fetch(PDO::FETCH_ASSOC);
+      $data['row']=$info['row'];
+      $this->assoc->deleteData($data);
+    }
+  }
+  
+  public function getContent(array $tags,$type=null,$sort=null,$limit=null,$offset=null)
+  {
+    foreach ($tags as $name) //get all tag ids and put them into an array
+    {
+      $q=$this->tags->getData("name:`{$name}`",array('num'));
+      $info=$q->fetch(PDO::FETCH_ASSOC);
+      $tids[]=$info['num'];
+    }
+  
+    foreach ($tids as $tnum) //find all content ids and put them into an array
+    {
+      $q=$this->assoc->getData("tag_num:`= {$tnum}`",array('con_num'));
+      while ($ko=$q->fetch(PDO::FETCH_ASSOC))
+      {
+       $cids[]=$ko['con_num'];
+      }
+    }
+  
+    $where="WHERE ";
+    $nums=array();
+    foreach ($cids as $num) //create num=num or statetment for each pid found
+    {
+     if (!empty($num))
+      {
+        $nums[]="`num`={$num}";
+      }
+    }
+    $num_str=implode($nums," OR ");
+    
+    if (!empty($type)) //add type filter if present
+    {
+      $where.="({$num_str}) AND `type` LIKE '".$type."'";
+    }
+    else
+    {
+      $where.=$num_str;
+    }
+    
+    if ($where != "WHERE ")
+    {
+      $sql=$where;
+      if (!empty($sort))
+      {
+        if (preg_match("/(?P<col>.*)( )(?P<operator><|>)/",$sort,$orderby))
+        {
+          if ($orderby['operator'] == '>')
+          {
+            $sql.=" ORDER BY `".$orderby['col']."` DESC";
+          }
+          else
+          {
+            $sql.=" ORDER BY `".$orderby['col']."` ASC";
+          }
+        }
+        else
+        {
+          $sql.=" ORDER BY `".$sort."` ASC";
+        }
+      }
+      if ($limit > 0)
+      {
+        $sql.=" LIMIT ".$limit;
+      }
+      if ($offset > 0)
+      {
+        $sql.=" OFFSET ".$offset;
+      }
+      return $this->con->getByQuery($sql);
+    }
+    else
+    {
+      return false;
+    }
+  }
+}
+
 class MomokoAttachment implements MomokoObject
 {
  private $table;
+ private $config;
  private $page;
  private $info=array();
  
  public function __construct($path, array $additional_vars=null)
  {
   $table=new DataBaseTable('content');
+  $this->config=new MomokoSiteConfig();
   
   $title=basename($path);
   $category_tree=trim(dirname($path),"./");
@@ -575,7 +609,7 @@ class MomokoAttachment implements MomokoObject
     $hiddenvals=<<<HTML
 <input type=hidden name="type" value="attachment">
 <input type=hidden name="date_created" value="{$now}">
-<input type=hidden name="author" value="{$GLOBALS['USR']->num}">
+<input type=hidden name="author" value="{$this->user->num}">
 HTML;
    }
    else
@@ -604,16 +638,23 @@ $(function(){
  });
 });
 </script>
-<form method=post>
+<form class="form-inline" role="form" method=post>
 {$hiddenvals}
 <h2>Edit Attachment: <input type=text name="title" placeholder="Filename" id="title" value="{$this->title}"></h2>
 <div id="PageEditor">
 <div id="PageProps">
-<ul class="noindent nobullet">
-<li><label for="parent">Parent Page:</label> <select id="parent" name="parent">{$parent_opts}</select></li>
-<li><label for="status">Attachment Status:</label> <select id="status" name="status">{$status_opts}</select></li>
-<li><label for="private">Groups that have access:</label> <input type=text id="private" name="has_access" disabled=disabled value="editor,members"></li>
-</ul>
+<div class="form-group">
+ <label for="parent">Parent Page:</label>
+ <select class="form-control" id="parent" name="parent">{$parent_opts}</select>
+</div>
+<div class="form-group">
+ <label for="status">Attachment Status:</label>
+ <select id="status" name="status">{$status_opts}</select>
+</div>
+<div class="form-group">
+ <label for="private">Groups that have access:</label>
+ <input type=text id="private" name="has_access" disabled=disabled value="editor,members">
+</div>
 </div>
 <div id="PageSave" align=center>
 <button type=submit name="save" value="1">Save</button>
@@ -652,7 +693,7 @@ HTML;
   if ($_POST['drop'])
   {
    $data['num']=$this->info['num'];
-   $file=$GLOBALS['SET']['basedir'].'/'.preg_replace("%http://".$GLOBALS['SET']['baseuri']."/%",'',$this->link);
+   $file=$this->config->basedir.'/'.preg_replace("%http://".$this->config->baseuri."/%",'',$this->link);
    if (unlink($file))
    {
     try
@@ -674,7 +715,7 @@ HTML;
     $info['inner_body']=<<<HTML
 <div id="DeleteAttachment" class="message box">
 <h3 class="message title">Attachment Gone</h3>
-<p>The attachment you selected was deleted! You may now <a href="//{$GLOBALS['SET']['baseuri']}/">return</a> to your home page!</p>
+<p>The attachment you selected was deleted! You may now <a href="//{$this->config->baseuri}/">return</a> to your home page!</p>
 </div>
 HTML;
    }
@@ -696,7 +737,7 @@ HTML;
 <h3 class="message confirmation title">Do you wish to delete this attachment?</h3>
 <p>You are about to delete an attachment. Content in MomoKO cannot be retrieved once it is deleted. If you would like to simply make the attachment private without removing it, there are several options for you in the attachment's edit page under 'status'.</p>
 <p class="confirmation question">Are you sure you want to delete '{$this->info['title']}'?</p>
-<div class="confirmation buttons"><button class="answer" type=submit name="drop" id="true" value="1">Yes</button> <button class="answer" id="false">No</button></div>
+<div class="confirmation buttons"><button class="answer" class="btn btn-success" type=submit name="drop" id="true" value="1">Yes</button> <button class="btn btn-danger" class="answer" id="false">No</button></div>
 </div>
 </form>
 HTML;
@@ -707,14 +748,19 @@ HTML;
  }
 }
 
-class MomokoPage implements MomokoObject
+class MomokoContent implements MomokoObject
 {
  private $table;
  private $page;
+ private $user;
+ private $config;
  private $info=array();
  
- public function __construct($path, array $additional_vars=null)
+ public function __construct($path,MomokoSession $user, array $additional_vars=null)
  {
+  $this->user=$user;
+  $this->config=new MomokoSiteConfig();
+
   $table=new DataBaseTable('content');
   
   $title=basename($path);
@@ -752,7 +798,7 @@ class MomokoPage implements MomokoObject
 
   $body=$this->get();
   $vars=$this->setVars($additional_vars);
-  $ch=new MomokoVariableHandler($vars);
+  $ch=new MomokoVariableHandler($vars,$this->user);
   $this->inner_body=$ch->replace($body);
  }
  
@@ -781,22 +827,49 @@ class MomokoPage implements MomokoObject
 
   $body=$this->get();
   $vars=$this->setVars($additional_vars);
-  $ch=new MomokoVariableHandler($vars);
+  $ch=new MomokoVariableHandler($vars,$this->user);
   $this->inner_body=$ch->replace($body);
  }
  
  public function put($data)
  {
-  if (@$data['text'])
+  if (@$data['title'])
   {
+   $tags=new MomokoTags();
+   if (!empty($data['tags']))
+   {
+     $tarr=explode(",",$data['tags']);
+   }
+   else
+   {
+     $tags->deleteAll($data['num']); //Remove all tags
+   }
+   
+   if (is_array($data['set']))
+   {
+     $data['text']=null;
+     foreach($data['set'] as $k=>$v)
+     {
+       $data['text'].=$k."=\"{$v}\"\n";
+     }
+     $data['text']=trim($data['text'],"\n");
+   }
    if (($_GET['action'] == 'edit' && $data['num']) && $update=$this->table->updateData($data))
    {
-    header("Location: http://{$GLOBALS['SET']['baseuri']}/?p={$data['num']}");
+    if (is_array($tarr))
+    {
+      $tags->changeAssoc($data['num'],$tarr);
+    }
+    header("Location: http://{$this->config->baseuri}/?p={$data['num']}");
     exit();
    }
    elseif ($_GET['action'] == 'new' && $new=$this->table->putData($data))
    {
-    header("Location: http://{$GLOBALS['SET']['baseuri']}/?p={$new}");
+    if (is_array($tarr))
+    {
+      $tags->changeAssoc($new,$tarr);
+    }
+    header("Location: http://{$this->config->baseuri}/?p={$new}");
     exit();
    }
    else
@@ -829,7 +902,7 @@ class MomokoPage implements MomokoObject
      }
     }
    }
-   $statuses=array('public'=>"Public",'cloaked'=>"Hidden From Navigation",'private'=>"Private",'locked'=>"In Production");
+   $statuses=array('public'=>"Public",'cloaked'=>"Hidden From Navigation",'private'=>"Private",'locked'=>"Draft");
    $status_opts=null;
    foreach($statuses as $value=>$name)
    {
@@ -843,13 +916,17 @@ class MomokoPage implements MomokoObject
     }
    }
    
-   if ($_GET['content'])
+   if ($_GET['content'] == "addin page")
+   {
+     $type="page";
+   }
+   elseif (!empty($_GET['content']))
    {
     $type=$_GET['content'];
    }
    else
    {
-    $type="page";
+    $type=$this->type;
    }
    
    $now=date("Y-m-d H:i:s");
@@ -858,7 +935,7 @@ class MomokoPage implements MomokoObject
     $hiddenvals=<<<HTML
 <input type=hidden name="type" value="{$type}">
 <input type=hidden name="date_created" value="{$now}">
-<input type=hidden name="author" value="{$GLOBALS['USR']->num}">
+<input type=hidden name="author" value="{$this->user->num}">
 <input type=hidden name="mime_type" value="text/html">
 HTML;
    }
@@ -869,53 +946,117 @@ HTML;
 <input type=hidden name="date_modified" value="{$now}">
 HTML;
    }
-   $type_links=null;
-   if ($type == 'page')
+   
+   if ($this->mime_type == "text/html" && $_GET['content'] != "addin page")
    {
-    $formats='["p","Normal"], ["h2","Header 2"], ["h3","Header 3"], ["h4","Header 4"], ["pre","Preformatted"]';
-    if ($_GET['action'] == 'new')
+    $editor=<<<HTML
+<textarea class="form-control" id="pagebody" name="text">
+{$this->inner_body}
+</textarea>
+HTML;
+   }
+   elseif ($_GET['content'] != "addin page")
+   {
+    $mimeparts=explode("/",$this->mime_type);
+    switch ($mimeparts[0])
     {
-     $type_links="<div id=\"type_select\"><input type=\"radio\" id=\"t1\" checked=checked name=\"type\" value=\"page\"><label for=\"t1\">Page</label> <input type=\"radio\" id=\"t2\" name=\"type\" value=\"post\"><label for=\"t2\">Post</label></div>";
+     case 'application':
+     $tbl=new DataBaseTable('addins');
+     $query=$tbl->getData("dir:`{$mimeparts[1]}`");
+     $addin=$query->fetch(PDO::FETCH_OBJ);
+     if (!empty($addin->dir))
+     {
+      require_once $this->config->basedir.$this->config->filedir."addins/".$addin->dir."/page.php";
+      $addin=new MomokoPageAddin($this->text,$this->user);
+      $editor=$addin->getForm();
+     }
+     break;
+     case 'text':
+     default:
+     $editor=<<<HTML
+<textarea class="form-control" name="text">
+{$this->text}
+</textarea>
+HTML;
     }
    }
    else
    {
+     $editor=<<<HTML
+<div id="AddinSettings" class="alert alert-warning">Please <a href="#modal" data-toggle="modal">select</a> an addin to drive this page's dynamic content.</div>
+HTML;
+   }
+   
+   $type_links=null;
+   if ($type == 'page')
+   {
+    $formats='["p","Normal"], ["h2","Header 2"], ["h3","Header 3"], ["h4","Header 4"], ["pre","Preformatted"]';
+   }
+   elseif ($type == 'attachment')
+   {
+     $formats='["p","Normal"],';
+   }
+   else
+   {
     $formats='["p","Normal"], ["h3","Header 3"], ["h4","Header 4"]';
-    if ($_GET['action'] == 'new')
-    {
-     $type_links="<div id=\"type_select\"><input type=\"radio\" id=\"t1\" name=\"type\" value=\"page\"><label for=\"t1\">Page</label> <input type=\"radio\" id=\"t2\" checked=checked name=\"type\" value=\"post\"><label for=\"t2\">Post</label></div>";
-    }
    }
    $type=ucwords($type);
    $chooser=null;
    if ($_GET['action'] == "new")
    {
-    $chooser=<<<TXT
-	$("div#modal").load("//{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=content&action=gethref&ajax=1&origin=new",function(){
-	 $("#vtabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
-	 }).on('mouseenter',"div.selectable",function(){
-		 $(this).addClass("ui-state-hover");
-		 }).on('mouseleave',"div.selectable",function(){
-			$(this).removeClass("ui-state-hover");
-		 }).on('click',"div.selectable",function(){
-		   var location=$(this).find("a#location").attr('href');
-           $.get(location,function(html){
-		    $("#pagebody").html(html);
-            $("div.jqte_editor").html(html);
-           })
-		   $("div#modal").dialog('close');
-	    });
-	$("div#modal").dialog({
-		 height: 500,
-		 width: 800,
-		 modal: true,
-		 title: "New From...",
-         close: function(){
-            $(this).empty(); //empty the dialog box so it may be filled by ajax again later.
-            $(this).find('*').addBack().off(); //destroy all even handlers so they may be re-used with new data later.
-         }
-	});
+     if (empty($_GET['content']))
+     {
+       $chooser=<<<TXT
+$("#modal .modal-title").html("New Content Type?");
+$("#modal .modal-body").html("<a href='?content=page&action=new' class='btn btn-default'>Static Page <a href='?content=addin+page&action=new' class='btn btn-default'>Dynamic Page</a> <a href='?content=post&action=new' class='btn btn-default'>Post</a> <a href='?content=attachment&action=new' class='btn btn-default'>Attachment</a>");
+$("#modal").modal('show');
 TXT;
+     }
+     elseif ($_GET['content'] == 'addin page')
+     {
+      $chooser=<<<TXT
+    $("#modal .modal-title").html("Addin Picker...");
+	$("#modal .modal-body").load("//{$this->config->baseuri}/mk-dash.php?section=addin&action=picker&ajax=1&origin=new",function(){
+     $(this).on('click','div.selectable',function(){
+      var addin=$(this).attr('id');
+      $("#AddinSettings").load("//{$this->config->baseuri}/mk-dash.php?section=addin&action=addinform&addin="+addin+"&ajax=1&origin=new").removeClass("alert alert-warning");
+     });
+     $(".selectable").attr("data-dismiss",'modal');
+	});
+    $("#modal").modal('show');
+TXT;
+     }
+     elseif ($_GET['content'] == "attachment")
+     {
+       $chooser=<<<TXT
+   $("#modal .modal-title").html("Uploader...");
+   $("#modal .modal-body").load("//{$this->config->baseuri}/mk-dash.php?section=content&action=gethref&ajax=1&origin=attachment",function(){
+     $(".modal-body li:not(.active)").hide();
+     $(this).on('click','div.selectable',function(){
+       var num=$(this).attr('id');
+       window.location="//{$this->config->baseuri}/p="+num+"&action=edit";
+     });
+   });
+   
+   $("#modal").modal('show');
+TXT;
+     }
+     else
+     {
+      $chooser=<<<TXT
+    $("#modal .modal-title").html("New From...");
+	$("#modal .modal-body").load("//{$this->config->baseuri}/mk-dash.php?section=content&action=gethref&ajax=1&origin=new",function(){
+     $(this).on('click','div.selectable',function(){
+      var location=$(this).find("a#location").attr('href');
+      $.get(location,function(html){
+       $(".jqte_editor").html(html);
+      });
+     });
+     $(".selectable").attr("data-dismiss",'modal');
+	});
+    $("#modal").modal('show');
+TXT;
+     }
    }
    
    $info['title']="Edit {$type}: ".$this->title;
@@ -928,18 +1069,12 @@ $(function(){
  }
   
  $("textarea").jqte({
-  dashuri:"//{$GLOBALS['SET']['baseuri']}/mk-dash.php",
+  dashuri:"//{$this->config->baseuri}/mk-dash.php",
   color:false,
   strike:false,
   formats:[{$formats}],
   fsize:false,
   placeholder: "Page body..."
- });
- $("div#PageEditor").tabs();
- 
- $("#type_select").css("text-align","center");
- $("#type_select input:radio").change(function(){
-  window.location="?action=new&content="+$("#type_select input:radio:checked").val();
  });
  
  $("select#status").change(function(){
@@ -952,36 +1087,45 @@ $(function(){
  });
 });
 </script>
-<form method=post>
+<form role="form" method=post>
 {$hiddenvals}
 <h2>Edit {$type}: <input type=text name="title" placeholder="{$type} Title" id="title" value="{$this->title}"></h2>
-{$type_links}
 <div id="PageEditor">
-<ul id="tabs">
-<li><a href="#PageBody">Body</a></li>
-<li><a href="#PageProps">Properties</a></li>
+<ul class="nav nav-tabs">
+<li class="active"><a data-toggle="tab" href="#PageBody">Body</a></li>
+<li><a data-toggle="tab" href="#PageProps">Properties</a></li>
 </ul>
-<div id="PageBody">
-<textarea id="pagebody" name="text">
-{$this->inner_body}
-</textarea>
+<div class="tab-content">
+<div id="PageBody" class="tab-pane fade in active">
+{$editor}
 </div>
 HTML;
   if ($type == 'Page')
   {
    $info['inner_body'].=<<<HTML
-<div id="PageProps">
-<ul class="noindent nobullet">
-<li><label for="parent">Parent Page:</label> <select id="parent" name="parent">{$parent_opts}</select></li>
-<li><label for="status">Page Status:</label> <select id="status" name="status">{$status_opts}</select></li>
-<li><label for="private">Groups that have access:</label> <input type=text id="private" name="has_access" disabled=disabled value="editor,members"></li>
-</ul>
+<div id="PageProps" class="tab-pane fade">
+<div class="form-group">
+ <label for="parent">Parent Page:</label>
+ <select class="form-control" id="parent" name="parent">{$parent_opts}</select>
+</div>
+<div class="form-group" title="Comma-seperated list of tags">
+ <label for="tags">Tags:</label>
+ <input type="text" class="form-control" id="tags" name="tags" value="{$this->tags}">
+</div>
+<div class="form-group">
+ <label for="status">Page Status:</label>
+ <select class="form-control" id="status" name="status">{$status_opts}</select>
+</div>
+<div class="form-group">
+ <label for="private">Groups that have access:</label>
+ <input class="form-control" type="text" id="private" name="has_access" disabled=disabled value="editor,members">
+</div>
 </div>
 HTML;
    }
-   elseif ($type == 'Post')
+   elseif ($type == 'Post' || $type == "Attachment")
    {
-    $now_h=date($GLOBALS['USR']->shortdateformat);
+    $now_h=date($this->user->shortdateformat);
     unset($statuses['cloaked'],$statuses['private']);
     $status_opts=null;
     foreach($statuses as $value=>$name)
@@ -996,19 +1140,31 @@ HTML;
      }
     }
     $info['inner_body'].=<<<HTML
-<div id="PageProps">
+<div id="PageProps" class="tab-pane fade">
 <input type=hidden name="parent" value="0">
-<ul class="noindent nobullet">
-<li>Post Date: {$now_h}</li>
-<li>Post Author: {$GLOBALS['USR']->name}</li>
-<li><label for="status">Post Status:</label> <select id="status" name="status">{$status_opts}</select>
-</ul>
+<div class="form-group">
+ <label for="pdate">{$type} Date:</label>
+ <span id="pdate" class="form-control">{$now_h}</span>
+</div>
+<div class="form-group">
+ <label for="pauthor">{$type} Author:</label>
+ <span id="pauthor" class="form-control">{$this->user->name}</span>
+</div>
+<div class="form-group" title="comma-seperated list of tags">
+ <label for="tags">Tags:</label>
+ <input type="text" id="tags" class="form-control" name="tags" value="{$this->tags}">
+</div>
+<div class="form-group">
+ <label for="status">Post Status:</label>
+ <select id="status" class="form-control" name="status">{$status_opts}</select>
+</div>
 </div>
 HTML;
    }
    $info['inner_body'].=<<<HTML
+</div>
 <div id="PageSave" align=center>
-<button type=submit name="save" value="1">Save</button>
+<button type=submit name="save" class="btn btn-primary" value="1">Save</button>
 </div>
 </div>
 </form>
@@ -1021,19 +1177,124 @@ HTML;
  public function get()
  {
   $authorized=$this->hasAccess();
-
-  if ($authorized && $this->text)
+  if (empty($this->user) || !($this->user instanceof MomokoSession))
   {
-   return $this->text;
+   $user=new MomokoSession(); //create a guest session in case usere is empty to prevent cascading errors
+  }
+  else
+  {
+   $user=$this->user; //copy the current session if it is okay.
+  }
+  
+  if ($this->type == 'post' && empty($_GET['action']) && empty($_GET['ajax']))
+  {
+    if (!empty($this->date_modified))
+    {
+      $datetranslated=date($this->user->longdateformat." ".$this->user->timeformat,strtotime($this->date_modified));
+    }
+    else
+    {
+      $datetranslated=date($this->user->longdateformat." ".$this->user->timeformat,strtotime($this->date_created));
+    }
+    $html=<<<HTML
+<h1>{$this->title}</h1>
+<div class="post-date">{$datetranslated}</div>
+{$this->text}
+HTML;
+  }
+  elseif ($this->type == 'attachment')
+  {
+    $mimeparts=explode("/",$this->mime_type);
+    $linkparts=parse_url($this->link);
+    $locfile=$this->config->basedir.preg_replace("/momoko\//","",ltrim($linkparts['path'],"/"));
+    $html="<h1>{$this->title}</h1>\n";
+    if ($this->mime_type == "text/html")
+    {
+      $page=parse_page(file_get_contents($locfile));
+      $html.=$page['inner_body'];
+    }
+    elseif ($mimeparts[0] == "text")
+    {
+      $text=htmlentities(file_get_contents($locfile));
+      $html.=<<<HTML
+<pre class="code">
+{$text}
+</pre>
+HTML;
+    }
+    elseif ($mimeparts[0] == "image")
+    {
+      $html.=<<<HTML
+<figure class="preview">
+  <a href="{$this->link}" target="_new"><img src="{$this->link}" alt="{$this->title}" /></a>
+  <figcaption>{$this->text}</figcaption>
+</figure>
+HTML;
+    }
+    else
+    {
+      $html.=<<<HTML
+<div class="alert alert-info">
+<p>This attachment could not be embedded directly in a page. You can <a href="{$this->link}" target="_new">open</a> this file and view or downloaded by clicking the button below.</p>
+</div>
+HTML;
+    }
+    $html.=<<<HTML
+<div class="left">
+<a href="{$this->link}" class="btn btn-primary" target="_new" title="Open in new Tab/Window">Open</a>
+</div>
+HTML;
+  }
+  else //if it is not a post or attachment assume it is some kind of page
+  {
+    if ($this->mime_type == "text/html")
+    {
+     $html=$this->text;
+    }
+    else
+    {
+      $mimeparts=explode("/",$this->mime_type);
+      switch($mimeparts[0])
+      {
+        case 'application':
+        $tbl=new DataBaseTable("addins");
+        $query=$tbl->getData("dir:`{$mimeparts[1]}`");
+        $addin=$query->fetch(PDO::FETCH_OBJ);
+        $html="<h1>".$this->title."</h1>\n";
+        if (!empty($addin->dir))
+        {
+          require_once $this->config->basedir.$this->config->filedir."addins/".$addin->dir."/page.php";
+          $page=new MomokoPageAddin($this->text,$this->user);
+          $html.=$page->getPage();
+        }
+        else
+        {
+          $html.="<div class=\"alert alert-danger\">Could not load addin '{$mimeparts[1]}'. Addin not found.</div>";
+        }
+        break;
+        case 'text':
+        default:
+        $html=$this->text;
+      }
+    }
+  }
+
+  if ($authorized && $html)
+  {
+   return $html;
+  }
+  elseif ($blob)
+  {
+    return $blob;
   }
   elseif (!$authorized)
   {
-   $page=new MomokoError("403 Forbidden");
+   $page=new MomokoError("403 Forbidden",$user);
    return $page->inner_body;
   }
   else
   {
-   $page=new MomokoError("404 Not Found");
+   $page=new MomokoError("404 Not Found",$user);
    return $page->inner_body;
   }
  }
@@ -1043,10 +1304,19 @@ HTML;
   $info['title']="Delete Page: ".$this->info['title'];
   if ($_POST['drop'])
   {
+   if (!empty($this->info['link']))
+   {
+     $linkparts=parse_url($this->info['link']);
+     $locfile=preg_replace("/\/momoko/","",$linkparts['path']);
+   }
    $data['num']=$this->info['num'];
    try
    {
     $delete=$this->table->deleteData($data);
+    if ($this->info['type'] == "attachment")
+    {
+      unlink($this->config->basedir.$locfile);
+    }
    }
    catch (Exception $err)
    {
@@ -1058,7 +1328,7 @@ HTML;
     $info['inner_body']=<<<HTML
 <div id="DeletePage" class="message box">
 <h3 class="message title">Page Gone</h3>
-<p>The page you selected was removed! You may now <a href="//{$GLOBALS['SET']['baseuri']}/">return</a> to your home page!</p>
+<p>The page you selected was removed! You may now <a href="//{$this->config->baseuri}/">return</a> to your home page!</p>
 </div>
 HTML;
    }
@@ -1080,7 +1350,7 @@ HTML;
 <h3 class="message confirmation title">Do you wish to delete this page?</h3>
 <p>You are about to delete a page or post. Content in MomoKO cannot be retrieved once it is deleted. If you would like to hide a page from navigation without removing it, there are several options for you in the page's properties tab under 'status'.</p>
 <p class="confirmation question">Are you sure you want to delete '{$this->info['title']}'?</p>
-<div class="confirmation buttons"><button class="answer" type=submit name="drop" id="true" value="1">Yes</button> <button class="answer" id="false">No</button></div>
+<div class="confirmation buttons"><button class="answer btn btn-success" type=submit name="drop" id="true" value="1">Yes</button> <button class="answer btn btn-danger" id="false">No</button></div>
 </div>
 </form>
 HTML;
@@ -1097,7 +1367,7 @@ HTML;
     $vars=array();
    }
    
-   $vars['siteroot']=$GLOBALS['SET']['siteroot'];
+   $vars['siteroot']=$this->config->siteroot;
    
    return $vars;
  }
@@ -1105,7 +1375,12 @@ HTML;
  private function hasAccess()
  {
   $grouplist=explode(",",$this->has_access);
-  if ($GLOBALS['USR']->inGroup('admin'))
+  if (empty($this->user))
+  {
+   trigger_error("No user passed when attempting to check for access rights. Defaulting to no access. This is a programming error.",E_USER_NOTICE);
+   return false;
+  }
+  elseif ($this->user->inGroup('admin'))
   {
    return true;
   }
@@ -1114,7 +1389,7 @@ HTML;
    switch ($this->status)
    {
     case 'locked':
-    if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
+    if ($this->user->inGroup('admin') || $this->user->inGroup('editor'))
     {
      return true;
     }
@@ -1133,7 +1408,7 @@ HTML;
   {
    foreach ($grouplist as $group)
    {
-    if ($GLOBALS['USR']->inGroup($group))
+    if ($this->user->inGroup($group))
     {
      return true;
     }
@@ -1147,19 +1422,21 @@ class MomokoError implements MomokoObject
 {
  public $name;
  private $page;
+ private $config;
  private $inner_body;
  private $error_msg;
 
- public function __construct($title,$msg=null,array $additional_vars=null)
+ public function __construct($title,MomokoSession $user,$msg=null,array $additional_vars=null)
  {
-  $this->page=new MomokoPage($title);
+  $this->page=new MomokoContent($title,$user);
+  $this->config=new MomokoSiteConfig();
   $this->error_msg=$msg;
   header("Status: ".$this->page->title);
   header("HTTP/1.0 ".$this->page->title);
 
   $body=$this->page->inner_body;
   $vars=$this->setVars($additional_vars);
-  $ch=new MomokoVariableHandler($vars);
+  $ch=new MomokoVariableHandler($vars,$user);
   $this->inner_body=$ch->replace($body);
  }
 
@@ -1192,22 +1469,25 @@ class MomokoError implements MomokoObject
  private function setVars($vars)
  {
   $vars['error_msg']=$this->error_msg;
-  $vars['admin_email']=$GLOBALS['SET']['support_email'];
-  $vars['forgot_password']='http://'.$GLOBALS['SET']['domain'].$GLOBALS['SET']['location'].ADDINROOT.'passreset/';
+  $vars['admin_email']=$this->config->support_email;
+  $vars['forgot_password']=$this->config->sec_protocol.$this->config->baseuri."/mk-login.php?action=reset";
   return $vars;
  }
 }
 
 class MomokoTemplate implements MomokoObject, MomokoPageObject
 {
- private $cur_path;
+ private $user;
  private $template;
+ private $conf;
  private $info=array();
  
- public function __construct($path)
+ public function __construct(MomokoSession $user,MomokoSiteConfig $conf)
  {
-  $this->cur_path=$path;
-  $this->info=$this->readInfo();
+  $this->user=$user;
+  $this->conf=$conf;
+  $this->template=$conf->basedir.TEMPLATEPATH;
+  $this->info=$this->get();
  }
  
  public function __get($var)
@@ -1230,25 +1510,7 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
  
  public function get()
  {
-  if ((pathinfo($this->cur_path,PATHINFO_EXTENSION) == 'html' || pathinfo($this->cur_path,PATHINFO_EXTENSION) == 'htm') && file_exists($GLOBALS['SET']->basedir.$this->cur_path))
-  {
-   $this->template=$this->cur_path;
-  }
-  elseif (file_exists($GLOBALS['SET']['basedir'].$this->cur_path.'/default.tpl.html'))
-  {
-   $this->template=$this->cur_path.'/default.tpl.html';
-  }
-  else
-  {
-   $this->template=TEMPLATEPATH;
-  }
-  
-  return file_get_contents($GLOBALS['SET']['basedir'].$this->template);
- }
-
- private function readInfo()
- {
-  $raw=$this->get();
+  $raw=file_get_contents($this->template);
   preg_match("/<head>(?P<head>.*?)<\/head>/smU",$raw,$match);
   $split['head']=$match['head'];
   unset($match);
@@ -1257,22 +1519,22 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
   $body_tag="<body".$match['body_props'].">";
   unset($match);
   
-  if (!$GLOBALS['USR']->inGroup('users'))
+  if (!$this->user->inGroup('users'))
   {
-   $umopts="<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-login.php\">Login</a></li>";
+   $umopts="<li><a href=\"{$this->conf->sec_protocol}{$this->conf->baseuri}/mk-login.php\">Login</a></li>";
    $rockout=null;
   }
   else
   {
-   $umopts="<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=settings\">Settings</a></li>";
-   $rockout="\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/?action=logout\">Logout</a></li>\n";
+   $umopts="<li><a href=\"{$this->conf->siteroot}/mk-dash.php?section=user&action=settings\">Settings</a></li>";
+   $rockout="\n<li><a href=\"{$this->conf->sec_protocol}{$this->conf->baseuri}/?action=logout\">Logout</a></li>\n";
   }
   $contentlists=null;
-  if ($GLOBALS['USR']->inGroup('admin'))
+  if ($this->user->inGroup('admin'))
   {
-   $umopts.="\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=user&action=new\">Register</a></li>";
+   $umopts.="\n<li><a href=\"{$this->conf->siteroot}/mk-dash.php?section=user&action=list\">Manage</a></li>\n<li><a href=\"{$this->conf->siteroot}/mk-dash.php?section=user&action=new\">Register</a></li>";
   }
-  if ($GLOBALS['USR']->inGroup('admin') || $GLOBALS['USR']->inGroup('editor'))
+  if ((basename($_SERVER['PHP_SELF']) == "mk-dash.php" || empty($_GET['action'])) && ($this->user->inGroup('admin') || $this->user->inGroup('editor')))
   {
    if($_SERVER['QUERY_STRING'])
    {
@@ -1293,8 +1555,8 @@ class MomokoTemplate implements MomokoObject, MomokoPageObject
      $type="Page";
     }
     $curconlinks.=<<<HTML
-<li><a href="{$qstr}action=edit">Edit This {$type}</a></li>
-<li><a href="{$qstr}action=delete">Delete This {$type}</a></li>
+<li><a href="{$qstr}action=edit">Edit This</a></li>
+<li><a href="{$qstr}action=delete">Delete This</a></li>
 HTML;
    }
    else
@@ -1304,14 +1566,31 @@ HTML;
    $contentlists.=<<<HTML
 <h4>Content</h4>
 <ul id="ContentPlugs" class="plug list">
-<li><a href="{$GLOBALS['SET']['siteroot']}/?action=new">New</a></li>{$curconlinks}
-<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list=pages">All Pages</a></li>
-<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list=posts">All Posts</a></li>
-<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
+<li><a href="javascript:void" onclick="$('#newMenu').slideToggle()">New</a></li>
+<li id="newMenu" style="display:none"><ul class="nobullet">
+<li><a href="{$this->conf->siteroot}/?content=page&action=new">Page</a></li>
+<li><a href="{$this->conf->siteroot}/?content=addin+page&action=new">Dynamic Page</a></li>
+<li><a href="{$this->conf->siteroot}/?content=post&action=new">Post</a></li>
+<li><a href="{$this->conf->siteroot}/?content=attachment&action=new">Attachment</a></li>
+</ul></li>{$curconlinks}
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=pages">All Pages</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=posts">All Posts</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
 </ul>
 HTML;
   }
-  if ($GLOBALS['USR']->inGroup('admin'))
+  elseif ($this->user->inGroup('admin') || $this->user->inGroup('editor'))
+  {
+    $contentlists.=<<<HTML
+<h4>Content</h4>
+<ul id="ContentPlugs" class="plug list">
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=pages">All Pages</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=posts">All Posts</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=attachments">Attachments</a></li>
+</ul>
+HTML;
+  }
+  if ($this->user->inGroup('admin'))
   {
    $sb_tbl=new DataBaseTable('addins');
    $sb_q=$sb_tbl->getData("type:'switchboard'",array('dir','shortname'));
@@ -1320,19 +1599,19 @@ HTML;
    {
     while ($sb_row=$sb_q->fetch())
     {
-        $switchboards.="<li><a href=\"{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=switchboard&plug={$sb_row['dir']}\">{$sb_row['shortname']}</a></li>\n";
+        $switchboards.="<li><a href=\"{$this->conf->siteroot}/mk-dash.php?section=switchboard&plug={$sb_row['dir']}\">{$sb_row['shortname']}</a></li>\n";
     }
    }
    $contentlists.=<<<HTML
 <h4>Site</h4>
 <ul id="SitePlugs" class="plug list">
-<li><a href="{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&list=logs">Logs</a></li>
-<li><a href="{$GLOBALS['SET']['sec_protocol']}{$GLOBALS['SET']['baseuri']}/mk-dash.php?section=site&action=settings">Settings</a></li>
-<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&action=appearance">Appearance</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=site&list=logs">Logs</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=site&action=settings">Settings</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=site&action=appearance">Appearance</a></li>
 </ul>
 <h4>Addins</h4>
 <ul id="SwitchPlugs" class="plug list">
-{$switchboards}<li><a href="{$GLOBALS['SET']['siteroot']}/mk-dash.php?section=site&list=addins">All Addins</a></li>
+{$switchboards}<li><a href="{$this->conf->siteroot}/mk-dash.php?section=site&list=addins">All Addins</a></li>
 </ul>
 HTML;
   }
@@ -1341,8 +1620,8 @@ HTML;
   if ($_GET['action'] == 'edit' || $_GET['action'] == 'new')
   {
    $editor=<<<HTML
-<link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/mk-core/styles/editor.css" type=text/css>
-<script type="text/javascript" src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/editor.js"></script>
+<link rel="stylesheet" href="//{$this->conf->baseuri}/mk-core/styles/editor.css" type=text/css>
+<script type="text/javascript" src="//{$this->conf->baseuri}/mk-core/scripts/editor.js"></script>
 HTML;
   }
   else
@@ -1354,46 +1633,87 @@ HTML;
 <title>~{sitename} - ~{pagetitle}</title>
 <!-- Meta Tags? -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css" />
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-{$editor}<script src="//{$GLOBALS['SET']['baseuri']}/mk-core/scripts/dash.js" type="text/javascript"></script>
-<link rel="stylesheet" href="//{$GLOBALS['SET']['baseuri']}/mk-core/styles/momoko.css" type="text/css">
+<script src="//{$this->conf->baseuri}/mk-core/scripts/bootstrap.js"></script>
+{$editor}<script src="//{$this->conf->baseuri}/mk-core/scripts/dash.js" type="text/javascript"></script>
+<link rel="stylesheet" href="//{$this->conf->baseuri}/mk-core/styles/momoko.css" type="text/css">
 
-<link rel="alternate" type="application/rss+xml" title="Post Feed: RSS" href="{$GLOBALS['SET']['siteroot']}/?content=rss">
-<link rel="alternate" type="application/atom+xml" title="Post Feed: ATOM" href="{$GLOBALS['SET']['siteroot']}/?content=atom">
+<link rel="alternate" type="application/rss+xml" title="Post Feed: RSS" href="{$this->conf->siteroot}/?content=rss">
+<link rel="alternate" type="application/atom+xml" title="Post Feed: ATOM" href="{$this->conf->siteroot}/?content=atom">
 {$addin_tags}
 {$split['head']}
 HTML;
-  if ($GLOBALS['USR']->inGroup('users'))
-  {
-   $dashup="<div id=\"dashOpen\"><button id=\"sidebarOpen\" onclick=\"toggleSidebar()\">My Dashboard</button></div>";
-  }
-  else
-  {
-   $dashup="<div id=\"dashOpen\"><button id=\"sidebarLogin\" onclick=\"window.location='//{$GLOBALS['SET']['baseuri']}/mk-login.php'\">Login</button></div>";
-  }
 
- if ($_SESSION['modern'])
+ if ($_SESSION['modern'] == 'full')
  {
+  $version=MOMOKOVERSION;
   $split['body']=<<<HTML
-{$dashup}
-<div id="modal" title="Loading Awesomeness!" style="display:none">
-<p>Becoming 20% more awesome...</p>
+<div id="modal" class="modal fade" role="dialog">
+ <div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+     <button type="button" class="close" data-dismiss="modal">&times;</button>
+     <h4 class="modal-title">Preparing awesome stuff...</h4>
+    </div>
+    <div class="modal-body">
+     <p>Becoming 20% more awesome...</p>
+    </div>
+  </div>
+ </div>
 </div>
-<div id="overlay" class="ui-widget-overlay" style="display:none" onclick="toggleSidebar();">&nbsp;</div>
-<div id="dashboard" class="sidebar">
-<button style="float:right" id="sidebarClose" onclick="toggleSidebar()">Close Dashboard</button>
-<h1>{$GLOBALS['SET']['name']}</h1>
+<div id="sidebar" class="modal fade left" role="dialog">
+ <div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+     <button type="button" class="close" data-dismiss="modal">&times;</button>
+    </div>
+    <div id="dashboard" class="modal-body">
+<h1>{$this->conf->name}</h1>
 <h4>User</h4>
 <ul id="UserPlugs" class="plug list">
 {$umopts}
+{$rockout}
 </ul>
 {$contentlists}
-<h4>Exit</h4>
-<ul id="ExitPlugs" class="plug list">
-<li><a href="javascript:void();" onclick="toggleSidebar();">Close Dashboard</a></li>{$rockout}
-</ul>
+<div class="version alert alert-info">
+MomoKO v{$version}
 </div>
+</div>
+    </div>
+  </div>
+ </div>
+</div>
+{$split['body']}
+HTML;
+ }
+ elseif ($_SESSION['modern'] == 'partial' && !$_SESSION['classic'])
+ {
+   $split['body']=<<<HTML
+<script language="javascript" type="text/javascript">
+  $(document).ready(function(){
+    $('#modal').modal('show');
+  });
+</script>
+<div id="modal" class="modal fade" role="dialog">
+ <div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+     <h4 class="modal-title">JavaScript support detected!</h4>
+    </div>
+    <div class="modal-body">
+     <p>Your browser does support javascript. If you'd like you can switch to a better supported, feature-rich layout by informing MomoKO that JavaScript is enabled. You will only have to do this once. Do you wish to switch to a better layout?</p>
+    </div>
+    <div class="modal-footer">
+     <a href="{$this->config->siteroot}mk-login.php?action=force-modern" class="btn btn-success">Yes</a>
+     <a href="{$this->config->siteroot}mk-login.php?action=keep-classic" class="btn btn-danger">No</a>
+    </div>
+  </div>
+ </div>
+</div>
+<noscript>
+<div class="alert alert-warning">
+<p>Your browser does not support JavaScript! To use a better theme, please enable JavaScript, if available.
+</div>
+</noscript>
 {$split['body']}
 HTML;
  }
@@ -1427,8 +1747,8 @@ HTML;
  else
  {
   $html=$this->info['full'];
-  $vars['siteroot']=$GLOBALS['SET']['siteroot'];
-  $vars['sitename']=$GLOBALS['SET']['name'];
+  $vars['siteroot']=$this->conf->siteroot;
+  $vars['sitename']=$this->conf->name;
   $vars['pagetitle']="Untitled";
   $vars['templatedir']=$vars['siteroot'].dirname($this->template);
   $vars['pagedir']=$vars['siteroot'].PAGEROOT;
@@ -1452,7 +1772,7 @@ HTML;
    $vars['body']=$page->inner_body;
   }
 
-  $ch=new MomokoVariableHandler($vars);
+  $ch=new MomokoVariableHandler($vars,$this->user);
   $html=$ch->replace($html);
 
   return $html;
@@ -1463,10 +1783,14 @@ HTML;
 class MomokoAddinForm implements MomokoObject
 {
   public $form;
+  private $config;
+  private $user;
   private $info=array();
   
-  public function __construct($form=null)
+  public function __construct($form=null, MomokoSession $user)
   {
+    $this->config=new MomokoSiteConfig();
+    $this->user=$user;
     if (!empty($form))
     {
       $this->form=$form;
@@ -1493,13 +1817,13 @@ class MomokoAddinForm implements MomokoObject
   
   public function get()
   {
-    return file_get_contents($GLOBALS['SET']['basedir'].$GLOBALS['SET']['filedir']."forms/addin".$this->form.".htm");
+    return file_get_contents($this->config->basedir.$this->config->filedir."forms/addin".$this->form.".htm");
   }
   
   private function parse()
   {
     $info=parse_page($this->get());
-    $vars['sitedir']=$GLOBALS['SET']['baseuri'];
+    $vars['sitedir']=$this->config->baseuri;
     $table=new DataBaseTable('addins');
     
     switch($this->form)
@@ -1530,15 +1854,15 @@ class MomokoAddinForm implements MomokoObject
 	{
 	  if ($name != 'num')
 	  {
-	    $vars['addin_list'].="<td id=\"".$name."\" class=\"ui-widget-content\">".$row[$name]."</td>";
+	    $vars['addin_list'].="<td id=\"".$name."\">".$row[$name]."</td>";
 	  }
 	}
-	$vars['addin_list'].="<td class=\"ui-widget-content\"><a class=\"ui-icon ui-icon-trash\" style=\"display:inline-block\" onclick=\"showRemove('".$row['num']."',event)\" title=\"Delete\" href=\"javascript:void()\"></a></td>\n</tr>\n";
+	$vars['addin_list'].="<td><a class=\"glyphicon glyphicon-remove\" onclick=\"showRemove('".$row['num']."',event)\" title=\"Delete\" href=\"javascript:void()\"></a></td>\n</tr>\n";
       }
     }
-    $vars['site_location']=$GLOBALS['SET']['siteroot'];
+    $vars['site_location']=$this->config->siteroot;
       
-    $vh=new MomokoVariableHandler($vars);
+    $vh=new MomokoVariableHandler($vars,$this->user);
     $info['inner_body']=$vh->replace($info['inner_body']);
     return $info;
   }
@@ -1549,14 +1873,16 @@ class MomokoAddin implements MomokoObject
  public $path;
  public $isEnabled;
  private $table;
+ private $config;
  private $info=array();
 
  public function __construct($path=null)
  {
   $this->table=new DataBaseTable('addins');
+  $this->config=new MomokoSiteConfig();
   if (!empty($path))
   {
-   $manifest=xmltoarray($GLOBALS['SET']['basedir'].$path.'/manifest.xml'); //Load manifest
+   $manifest=xmltoarray($this->config->basedir.$path.'/manifest.xml'); //Load manifest
    $this->info=$this->parseManifest($manifest);
    
    $db=new DataBaseTable("addins");
@@ -1603,7 +1929,7 @@ class MomokoAddin implements MomokoObject
   }
   else
   {
-    $destination=$GLOBALS['CFG']->basedir.$data['dir'];
+    $destination=$this->config->basedir.$data['dir'];
     if (mkdir($destination))
     {
       $zip=new ZipArchive;
@@ -1615,7 +1941,7 @@ class MomokoAddin implements MomokoObject
       {
 	$new=$this->table->getData("num:'= ".$num."'",null,null,1);
 	$info=$new->toArray();
-	momoko_changes($GLOBALS['USR'],'added',$this);
+	momoko_changes($this->user,'added',$this);
 	if (is_array($info[0]))
 	{
 	  return $info[0];
@@ -1643,7 +1969,7 @@ class MomokoAddin implements MomokoObject
   }
   else
   {
-    $destination=$GLOBALS['CFG']->basedir.$data['dir'];
+    $destination=$this->config->basedir.$data['dir'];
     if (!file_exists($destination))
     {
       unlink($data['archive']);
@@ -1665,7 +1991,7 @@ class MomokoAddin implements MomokoObject
       {
 	$new=$this->table->getData("num:'= ".$num."'",null,null,1);
 	$info=$new->toArray();
-	momoko_changes($GLOBALS['USR'],'updated',$this);
+	momoko_changes($this->user,'updated',$this);
 	if (is_array($info[0]))
 	{
 	  return $info[0];
@@ -1691,7 +2017,7 @@ class MomokoAddin implements MomokoObject
   if (!empty($file))
   {
     $result=false;
-    $filename=$GLOBALS['SET']['tempdir'].'/'.$file['name'];
+    $filename=$this->config->tempdir.'/'.$file['name'];
     if ($file['error'] == UPLOAD_ERR_OK && move_uploaded_file($file['tmp_name'],$filename))
     {
       $result=true;
@@ -1752,9 +2078,9 @@ HTML;
   if ($_POST['send'] == "Yes")
   {
     $ddata['num']=$data->num;
-    if ($table->removeData($ddata) && rmdirr($GLOBALS['SET']['basedir'].'/addins/'.$data->dir))
+    if ($table->removeData($ddata) && rmdirr($this->config->basedir.'/addins/'.$data->dir))
     {
-      momoko_changes($GLOBALS['USR'],'dropped',$this);
+      momoko_changes($this->user,'dropped',$this);
       $ddata['succeed']=true;
     }
     else
@@ -1800,7 +2126,7 @@ HTML;
  {
   $query=$this->table->getData("num:'= ".$id."'",array('`num`','`dir`','`enabled`'),null,1);
   $data=$query->fetch(PDO::FETCH_OBJ);
-  $path=$GLOBALS['SET']['basedir']."/addins/".$data->dir."/";
+  $path=$this->config->basedir."/addins/".$data->dir."/";
   
   $manifest=xmltoarray($path.'/manifest.xml'); //Load manifest
   $this->info=$this->parseManifest($manifest);
@@ -1834,7 +2160,7 @@ HTML;
   
   if ($update=$this->table->updateData($ndata))
   {
-    momoko_changes($GLOBALS['USR'],'toggled',$this,"Addin is enabled is now set to=".$ndata['enabled']);
+    momoko_changes($this->user,'toggled',$this,"Addin is enabled is now set to=".$ndata['enabled']);
     return $ndata['enabled'];
   }
   else
@@ -1850,7 +2176,7 @@ HTML;
   {
    foreach ($list as $item)
    {
-    if ($item == 'ALL' || $GLOBALS['USR']->inGroup($item))
+    if ($item == 'ALL' || $this->user->inGroup($item))
     {
      $auth=true;
     }
@@ -1889,9 +2215,9 @@ HTML;
     }
    }
 
+
    $array[$node['@name']]['attr']=$node['@attributes'];
   }
-
   if (array_key_exists('authority',$array))
   {
    $authority=$array['authority']['value'];
@@ -1903,8 +2229,6 @@ HTML;
    }
    $array['authority']=$lists;
   }
-
   return $array;
  }
 }
-

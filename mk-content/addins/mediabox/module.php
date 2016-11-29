@@ -3,25 +3,20 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
 {
  public $info;
  public $opt_keys=array();
+ protected $settings=array();
  private $actions=array();
- private $settings=array();
 
- public function __construct()
+ public function __construct(MomokoSession $user,$extset=null)
  {
   $this->info=$this->getInfoFromDB();
   $this->opt_keys=array('type'=>array('type'=>'select','options'=>array('image','video','audio','object')),'width'=>array('type'=>'number'),'height'=>array('type'=>'number'),'link1'=>array('type'=>'link'),'link2'=>array('type'=>'link'));
-  parse_str($this->info->settings,$this->settings); 
- }
-
- public function __get($key)
- {
-  if (array_key_exists($key,$this->settings))
+  if (empty($extset))
   {
-   return $this->settings[$key];
+    parse_str($this->info->settings,$this->settings); 
   }
   else
   {
-   return false;
+    parse_str($extset,$this->settings);
   }
  }
 
@@ -69,6 +64,16 @@ class MomokoMediaboxModule extends MomokoModule implements MomokoModuleInterface
    }
 
    return <<<HTML
+<script language="javascript" type="text/javascript">
+$(function(){
+  $("#MediaBox img").css("cursor","pointer").click(function(){
+    var src=$(this).attr('src');
+    $("#modal .modal-title").html("Image Viewer");
+    $("#modal .modal-body").html("<a href=\""+src+"\" title=\"Open full image in new tab\" target=\"_new\"><img width=\"100%\" src=\""+src+"\"></a>");
+    $("#modal").modal('show');
+  });
+});
+</script>
 <div id="MediaBox" class="box">
 {$media}
 </div>

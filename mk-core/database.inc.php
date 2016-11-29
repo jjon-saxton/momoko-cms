@@ -46,17 +46,85 @@ class DataBaseSchema extends PDO
    return $query->fetchALL(PDO::FETCH_ASSOC);
   }
  }
-
- public function dropTable($table)
+ 
+ public function createBackup($file,$type='mis')
  {
-  if ($this->query("DROP TABLE `".$this->ini['schema']['tableprefix'].$table."`"))
-  {
-   return true;
-  }
-  else
-  {
-   return false;
-  }
+   $tables=$this->showTables();
+   $key="Tables_in_{$this->ini['schema']['name']}";
+   
+   switch ($type)
+   {
+     case 'sql':
+   $sql=null; //TODO CREATE DATABASE?
+   foreach ($tables as $info)
+   {
+     $table=new DataBaseTable($info[$key],false);
+     $sql.=$table->dump($type)."\n";
+   }
+   
+   if (file_put_contents($file,$sql))
+   {
+     return true;
+   }
+   else
+   {
+     trigger_error("Could not create database backup file '{$file}'",E_USER_WARNING);
+     return false;
+   }
+     break;
+     case 'mis':
+     default:
+     $text=array();
+     foreach ($this->ini as $set=>$val)
+     {
+       if ($set != "name")
+       {
+         $text[$set]=null;
+         foreach ($val as $tset=>$tval)
+         {
+           $text[$set].=$tset."= \"{$tval}\"\n";
+         }
+       }
+     }
+     
+     foreach ($tables as $info)
+     {
+       $table=new DataBaseTable($info[$key],false);
+       $text[$info[$key]]=$table->dump($type);
+     }
+     
+     $ini=null;
+     foreach ($text as $section=>$values)
+     {
+       $ini.="[{$section}]\n{$values}\n";
+     }
+     
+     return file_put_contents($file,$ini);
+   }
+ }
+ 
+ public function restoreBackup(array $is)
+ {
+   foreach ($is as $sec=>$set)
+   {
+     if ($sec != "schema" && $sec != "database")
+     {
+      $table=new DataBaseTable($set,false);
+      foreach ($set as $row)
+      {
+        $r[]=$table->putData($row);
+      }
+     }
+   }
+   
+   if (!empty($r) && is_array($r))
+   {
+     return true;
+   }
+   else
+   {
+     return false;
+   }
  }
 }
 
@@ -66,10 +134,17 @@ class DataBaseTable extends DataBaseSchema
  protected $indices;
  protected $results;
 
- public function __construct($table,$schema=null,$file='database.ini')
+ public function __construct($table,$short=true,$file='database.ini')
  {
   $settings=parent::__construct($schema,$file);
-  $this->table=$settings['schema']['tableprefix'].$table;
+  if ($short)
+  {
+    $this->table=$settings['schema']['tableprefix'].$table;
+  }
+  else
+  {
+    $this->table=$table;
+  }
 
   $fieldlist=$this->getFields();
   foreach ($fieldlist as $field)
@@ -154,7 +229,7 @@ class DataBaseTable extends DataBaseSchema
     ++$i;
    }
    $q=trim(preg_replace("/(?P<key>(?:[a-z][a-z0-9_]*))(:)`(?P<values>.*?)`/is","",$q)." ");
-  } 
+  }
   elseif (preg_match_all("/(?P<key>(?:[a-z][a-z0-9_]*))(:)'(?P<values>.*?)'/is",$q,$filters) > 0) //Old style for compatability, will be deprecated.
   {
    $where=array();
@@ -256,6 +331,21 @@ class DataBaseTable extends DataBaseSchema
 
   return $result;
  }
+ 
+ public function getByQuery($stmt)
+ {
+   $sql="SELECT * FROM `{$this->table}` ".$stmt;
+   try
+   {
+     $result=$this->query($sql);
+   }
+   catch (Exception $err)
+   {
+     trigger_error("SQL Server Error: ".$err->getMessage(),E_USER_ERROR);
+   }
+   
+   return $result;
+ }
 
  public function updateData(array $fieldarray)
  {
@@ -346,7 +436,7 @@ class DataBaseTable extends DataBaseSchema
     $cols.="`".$field."`,";
     $placeholders.=":".$field.",";
     $values[':'.$field]=$value;
-   } 
+   }
   }
   $cols=rtrim($cols,",");
   $placeholders=rtrim($placeholders,",");
@@ -371,5 +461,114 @@ class DataBaseTable extends DataBaseSchema
   {
    throw new Exception("Could not add data");
   }
+ }
+
+ public function emptyData()
+ {
+  try
+  {
+   $this->query("TRUNCATE `".$this->table."`");
+  }
+  catch (Exception $err)
+  {
+   trigger_error("SQL Server Error: ".$err->getMessage(),E_USER_ERROR);
+  }
+
+  return true;
+ }
+ 
+ public function dump($type='mis',$file=null)
+ {
+   $fields=$this->getFields();
+   switch ($type)
+   {
+     case 'rss':
+     //TODO make RSS XML from table data
+     break;
+     case 'sql':
+     $sql="CREATE TABLE `{$this->table}` (";
+     foreach ($fields as $col)
+     {
+       $sql.="`{$col->Field}` ".strtoupper($col->Type)." ";
+       if ($col->Null == "NO")
+       {
+        $sql.="NOT NULL ";
+       }
+       if ($col->Key == "PRI")
+       {
+         $sql.="PRIMARY KEY ";
+       }
+       $sql.=strtoupper($col->Extra).", ";
+     }
+     $sql=rtrim($sql,", ");
+     $sql.=") ENGINE MY_ISAM;\n";
+     $query=$this->getData();
+     while ($row=$query->fetch(PDO::FETCH_ASSOC))
+     {
+       $sql.="INSERT INTO `{$this->table}` SET ";
+       foreach ($row as $col=>$val)
+       {
+         $sql.="{$col}='{$val}', ";
+       }
+       $sql=rtrim($sql,", ");
+       $sql.=";\n";
+     }
+     $sql=rtrim($sql,"\n");
+     if (empty($file))
+     {
+       return $sql;
+     }
+     elseif (file_put_contents($file,$sql))
+     {
+       return true;
+     }
+     else
+     {
+       trigger_error("Could not save {$file}!",E_USER_WARNING);
+       return false;
+     }
+     break;
+     case 'mis':
+     default:
+     $query=$this->getData();
+     $ini=null;
+     while ($row=$query->fetch(PDO::FETCH_ASSOC))
+     {
+       $id=$row[$this->indices['primary']];
+       foreach ($row as $col=>$data)
+       {
+         $ini.=$id."[$col] = \"{$data}\"\n";
+       }
+     }
+     
+     if (empty($file))
+     {
+       return $ini;
+     }
+     elseif (file_put_contents($file,$ini))
+     {
+       return true;
+     }
+     else
+     {
+       trigger_error("Cannot save MIS INI '{$file}'",E_USER_WARNING);
+       return false;
+     }
+   }
+ }
+
+ public function drop()
+ {
+  try
+  {
+   $this->query("DROP TABLE `".$this->table."`");
+  }
+  catch (Exception $e)
+  {
+   trigger_error("SQL Server Error: ".$e->getMessage(),E_USER_ERROR);
+   return false;
+  }
+
+  return true;
  }
 }

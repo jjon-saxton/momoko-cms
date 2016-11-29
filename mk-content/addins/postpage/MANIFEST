@@ -1,0 +1,14 @@
+[info]
+shortname = "Post Page"
+longname = "Post Page"
+type = "page"
+description = "A page designed to list posts. Basically it is a full-page version of the Mini Post List."
+
+[authorization]
+whitelist = "ALL"
+blacklist = "root"
+
+[attribution]
+author = "Jon Saxton"
+email = "cem@tower21studios.com"
+version = "0.1a"

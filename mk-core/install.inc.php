@@ -1,14 +1,13 @@
 <?php
 
 function create_tables($config)
-{  
+{
   $def['settings'][0]="`key` VARCHAR(30) NOT NULL PRIMARY KEY";
   $def['settings'][1]="`value` VARCHAR(255) NOT NULL";
 
   $def['addins'][0]="`num` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['addins'][1]="`dir` VARCHAR(75) NOT NULL";
   $def['addins'][2]="`type` VARCHAR(15) NOT NULL";
-  $def['addins'][3]="`zone` INT(1)";
   $def['addins'][4]="`order` INT(11)";
   $def['addins'][5]="`enabled` CHAR(1) NOT NULL";
   $def['addins'][6]="`shortname` VARCHAR(72) NOT NULL";
@@ -16,6 +15,11 @@ function create_tables($config)
   $def['addins'][8]="`settings` TEXT";
   $def['addins'][9]="`description` TEXT";
   $def['addins'][10]="`headtags` TEXT";
+  
+  $def['mzassoc'][0]="`row` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT";
+  $def['mzassoc'][1]="`mod` INT(11) NOT NULL";
+  $def['mzassoc'][2]="`zone` INT(11) NOT NULL";
+  $def['mzassoc'][3]="`settings` TEXT";
   
   $def['content'][0]="`num` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['content'][1]="`title` VARCHAR(100) NOT NULL";
@@ -27,9 +31,17 @@ function create_tables($config)
   $def['content'][7]="`author` INT(255)";
   $def['content'][8]="`has_access` VARCHAR(20)";
   $def['content'][9]="`mime_type` VARCHAR(20)";
-  $def['content'][10]="`parent` TEXT";
-  $def['content'][11]="`text` TEXT";
-  $def['content'][12]="`link` TEXT";
+  $def['content'][10]="`tags` TEXT";
+  $def['content'][11]="`parent` TEXT";
+  $def['content'][12]="`text` TEXT";
+  $def['content'][13]="`link` TEXT";
+  
+  $def['tags'][0]="`num` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
+  $def['tags'][1]="`name` TEXT";
+  
+  $def['tcassoc'][0]="`row` INT(11) NOT NULL AUTO_INCRMENT PRIMARY KEY";
+  $def['tcassoc'][1]="`tag_num` INT(11)";
+  $def['tcassoc'][2]="`con_num` INT(11)";
   
   $def['log'][0]="`num` INT (11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
   $def['log'][1]="`time` DATETIME";
@@ -127,7 +139,7 @@ HTML;
 <body>
 <p>As of today I have a new site running MomoKO!</p>
 </body>
-</html> 
+</html>
 HTML;
   
   $admin['password']=crypt($admin['password'],$site['session']);
@@ -139,7 +151,7 @@ HTML;
   
   $rows['content'][]=array('title'=>"Hello World!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'page','order'=>1, 'parent'=>0,'author'=>1,'text'=>$firstpage,'mime_type'=>'text/html');
   $rows['content'][]=array('title'=>"Welcome!",'date_created'=>date("Y-m-d H:i:s"),'status'=>"public",'type'=>'post','parent'=>0,'author'=>1,'text'=>$firstpost,'mime_type'=>'text/html');
-  foreach (glob($site['basedir']."/mk-content/error/*.htm") as $file)
+  foreach (glob($site['basedir']."/mk-content/errors/*.htm") as $file)
   {
    $raw=file_get_contents($file);
    if (preg_match("/<title>(?P<title>.*?)<\/title>/smU",$raw,$match) > 0)
@@ -198,9 +210,9 @@ HTML;
   $rows['users'][]=array('name'=>'guest','password'=>'guest','email'=>$admin['email'],'groups'=>"nobody",'shortdateformat'=>$defaults['sdf'],'longdateformat'=>$defaults['ldf'],'timeformat'=>$defaults['tf'],'rowspertable'=>$defaults['rpt']);
   $rows['users'][]=$admin;
   
-  $rows['settings'][]=array('key'=>'version','value'=>'2.1');
+  $rows['settings'][]=array('key'=>'version','value'=>'2.2');
   $rows['settings'][]=array('key'=>'name','value'=>$site['name']);
-  $rows['settings'][]=array('key'=>'template','value'=>'quirk');
+  $rows['settings'][]=array('key'=>'template','value'=>'fluidity');
   $rows['settings'][]=array('key'=>'support_email','value'=>$admin['email']);
   $rows['settings'][]=array('key'=>'owner','value'=>$admin['name']);
   $rows['settings'][]=array('key'=>'security_logging','value'=>1);
@@ -214,7 +226,6 @@ HTML;
   $rows['settings'][]=array('key'=>'use_ssl','value'=>$site['use_ssl']);
   $rows['settings'][]=array('key'=>'email_mta','value'=>'phpmail');
   $rows['settings'][]=array('key'=>'email_server','value'=>"host=localhost");
-  $rows['settings'][]=array('key'=>'rewrite','value'=>0);
   
   $okay=0;
   $tottbls=0;
@@ -247,6 +258,14 @@ HTML;
   {
    $okay++;
   }
+  $addin_tbl=new DataBaseTable('addins'); //Need addins table to set values for default layout
+  $layout_q=$addin_tbl->getData("dir=`fluidity`");
+  $fluidity=$layout_q->fetch(PDO::FETCH_ASSOC);
+  $fluidity['enabled']="y";
+  $fluidity['headtags']=<<<HTML
+<link href="//{$site['baseuri']}/mk-content/addins/fluidity/white.css" rel="stylesheet" type="text/css">
+HTML;
+ $fluidity=$addin_tbl->updateData($fluidity);
   
   if ($okay == $tottbls)
   {
@@ -257,6 +276,7 @@ HTML;
     trigger_error("Only ".$okay." of ".$tottbls." tables were populated! Please empty the tables and try again.",E_USER_WARNING);
     return false;
   }
+
 }
 
 function db_upgrade($level,$version,$backup=null)
@@ -269,9 +289,9 @@ function db_upgrade($level,$version,$backup=null)
   {
    $db->createBackup($config->basedir."/momoko-db-".time().".sql") or die(trigger_error("Could not create backup!", E_USER_WARNING));
   }
-  $tables['addins']=new DataBaseTable(DAL_TABLE_PRE.'addins',DAL_DB_DEFAULT);
+  $tables['addins']=new DataBaseTable('addins');
   echo("Altering addin table columns...\n");
-  $tables['addins']->putField("enabled","char",1,"NOT NULL") or die(trigger_error("could not add 'enabled' column, you may need to manually add this column, see our release notes for more details!",E_USER_WARNING));
+  $tables['addins']->updateFields(array("`enabled` CHAR(1) NOT NULL")) or die(trigger_error("could not add 'enabled' column, you may need to manually add this column, see our release notes for more details!",E_USER_WARNING));
   echo("Dropping old/unused tables...\n");
   $db->dropTable(DAL_TABLE_PRE.'merchants',DAL_DB_DEFAULT) or die(trigger_error("Unable to drop old table '".DAL_TABLE_PRE."merchants'!",E_USER_ERROR));
   echo("Adding the new settings table...\n");
@@ -307,6 +327,36 @@ function db_upgrade($level,$version,$backup=null)
   }
   $config->owner=$owner;
  }
+ 
+ if ($version <= 2.1)
+ {
+   $newtables['tags'][0]="`num` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
+   $newtables['tags'][1]="`name` TEXT";
+  
+   $newtables['tcassoc'][0]="`row` INT(11) NOT NULL AUTO_INCRMENT PRIMARY KEY";
+   $newtables['tcassoc'][1]="`tag_num` INT(11)";
+   $newtables['tcassoc'][2]="`con_num` INT(11)";
+   
+   $newtables['mzassoc'][0]="`row` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY";
+   $newtables['mzassoc'][1]="`mod` INT(11)";
+   $newtables['mzassoc'][2]="`zone` INT(11)";
+   $newtables['mzassoc'][3]="`settings` TEXT";
+   
+   foreach ($newtables as $tblname=>$cols)
+   {
+     $db->addTable($tblname,$cols);
+   }
+   $tables['content']=new DataBaseTable('content');
+   $newfields['content']=array("`tags` TEXT");
+   foreach ($newfields as $tblname=>$cols)
+   {
+     $tables[$tblname]->updateFields($cols);
+   }
+   
+   $remove['key']='rewrite';
+   $tables['settings']=new DataBaseTable('settings');
+   $tables['settings']->deleteData($remove);
+ }
 
  $new_content=scan_core_content($config);
  if (is_array($new_content))
@@ -341,7 +391,7 @@ function db_upgrade($level,$version,$backup=null)
  momoko_basic_changes($GLOBALS['USR'],"updated","Site Content",$cm);
  momoko_basic_changes($GLOBALS['USR'],"updated","Core Addins",$am);
  
- $config->version="2.1";
+ $config->version="2.2";
  $config->saveTemp();
  
  return true;

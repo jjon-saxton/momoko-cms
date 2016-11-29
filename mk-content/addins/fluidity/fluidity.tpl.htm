@@ -12,22 +12,18 @@
     <![endif]-->
 <!--Template-specific JQuery Procedures-->
 <script language="javascript" type="text/javascript">
- $(document).ready(function(){ //work-around to mimic Quirk Nav-bar behavior
-  $('a.dropdown-toggle').click(function(e) {
+ $(document).ready(function(){
+  if ($("#HeadBar").find("#MediaBox img").length){ //Makes site title go over a mediabox image
+   $("#HeadBar").find("h1").addClass("overtext");
+  }
+  $('a.dropdown-toggle').click(function(e) { //work-around to mimic Quirk Nav-bar behavior
     if (e.target == this){ //when clicking the link itself, go to the link, if we click another element, say the arrow, then do the default action (dropdown the menu)
      var location = $(this).attr('href');
      window.location.href = location;
      return false;
     }
+  });
  });
- $("button, input[type=button], input[type=submit], input[type=reset]").addClass("btn");
- $("button, input[type=button]").addClass('btn-default');
- $("button[type=submit], input[type=submit]").addClass('btn-primary');;
- $("button[type=reset], input[type=reset]").addClass('btn-warning');
- //add bootstrap styles to MomoKO buttons
- $("table").addClass("table");
- $("table.dashboard").addClass("table-bordered table-hover table-condensed");
-});
 </script>
 </head>
 <body>
@@ -35,8 +31,8 @@
     <div class="container-fluid"> 
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#defaultNavbar1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-	<a class="navbar-brand" href="javascript:void()" onclick="toggleSidebar()"><var>sitename</var></a></div>
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#MainNavBar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+	<a class="navbar-brand" href="#sidebar" data-toggle="modal"><var>sitename</var></a></div>
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="MainNavBar">
         <!-- NAVIGATION:display=menu -->
@@ -47,8 +43,9 @@
 </nav>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-     <h1 class="text-center"><var>sitename</var></h1>
+    <div id="HeadBar" class="col-sm-12 center">
+     <h1 class="text-center full"><var>sitename</var></h1>
+     <!-- MODULEZONE:id=2 -->
     </div>
   </div>
   <hr>
@@ -71,7 +68,5 @@
   </div>
   <hr>
 </div>
-<!-- Include all compiled plugins (below), or include individual files as needed --> 
-<script src="~{templatedir}/bootstrap.js"></script>
 </body>
 </html>

@@ -5,12 +5,16 @@
 <body>
 <h2>Welcome MomoKO User!</h2>
 <p>Enter your login credentials in the form below.</p>
-<form action="//~{link}" method=post>
-<ul class="box noindent nobullet">
-<li><input type=text name="name" placeholder="username"></li>
-<li><input type=password name="password" placeholder="password"></li>
-<li><input type=submit name="Next" Value="Login">
-</ul>
+<form role="form" action="//~{link}" method=post>
+<div class="form-group">
+<label for="u">Username:</label>
+<input id="u" class="form-control" type=text name="name" placeholder="username">
+</div>
+<div class="form-group">
+<label for="p">Password:</label>
+<input id="p" class="form-control" type=password name="password" placeholder="password">
+</div>
+<button type=submit name="Next" class="btn btn-primary">Login</button>
 </form>
 <p><a href="//~{recovery}">Did you forget your password?</a></p>
 </body>
