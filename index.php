@@ -17,9 +17,9 @@ if (!is_writable($config->basedir.$config->filedir))
  trigger_error("MomoKO's content storage directory is not writable!",E_USER_NOTICE);
 }
 
-if ($config->version < preg_replace("/[^0-9,.]/","",MOMOKOVERSION)) // It is possible the database does not match the script version
+if ($config->version < sprintf("%.1f",MOMOKOVERSION)) // It is possible the database does not match the script version
 {
- header("Location: http://".$config->baseuri."/mk-update.php");
+ //header("Location: http://".$config->baseuri."/mk-update.php");
  exit();
 }
 
