@@ -4,3 +4,6 @@
 [submodule "mk-content/addins/tagcloud"]
 	path = mk-content/addins/tagcloud
 	url = https://github.com/jjon-saxton/momoko-addin-tagcloud.git
+[submodule "mk-core/dataconnect"]
+	path = mk-core/dataconnect
+	url = https://github.com/jjon-saxton/dataconnect.git

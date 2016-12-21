@@ -1,6 +1,6 @@
 <?php
 #Load settings from database
-require_once dirname(__FILE__).'/database.inc.php';
+require_once dirname(__FILE__).'/dataconnect/database.inc.php';
 $config=new MomokoSiteConfig();
 $config->sys_groups=array('nobody','users','suspended','editor','cli','admin');
 
@@ -904,21 +904,6 @@ function truncate($text, $length = 100, $ending = '...', $exact = false, $consid
     }
   }
   return $truncate;
-}
-
-function strrtrim($message,$strip)
-{
-  // break message apart by strip string
-  $lines = explode($strip, $message);
-  $last  = '';
-  // pop off empty strings at the end
-  do
-  {
-    $last = array_pop($lines);
-  }
-  while (empty($last) && (count($lines)));
-  // re-assemble what remains
-  return implode($strip, array_merge($lines, array($last)));
 }
 
 function build_sorter($key)
