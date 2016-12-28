@@ -1573,7 +1573,7 @@ HTML;
 <li><a href="{$this->conf->siteroot}/?content=post&action=new">Post</a></li>
 <li><a href="{$this->conf->siteroot}/?content=attachment&action=new">Attachment</a></li>
 </ul></li>{$curconlinks}
-<li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&action=gethref&ajax=1" data-toggle="modal" data-target="#modal">New/Update From File</a></li>
+<li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&action=getfile&ajax=1" data-dismiss="modal" data-toggle="modal" data-target="#modal">New/Update From File</a></li>
 <li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=pages">All Pages</a></li>
 <li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=posts">All Posts</a></li>
 <li><a href="{$this->conf->siteroot}/mk-dash.php?section=content&list=attachments">Attachments</a></li>

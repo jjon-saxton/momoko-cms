@@ -1587,6 +1587,7 @@ HTML;
      $page['title']="Addin Form";
      $page['body']=$addin->getForm();
    break;
+   case 'getfile':
    case 'gethref':
    $blank=null;
    $list=$this->table->getData(null,null,'order');
