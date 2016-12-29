@@ -1396,6 +1396,33 @@ var pDoc=window.parent.document;
 HTML;
     break;
     case 'content':
+    $page['title']="Upload content from your computer";
+    if ($_FILES['file']['tmp_name'])
+    {
+     if ($_FILES['file']['error'] == UPLOAD_ERR_OK)
+     {
+      if (class_exists("finfo"))
+      {
+       $finfo=$_FILES['file'];
+       $upload_info=new finfo(FILEINFO_MIME_TYPE);
+       $finfo['mime_type']=$upload_info->file($finfo['tmp_name']);
+      }
+      if (($finfo['mime_type'] == "text/plain" || $finfo['mime_type'] == "text/markdown") || pathinfo($_FILES['file']['name'],PATHINFO_EXTENSION) == "md")
+      {
+       $md=file_get_contents($finfo['tmp_name']);
+       $html=Markdown($md);
+      }
+      elseif ($finfo['mime_type'] == "text/html")
+      {
+       $html=file_get_contents($finfo['tmp_name']);
+      }
+      else
+      {
+       //TODO process as an attachment, see below
+      }
+     }
+    }
+    break;
     case 'attachment':
     default:
     $page['title']="Upload a file from your computer";
