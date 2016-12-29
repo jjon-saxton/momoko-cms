@@ -1589,6 +1589,7 @@ HTML;
    break;
    case 'getfile':
    case 'gethref':
+   case 'newfrom':
    $blank=null;
    $list=$this->table->getData(null,null,'order');
    while ($content=$list->fetch(PDO::FETCH_OBJ))
@@ -1629,7 +1630,7 @@ HTML;
     }
    }
 
-   if (@$_GET['origin'] == "new")
+   if ($action == 'newfrom')
    {
     $blank="<div id=\"0\" class=\"page selectable box\"><a id=\"location\" href=\"{$this->config->siteroot}{$this->config->filedir}/forms/new.htm\" style=\"display:none\">[insert]</a><strong>Blank Page or Post</strong></div>";
    }
@@ -1642,14 +1643,44 @@ HTML;
    {
     $exturi_perams=" disabled=disabled title=\"Your server does not support this function!\"";
    }
-   $page['title']="Link Chooser";
-   $page['body']=<<<HTML
+   if ($action == "gethref" || $action == "newfrom")
+   {
+     if ($action == "gethref")
+     {
+      $page['title']="Link Chooser";
+     }
+     else
+     {
+      $page['title']="New From...";
+     }
+     $page['body']=<<<HTML
 <ul class="nav nav-pills">
 <li class="active"><a data-toggle="pill" href="#External">External Source</a></li>
 <li><a data-toggle="pill" href="#Pages">Page</a></li>
 <li><a data-toggle="pill" href="#Posts">Post</a></li>
 <li><a data-toggle="pill" href="#Attachments">Attachment</a></li>
 </ul>
+HTML;
+   }
+   elseif ($action == "getfile")
+   {
+     $page['title']="File Uploader";
+     if ($_GET['ajax'] && $_GET['modal'])
+     {
+      $page['body']=<<<HTML
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal">&times;</button>
+<h4 class="modal-title">{$page['title']}</h4>
+</div>
+<div class="modal-body">
+HTML;
+     }
+     else
+     {
+      $page['body']=null;
+     }
+   }
+$page['body'].=<<<HTML
 <div class="tab-content">
 <div id="External" class="tab-pane fade in active">
 {$blank}
@@ -1660,6 +1691,17 @@ HTML;
 </form>
 <div id="FileInfo"><iframe id="FileTarget" name="droptarget" style="display:none" src="{$this->config->siteroot}/mk-dash.php?section=content&action=upload&ajax=1"></iframe></div>
 </div>
+HTML;
+if ($action == "getfile")
+{
+  if ($_GET['ajax'] && $_GET['modal'])
+  {
+   $page['body'].="</div>\n";
+  }
+}
+elseif ($action == "gethref" || $action == "newfrom")
+{
+ $page['body'].=<<<HTML
 <div id="Pages" class="tab-pane fade">
 <h4 class="module">Select a Page</h4>
 {$pages}
@@ -1675,6 +1717,7 @@ HTML;
  </div>
 </div>
 HTML;
+}
    break;
    case 'list':
    default:
