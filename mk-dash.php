@@ -1395,6 +1395,7 @@ var pDoc=window.parent.document;
 </html>
 HTML;
     break;
+    case 'content':
     case 'attachment':
     default:
     $page['title']="Upload a file from your computer";
