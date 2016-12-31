@@ -57,8 +57,39 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    case 'new':
    if ($auth->inGroup('admin') || $auth->inGroup('editor'))
    {
-    $child=new MomokoContent("New...",$auth);
-    $child->put($_POST);
+    if (!empty($_GET['file']))
+    {
+     $html=file_get_contents($config->basedir.$_GET['file']);
+     $data=parse_page($html);
+     unset($html);
+     $data['text']=$data['inner_body'];
+     $data['link']=$config->siteroot.$_GET['file'];
+     unlink($config->basedir.$_GET['file']);
+    }
+    else
+    {
+     $data['title']="New...";
+     $data['author']=$user->num;
+     $data['date_created']=date("Y-m-d H:i:s");
+     $data['status']="cloaked";
+     $data['parent']=0;
+     $data['text']=file_get_contents($config->basedir.$config->filedir."forms/new.htm");
+     
+     if (!empty($_GET['content']))
+     {
+      $data['type']=$_GET['content'];
+     }
+     else
+     {
+      $data['type']="unknown";
+     }
+    }
+    
+    $data['mime_type']="text/html";
+    if ($num=$child->putTemp($data))
+    {
+     header("Location: ".$config->siteroot."?action=edit&p=".$num);
+    }
    }
    else
    {

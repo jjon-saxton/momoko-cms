@@ -941,6 +941,39 @@ function parse_page($data)
  return $array;
 }
 
+function markup($text,$parser=1)
+{
+ if (preg_match("/title:(?P<title>.*)/",$text,$matches) > 0)
+ {
+  $text=preg_replace("/title:(.*)/","",$text);
+  $page['title']=$matches['title'];
+ }
+ else
+ {
+  $page['title']="Untitled";
+ }
+ switch($parser)
+ {
+  case 1:
+  require_once dirname(__FILE__)."/markdown.inc.php";
+  $parser=new MarkdownExtra_Parser();
+  $page['body']=$parser->transform($text);
+  break;
+  default:
+  //TODO find away to add in new parsers
+ }
+ return <<<HTML
+<html>
+<head>
+<title>{$page['title']}</title>
+</head>
+<body>
+{$page['body']}
+</body>
+</html>
+HTML;
+}
+
 function locate_title($txt,$tag='h1') //Locates a title for a page without a head section, useful for pages from markdown sources
 {
  $title="Untitled";

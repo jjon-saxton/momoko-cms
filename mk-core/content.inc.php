@@ -831,6 +831,11 @@ class MomokoContent implements MomokoObject
   $this->inner_body=$ch->replace($body);
  }
  
+ public function putTemp($data)
+ {
+  return $this->table->putData($data);
+ }
+ 
  public function put($data)
  {
   if (@$data['title'])

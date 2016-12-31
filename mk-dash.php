@@ -1409,9 +1409,8 @@ HTML;
       }
       if (($finfo['mime_type'] == "text/plain" || $finfo['mime_type'] == "text/markdown") || pathinfo($_FILES['file']['name'],PATHINFO_EXTENSION) == "md")
       {
-       require_once dirname(__FILE__)."/mk-core/markdown.inc.php";
-       $md=file_get_contents($finfo['tmp_name']);
-       $html=Markdown($md);
+       $text=file_get_contents($finfo['tmp_name']);
+       $html=markup($text);
       }
       elseif ($finfo['mime_type'] == "text/html")
       {
@@ -1420,7 +1419,7 @@ HTML;
       $name=$this->config->filedir.pathinfo($finfo['name'],PATHINFO_FILENAME);
       if (file_put_contents($this->config->basedir.$name.".htm",$html))
       {
-       $finfo['edit']="?action=edit&file=".$name.".htm";
+       $finfo['edit']="?action=new&file=".$name.".htm";
        $finfo['link']=$this->config->siteroot.$name;
        $script_body=<<<TXT
 $('#ExtFile #msg',pDoc).html("Uploaded!").removeClass('alert-info').addClass('alert-success');
