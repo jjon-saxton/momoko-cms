@@ -1409,6 +1409,7 @@ HTML;
       }
       if (($finfo['mime_type'] == "text/plain" || $finfo['mime_type'] == "text/markdown") || pathinfo($_FILES['file']['name'],PATHINFO_EXTENSION) == "md")
       {
+       require_once dirname(__FILE__)."/mk-core/markdown.inc.php";
        $md=file_get_contents($finfo['tmp_name']);
        $html=Markdown($md);
       }
@@ -1416,12 +1417,43 @@ HTML;
       {
        $html=file_get_contents($finfo['tmp_name']);
       }
+      $name=$this->config->filedir.pathinfo($finfo['name'],PATHINFO_FILENAME);
+      if (file_put_contents($this->config->basedir.$name.".htm",$html))
+      {
+       $finfo['edit']="?action=edit&file=".$name.".htm";
+       $finfo['link']=$this->config->siteroot.$name;
+       $script_body=<<<TXT
+$('#ExtFile #msg',pDoc).html("Uploaded!").removeClass('alert-info').addClass('alert-success');
+$('div#FileInfo',pDoc).append("<div onclick=\"window.location='{$finfo['edit']}'\" class=\"page selectable box\"><a id=\"location\" href=\"{$finfo['link']}\" style=\"display:none\">[insert]</a><strong>{$finfo['name']}</strong></div>");
+window.setTimeout(function(){
+ $("#ExtFile #msg",pDoc).fadeOut('slow');
+ $('input#file',pDoc).val("").removeAttr('disabled');
+}, 1500);
+TXT;
+      }
       else
       {
-       //TODO process as an attachment, see below
+       $script_body=<<<TXT
+$('#ExtFile #msg',pDoc).html("Failed to created file {$name}.htm'!").removeClass('alert-info').addClass('alert-danger');
+TXT;
       }
      }
     }
+    $page['body']=<<<HTML
+<html>
+<head>
+<title>File Upload</title>
+<script language=javascript src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript"></script>
+<body>
+<script language="javascript" type="text/javascript">
+var pDoc=window.parent.document;
+
+{$script_body}
+</script>
+<p>Processing complete. Check below for further debugging.</p>
+</body>
+</html>
+HTML;
     break;
     case 'attachment':
     default:
