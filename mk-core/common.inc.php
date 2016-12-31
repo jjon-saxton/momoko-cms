@@ -952,6 +952,16 @@ function markup($text,$parser=1)
  {
   $page['title']="Untitled";
  }
+ $metas=null;
+ if (preg_match_all("/(?P<key>\w*):(?P<value>[[:alnum:]].*)/",$text,$matches,PREG_SET_ORDER) > 0)
+ {
+  $metas.="\n";
+  foreach ($matches as $val)
+  {
+   $metas.="<meta name=\"{$val[1]}\" content=\"{$val[2]}\">\n";
+   $text=preg_replace("/{$val[1]}:{$val[2]}/","",$text);
+  }
+ }
  switch($parser)
  {
   case 1:
@@ -965,7 +975,7 @@ function markup($text,$parser=1)
  return <<<HTML
 <html>
 <head>
-<title>{$page['title']}</title>
+<title>{$page['title']}</title>{$metas}
 </head>
 <body>
 {$page['body']}
