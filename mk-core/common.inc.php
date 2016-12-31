@@ -934,6 +934,13 @@ function parse_page($data)
    $array['title']=$match['title'];
   }
  }
+ if (preg_match_all("/<meta name=\"(?P<key>.*?)\" content=\"(?P<value>.*?)\">/",$data,$matches,PREG_SET_ORDER) > 0)
+ {
+  foreach ($matches as $val)
+  {
+   $array[$val[1]]=$val[2];
+  }
+ }
  if (preg_match("/<body>(?P<body>.*?)<\/body>/smU",$data,$match) > 0) // Find page body in $data
  {
   $array['inner_body']=trim($match['body'],"\n\r"); //Replace the $body variable with just the page body found triming out the fat
