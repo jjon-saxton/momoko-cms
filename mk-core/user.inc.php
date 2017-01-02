@@ -190,7 +190,7 @@ class MomokoUser
     if (!empty($name))
     {
      $data=$this->db->getData("name:`{$name}`",null,null,1);
-     $this->info=$data->fetch(PDO::FETCH_ASSOC);
+     $this->info=$data->fetch(PDO::FETCH_OBJ);
     }
   }
 
