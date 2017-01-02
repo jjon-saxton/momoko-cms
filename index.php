@@ -57,6 +57,13 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    case 'new':
    if ($auth->inGroup('admin') || $auth->inGroup('editor'))
    {
+    $def['title']="New...";
+    $def['type']="unknown";
+    $def['author']=$user->num;
+    $def['date_created']=date("Y-m-d H:i:s");
+    $def['status']="cloaked";
+    $def['parent']=0;
+    //^default data^
     if (!empty($_GET['file']))
     {
      $html=file_get_contents($config->basedir.$_GET['file']);
@@ -65,23 +72,23 @@ if(isset($_GET['action']) && !empty($_GET['action']))
      $data['text']=$data['inner_body'];
      $data['link']=$config->siteroot.$_GET['file'];
      unlink($config->basedir.$_GET['file']);
+     
+     foreach ($def as $key=>$val) //Fill empty data with defaults
+     {
+      if (empty($data[$key]))
+      {
+       $data[$key]=$val;
+      }
+     }
     }
     else
     {
-     $data['title']="New...";
-     $data['author']=$user->num;
-     $data['date_created']=date("Y-m-d H:i:s");
-     $data['status']="cloaked";
-     $data['parent']=0;
+     $data=$def; //Use default data
      $data['text']=file_get_contents($config->basedir.$config->filedir."forms/new.htm");
      
      if (!empty($_GET['content']))
      {
       $data['type']=$_GET['content'];
-     }
-     else
-     {
-      $data['type']="unknown";
      }
     }
     
@@ -89,6 +96,8 @@ if(isset($_GET['action']) && !empty($_GET['action']))
     $num=$child->fetchByLink($data['link']);
     if (!empty($num))
     {
+     $data['date_modified']=$data['date_created'];
+     unset($data['date_created']);
      if ($child->update($data,$num))
      {
       header("Location: ".$config->siteroot."?p=".$num);

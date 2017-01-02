@@ -180,14 +180,18 @@ class MomokoUser
 {
   private $db;
   private $config;
-  private $path;
   private $info=array();
 
-  public function __construct($path=null)
+  public function __construct($name=null)
   {
     $this->db=new DataBaseTable('users');
     $this->config=new MomokoSiteConfig();
-    $this->path=$path;
+    
+    if (!empty($name))
+    {
+     $data=$this->db->getData("name:`{$name}`",null,null,1);
+     $this->info=$data->fetch(PDO::FETCH_ASSOC);
+    }
   }
 
   public function __get($var)
@@ -204,10 +208,7 @@ class MomokoUser
 
   public function get()
   {
-    $name=pathinfo($this->path,PATHINFO_BASENAME);
-    $data=$this->db->getData("name:'".$name."'",array('num'),null,1);
-    $row=$data->fetch(PDO::FETCH_OBJ);
-    return $this->getByID($row->num);
+    return $this->info;
   }
 
   public function getByID($num)

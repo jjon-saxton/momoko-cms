@@ -938,7 +938,15 @@ function parse_page($data)
  {
   foreach ($matches as $val)
   {
-   $array[$val[1]]=$val[2];
+   if ($val[1] == "author")
+   {
+    $author=new MomokoUser($val[2]);
+    $array[$val[1]]=$author->num;
+   }
+   else
+   {
+    $array[$val[1]]=$val[2];
+   }
   }
  }
  if (preg_match("/<body>(?P<body>.*?)<\/body>/smU",$data,$match) > 0) // Find page body in $data
