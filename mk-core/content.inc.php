@@ -1095,13 +1095,8 @@ $(function(){
   $("input#private").removeAttr('disabled');
  }
   
- $("textarea").jqte({
-  dashuri:"//{$this->config->baseuri}/mk-dash.php",
-  color:false,
-  strike:false,
-  formats:[{$formats}],
-  fsize:false,
-  placeholder: "Page body..."
+ $("textarea").summernote({
+   airMode: true
  });
  
  $("select#status").change(function(){
@@ -1648,8 +1643,8 @@ HTML;
   if ($_GET['action'] == 'edit' || $_GET['action'] == 'new')
   {
    $editor=<<<HTML
-<link rel="stylesheet" href="//{$this->conf->baseuri}/mk-core/styles/editor.css" type=text/css>
-<script type="text/javascript" src="//{$this->conf->baseuri}/mk-core/scripts/editor.js"></script>
+<link rel="stylesheet" href="//{$this->conf->baseuri}/mk-core/styles/summernote.css" type=text/css>
+<script type="text/javascript" src="//{$this->conf->baseuri}/mk-core/scripts/summernote.min.js"></script>
 HTML;
   }
   else
