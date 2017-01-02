@@ -1096,7 +1096,15 @@ $(function(){
  }
   
  $("textarea").summernote({
-   airMode: true
+   airMode: true,
+   popover:{
+    air: [
+     ['para',['style','ul','ol','paragraph']],
+     ['font',['bold','italic','clear']],
+     ['table',['table']],
+     ['insert',['link','picture']]
+    ]
+   }
  });
  
  $("select#status").change(function(){
@@ -1644,7 +1652,7 @@ HTML;
   {
    $editor=<<<HTML
 <link rel="stylesheet" href="//{$this->conf->baseuri}/mk-core/styles/summernote.css" type=text/css>
-<script type="text/javascript" src="//{$this->conf->baseuri}/mk-core/scripts/summernote.min.js"></script>
+<script type="text/javascript" src="//{$this->conf->baseuri}/mk-core/scripts/summernote.js"></script>
 HTML;
   }
   else
