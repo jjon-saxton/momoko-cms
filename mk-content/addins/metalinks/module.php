@@ -28,7 +28,7 @@ class MomokoMetalinksModule extends MomokoModule implements MomokoModuleInterfac
     {
       $base=$cfg->siteroot."/?p={$_GET['p']}&";
     }
-    $actions[]=array('href'=>$base."action=new",'title'=>"New...");
+    $actions[]=array('href'=>$cfg->siteroot."/mk-dash.php?section=content&action=getfile&ajax=1&modal=1",'data-toggle'=>'modal','data-target'=>"#modal",'title'=>"Publish/Update from file");
     if (basename($_SERVER['PHP_SELF']) != 'mk-dash.php' && empty($_GET['action']))
     {
       $actions[]=array('href'=>$base."action=edit",'title'=>"Edit This");
