@@ -86,9 +86,19 @@ if(isset($_GET['action']) && !empty($_GET['action']))
     }
     
     $data['mime_type']="text/html";
+    $num=$child->fetchByLink($data['link']);
+    if (!empty($num))
+    {
+     if ($child->update($data,$num))
+     {
+      header("Location: ".$config->siteroot."?p=".$num);
+      exit();
+     }
+    }
     if ($num=$child->putTemp($data))
     {
-     header("Location: ".$config->siteroot."?action=edit&p=".$num);
+     header("Location: ".$config->siteroot."?p=".$num);
+     exit();
     }
    }
    else

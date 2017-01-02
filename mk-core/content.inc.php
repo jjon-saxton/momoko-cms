@@ -831,9 +831,31 @@ class MomokoContent implements MomokoObject
   $this->inner_body=$ch->replace($body);
  }
  
+ public function fetchByLink($uri)
+ {
+  $query=$this->table->getData("link:`{$uri}`",null,null,1);
+  $item=$query->fetch(PDO::FETCH_ASSOC);
+  if (!empty($item['num']))
+  {
+   $this->info=$item;
+   return $item['num'];
+  }
+  else
+  {
+   return false;
+  }
+ }
+ 
  public function putTemp($data)
  {
   return $this->table->putData($data);
+ }
+ 
+ public function update($data,$num)
+ {
+  $data['num']=$num;
+  
+  return $this->table->updateData($data);
  }
  
  public function put($data)
