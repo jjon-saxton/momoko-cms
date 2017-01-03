@@ -21,6 +21,7 @@ class MomokoDashboard implements MomokoObject
    $this->table=new DataBaseTable('addins');
    break;
    case 'content':
+   case 'attachment':
    $this->table=new DataBaseTable('content');
    break;
    case 'site':
@@ -1712,7 +1713,22 @@ HTML;
      {
       $page['title']="New From...";
      }
+     if ($_GET['ajax'] && $_GET['modal'])
+     {
      $page['body']=<<<HTML
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal">&times;</button>
+<h4 class="modal-title">{$page['title']}</h3>
+</div>
+<div class="modal-body">
+HTML;
+     }
+     else
+     {
+      $page['body']=null;
+     }
+     
+     $page['body'].=<<<HTML
 <ul class="nav nav-pills">
 <li class="active"><a data-toggle="pill" href="#External">External Source</a></li>
 <li><a data-toggle="pill" href="#Pages">Page</a></li>
@@ -1720,6 +1736,10 @@ HTML;
 <li><a data-toggle="pill" href="#Attachments">Attachment</a></li>
 </ul>
 HTML;
+    if ($_GET['ajax'] && $_GET['modal'])
+    {
+     $page['body'].="</div>\n";
+    }
    }
    elseif ($action == "getfile")
    {
