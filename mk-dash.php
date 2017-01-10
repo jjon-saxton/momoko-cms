@@ -1716,6 +1716,15 @@ HTML;
      if ($_GET['ajax'] && $_GET['modal'])
      {
      $page['body']=<<<HTML
+<script language="javascript">
+$(function(){
+ $("div.selectable").click(function(){
+   var location=$(this).find("a#location").attr('href');
+   $("#modal").modal('hide');
+   $("input.note-{$_GET['src']}-url").val(location);
+ });
+});
+</script>
 <div class="modal-header">
 <button type="button" class="close" data-dismiss="modal">&times;</button>
 <h4 class="modal-title">{$page['title']}</h3>
