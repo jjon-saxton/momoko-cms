@@ -1098,10 +1098,18 @@ $(function(){
  $("textarea").summernote({
    airMode: true,
    popover:{
+    image: [
+     ['float',['floatLeft','floatRight','floatNone']],
+     ['remove',['removeMedia']]
+    ],
+    link: [
+     ['link',['linkDialogShow','unlink']]
+    ],
     air: [
      ['para',['style','ul','ol','paragraph']],
      ['font',['bold','italic','clear']],
      ['table',['table']],
+     ['misc',['undo','redo']],
      ['insert',['link','picture']]
     ]
    }
