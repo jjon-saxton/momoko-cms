@@ -705,10 +705,30 @@ HTML;
        case 'siteroot':
        $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">\n<div class=\"alert alert-info\">For information only; automatically generated value.</div>\n";
        break;
+       case 'channel':
+       $channels[]=array('name'=>'dev','label'=>'Development');
+       $channels[]=array('name'=>'beta','label'=>'Beta');
+       $channels[]=array('name'=>'stable','label'=>'Stable');
+       //TODO replace with momokocms.org API call
+       $page['body'].="<select class=\"form-control\" name=\"{$setting['key']}\" id=\"{$setting['key']}\">\n";
+       foreach ($channels as $ch_opt)
+       {
+         if ($ch_opt['name'] == $setting['value'])
+         {
+           $ch_sel=" selected=\"selected\"";
+         }
+         else
+         {
+           $ch_sel=null;
+         }
+         $page['body'].="<option{$ch_sel} value=\"{$ch_opt['name']}\">{$ch_opt['label']}</option>\n";
+       }
+       $page['body'].="</select>\n";
+       break;
        case 'version':
        $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">";
 
-       $raw=ftp_get_contents("ftp://ftp.momokocms.org/core/momokoversions.lst","anonymous@momokocms.org");
+       $raw=ftp_get_contents("ftp://ftp.momokocms.org/core/momokoversions.lst","anonymous@momokocms.org"); //also replace with momokocms.org API call
        $raw=explode("\n",$raw);
        $list=array();
        foreach ($raw as $row)

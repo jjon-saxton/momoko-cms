@@ -211,6 +211,7 @@ HTML;
   $rows['users'][]=$admin;
   
   $rows['settings'][]=array('key'=>'version','value'=>'2.2');
+  $rows['settings'][]=array('key'=>'channel','value'=>'stable');
   $rows['settings'][]=array('key'=>'name','value'=>$site['name']);
   $rows['settings'][]=array('key'=>'template','value'=>'fluidity');
   $rows['settings'][]=array('key'=>'support_email','value'=>$admin['email']);
@@ -356,6 +357,14 @@ function db_upgrade($level,$version,$backup=null)
    $remove['key']='rewrite';
    $tables['settings']=new DataBaseTable('settings');
    $tables['settings']->deleteData($remove);
+ }
+ 
+ if ($version <= 2.2)
+ {
+   $tables['settings']=new DataBaseTable('settings');
+   $newset['key']='channel';
+   $newset['value']='stable';
+   $newset['num']=$tables['settings']->putData($newset);
  }
 
  $new_content=scan_core_content($config);
