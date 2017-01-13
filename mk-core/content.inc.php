@@ -1095,13 +1095,24 @@ $(function(){
   $("input#private").removeAttr('disabled');
  }
   
- $("textarea").jqte({
-  dashuri:"//{$this->config->baseuri}/mk-dash.php",
-  color:false,
-  strike:false,
-  formats:[{$formats}],
-  fsize:false,
-  placeholder: "Page body..."
+ $("textarea").summernote({
+   airMode: true,
+   popover:{
+    image: [
+     ['float',['floatLeft','floatRight','floatNone']],
+     ['remove',['removeMedia']]
+    ],
+    link: [
+     ['link',['linkDialogShow','unlink']]
+    ],
+    air: [
+     ['para',['style','ul','ol','paragraph']],
+     ['font',['bold','italic','clear']],
+     ['table',['table']],
+     ['misc',['undo','redo']],
+     ['insert',['link','picture']]
+    ]
+   }
  });
  
  $("select#status").change(function(){
@@ -1648,8 +1659,8 @@ HTML;
   if ($_GET['action'] == 'edit' || $_GET['action'] == 'new')
   {
    $editor=<<<HTML
-<link rel="stylesheet" href="//{$this->conf->baseuri}/mk-core/styles/editor.css" type=text/css>
-<script type="text/javascript" src="//{$this->conf->baseuri}/mk-core/scripts/editor.js"></script>
+<link rel="stylesheet" href="//{$this->conf->baseuri}/mk-core/styles/summernote.css" type=text/css>
+<script type="text/javascript" src="//{$this->conf->baseuri}/mk-core/scripts/summernote.js"></script>
 HTML;
   }
   else

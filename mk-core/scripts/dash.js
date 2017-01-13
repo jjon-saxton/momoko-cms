@@ -8,20 +8,6 @@ $(function(){
   event.preventDefault();
   history.back();
  });
- $("button.linkbrowse").attr("data-toggle",'modal').attr("data-target",'#modal').click(function(event){
-    event.preventDefault();
-    var caller=event.currentTarget.id;
-
-    $("#modal .modal-title").html("Link Browser...");
-    $("#modal .modal-body").empty().load("?section=content&action=gethref&ajax=1",function(){
-     $(this).on('click',"div.selectable",function(){
-      var location=$(this).find("a#location").attr('href');
-      $("input#mediabox-"+caller).val(location);
-     });
-     $("div.page").attr("data-dismiss",'modal');
-    });
-    $("#modal .modal-footer").remove();
-  });
   
   $( "#add-addin" )
       .button()
