@@ -706,10 +706,9 @@ HTML;
        $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">\n<div class=\"alert alert-info\">For information only; automatically generated value.</div>\n";
        break;
        case 'channel':
-       $channels[]=array('name'=>'dev','label'=>'Development');
-       $channels[]=array('name'=>'beta','label'=>'Beta');
-       $channels[]=array('name'=>'stable','label'=>'Stable');
-       //TODO replace with momokocms.org API call
+       $uni=file_get_contents("http://cem:1slmlpFS!@dev.tower21studios.com/store.momoko/mk-uni.php?repo=channels"); //TODO replace with live store.momokocms.org URL
+       $channels=json_decode($uni,true);
+       unset($uni);
        $page['body'].="<select class=\"form-control\" name=\"{$setting['key']}\" id=\"{$setting['key']}\">\n";
        foreach ($channels as $ch_opt)
        {
@@ -727,31 +726,29 @@ HTML;
        break;
        case 'version':
        $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">";
-
-       $raw=ftp_get_contents("ftp://ftp.momokocms.org/core/momokoversions.lst","anonymous@momokocms.org"); //also replace with momokocms.org API call
-       $raw=explode("\n",$raw);
-       $list=array();
-       foreach ($raw as $row)
+       
+       $uni=file_get_contents("http://cem:1slmlpFS!@dev.tower21studios.com/store.momoko/mk-uni.php?repo=core&q=channel:`{$this->config->channel}`");
+       $versions=json_decode($uni,true);
+       unset($uni);
+       if (isset($versions['version'])) //Single result returned by store.
        {
-        list($r['num'],$r['level'])=explode(",",$row);
-        $list[$r['level']][]=$r['num'];
-        if ($r['num'] == $setting['value'])
-        {
-         $path=$r['level'];
-        }
+         if ($setting['value'] < $versions['version'])
+         {
+          $update=$versions['version'];
+         }
+         else
+         {
+          $update=false;
+         }
        }
-       $update=false;
-       foreach ($list[$path] as $v)
+       elseif (isset($version[0])) //multiple rows returned by store
        {
-        if ($v > $setting['value'])
-        {
-         $update=$v;
-        }
+        //TODO find *greatest* version number and compare to current setting.
        }
-
+       
        if ($update)
        {
-        $page['body'].="\n<div class=\"alert alert-warning\">MomoKO {$update} is out now! <a href=\"https://github.com/jjon-saxton/momoko-cms/wiki/{$update}:-Upgrading\">more information</a></div>";
+        $page['body'].="\n<div class=\"alert alert-warning\">MomoKO {$update} is out now on your selected channel! <a href=\"https://github.com/jjon-saxton/momoko-cms/wiki/{$update}:-Upgrading\">more information</a></div>"; //TODO show changelog text and offer to download and install new update!
        }
        else
        {
