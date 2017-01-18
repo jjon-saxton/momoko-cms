@@ -779,7 +779,7 @@ HTML;
        }
        elseif ($update)
        {
-        $page['body'].="\n<div class=\"panel panel-warning\">\n<div class=\"panel-heading\">MomoKO {$update} is now available in '{$this->config->channel}'! <a href=\"#updateMessage\" data-toggle=\"collapse\">view more information</a>.</div>\n<div id=\"updateMessage\" class=\"panel-collapse collapse\"><div class=\"panel-body\"><h4>{$update} Change Log</h4><pre>{$info}</pre>\n</div>\n<div class=\"panel-footer text-right\"><button class=\"btn btn-primary\" id=\"update\" type=\"button\">Update</button></div>\n</div>\n</div>"; //TODO show changelog text and offer to download and install new update!
+        $page['body'].="\n<div class=\"panel panel-warning\">\n<div class=\"panel-heading\">MomoKO {$update} is now available in '{$this->config->channel}'! <a href=\"#updateMessage\" data-toggle=\"collapse\">view more information</a>.</div>\n<div id=\"updateMessage\" class=\"panel-collapse collapse\"><div class=\"panel-body\"><p>A new version of MomoKO is available on your selected update channel. Below is a log of changes made in this new version. If you would like to take advantage of these new features, click the 'update' button after the log.</p>\n<pre>{$info}</pre>\n</div>\n<div class=\"panel-footer text-right\"><button class=\"btn btn-primary\" id=\"update\" type=\"button\">Update</button></div>\n</div>\n</div>"; //TODO show changelog text and offer to download and install new update!
        }
        else
        {
