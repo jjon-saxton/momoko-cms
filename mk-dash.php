@@ -707,7 +707,14 @@ HTML;
        break;
        case 'channel':
        $uni=file_get_contents("http://cem:1slmlpFS!@dev.tower21studios.com/store.momoko/mk-uni.php?repo=channels"); //TODO replace with live store.momokocms.org URL
-       $channels=json_decode($uni,true);
+       if ($uni)
+       {
+        $channels=json_decode($uni,true);
+       }
+       else
+       {
+        $channels[]=array('label'=>"Error fetching channel labels!",'name'=>$setting['value']);
+       }
        unset($uni);
        $page['body'].="<select class=\"form-control\" name=\"{$setting['key']}\" id=\"{$setting['key']}\">\n";
        foreach ($channels as $ch_opt)
@@ -728,27 +735,51 @@ HTML;
        $page['body'].="<input type=\"text\" disabled=\"disabled\" class=\"form-control\" id=\"{$setting['key']}\" value=\"{$setting['value']}\">";
        
        $uni=file_get_contents("http://cem:1slmlpFS!@dev.tower21studios.com/store.momoko/mk-uni.php?repo=core&q=channel:`{$this->config->channel}`");
-       $versions=json_decode($uni,true);
+       if ($uni)
+       {
+        $versions=json_decode($uni,true);
+       }
+       else
+       {
+        $versions['status']='error';
+        $versions['type']='uni fetch';
+        $versions['message']="HTTP Error while attempting to fetch data from MomoKO's central repository. Try checking out <a href=\"http://store.momokocms.org\">web front</a>.";
+       }
        unset($uni);
        if (isset($versions['version'])) //Single result returned by store.
        {
          if ($setting['value'] < $versions['version'])
          {
           $update=$versions['version'];
+          $info=$versions['changelog'];
          }
          else
          {
           $update=false;
          }
        }
-       elseif (isset($version[0])) //multiple rows returned by store
+       elseif (isset($versions[0])) //multiple rows returned by store
        {
-        //TODO find *greatest* version number and compare to current setting.
+        $newest=max($versions);
+        if ($setting['value'] < $newest)
+        {
+         $v_key=array_search($newest,$versions);
+         $update=$newest;
+         $info=$versions[$v_key]['changelog'];
+        }
+        else
+        {
+         $update=false;
+        }
        }
        
-       if ($update)
+       if ($versions['status'] == 'error')
        {
-        $page['body'].="\n<div class=\"alert alert-warning\">MomoKO {$update} is out now on your selected channel! <a href=\"https://github.com/jjon-saxton/momoko-cms/wiki/{$update}:-Upgrading\">more information</a></div>"; //TODO show changelog text and offer to download and install new update!
+        $page['body'].="\n<div class=\"alert alert-danger\">{$versions['message']} Site owners; if the problem persists, please feel free to file an issue at <a href=\"https://github.com/jjon-saxton/momoko-cms/issues\">our github tracker</a></div>";
+       }
+       elseif ($update)
+       {
+        $page['body'].="\n<div class=\"panel panel-warning\">\n<div class=\"panel-heading\">MomoKO {$update} is now available in '{$this->config->channel}'! <a href=\"#updateMessage\" data-toggle=\"collapse\">view more information</a>.</div>\n<div id=\"updateMessage\" class=\"panel-collapse collapse\"><div class=\"panel-body\"><h4>{$update} Change Log</h4><pre>{$info}</pre>\n</div>\n<div class=\"panel-footer text-right\"><button class=\"btn btn-primary\" id=\"update\" type=\"button\">Update</button></div>\n</div>\n</div>"; //TODO show changelog text and offer to download and install new update!
        }
        else
        {

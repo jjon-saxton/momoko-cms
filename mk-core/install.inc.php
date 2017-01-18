@@ -400,7 +400,7 @@ function db_upgrade($level,$version,$backup=null)
  momoko_basic_changes($GLOBALS['USR'],"updated","Site Content",$cm);
  momoko_basic_changes($GLOBALS['USR'],"updated","Core Addins",$am);
  
- $config->version="2.2";
+ $config->version="2.3";
  $config->saveTemp();
  
  return true;
