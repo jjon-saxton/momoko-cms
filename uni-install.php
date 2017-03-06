@@ -33,14 +33,19 @@ switch ($_GET['method'])
  case 'sys-upgrade':
  if (isset($_GET['install']))
  {
-  $info=new UniInfo('core',$_GET['target']);
+  $page['title']="Upgrading System...";
+  $info=new UniItem('core',$_GET['target']);
   if ($pkg=$info->fetch())
   {
    if ($_GET['install'])
    {
     if ($info->install($pkg))
     {
-     //TODO tell users they are about to run a database update and redirect to mk-update.php
+     $page['body']="Update package downloaded and installed. You will need to perform a database update before your site is ready again.";
+     $buttons[0]['href']="./mk-update/";
+     $buttons[0]['type']="success";
+     $buttons[0]['self']=false;
+     $buttons[0]['title']="Finish Upgrading";
     }
     else
     {
@@ -49,7 +54,10 @@ switch ($_GET['method'])
    }
    else
    {
-    //TODO set update reminder and let users know the package is ready for them.
+    //TODO set update reminder.
+    $page['body']="Update package downloaded and ready. A message will appear the next time you log in reminding you to install this package.";
+    $buttons[0]['action']="close";
+    $buttons[0]['type']="primary";
    }
   }
   else
@@ -75,6 +83,13 @@ switch ($_GET['method'])
 if ($_GET['modal'])
 {
  $html=<<<HTML
+<script language="javascript">
+ $("#modal a[data-target='#self']").click(function(e){
+        e.preventDefault();
+        var loc=$(this).attr("href");
+        $("div.modal.in .modal-content").load(loc);
+    });
+</script>
 <div class="modal-header">
 <button type="button" class="close" data-dismiss="modal">&times;</button>
 <h4 class="modal-title">{$page['title']}</h4>
@@ -91,9 +106,17 @@ HTML;
    {
     $html.="<button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\">Cancel</button>";
    }
+   elseif ($item['action'] == 'close')
+   {
+    $html.="<button type=\"button\" class=\"btn btn-{$item['type']}\" data-dismiss=\"modal\">Close</button>";
+   }
    else
    {
-    $html.="<a href=\"{$item['href']}\" class=\"btn btn-{$item['type']}\" data-target=\"#modal\">{$item['title']}</a>";
+    if ($self !== false)
+    {
+     $target=" data-target=\"#self\"";
+    }
+    $html.="<a href=\"{$item['href']}\" class=\"btn btn-{$item['type']}\"$target>{$item['title']}</a>";
    }
   }
   $html.="</div>\n";
