@@ -3,14 +3,33 @@
 
 class UniItem
 {
+ public $repo;
+ public $errorMsg;
  private $info=array();
 
  public function __construct($repo,$id=null,$name=null)
  {
+  $this->repo=$repo;
   if (empty($id) && empty($name))
   {
    trigger_error("Either a name or an id is required to set an UniItem!",E_USER_ERROR);
   }
+
+  switch ($repo)
+  {
+   case 'addins':
+   $raw=file_get_contents("http://cem:1slmlpFS!@dev.tower21studios.com/store.momoko/mk-uni.php?repo=addins&q=id:`= {$id}` short_name:`{$name}`");
+   break;
+   case 'channels':
+   $raw=file_get_contents("http://cem:1slmlpFS!@dev.tower21studios.com/store.momoko/mk-uni.php?repo=channels&q=id:`= {$id}` name:`{$name}`");
+   break;
+   case 'core':
+   $raw=file_get_contents("http://cem:1slmlpFS!@dev.tower21studios.com/store.momoko/mk-uni.php?repo=core&q=version:`{$name}`");
+   break;
+  }
+  $temp=json_decode($raw,true);
+
+  return $this->info=$temp;
  }
 
  public function __get($key)
@@ -20,6 +39,25 @@ class UniItem
 
  public function fetch($storage=null)
  {
+  $ftp_server="momokocms.org";
+  $ftp_user="api@momokocms.org";
+  $ftp_pass="tRy{LfAGdIuT";
+  $conn=ftp_connect($ftp_server);
+  $login=ftp_login($conn,$ftp_user,$ftp_pass);
+
+  if (empty($storage))
+  {
+   $storage=dirname(__FILE__)."/mk-content/";
+  }
+
+  if (ftp_get($conn,$storage.$this->pkg_name,"/{$this->repo}/".$this->pkg_name,FTP_BINARY))
+  {
+   return $storage.$this->pkg_name;
+  }
+  else
+  {
+   return false;
+  }
  }
 
  public function install($pkg)
@@ -34,9 +72,10 @@ switch ($_GET['method'])
  if (isset($_GET['install']))
  {
   $page['title']="Upgrading System...";
-  $info=new UniItem('core',$_GET['target']);
+  $info=new UniItem('core',null,$_GET['target']);
   if ($pkg=$info->fetch())
   {
+   var_dump($pkg);
    if ($_GET['install'])
    {
     if ($info->install($pkg))
@@ -62,7 +101,7 @@ switch ($_GET['method'])
   }
   else
   {
-   //TODO error downloading package!
+   $page['body']="<span class=\"alert alert-danager\">Your update package could not be downloaded!</span>";
   }
  }
  else
