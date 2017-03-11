@@ -203,9 +203,13 @@ HTML;
    }
    else
    {
-    if ($self !== false)
+    if ($item['self'] !== FALSE)
     {
      $target=" data-target=\"#self\"";
+    }
+    else
+    {
+     $target=" data-target=\"#tab\"";
     }
     $html.="<a href=\"{$item['href']}\" class=\"btn btn-{$item['type']}\"$target>{$item['title']}</a>";
    }
