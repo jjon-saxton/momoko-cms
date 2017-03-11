@@ -1,5 +1,9 @@
 <?php
 /* Fetcher and installer for Unified Store API */
+require_once dirname(__FILE__)."/mk-core/common.inc.php";
+
+define ("UNI_ERROR_NO_ARCHIVE",6011);
+define ("UNI_ERROR_INVALID_PKG",6012);
 
 class UniItem
 {
@@ -62,6 +66,36 @@ class UniItem
 
  public function install($pkg)
  {
+  if (class_exists("finfo"))
+  {
+   $pkg_info=new finfo(FILEINFO_MIME);
+   $mime=$pkg_info->file($pkg);
+   list($mime,$charset)=explode(";",$mime); //charset added to file when downloaded via FTP which could cause problems with the check below. Remove it!
+   if ($mime == "application/zip")
+   {
+    $arch=new ZipArchive;
+    $status=$arch->open($pkg);
+    if ($status === TRUE)
+    {
+     $storage=dirname($pkg);
+     $name=basename($pkg,".zip");
+     $arch->extractTo($storage);
+     //TODO replace old code with new code from extracted package
+     unlink($pkg);
+     return true;
+    }
+    else
+    {
+     trigger_error("Could not open {$pkg} as a ZIP archive: {$status}",E_USER_NOTICE);
+     return 6011;
+    }
+   }
+   else
+   {
+    trigger_error("{$pkg} is not a valid ZIP archive",E_USER_NOTICE);
+    return 6012;
+   }
+  }
  }
 }
 
@@ -75,20 +109,38 @@ switch ($_GET['method'])
   $info=new UniItem('core',null,$_GET['target']);
   if ($pkg=$info->fetch())
   {
-   var_dump($pkg);
    if ($_GET['install'])
    {
-    if ($info->install($pkg))
+    $status=$info->install($pkg);
+    if ($status === TRUE)
     {
      $page['body']="Update package downloaded and installed. You will need to perform a database update before your site is ready again.";
-     $buttons[0]['href']="./mk-update/";
+     $buttons[0]['href']="./mk-update.php";
      $buttons[0]['type']="success";
      $buttons[0]['self']=false;
      $buttons[0]['title']="Finish Upgrading";
     }
     else
     {
-     //TODO error trying to install update!
+     $page['body']="Update package downloaded, but <strong>not</strong> installed!";
+     switch ($status)
+     {
+      case UNI_ERROR_NO_ARCHIVE:
+      $page['body'].=" The update package could not be opened as an archive.";
+      break;
+      case UNI_ERROR_INVALID_PKG:
+      $page['body'].=" We fetched a package that is not valid. This may be problem with the <a href=\"http://store.momokocms.org\">Addin Store</a>.";
+      break;
+      default:
+      $page['body'].=" An unknown error occured.";
+     }
+     $buttons[0]['href']="./mk-dash.php?section=site&list=logs";
+     $buttons[0]['type']="warning";
+     $buttons[0]['self']=false;
+     $buttons[0]['title']="Check the logs";
+     $buttons[1]['action']="close";
+     $buttons[1]['type']="danger";
+     $buttons[1]['title']="Close";
     }
    }
    else
