@@ -4,6 +4,8 @@ require_once dirname(__FILE__)."/mk-core/common.inc.php";
 
 define ("UNI_ERROR_NO_ARCHIVE",6011);
 define ("UNI_ERROR_INVALID_PKG",6012);
+define ("UNI_ERROR_PKG_MISMATCH",6020);
+define ("UNI_ERROR_NO_VERSION",6021);
 
 class UniItem
 {
@@ -80,8 +82,28 @@ class UniItem
      $storage=dirname($pkg);
      $name=basename($pkg,".zip");
      $arch->extractTo($storage);
-     //TODO replace old code with new code from extracted package
      unlink($pkg);
+     if (file_exists($storage.'/'.$name."/version.nfo.txt"))
+     {
+      $version=file_get_contents($storage.'/'.$name."/version.nfo.txt");
+      if ($version == $this->long_version)
+      {
+       //TODO replace old code with new code from extracted package
+      }
+      else
+      {
+       trigger_error("Package mismatch! The version of MomoKO provided by the new package is {$version} expacting {$this->long_version}.",E_USER_NOTICE);
+       rmdirr($storage.'/'.$name);
+       return 6020;
+      }
+     }
+     else
+     {
+      trigger_error("Unexpected package format! 'version.nfo.txt' does not exist in the new package's root directory!");
+
+      rmdirr($storage.'/'.$name);
+      return 6021;
+     }
      return true;
     }
     else
@@ -125,6 +147,9 @@ switch ($_GET['method'])
      $page['body']="Update package downloaded, but <strong>not</strong> installed!";
      switch ($status)
      {
+      case UNI_ERROR_PKG_MISMATCH:
+      case UNI_ERROR_NO_VERSION:
+      $page['body'].="The update package was opened, but there was a problem with the version of MomoKO it provides. Either no version information was not found (malformed package?) or the version provided was not what was expected. The update package was removed, so you may try again. If the problem continues please <a href=\"http://store.momokocms.org/report?repo=core&version={$_GET['target']}\">report it</a> to the MomoKO Store staff.";
       case UNI_ERROR_NO_ARCHIVE:
       $page['body'].=" The update package could not be opened as an archive.";
       break;
@@ -209,7 +234,7 @@ HTML;
     }
     else
     {
-     $target=" data-target=\"#tab\"";
+     $target=null;
     }
     $html.="<a href=\"{$item['href']}\" class=\"btn btn-{$item['type']}\"$target>{$item['title']}</a>";
    }
