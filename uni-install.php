@@ -88,7 +88,11 @@ class UniItem
       $version=file_get_contents($storage.'/'.$name."/version.nfo.txt");
       if ($version == $this->long_version)
       {
-       //TODO replace old code with new code from extracted package
+       $cfg=new MomokoSiteConfig();
+       if(rename($storage."/".$name,$cfg->basedir))
+       {
+        return true; //TODO further testing during beta
+       }
       }
       else
       {
