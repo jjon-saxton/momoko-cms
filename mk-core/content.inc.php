@@ -1112,6 +1112,20 @@ $(function(){
      ['misc',['undo','redo']],
      ['insert',['link','picture']]
     ]
+   },
+   callbacks:{
+    onChange:function(content,e){
+        var timeoutID;
+        
+        if (timeoutID)
+        {
+            clearTimeout(timeoutID);
+        }
+        
+        timeoutID=setTimeout(function(){
+            console.log(content) //TODO send the value of content to the server for autosave processing
+        },9000);
+    }
    }
  });
  
