@@ -1119,7 +1119,7 @@ $(function(){
         
         if (timeoutID)
         {
-            clearTimeout(timeoutID);
+            clearTimeout(timeoutID); //the timer (created below) is set up to prevent server overload, this is meant to stop the timer, but still results in too many call. TODO need away to completely stop execution
         }
         
         timeoutID=setTimeout(function(){
