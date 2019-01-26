@@ -1123,7 +1123,9 @@ $(function(){
         }
         
         timeoutID=setTimeout(function(){
-            console.log(content) //TODO send the value of content to the server for autosave processing
+            $.post("./ajax.php?action=autosave&p={$this->num}",{html:content},function(result){
+                console.log(result);
+            });
         },9000);
     }
    }

@@ -13,6 +13,17 @@ switch ($_GET['action'])
     case 'fetch_files':
         echo json_encode(fetch_files($_GET['dir'],$_GET['limit']));
         break;
+    case 'autosave':
+        $name=$config->basedir.$config->tempdir.$auth->name."-page".$_GET['p'].".bck.htm";
+        if (file_put_contents($name,$_POST['html']))
+        {
+            echo json_encode(array('status' => 'ok','content' => $_POST['html']));
+        }
+        else
+        {
+            echo json_encode(array('status' => 'error','content' => 'Could not autosave page for recovery! unknown error writing '.$name));
+        }
+        break;
     case 'put':
         $new=$table->putData($_POST);
         echo json_encode($new);
