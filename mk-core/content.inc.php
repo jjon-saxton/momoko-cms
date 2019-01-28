@@ -1066,6 +1066,7 @@ TXT;
    });
    
    $("#modal").modal('show');
+
 TXT;
      }
      else
@@ -1082,20 +1083,56 @@ TXT;
      $(".selectable").attr("data-dismiss",'modal');
 	});
     $("#modal").modal('show');
+
 TXT;
      }
+   }
+   
+   $recover_opts=null;
+   if ($_GET['override'] == 'recover')
+   {
+    $filename=$this->config->basedir.$this->config->tempdir.$this->user->name."-page{$this->num}.bck.htm";
+    $rhtml=file_get_contents($filename);
+    $editor=<<<HTML
+<textarea class="form-control" id="pagebody" name="text">
+{$rhtml}
+</textarea>
+HTML;
+   }
+   elseif ($_GET['content'] != 'attachment' || $_GET['content'] != "addin page") //ensures recovery option is only available for regular pages at this time
+   {
+    $filename=$this->config->basedir.$this->config->tempdir.$this->user->name."-page{$this->num}.bck.htm";
+    if (file_exists($filename))
+    {
+        $fmd=date("Ymd",filemtime($filename));
+        $cdate=date("Ymd");
+        if ($fmd < $cdate)
+        {
+            unlink($filename);
+            $recover_opts="console.log(\"an old recovery file, '{$filename}', was detected. The file has been removed please advise users to save changes or recover backups on the same day they are created\");\n";
+        }
+        else
+        {
+            $recover_opts=<<<TXT
+    $("#modal .modal-title").html("Recover from backup?");
+	$("#modal .modal-body").html("A recovery file exists for this page. Would you like to load the file and continue where you left off, or discard it and edit the page as it exists currently? <div class='text-center'><button class='btn btn-success' onclick=\"window.location='{$this->config->siteroot}?action=edit&p={$this->num}&override=recover'\">Continue</button> <button class='btn btn-danger' data-dismiss='modal'>Discard</button></div>");
+    $("#modal").modal('show');
+
+TXT;
+        }
+    }
+    //TODO
    }
    
    $info['title']="Edit {$type}: ".$this->title;
    $info['inner_body']=<<<HTML
 <script language="javascript">
 $(function(){
- {$chooser}
- if ($("select#status").val() == "private"){
+ {$chooser}if ($("select#status").val() == "private"){
   $("input#private").removeAttr('disabled');
  }
-  
- $("textarea").summernote({
+
+ {$recover_opts}$("textarea").summernote({
    airMode: true,
    popover:{
     image: [
@@ -1119,7 +1156,7 @@ $(function(){
         
         if (timeoutID)
         {
-            clearTimeout(timeoutID); //the timer (created below) is set up to prevent server overload, this is meant to stop the timer, but still results in too many call. TODO need away to completely stop execution
+            clearTimeout(timeoutID); //the timer (created below) is set up to prevent server overload, this is meant to stop the timer, but still results in too many call. TODO need a way to completely stop execution
         }
         
         timeoutID=setTimeout(function(){
