@@ -862,6 +862,11 @@ class MomokoContent implements MomokoObject
  {
   if (@$data['title'])
   {
+   $filename=$this->config->basedir.$this->config->tempdir.$this->user->name."-page{$this->num}.bck.htm";
+   if (file_exists($filename))
+   {
+    unlink($filename);
+   }
    $tags=new MomokoTags();
    if (!empty($data['tags']))
    {
