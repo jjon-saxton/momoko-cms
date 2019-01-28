@@ -1126,7 +1126,6 @@ HTML;
 TXT;
         }
     }
-    //TODO
    }
    
    $info['title']="Edit {$type}: ".$this->title;
