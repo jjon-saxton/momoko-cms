@@ -86,7 +86,7 @@ class UniItem
      if (file_exists($storage.'/'.$name."/version.nfo.txt"))
      {
       $version=file_get_contents($storage.'/'.$name."/version.nfo.txt");
-      if ($version == $this->long_version)
+      if (trim($version) == $this->long_version)
       {
        $cfg=new MomokoSiteConfig();
        if(rename($storage."/".$name,$cfg->basedir))
@@ -96,7 +96,7 @@ class UniItem
       }
       else
       {
-       trigger_error("Package mismatch! The version of MomoKO provided by the new package is {$version} expacting {$this->long_version}.",E_USER_NOTICE);
+       trigger_error("Package mismatch! The version of MomoKO provided by the new package is {$version} expecting {$this->long_version}.",E_USER_NOTICE);
        rmdirr($storage.'/'.$name);
        return 6020;
       }
