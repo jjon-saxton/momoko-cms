@@ -1664,7 +1664,6 @@ HTML;
 <li><a href="javascript:void" onclick="$('#newMenu').slideToggle()">New</a></li>
 <li id="newMenu" style="display:none"><ul class="nobullet">
 <li><a href="{$this->conf->siteroot}/?content=page&action=new">Page</a></li>
-<li><a href="{$this->conf->siteroot}/?content=addin+page&action=new">Dynamic Page</a></li>
 <li><a href="{$this->conf->siteroot}/?content=post&action=new">Post</a></li>
 <li><a href="{$this->conf->siteroot}/?content=attachment&action=new">Attachment</a></li>
 </ul></li>{$curconlinks}
