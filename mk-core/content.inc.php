@@ -934,6 +934,28 @@ class MomokoContent implements MomokoObject
      }
     }
    }
+   $mimeparts=explode("/",$this->info['mime_type']);
+   $addins=new DataBaseTable('addins');
+   $findpgaddins=$addins->getData("type:`page`",array('num','dir','shortname','type'));
+   if ($this->info['mime_type'] == 'text/html')
+   {
+    $addin_opts="<option selected=selected value=\"text/html\">-- Static Page --</option>";
+   }
+   else
+   {
+    $addin_opts="<option value=\"text/html\">-- Static Page -- </option>";
+   }
+   while ($dynamic=$findpgaddins->fetch(PDO::FETCH_ASSOC))
+   {
+    if ($mimeparts[1] == $dynamic['dir'])
+    {
+        $addin_opts.="<option selected=selected value=\"application/{$dynamic['dir']}\">{$dynamic['shortname']}</option>";
+    }
+    else
+    {
+        $addin_opts.="<option value=\"application/{$dynamic['dir']}\">{$dynamic['shortname']}</option>";
+    }
+   }
    $statuses=array('public'=>"Public",'cloaked'=>"Hidden From Navigation",'private'=>"Private",'locked'=>"Draft");
    $status_opts=null;
    foreach($statuses as $value=>$name)
@@ -948,11 +970,7 @@ class MomokoContent implements MomokoObject
     }
    }
    
-   if ($_GET['content'] == "addin page")
-   {
-     $type="page";
-   }
-   elseif (!empty($_GET['content']))
+   if (!empty($_GET['content']))
    {
     $type=$_GET['content'];
    }
@@ -979,7 +997,7 @@ HTML;
 HTML;
    }
    
-   if ($this->mime_type == "text/html" && $_GET['content'] != "addin page")
+   if ($this->mime_type == "text/html")
    {
     $editor=<<<HTML
 <textarea class="form-control" id="pagebody" name="text">
@@ -987,7 +1005,7 @@ HTML;
 </textarea>
 HTML;
    }
-   elseif ($_GET['content'] != "addin page")
+   else
    {
     $mimeparts=explode("/",$this->mime_type);
     switch ($mimeparts[0])
@@ -1011,12 +1029,6 @@ HTML;
 </textarea>
 HTML;
     }
-   }
-   else
-   {
-     $editor=<<<HTML
-<div id="AddinSettings" class="alert alert-warning">Please <a href="#modal" data-toggle="modal">select</a> an addin to drive this page's dynamic content.</div>
-HTML;
    }
    
    $type_links=null;
@@ -1172,6 +1184,10 @@ $(function(){
    }
  });
  
+ $("select#addin").change(function(){
+    $("form").submit();
+ });
+ 
  $("select#status").change(function(){
   if ($("select#status").val() == "private"){
    $("input#private").removeAttr('disabled');
@@ -1202,6 +1218,10 @@ HTML;
 <div class="form-group">
  <label for="parent">Parent Page:</label>
  <select class="form-control" id="parent" name="parent">{$parent_opts}</select>
+</div>
+<div class="form-group" title="Static pages are edited by you and designed to provide simple content, conversely you can select a special addin to display content on-the-fly.">
+ <label for="addin">Dynamic Content:</label>
+ <select class="form-control" id="addin" name="mime_type">{$addin_opts}</select>
 </div>
 <div class="form-group" title="Comma-seperated list of tags">
  <label for="tags">Tags:</label>
