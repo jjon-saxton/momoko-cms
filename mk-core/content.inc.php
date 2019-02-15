@@ -877,7 +877,14 @@ class MomokoContent implements MomokoObject
      $tags->deleteAll($data['num']); //Remove all tags
    }
    
-   if (is_array($data['set']))
+   if ($data['mime_type'] == "text/html" && !$data['text']) //Prevents malformed static pages
+   {
+    $data['text']=<<<HTML
+<h2>Page Content</h2>
+<p> </p>
+HTML;
+   }
+   elseif (is_array($data['set']))
    {
      $data['text']=null;
      foreach($data['set'] as $k=>$v)
@@ -1185,7 +1192,21 @@ $(function(){
  });
  
  $("select#addin").change(function(){
-    $("form").submit();
+    if ($("textarea#pagebody").val())
+    {
+        if(confirm("Switching to a dynamic content type will erase the current page's body!"))
+        {
+            $("textarea#pagebody").val('');
+            this.form.submit();
+        }
+    }
+    else
+    {
+        if(confirm("Switching dynamic content types or reverting to a static page will result in this page's settings being deleted!"))
+        {
+            this.form.submit();
+        }
+    }
  });
  
  $("select#status").change(function(){
