@@ -174,8 +174,7 @@ switch ($_GET['method'])
    }
    else
    {
-    //TODO set update reminder.
-    $page['body']="Update package downloaded and ready. A message will appear the next time you log in reminding you to install this package.";
+    $page['body']="Update package downloaded and ready. The package will be detected next time you attempt to update.";
     $buttons[0]['action']="close";
     $buttons[0]['type']="primary";
    }
@@ -188,14 +187,26 @@ switch ($_GET['method'])
  else
  {
   $page['title']="Perform System Upgrade?";
-  $page['body']="You are about to upgrade MomoKO to {$_GET['target']}. During the upgrade, your site will <strong>not</strong> be available. You may choose to upgrade your system as soon as you download the update package or hold off until you have notified your users of a short site outage. How do you wish to proceed?";
+  $page['body']="You are about to upgrade MomoKO to {$_GET['target']}. During the upgrade, your site will <strong>not</strong> be available.";
   $buttons[0]['action']="cancel";
-  $buttons[1]['href']="./uni-install.php?method={$_GET['method']}&target={$_GET['target']}&modal={$_GET['modal']}&install=0";
-  $buttons[1]['type']="info";
-  $buttons[1]['title']="Download Update Only";
-  $buttons[2]['href']="./uni-install.php?method={$_GET['method']}&target={$_GET['target']}&modal={$_GET['modal']}&install=1";
-  $buttons[2]['type']="primary";
-  $buttons[2]['title']="Download and Install Now!";
+  $files=glob(dirname(__FILE__)."/mk-content/momoko-cms-*.zip");
+  if (count($files) > 0)
+  {
+    $page['body'].="You have a package ready for install already. You can install it whenever you're ready.";
+    $buttons[1]['href']="./uni-install.php?method={$_GET['method']}&target={$_GET['target']}&modal={$_GET['modal']}&install=1";
+    $buttons[1]['type']="primary";
+    $buttons[1]['title']="Install Now!";
+  } 
+  else
+  {
+    $page['body'].="You may choose to upgrade your system as soon as you download the update package or hold off until you have notified your users of a short site outage. How do you wish to proceed?";
+    $buttons[1]['href']="./uni-install.php?method={$_GET['method']}&target={$_GET['target']}&modal={$_GET['modal']}&install=0";
+    $buttons[1]['type']="info";
+    $buttons[1]['title']="Download Update Only";
+    $buttons[2]['href']="./uni-install.php?method={$_GET['method']}&target={$_GET['target']}&modal={$_GET['modal']}&install=1";
+    $buttons[2]['type']="primary";
+    $buttons[2]['title']="Download and Install Now!";
+  }
  }
  break;
 }
