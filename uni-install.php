@@ -6,6 +6,7 @@ define ("UNI_ERROR_NO_ARCHIVE",6011);
 define ("UNI_ERROR_INVALID_PKG",6012);
 define ("UNI_ERROR_PKG_MISMATCH",6020);
 define ("UNI_ERROR_NO_VERSION",6021);
+define ("UNI_ERROR_CANNOT_MOVE",6022);
 
 class UniItem
 {
@@ -89,9 +90,25 @@ class UniItem
       if (trim($version) == $this->long_version)
       {
        $cfg=new MomokoSiteConfig();
-       if(rename($storage."/".$name,$cfg->basedir))
+       $new=$cfg->basedir;
+       $backup=rtrim($cfg->basedir,"/")."-bak/";
+       if(rename($cfg->basedir,$backup))
        {
-        return true; //TODO further testing during beta
+        mkdir($new,0755);
+        if(rename($backup."mk-content/".$name,$new))
+        {
+          return true; //TODO further testing during beta
+        }
+        else
+        {
+          trigger_error("Cannot complete installation! New package files could not be moved into place. Check permissions.",E_USER_NOTICE);
+          return 6022;
+        }
+       }
+       else
+       {
+         trigger_error("Cannot complete installation! A backup of your current install could not be created. It is not recommended to complete installation automatically without a backup!",E_USER_NOTICE);
+         return 6022;
        }
       }
       else
@@ -140,7 +157,7 @@ switch ($_GET['method'])
     $status=$info->install($pkg);
     if ($status === TRUE)
     {
-     $page['body']="Update package downloaded and installed. You will need to perform a database update before your site is ready again.";
+     $page['body']="Update package downloaded and installed. You will need to perform a database update before your site is ready again. A backup of your old installation has been created, if you notice problems, please delete the current installation and rename the backup. You will need to delete the backup manually if you need to save space!";
      $buttons[0]['href']="./mk-update.php";
      $buttons[0]['type']="success";
      $buttons[0]['self']=false;
@@ -160,6 +177,9 @@ switch ($_GET['method'])
       case UNI_ERROR_INVALID_PKG:
       $page['body'].=" We fetched a package that is not valid. This may be problem with the <a href=\"http://store.momokocms.org\">Addin Store</a>.";
       break;
+         case UNI_ERROR_CANNOT_MOVE:
+             $page['body'].="The package was downloaded and extracted but could not be moved! Please check permissions. Please note some servers may not allow permissions to be set correctly. In cases where you cannot set permissions to allow MomoKO to overwrite her own files, you will have to complete the installation manually. The files reside in MomoKO's 'mk-content' folder.";
+             break;
       default:
       $page['body'].=" An unknown error occured.";
      }
