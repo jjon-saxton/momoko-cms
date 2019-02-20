@@ -59,7 +59,7 @@ if(isset($_GET['action']) && !empty($_GET['action']))
    {
     $def['title']="New...";
     $def['type']="unknown";
-    $def['author']=$user->num;
+    $def['author']=$auth->num;
     $def['date_created']=date("Y-m-d H:i:s");
     $def['status']="cloaked";
     $def['parent']=0;
