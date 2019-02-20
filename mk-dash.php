@@ -1102,17 +1102,24 @@ $(function(){
  
  $("button#SaveMods").click(function(event){
   event.preventDefault();
+  $(this).attr('disabled','disabled');
   var raw=$("div.container").html();
   $("input#mods").val(raw);
-  $("form#ModuleForm").submit();
+  setTimeout(function(){
+    $("form#ModuleForm").submit();
+  },1000);
  });
  
- $("button#ReOrder").click(function(){
+ $("button#ReOrder").click(function(event){
   event.preventDefault();
+  $(this).attr('disabled','disabled')
   var raw=$("div#MapList").html();
   $("input#map").val(raw);
-  $("form#MapForm").submit();;
+  setTimeout(function(){
+    $("form#MapForm").submit();
+  },1000);
  });
+  
  $("ul.map ul").addClass("nobullet");
  
  $("#MapList .subnav").parent()
@@ -1234,12 +1241,15 @@ HTML;
     foreach ($html->find("div.column") as $node)
     {
      $mz['zone']=$node->id;
+     $order=1;
      foreach ($node->find("div.module") as $mod)
      {
       list($name,$mid,$oldzone,$oldrow)=explode("-",$mod->id);
       $data['num']=$mid;
+      $data['order']=$order;
       $mz['mod']=$mid;
       $mz['settings']=http_build_query($user_data[$mod->id]);
+      $order++;
       try
       {
        $update=$table->updateData($data);
