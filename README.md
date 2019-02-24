@@ -82,6 +82,8 @@ If you did no use the latest_stable branch (for example, if you skipped the 2.0 
 
 If you did not acquire MomoKO with git you will be able to acquire new MomoKO zip archives from FTP using the FTP procedures outlined above. The archive in /core/latest_stable/ will have been updated so you can simply re-download that if you wish or pick a version higher than the one you have in /core/
 
+Once you have MomoKO 2.3 you will be able to upgrade MomoKO by going to the Site Settings section of your dashboard. There MomoKO will check for updates and inform you if a new version is available for your selected channel. The default channel is the 'stable' channel, but this to can be changed in this section of the dashboard.
+
 ### 2 - Set up a 2.1 compatible database
 
 The easiest way to ensure your database is compatible with 2.1 is to set up a new one. You can use the same connection settings, but the best way to set this up is to delete your current "database.ini" and follow the instructions under "Configure MomoKO" in the README. Ensure you use a different table prefix. This will allow you to keep your old tables for reference later.
