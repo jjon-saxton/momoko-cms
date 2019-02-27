@@ -1757,6 +1757,7 @@ HTML;
   {
    $editor=<<<HTML
 <link rel="stylesheet" href="//{$this->conf->baseuri}/mk-core/styles/summernote.css" type=text/css>
+<script src="//{$this->conf->baseuri}/mk-core/scripts/editor.js"></script>
 <script src="//{$this->conf->baseuri}/mk-core/scripts/summernote.js"></script>
 HTML;
   }
@@ -1770,7 +1771,8 @@ HTML;
 <!-- Meta Tags? -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="//{$this->conf->baseuri}/mk-core/scripts/bootstrap.js"></script>
-{$editor}<script src="//{$this->conf->baseuri}/mk-core/scripts/dash.js" type="text/javascript"></script>
+{$editor}
+<script src="//{$this->conf->baseuri}/mk-core/scripts/dash.js" type="text/javascript"></script>
 <link rel="stylesheet" href="//{$this->conf->baseuri}/mk-core/styles/momoko.css" type="text/css">
 
 <link rel="alternate" type="application/rss+xml" title="Post Feed: RSS" href="{$this->conf->siteroot}/?content=rss">
@@ -1783,7 +1785,7 @@ HTML;
  {
   $version=MOMOKOVERSION;
   $split['body']=<<<HTML
-<div id="modal" class="modal fade" role="dialog">
+<div id="modal" class="modal fade" style="z-index:1150" role="dialog">
  <div class="modal-dialog">
   <div class="modal-content">
     <div class="modal-header">
