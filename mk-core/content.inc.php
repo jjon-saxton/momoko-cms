@@ -1757,7 +1757,7 @@ HTML;
   {
    $editor=<<<HTML
 <link rel="stylesheet" href="//{$this->conf->baseuri}/mk-core/styles/summernote.css" type=text/css>
-<script type="text/javascript" src="//{$this->conf->baseuri}/mk-core/scripts/summernote.js"></script>
+<script src="//{$this->conf->baseuri}/mk-core/scripts/summernote.js"></script>
 HTML;
   }
   else
