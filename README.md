@@ -101,4 +101,4 @@ Go to your new MomoKO 2.1 site and log in as an administrator. Go to the new add
 
 ### 5 - For the future
 
-In the future we may create a type of exporter for MomoKO 1.6 that will handle all of the above steps for you, from exporting the settings and users as well as zipping the contents of your pages folder.
+At this time this project is being closed and has no future. I may revisit it at a future date, but there are no plans for that at this time.
